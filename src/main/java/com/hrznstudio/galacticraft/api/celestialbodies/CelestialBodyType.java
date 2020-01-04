@@ -39,9 +39,9 @@ public class CelestialBodyType implements DynamicSerializable {
 
     private final Identifier id;
     private final String translationKey;
-    @Nullable private final DimensionType dimension;
+    private final DimensionType dimension;
     private final int accessWeight;
-    @Nullable private final CelestialBodyType parent;
+    private final CelestialBodyType parent;
     private final double orbit;
     private final float gravity;
     private final boolean oxygen;
@@ -61,7 +61,7 @@ public class CelestialBodyType implements DynamicSerializable {
      * @param gravity The gravity applied to entities on the body (1.0f is the same as the overworld)
      * @param oxygen Whether or not the body has oxygen.
      */
-    public CelestialBodyType(Identifier id, String translationKey, @Nullable DimensionType dimension, int accessWeight, @Nullable CelestialBodyType parent, double orbit, float gravity, boolean oxygen) {
+    public CelestialBodyType(Identifier id, String translationKey, DimensionType dimension, int accessWeight, CelestialBodyType parent, double orbit, float gravity, boolean oxygen) {
         this.id = id;
         this.translationKey = translationKey;
         this.dimension = dimension;
