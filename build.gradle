@@ -1,0 +1,88 @@
+plugins {
+    id 'fabric-loom' version '0.2.6-SNAPSHOT'
+    id 'java'
+    id 'maven-publish'
+}
+
+group 'com.hrznstudio'
+version '0.1.0-alpha+1.14.4'
+
+sourceCompatibility = targetCompatibility = JavaVersion.VERSION_1_8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    minecraft "com.mojang:minecraft:1.14.4"
+    mappings "net.fabricmc:yarn:1.14.4+build.15:v2"
+
+    modImplementation "net.fabricmc:fabric-loader:0.7.0+build.171"
+    modImplementation("net.fabricmc.fabric-api:fabric-api:0.3.3+build.234-1.14") { transitive = true }
+}
+
+processResources {
+    inputs.property "version", project.version
+
+    from(sourceSets.main.resources.srcDirs) {
+        include "fabric.mod.json"
+        expand "version": project.version
+    }
+
+    from(sourceSets.main.resources.srcDirs) {
+        exclude "fabric.mod.json"
+    }
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = "UTF-8"
+}
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+    archiveClassifier  = "sources"
+    from sourceSets.main.allSource
+}
+
+task javadocJar(type: Jar) {
+    from javadoc
+    archiveClassifier = 'javadoc'
+}
+
+jar {
+    from "LICENSE"
+    manifest {
+        attributes([
+                "Implementation-Title"    : "Addon-API",
+                "Implementation-Version"  : "${project.version}",
+                "Implementation-Vendor"   : "Horizon Studio",
+                "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
+                "Maven-Artifact"          : "${project.group}:Addon-API:${project.version}",
+                "ModSide"                 : "BOTH",
+        ],)
+    }
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            artifact(jar) {
+                builtBy remapJar
+            }
+            artifact(sourcesJar) {
+                builtBy remapSourcesJar
+            }
+            artifact javadocJar
+        }
+    }
+    repositories {
+        maven {
+            name = "GitHubPackages"
+            url =  uri("https://maven.pkg.github.com/StellarHorizons/Addon-API")
+            credentials {
+                username = System.getenv("GITHUB_ACTOR")
+                password = System.getenv("GITHUB_TOKEN")
+            }
+        }
+    }
+}
+
