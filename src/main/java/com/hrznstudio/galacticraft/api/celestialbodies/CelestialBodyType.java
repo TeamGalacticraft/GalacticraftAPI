@@ -24,7 +24,6 @@ package com.hrznstudio.galacticraft.api.celestialbodies;
 
 import com.hrznstudio.galacticraft.api.addon.AddonRegistry;
 import com.mojang.datafixers.types.DynamicOps;
-import jdk.internal.jline.internal.Nullable;
 import net.minecraft.util.DynamicSerializable;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
@@ -85,7 +84,6 @@ public class CelestialBodyType implements DynamicSerializable {
      * @param id The identifier of the body
      * @return the celestial body or null
      */
-    @Nullable
     public static CelestialBodyType getById(Identifier id) {
         return AddonRegistry.CELESTIAL_BODIES.get(id);
     }
