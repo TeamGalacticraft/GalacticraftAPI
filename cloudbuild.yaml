@@ -1,6 +1,10 @@
 steps:
 - name: 'adoptopenjdk/openjdk8-openj9'
   args:
+    - 'chmod'
+    - '+x'
+    - 'gradlew'
+    - '&&'
     - './gradlew'
     - 'build'
     - '--stacktrace'
