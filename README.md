@@ -1,5 +1,5 @@
 # Addon-API
-The [Galacticraft: Rewoven](https://github.com/StellarHorizons/Addon-API) addon API.
+The [Galacticraft: Rewoven](https://github.com/StellarHorizons/Galacticraft-Rewoven) addon API.
 
 ## Feautes
 Here are a list of features, both planned an implemented.
@@ -83,4 +83,4 @@ And add this class to your `fabric.mod.json` in the entrypoints section.
 ```
 This will tell the addon api to load your addon from here.
 ### More Examples
-An example addon has been created to make it easier for developers to see how feautre of the API are used. The example addon can be found in [StellarHorizons/ExampleAddon]().
+An example addon has been created to make it easier for developers to see how feautre of the API are used. The example addon can be found in [StellarHorizons/ExampleAddon](https://github.com/StellarHorizons/ExampleAddon).
