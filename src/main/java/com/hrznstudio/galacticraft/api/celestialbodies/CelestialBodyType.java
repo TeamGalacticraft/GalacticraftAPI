@@ -23,6 +23,7 @@
 package com.hrznstudio.galacticraft.api.celestialbodies;
 
 import com.hrznstudio.galacticraft.api.addon.AddonRegistry;
+import com.mojang.datafixers.Dynamic;
 import com.mojang.datafixers.types.DynamicOps;
 import net.minecraft.util.DynamicSerializable;
 import net.minecraft.util.Identifier;
@@ -33,8 +34,8 @@ import java.util.Optional;
 
 public class CelestialBodyType implements DynamicSerializable {
 
-    public static final CelestialBodyType THE_SUN;
-    public static final CelestialBodyType EARTH;
+    public static final CelestialBodyType THE_SUN = register(new CelestialBodyType(new Identifier("galacticraft-api", "the_sun"), "ui.galacticraft-api.bodies.the_sun", null, -1, null, 0d, 0f, false));
+    public static final CelestialBodyType EARTH = register(new CelestialBodyType(new Identifier("galacticraft-api", "earth"), "ui.galacticraft-api.bodies.earth", DimensionType.OVERWORLD, 0, THE_SUN, 10d, 1.0f, true));
 
     private final Identifier id;
     private final String translationKey;
@@ -96,6 +97,10 @@ public class CelestialBodyType implements DynamicSerializable {
         return id;
     }
 
+    public static Identifier getId(CelestialBodyType type) {
+        return AddonRegistry.CELESTIAL_BODIES.getId(type);
+    }
+
     public String getTranslationKey() {
         return translationKey;
     }
@@ -125,12 +130,16 @@ public class CelestialBodyType implements DynamicSerializable {
     }
 
     @Override
-    public <T> T serialize(DynamicOps<T> var1) {
-        return null;
+    public <T> T serialize(DynamicOps<T> ops) {
+        return ops.createString(AddonRegistry.CELESTIAL_BODIES.getId(this).toString());
     }
 
-    static {
-        THE_SUN = register(new CelestialBodyType(new Identifier("galacticraft-api", "the_sun"), "ui.galacticraft-api.bodies.the_sun", null, -1, null, 0d, 0f, false));
-        EARTH = register(new CelestialBodyType(new Identifier("galacticraft-api", "earth"), "ui.galacticraft-api.bodies.earth", DimensionType.OVERWORLD, 0, THE_SUN, 10d, 1.0f, true));
+    public static CelestialBodyType deserialize(Dynamic<?> dynamic) {
+        return AddonRegistry.CELESTIAL_BODIES.get(new Identifier(dynamic.asString("")));
+    }
+
+    @Override
+    public String toString() {
+        return getId(this).toString();
     }
 }
