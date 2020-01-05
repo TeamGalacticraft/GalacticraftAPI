@@ -4,11 +4,11 @@ The [Galacticraft: Rewoven](https://github.com/StellarHorizons/Addon-API) addon 
 ## Feautes
 Here are a list of features, both planned an implemented.
 
-    * [x] Addon entrypoint loading.
-    * [x] Celestial bodies.
-    * [x] Celestial body registry.
-    * [ ] Celestial body display info.
-    * [ ] Rockets/Rocket parts.
+* [x] Addon entrypoint loading.
+* [x] Celestial bodies.
+* [x] Celestial body registry.
+* [ ] Celestial body display info.
+* [ ] Rockets/Rocket parts.
 
 ## Quickstart
 
