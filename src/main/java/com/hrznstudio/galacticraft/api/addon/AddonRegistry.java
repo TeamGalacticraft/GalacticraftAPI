@@ -22,6 +22,7 @@
 
 package com.hrznstudio.galacticraft.api.addon;
 
+import com.hrznstudio.galacticraft.api.atmosphere.AtmosphericGas;
 import com.hrznstudio.galacticraft.api.celestialbodies.CelestialBodyType;
 import com.hrznstudio.galacticraft.api.internal.mixin.RegistryAccessor;
 import net.minecraft.util.Identifier;
@@ -32,9 +33,9 @@ import net.minecraft.util.registry.SimpleRegistry;
 import java.util.function.Supplier;
 
 public abstract class AddonRegistry<T> extends Registry<T> {
-    public static final Registry<CelestialBodyType> CELESTIAL_BODIES = create(new Identifier("galacticraft-api", "celestial_bodies"), () -> {
-        return CelestialBodyType.THE_SUN;
-    });
+    public static final Registry<CelestialBodyType> CELESTIAL_BODIES = create(new Identifier("galacticraft-api", "celestial_bodies"), () -> CelestialBodyType.THE_SUN);
+
+    public static final Registry<AtmosphericGas> ATMOSPHERIC_GASES = create(new Identifier("galacticraft-api", "atmospheric_gases"), () -> null);
 
     private static <T> Registry<T> create(Identifier identifier, Supplier<T> defaultObject) {
         return putDefaultEntry(identifier, new SimpleRegistry<>(), defaultObject);
