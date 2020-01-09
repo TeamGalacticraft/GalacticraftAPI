@@ -51,11 +51,11 @@ public class GalacticraftAPIMain implements ModInitializer {
             LOGGER.info("[GC-API] Addon scan complete, found {} addons.", addonInitializers.size());
             int addonSuccess = 0;
             int addonFailure = 0;
-            for (int i = 0; i < addonInitializers.size(); i++) {
-                ModContainer container = FabricLoader.getInstance().getModContainer(addonInitializers.get(i).getModId()).get();
+            for (GCAddonInitializer addonInitializer : addonInitializers) {
+                ModContainer container = FabricLoader.getInstance().getModContainer(addonInitializer.getModId()).get();
                 LOGGER.info("[GC-API] Initializing Addon entry point for {} (v{}).", container.getMetadata().getName(), container.getMetadata().getVersion().getFriendlyString());
 
-                if(addonInitializers.get(i).onInitialize()) addonSuccess++;
+                if (addonInitializer.onInitialize()) addonSuccess++;
                 else addonFailure++;
             }
             LOGGER.info("[GC-API] Addon initialization complete. Loaded {} successfully and {} failed to load, {} total. (Took {}ms).", addonSuccess, addonFailure, addonSuccess + addonFailure, System.currentTimeMillis()-startAddonInitTime);
