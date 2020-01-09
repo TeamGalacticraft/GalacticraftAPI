@@ -66,7 +66,8 @@ public class CelestialBodyType implements DynamicSerializable {
                     new Identifier("galacticraft-api", "earth"),
                     "ui.galacticraft-api.bodies.earth",
                     DimensionType.OVERWORLD,
-                    0, THE_SUN,
+                    0,
+                    THE_SUN,
                     new CelestialBodyDisplayInfo(
                             10d,
                             24000d,
