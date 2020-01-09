@@ -52,11 +52,16 @@ public class GalacticraftAPIMain implements ModInitializer {
             int addonSuccess = 0;
             int addonFailure = 0;
             for (GCAddonInitializer addonInitializer : addonInitializers) {
-                ModContainer container = FabricLoader.getInstance().getModContainer(addonInitializer.getModId()).get();
-                LOGGER.info("[GC-API] Initializing Addon entry point for {} (v{}).", container.getMetadata().getName(), container.getMetadata().getVersion().getFriendlyString());
+                if(FabricLoader.getInstance().getModContainer(addonInitializer.getModId()).isPresent()) {
+                    ModContainer container = FabricLoader.getInstance().getModContainer(addonInitializer.getModId()).get();
+                    LOGGER.info("[GC-API] Initializing Addon entry point for {} (v{}).", container.getMetadata().getName(), container.getMetadata().getVersion().getFriendlyString());
 
-                if (addonInitializer.onInitialize()) addonSuccess++;
-                else addonFailure++;
+                    if (addonInitializer.onInitialize()) addonSuccess++;
+                    else addonFailure++;
+                } else {
+                    addonFailure++;
+                    LOGGER.warn("[GC-API] Mod not found with ID \"{}\", logged as load failure.", addonInitializer.getModId());
+                }
             }
             LOGGER.info("[GC-API] Addon initialization complete. Loaded {} successfully and {} failed to load, {} total. (Took {}ms).", addonSuccess, addonFailure, addonSuccess + addonFailure, System.currentTimeMillis()-startAddonInitTime);
         } else {
