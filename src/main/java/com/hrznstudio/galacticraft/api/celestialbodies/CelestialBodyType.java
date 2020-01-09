@@ -44,7 +44,15 @@ public class CelestialBodyType implements DynamicSerializable {
                     null,
                     -1,
                     null,
-                    0d,
+                    new CelestialBodyDisplayInfo(
+                            0d,
+                            0d,
+                            new Identifier("galacticraft-api", "body_icons"),
+                            0,
+                            0,
+                            16,
+                            16
+                    ),
                     0f,
                     new AtmosphericInfo( // blank atmosphere because you cannot visit the sun
                             new HashMap<>(),
@@ -59,7 +67,15 @@ public class CelestialBodyType implements DynamicSerializable {
                     "ui.galacticraft-api.bodies.earth",
                     DimensionType.OVERWORLD,
                     0, THE_SUN,
-                    10d,
+                    new CelestialBodyDisplayInfo(
+                            10d,
+                            24000d,
+                            new Identifier("galacticraft-api", "body_icons"),
+                            0,
+                            16,
+                            16,
+                            16
+                    ),
                     1.0f,
                     new AtmosphericInfo(
                             new HashMap<AtmosphericGas, Double>() {{
@@ -91,7 +107,7 @@ public class CelestialBodyType implements DynamicSerializable {
     private final DimensionType dimension;
     private final int accessWeight;
     private final CelestialBodyType parent;
-    private final double orbit;
+    private final CelestialBodyDisplayInfo displayInfo;
     private final float gravity;
     private final AtmosphericInfo atmosphere;
 
@@ -106,17 +122,17 @@ public class CelestialBodyType implements DynamicSerializable {
      * @param dimension The dimension the body type is for
      * @param accessWeight The rocket tier/access weight for the body. (-1 for inaccessible)
      * @param parent Parent body.
-     * @param orbit The orbit distance around the parent body
+     * @param displayInfo Information used to display the body
      * @param gravity The gravity applied to entities on the body (1.0f is the same as the overworld)
      * @param atmosphere The atmosphere of the body
      */
-    public CelestialBodyType(Identifier id, String translationKey, DimensionType dimension, int accessWeight, CelestialBodyType parent, double orbit, float gravity, AtmosphericInfo atmosphere) {
+    public CelestialBodyType(Identifier id, String translationKey, DimensionType dimension, int accessWeight, CelestialBodyType parent, CelestialBodyDisplayInfo displayInfo, float gravity, AtmosphericInfo atmosphere) {
         this.id = id;
         this.translationKey = translationKey;
         this.dimension = dimension;
         this.accessWeight = accessWeight;
         this.parent = parent;
-        this.orbit = orbit;
+        this.displayInfo = displayInfo;
         this.gravity = gravity;
         this.atmosphere = atmosphere;
     }
@@ -166,8 +182,8 @@ public class CelestialBodyType implements DynamicSerializable {
         return parent;
     }
 
-    public double getOrbit() {
-        return orbit;
+    public CelestialBodyDisplayInfo getDisplayInfo() {
+        return displayInfo;
     }
 
     public float getGravity() {
