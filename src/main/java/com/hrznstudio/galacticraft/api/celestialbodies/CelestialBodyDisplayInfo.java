@@ -81,4 +81,53 @@ public class CelestialBodyDisplayInfo {
     public int getIconH() {
         return iconH;
     }
+
+    public static class Builder {
+        private Identifier iconTexture = null;
+        private double orbitDistance = 0d;
+        private double orbitTime = 0d;
+        private int iconX = 0;
+        private int iconY = 0;
+        private int iconW = 16;
+        private int iconH = 16;
+
+        public Builder texture(Identifier texture) {
+            this.iconTexture = texture;
+            return this;
+        }
+
+        public Builder distance(double orbitDistance) {
+            this.orbitDistance = orbitDistance;
+            return this;
+        }
+
+        public Builder time(double time) {
+            this.orbitTime = time;
+            return this;
+        }
+
+        public Builder x(int x) {
+            this.iconX = x;
+            return this;
+        }
+
+        public Builder y(int y) {
+            this.iconY = y;
+            return this;
+        }
+
+        public Builder w(int w) {
+            this.iconW = w;
+            return this;
+        }
+
+        public Builder h(int h) {
+            this.iconH = h;
+            return this;
+        }
+
+        public CelestialBodyDisplayInfo build() {
+            return new CelestialBodyDisplayInfo(this.orbitDistance, this.orbitTime, this.iconTexture, this.iconX, this.iconY, this.iconW, this.iconH);
+        }
+    }
 }

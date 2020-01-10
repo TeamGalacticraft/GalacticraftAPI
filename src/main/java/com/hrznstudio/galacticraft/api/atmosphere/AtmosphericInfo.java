@@ -22,6 +22,7 @@
 
 package com.hrznstudio.galacticraft.api.atmosphere;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class AtmosphericInfo {
@@ -53,5 +54,30 @@ public class AtmosphericInfo {
 
     public float getPressure() {
         return pressure;
+    }
+
+    public static class Builder {
+        private Map<AtmosphericGas, Double> composition = new HashMap<>();
+        private double temperature = 15.0f;
+        private float pressure = 1.0f;
+
+        public Builder temprature(float temperature) {
+            this.temperature = temperature;
+            return this;
+        }
+
+        public Builder pressure(float pressure) {
+            this.pressure = pressure;
+            return this;
+        }
+
+        public Builder gas(AtmosphericGas gas, double ppm) {
+            this.composition.put(gas, ppm);
+            return this;
+        }
+
+        public AtmosphericInfo build() {
+            return new AtmosphericInfo(this.composition, this.temperature, this.pressure);
+        }
     }
 }

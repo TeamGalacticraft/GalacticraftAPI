@@ -36,73 +36,52 @@ import java.util.HashMap;
 import java.util.Optional;
 
 public class CelestialBodyType implements DynamicSerializable {
-
     public static final CelestialBodyType THE_SUN = register(
-            new CelestialBodyType(
-                    new Identifier("galacticraft-api", "the_sun"),
-                    "ui.galacticraft-api.bodies.the_sun",
-                    null,
-                    -1,
-                    null,
-                    new CelestialBodyDisplayInfo(
-                            0d,
-                            0d,
-                            new Identifier("galacticraft-api", "body_icons"),
-                            0,
-                            0,
-                            16,
-                            16
-                    ),
-                    0f,
-                    new AtmosphericInfo( // blank atmosphere because you cannot visit the sun
-                            new HashMap<>(),
-                            0d,
-                            0f
+            new CelestialBodyType.Builder(new Identifier("galacticraft-api", "the_sun"))
+                    .translationKey("ui.galacticraft-api.bodies.the_sun")
+                    .display(
+                            new CelestialBodyDisplayInfo.Builder()
+                                .texture(new Identifier("galacticraft-api", "body_icons"))
+                                .build()
                     )
-            )
-    );
-    public static final CelestialBodyType EARTH = register(
-            new CelestialBodyType(
-                    new Identifier("galacticraft-api", "earth"),
-                    "ui.galacticraft-api.bodies.earth",
-                    DimensionType.OVERWORLD,
-                    0,
-                    THE_SUN,
-                    new CelestialBodyDisplayInfo(
-                            10d,
-                            24000d,
-                            new Identifier("galacticraft-api", "body_icons"),
-                            0,
-                            16,
-                            16,
-                            16
-                    ),
-                    1.0f,
-                    new AtmosphericInfo(
-                            new HashMap<AtmosphericGas, Double>() {{
-                               put(AtmosphericGas.NITROGEN,       780840d    );
-                               put(AtmosphericGas.OXYGEN,         209500d    );
-                               put(AtmosphericGas.WATER_VAPOR,     25000d    );
-                               put(AtmosphericGas.ARGON,            9300d    );
-                               put(AtmosphericGas.CARBON_DIOXIDE,    399d    );
-                               put(AtmosphericGas.NEON,               18d    );
-                               put(AtmosphericGas.HELIUM,              5.42d );
-                               put(AtmosphericGas.METHANE,             1.79d );
-                               put(AtmosphericGas.KRYPTON,             1.14d );
-                               put(AtmosphericGas.HYDROGEN,            0.55d );
-                               put(AtmosphericGas.NITROUS_OXIDE,       0.325d);
-                               put(AtmosphericGas.CARBON_MONOXIDE,     0.1d  );
-                               put(AtmosphericGas.XENON,               0.09d );
-                               put(AtmosphericGas.OZONE,               0.07d );
-                               put(AtmosphericGas.NITROUS_DIOXIDE,     0.02d );
-                               put(AtmosphericGas.IODINE,              0.01d );
-                            }},
-                            15d,
-                            1.0f
-                    )
-            )
+                    .build()
     );
 
+    public static final CelestialBodyType EARTH = register(
+            new Builder(new Identifier("galacticraft-api", "earth"))
+                    .translationKey("ui.galacticraft-api.bodies.earth")
+                    .dimension(DimensionType.OVERWORLD)
+                    .weight(0)
+                    .display(
+                            new CelestialBodyDisplayInfo.Builder()
+                                    .texture(new Identifier("galacticraft-api", "body_icons"))
+                                    .y(16)
+                                    .build()
+                    )
+                    .atmosphere(
+                            new AtmosphericInfo.Builder()
+                                    .pressure(1.0f)
+                                    .temprature(15.0f)
+                                    .gas(AtmosphericGas.NITROGEN,       780840d     )
+                                    .gas(AtmosphericGas.OXYGEN,         209500d     )
+                                    .gas(AtmosphericGas.WATER_VAPOR,     25000d     )
+                                    .gas(AtmosphericGas.ARGON,            9300d     )
+                                    .gas(AtmosphericGas.CARBON_DIOXIDE,    399d     )
+                                    .gas(AtmosphericGas.NEON,               18d     )
+                                    .gas(AtmosphericGas.HELIUM,              5.42d  )
+                                    .gas(AtmosphericGas.METHANE,             1.79d  )
+                                    .gas(AtmosphericGas.KRYPTON,             1.14d  )
+                                    .gas(AtmosphericGas.HYDROGEN,            0.55d  )
+                                    .gas(AtmosphericGas.NITROUS_OXIDE,       0.325d )
+                                    .gas(AtmosphericGas.CARBON_MONOXIDE,     0.1d   )
+                                    .gas(AtmosphericGas.XENON,               0.09d  )
+                                    .gas(AtmosphericGas.OZONE,               0.07d  )
+                                    .gas(AtmosphericGas.IODINE,              0.01d  )
+                                    .gas(AtmosphericGas.NITROUS_DIOXIDE,     0.02d  )
+                                    .build()
+                    )
+                    .build()
+    );
     private final Identifier id;
     private final String translationKey;
     private final DimensionType dimension;
@@ -207,5 +186,60 @@ public class CelestialBodyType implements DynamicSerializable {
     @Override
     public String toString() {
         return getId(this).toString();
+    }
+
+    public static class Builder {
+        private final Identifier id;
+        private String translationKey;
+        private DimensionType dimension = null;
+        private int accessWeight = -1;
+        private CelestialBodyType parent = THE_SUN;
+        private CelestialBodyDisplayInfo displayInfo = null;
+        private float gravity = 1.0f;
+        private AtmosphericInfo atmosphere = null;
+
+        public Builder(Identifier id) {
+            this.id = id;
+            this.translationKey = id.toString();
+        }
+
+        public Builder translationKey(String key) {
+            this.translationKey = translationKey;
+            return this;
+        }
+
+        public Builder dimension(DimensionType dimension) {
+            this.dimension = dimension;
+            return this;
+        }
+
+        public Builder weight(int accessWeight) {
+            this.accessWeight = accessWeight;
+            return this;
+        }
+
+        public Builder parent(CelestialBodyType parent) {
+            this.parent = parent;
+            return this;
+        }
+
+        public Builder display(CelestialBodyDisplayInfo displayInfo) {
+            this.displayInfo = displayInfo;
+            return this;
+        }
+
+        public Builder gravity(float gravity) {
+            this.gravity = gravity;
+            return this;
+        }
+
+        public Builder atmosphere(AtmosphericInfo atmosphericInfo) {
+            this.atmosphere = atmosphericInfo;
+            return this;
+        }
+
+        public CelestialBodyType build() {
+            return new CelestialBodyType(this.id, this.translationKey, this.dimension, this.accessWeight, this.parent, this.displayInfo, this.gravity, this.atmosphere);
+        }
     }
 }
