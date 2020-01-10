@@ -2,6 +2,7 @@ plugins {
     id 'fabric-loom' version '0.2.6-SNAPSHOT'
     id 'java'
     id 'maven-publish'
+    id 'com.github.hierynomus.license' version '0.15.0'
 }
 
 group 'com.hrznstudio'
@@ -20,6 +21,12 @@ dependencies {
 
     modImplementation "net.fabricmc:fabric-loader:0.7.0+build.171"
     modImplementation("net.fabricmc.fabric-api:fabric-api:0.3.3+build.234-1.14") { transitive = true }
+}
+
+license {
+    header = file('HEADER')
+    ext.year = Calendar.getInstance().get(Calendar.YEAR)
+    ext.name = 'HRZN LTD'
 }
 
 processResources {
