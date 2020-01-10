@@ -22,7 +22,7 @@
 
 package com.hrznstudio.galacticraft.api.internal.fabric;
 
-import com.hrznstudio.galacticraft.api.addon.GCAddonInitializer;
+import com.hrznstudio.galacticraft.api.addon.AddonInitializer;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
@@ -47,11 +47,11 @@ public class GalacticraftAPIMain implements ModInitializer {
             // Addon detection
             LOGGER.info("[GC-API] Scanning for Addons...");
             long startAddonInitTime = System.currentTimeMillis();
-            List<GCAddonInitializer> addonInitializers = FabricLoader.getInstance().getEntrypoints("gc_addons", com.hrznstudio.galacticraft.api.addon.GCAddonInitializer.class);
+            List<AddonInitializer> addonInitializers = FabricLoader.getInstance().getEntrypoints("gc_addons", AddonInitializer.class);
             LOGGER.info("[GC-API] Addon scan complete, found {} addons.", addonInitializers.size());
             int addonSuccess = 0;
             int addonFailure = 0;
-            for (GCAddonInitializer addonInitializer : addonInitializers) {
+            for (AddonInitializer addonInitializer : addonInitializers) {
                 if(FabricLoader.getInstance().getModContainer(addonInitializer.getModId()).isPresent()) {
                     ModContainer container = FabricLoader.getInstance().getModContainer(addonInitializer.getModId()).get();
                     LOGGER.info("[GC-API] Initializing Addon entry point for {} (v{}).", container.getMetadata().getName(), container.getMetadata().getVersion().getFriendlyString());
