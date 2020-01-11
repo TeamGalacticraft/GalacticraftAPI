@@ -69,7 +69,7 @@ public class AtmosphericGas implements DynamicSerializable {
     public static final AtmosphericGas METHANE = register(
             new AtmosphericGas(
                     new Identifier("galacticraft-api", "methane"),
-                    "ui.galacticraft.gases.methane",
+                    "ui.galacticraft-api.gases.methane",
                     "CH4"
             )
     );
