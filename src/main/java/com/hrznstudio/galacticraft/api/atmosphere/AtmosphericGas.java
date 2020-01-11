@@ -149,18 +149,18 @@ public class AtmosphericGas implements DynamicSerializable {
 
     private final Identifier id;
     private final String translationKey;
-    private final String formula;
+    private final String symbol;
 
     /**
      *
      * @param id Unique identifier
      * @param translationKey Key to translate the gas' name
-     * @param formula the formula used to make up the gas
+     * @param symbol the symbol used to show the gas
      */
-    public AtmosphericGas(Identifier id, String translationKey, String formula) {
+    public AtmosphericGas(Identifier id, String translationKey, String symbol) {
         this.id = id;
         this.translationKey = translationKey;
-        this.formula = formula;
+        this.symbol = symbol;
     }
 
     public Identifier getId() {
@@ -171,8 +171,8 @@ public class AtmosphericGas implements DynamicSerializable {
         return translationKey;
     }
 
-    public String getFormula() {
-        return formula;
+    public String getSymbol() {
+        return symbol;
     }
 
     @Override
