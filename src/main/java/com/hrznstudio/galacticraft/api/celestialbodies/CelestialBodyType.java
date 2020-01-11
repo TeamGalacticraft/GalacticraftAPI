@@ -32,7 +32,6 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.dimension.DimensionType;
 
-import java.util.HashMap;
 import java.util.Optional;
 
 public class CelestialBodyType implements DynamicSerializable {
@@ -61,7 +60,7 @@ public class CelestialBodyType implements DynamicSerializable {
                     .atmosphere(
                             new AtmosphericInfo.Builder()
                                     .pressure(1.0f)
-                                    .temprature(15.0f)
+                                    .temperature(15.0f)
                                     .gas(AtmosphericGas.NITROGEN,       780840d     )
                                     .gas(AtmosphericGas.OXYGEN,         209500d     )
                                     .gas(AtmosphericGas.WATER_VAPOR,     25000d     )

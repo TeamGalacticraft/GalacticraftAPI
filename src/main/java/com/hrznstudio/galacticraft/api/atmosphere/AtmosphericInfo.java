@@ -61,7 +61,7 @@ public class AtmosphericInfo {
         private double temperature = 15.0f;
         private float pressure = 1.0f;
 
-        public Builder temprature(float temperature) {
+        public Builder temperature(float temperature) {
             this.temperature = temperature;
             return this;
         }
