@@ -1,7 +1,7 @@
 name: Maven Publish
 
 on:
-  publish:
+  release:
     types: [published]
 
 jobs:
@@ -29,8 +29,8 @@ jobs:
         run: |
           cd 1.14.4
           chmod +x gradlew
-          gradlew publish
+          ./gradlew publish
           cd ..
           cd 1.15.1
           chmod +x gradlew
-          gradlew publish
+          ./gradlew publish
