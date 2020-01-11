@@ -25,7 +25,7 @@ jobs:
       - name: Publish Artifacts
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.ASW_KEY }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_KEY }}
         run: |
           cd 1.14.4
           chmod +x gradlew
