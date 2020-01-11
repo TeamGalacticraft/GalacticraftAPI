@@ -204,7 +204,7 @@ public class CelestialBodyType implements DynamicSerializable {
         }
 
         public Builder translationKey(String key) {
-            this.translationKey = translationKey;
+            this.translationKey = key;
             return this;
         }
 
