@@ -196,7 +196,7 @@ public class CelestialBodyType implements DynamicSerializable {
         private CelestialBodyType parent = THE_SUN;
         private CelestialBodyDisplayInfo displayInfo = null;
         private float gravity = 1.0f;
-        private AtmosphericInfo atmosphere = null;
+        private AtmosphericInfo atmosphere = new AtmosphericInfo.Builder().build();
 
         public Builder(Identifier id) {
             this.id = id;
