@@ -23,13 +23,11 @@
 package com.hrznstudio.galacticraft.api.atmosphere;
 
 import com.hrznstudio.galacticraft.api.addon.AddonRegistry;
-import com.hrznstudio.galacticraft.api.celestialbodies.CelestialBodyType;
 import com.mojang.datafixers.Dynamic;
 import com.mojang.datafixers.types.DynamicOps;
 import net.minecraft.util.DynamicSerializable;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
-import org.checkerframework.checker.units.qual.A;
 
 public class AtmosphericGas implements DynamicSerializable {
 
