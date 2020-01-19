@@ -52,7 +52,7 @@ Replace `{VERSION}` with the version of Galacticraft you want to use. Versions u
 For more versioning information visit the [semver](https://semver.org/) website.
 
 ### The Addon Entry Point
-Your addon needs somewhere to start, so why take adantage of the same system Fabric uses?
+Your addon needs somewhere to start, so why take advantage of the same system Fabric uses?
 
 To start you will need to create a new class that implements `GCAddonInitializer`. (You will still need to setup the normal Fabric mod initializers.)
 
