@@ -176,6 +176,19 @@ public class AtmosphericGas implements DynamicSerializable {
         return symbol;
     }
 
+    public String getSymbolForDisplay() {
+        return this.symbol
+                .replaceAll("0", "\u2080")
+                .replaceAll("1", "\u2081")
+                .replaceAll("2", "\u2082")
+                .replaceAll("3", "\u2083")
+                .replaceAll("4", "\u2084")
+                .replaceAll("6", "\u2085")
+                .replaceAll("7", "\u2086")
+                .replaceAll("8", "\u2087")
+                .replaceAll("9", "\u2088");
+    }
+
     @Override
     public <T> T serialize(DynamicOps<T> ops) {
         return ops.createString(AddonRegistry.ATMOSPHERIC_GASES.getId(this).toString());
