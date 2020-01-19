@@ -7,7 +7,9 @@ Here are a list of features, both planned an implemented.
 * [x] Addon entrypoint loading.
 * [x] Celestial bodies.
 * [x] Celestial body registry.
-* [ ] Celestial body display info.
+* [x] Celestial body display info.
+* [x] Atmospheric Info.
+* [x] Atmospheric Gases.
 * [ ] Rockets/Rocket parts.
 
 ## Quickstart
@@ -17,8 +19,7 @@ You will need to add the Horizon Studio maven repository to your mod's `build.gr
 
 ```gradle
 repositories {
-    maven { url "https://mvn.hrzn.studio" }
-    // NOTE: this is currently offline
+    maven { url "https://cdn.hrznstudio.com/maven" }
 }
 ```
 
@@ -27,10 +28,10 @@ After that you can add Galacticraft and the Addon API.
 ```gradle
 dependencies {
     // add both the addon api and mod
-    modImplementation("com.hrznstudio:Addon-API:{VERSION}")
-    modRuntime("com.hrznstudio:Galacticraft-Rewoven:{VERSION}")
+    modImplementation("com.hrznstudio:GalacticraftAPI:{VERSION}")
+    //modRuntime("com.hrznstudio:Galacticraft-Rewoven:{VERSION}") // not up yet
     // but only include the addon api 
-    include "com.hrznstudio:Addon-API:{VERSION}"
+    include "com.hrznstudio:GalacticraftAPI:{VERSION}"
 }
 ```
 
@@ -58,11 +59,10 @@ To start you will need to create a new class that implements `GCAddonInitializer
 ```java
 import com.hrznstudio.galacticraft.api.addon.*;
 
-public class MyNewAddonGCHook implements GCAddonInitializer {
+public class MyNewAddonGCHook implements AddonInitializer {
     @Override
-    // boolean to tell the api if your addon loaded corretly.
-    public boolean onInitialize() {
-        return true;
+    public onInitialize() {
+        // addon init code
     }
 
     @Override
@@ -82,5 +82,3 @@ And add this class to your `fabric.mod.json` in the entrypoints section.
 }
 ```
 This will tell the addon api to load your addon from here.
-### More Examples
-An example addon has been created to make it easier for developers to see how feautre of the API are used. The example addon can be found in [StellarHorizons/ExampleAddon](https://github.com/StellarHorizons/ExampleAddon).
