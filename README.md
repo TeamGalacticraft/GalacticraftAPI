@@ -19,7 +19,7 @@ You will need to add the Horizon Studio maven repository to your mod's `build.gr
 
 ```gradle
 repositories {
-    maven { url "https://cdn.hrznstudio.com/maven" }
+    maven { url "https://cdn.hrzn.studio/maven" }
 }
 ```
 
@@ -35,10 +35,10 @@ dependencies {
 }
 ```
 
-You will also need to add the addon API to your `fabric.mod.json` in the `requires` section.
+You will also need to add the addon API to your `fabric.mod.json` in the `depends` section.
 ```json
 {
-    "requires": {
+    "depends": {
         "galacitcraft-api": "^{VERSION}"
     },
     "suggests": {
@@ -74,7 +74,6 @@ public class MyNewAddonGCHook implements AddonInitializer {
 And add this class to your `fabric.mod.json` in the entrypoints section.
 
 ```json
-
 {
     "entrypoints": {
         "gc_addon": "mynewaddon.hooks.MyNewAddonGCHook"
