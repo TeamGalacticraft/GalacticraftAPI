@@ -5,7 +5,7 @@ plugins {
 }
 
 group 'com.hrznstudio'
-version '0.1.4-alpha+1.14.4'
+version "0.1.5-alpha+${project.minecraft_version}"
 archivesBaseName = 'GalacticraftAPI'
 
 sourceCompatibility = targetCompatibility = JavaVersion.VERSION_1_8
@@ -14,8 +14,12 @@ repositories {
     mavenCentral()
 }
 
+minecraft {
+    refmapName = "galacticraft-api.refmap.json"
+}
+
 dependencies {
-    minecraft "com.mojang:minecraft:1.14.4"
+    minecraft "com.mojang:minecraft:${project.minecraft_version}"
     mappings "net.fabricmc:yarn:1.14.4+build.15:v2"
 
     modImplementation "net.fabricmc:fabric-loader:0.7.0+build.171"
@@ -68,8 +72,7 @@ publishing {
         mavenJava(MavenPublication) {
 			groupId = 'com.hrznstudio'
 			artifactId = 'GalacticraftAPI'
-			
-            artifact(jar) {
+            artifact(file("${project.buildDir}/libs/${project.archivesBaseName}-${project.version}.jar")) { // thanks shedaniel
                 builtBy remapJar
             }
             artifact(sourcesJar) {
