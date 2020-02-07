@@ -17,12 +17,25 @@ public class Teams {
 
     public Teams() {}
 
+    public void updateTeam(Team team) {
+        updateTeam(TeamsTagUtil.formatTeamName(team.name), team);
+    }
+
+    public void updateTeam(String name, Team team) {
+        this.teams.put(name, team);
+    }
+
+    public void deleteTeam(String name) {
+        teams.remove(name);
+    }
+
     public Team getTeam(String name) {
         if(teams.containsKey(name)) {
             return teams.get(name);
         }
         return null;
     }
+
 
     public Team getTeam(UUID player) {
         if(players.containsKey(player)) {

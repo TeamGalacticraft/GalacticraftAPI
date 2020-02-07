@@ -1,6 +1,5 @@
 package com.hrznstudio.galacticraft.api.teams;
 
-import com.hrznstudio.galacticraft.api.teams.packet.TeamsS2CPacket;
 import net.minecraft.network.Packet;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;

@@ -1,9 +1,9 @@
 package com.hrznstudio.galacticraft.api.teams;
 
 import com.hrznstudio.galacticraft.api.addon.AddonRegistry;
+import com.hrznstudio.galacticraft.api.teams.data.Permission;
 import com.hrznstudio.galacticraft.api.teams.data.Role;
 import com.hrznstudio.galacticraft.api.teams.data.Team;
-import com.hrznstudio.galacticraft.api.teams.data.Permission;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
@@ -19,6 +19,7 @@ public class TeamsTagUtil {
         CompoundTag teamsTag = new CompoundTag();
         for(Map.Entry<String, Team> t : teams.teams.entrySet()) {
             CompoundTag tTag = new CompoundTag();
+            tTag.putString("id", t.getValue().id.toString());
             tTag.putString("name", t.getValue().name);
             tTag.putInt("color", t.getValue().color.getColorIndex());
             tTag.putUuid("owner", t.getValue().owner);
@@ -62,7 +63,7 @@ public class TeamsTagUtil {
 
         for(String teamKey : teams.getKeys()) {
             CompoundTag team = teams.getCompound(teamKey);
-
+            Identifier id = Identifier.tryParse(team.getString("id"));
             String name = team.getString("name");
             Formatting color = Formatting.byColorIndex(team.getInt("color"));
             UUID owner = UUID.fromString(team.getString("owner"));
@@ -92,12 +93,12 @@ public class TeamsTagUtil {
                 invites.add(UUID.fromString(s.toString())); //TODO: again this could break things.
             }
 
-            teamMap.put(formatTeamName(name), new Team(color, name, owner, players, roles, invites));
+            teamMap.put(formatTeamName(name), new Team(id, color, name, owner, players, roles, invites));
         }
         return new Teams(teamMap, playersMap);
     }
 
-    private static String formatTeamName(String name) {
+    public static String formatTeamName(String name) {
         return name.toLowerCase(Locale.ENGLISH).replaceAll(" ", "-");
     }
 }

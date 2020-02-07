@@ -30,7 +30,7 @@ public interface AddonInitializer {
     void onAddonInitialize();
 
     /**
-     * Init things here that do not require gc
+     * Initialize things that do not require Galacticraft here.
      */
     void onCompatInitialize();
 

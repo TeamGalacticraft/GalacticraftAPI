@@ -4,6 +4,9 @@ import com.hrznstudio.galacticraft.api.addon.AddonRegistry;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
+import java.util.List;
+import java.util.UUID;
+
 public class Permission {
     public static final Permission INVITE_PLAYER = register(
             new Permission.Builder(
@@ -28,16 +31,6 @@ public class Permission {
     public static final Permission MODIFY_ROLES = register(
             new Permission.Builder(
                     new Identifier("galacticraft-api", "modify_roles")
-            ).build()
-    );
-    public static final Permission CREATE_ROLE = register(
-            new Permission.Builder(
-                    new Identifier("galacticraft-api", "create_role")
-            ).build()
-    );
-    public static final Permission DELETE_ROLE = register(
-            new Permission.Builder(
-                    new Identifier("galacticraft-api", "delete_role")
             ).build()
     );
 
@@ -65,6 +58,18 @@ public class Permission {
         return translationKey;
     }
 
+    public static boolean canModify(UUID player, Team oldTeam, Team newTeam) {
+        List<Permission> permissions = oldTeam.roles.get(oldTeam.players.get(player)).permissions;
+        if(oldTeam.owner.equals(player)) return true;
+        if(permissions.isEmpty()) return false;
+        if(oldTeam == newTeam) return false; // this should never happen but still good to check
+
+        if(oldTeam.color != newTeam.color) return permissions.contains(Permission.MODIFY_COLOR);
+        if(oldTeam.owner != newTeam.owner) return oldTeam.owner.equals(player);
+        if(oldTeam.invites != newTeam.invites) return permissions.contains(Permission.INVITE_PLAYER);
+        if(oldTeam.roles != newTeam.roles) return permissions.contains(MODIFY_ROLES);
+        return true;
+    }
 
     public static class Builder {
 
