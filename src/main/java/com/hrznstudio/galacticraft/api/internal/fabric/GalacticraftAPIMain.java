@@ -39,6 +39,19 @@ public class GalacticraftAPIMain implements ModInitializer {
     public void onInitialize() {
         long startInitTime = System.currentTimeMillis();
         LOGGER.info("[GC-API] Starting Initialization.");
+        List<AddonInitializer> addonInitializers = FabricLoader.getInstance().getEntrypoints("gc_addons", AddonInitializer.class);
+
+        // compat init
+        LOGGER.info("[GC-API] Initializing compatibility method.");
+        for (AddonInitializer addonInitializer : addonInitializers) {
+            if(FabricLoader.getInstance().getModContainer(addonInitializer.getModId()).isPresent()) {
+                ModContainer container = FabricLoader.getInstance().getModContainer(addonInitializer.getModId()).get();
+                LOGGER.info("[GC-API] Initializing Compat entry point for {} (v{}).", container.getMetadata().getName(), container.getMetadata().getVersion().getFriendlyString());
+                addonInitializer.onCompatInitialize();
+            } else {
+                LOGGER.warn("[GC-API] Mod not found with ID \"{}\".", addonInitializer.getModId());
+            }
+        }
 
         // GC detection.
         // only initialize if gc is present.
@@ -47,7 +60,6 @@ public class GalacticraftAPIMain implements ModInitializer {
             // Addon detection
             LOGGER.info("[GC-API] Scanning for Addons...");
             long startAddonInitTime = System.currentTimeMillis();
-            List<AddonInitializer> addonInitializers = FabricLoader.getInstance().getEntrypoints("gc_addons", AddonInitializer.class);
             LOGGER.info("[GC-API] Addon scan complete, found {} addons.", addonInitializers.size());
             for (AddonInitializer addonInitializer : addonInitializers) {
                 if(FabricLoader.getInstance().getModContainer(addonInitializer.getModId()).isPresent()) {

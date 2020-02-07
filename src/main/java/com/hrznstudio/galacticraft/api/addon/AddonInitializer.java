@@ -30,6 +30,11 @@ public interface AddonInitializer {
     void onAddonInitialize();
 
     /**
+     * Init things here that do not require gc
+     */
+    void onCompatInitialize();
+
+    /**
      * The addon's mod id.
      * @return the addon's mod id
      */
