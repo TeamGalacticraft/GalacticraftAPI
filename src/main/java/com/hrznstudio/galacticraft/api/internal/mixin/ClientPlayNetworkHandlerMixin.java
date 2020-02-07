@@ -2,6 +2,8 @@ package com.hrznstudio.galacticraft.api.internal.mixin;
 
 import com.hrznstudio.galacticraft.api.internal.data.ClientWorldTeamsGetter;
 import com.hrznstudio.galacticraft.api.teams.packet.TeamDeleteS2CPacket;
+import com.hrznstudio.galacticraft.api.teams.packet.TeamPlayerInviteS2CPacket;
+import com.hrznstudio.galacticraft.api.teams.packet.TeamPlayerLeaveS2CPacket;
 import com.hrznstudio.galacticraft.api.teams.packet.TeamUpdateS2CPacket;
 import com.hrznstudio.galacticraft.api.teams.packet.listener.ClientTeamsPacketListener;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
@@ -27,6 +29,18 @@ public abstract class ClientPlayNetworkHandlerMixin implements ClientPlayPacketL
     public void ctpl$onTeamDelete(TeamDeleteS2CPacket packet) {
         if(this.world != null) {
             ((ClientWorldTeamsGetter)world).getSpaceRaceTeams().deleteTeam(packet.getName());
+        }
+    }
+
+    public void ctpl$onTeamInvite(TeamPlayerInviteS2CPacket packet) {
+        if(this.world != null) {
+            ((ClientWorldTeamsGetter)world).getSpaceRaceTeams().getTeam(packet.getTeamId().getPath()).invites.add(packet.getInvitedPlayer());
+        }
+    }
+
+    public void ctpl$onPlayerLeave(TeamPlayerLeaveS2CPacket packet) {
+        if(this.world != null) {
+            ((ClientWorldTeamsGetter)world).getSpaceRaceTeams().getTeam(packet.getPlayer()).players.remove(packet.getPlayer());
         }
     }
 }

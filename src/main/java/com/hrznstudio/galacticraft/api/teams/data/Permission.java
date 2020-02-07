@@ -66,7 +66,6 @@ public class Permission {
 
         if(oldTeam.color != newTeam.color) return permissions.contains(Permission.MODIFY_COLOR);
         if(oldTeam.owner != newTeam.owner) return oldTeam.owner.equals(player);
-        if(oldTeam.invites != newTeam.invites) return permissions.contains(Permission.INVITE_PLAYER);
         if(oldTeam.roles != newTeam.roles) return permissions.contains(MODIFY_ROLES);
         return true;
     }

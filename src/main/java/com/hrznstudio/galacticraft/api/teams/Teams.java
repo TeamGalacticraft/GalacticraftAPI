@@ -1,7 +1,11 @@
 package com.hrznstudio.galacticraft.api.teams;
 
+import com.hrznstudio.galacticraft.api.teams.data.Role;
 import com.hrznstudio.galacticraft.api.teams.data.Team;
+import net.minecraft.util.Formatting;
+import net.minecraft.util.Identifier;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -33,9 +37,23 @@ public class Teams {
         if(teams.containsKey(name)) {
             return teams.get(name);
         }
+        if(teams.containsKey(TeamsTagUtil.formatTeamName(name))) {
+            return teams.get(TeamsTagUtil.formatTeamName(name));
+        }
         return null;
     }
 
+    public void createTeam(UUID owner, String name) {
+        teams.put(TeamsTagUtil.formatTeamName(name), new Team(
+                new Identifier("gc-teams", TeamsTagUtil.formatTeamName(name)),
+                Formatting.BLUE,
+                name,
+                owner,
+                new HashMap<UUID, Identifier>(),
+                new HashMap<Identifier, Role>(),
+                new ArrayList<UUID>()
+        ));
+    }
 
     public Team getTeam(UUID player) {
         if(players.containsKey(player)) {
