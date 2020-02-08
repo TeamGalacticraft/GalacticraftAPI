@@ -24,12 +24,10 @@ package com.hrznstudio.galacticraft.api.atmosphere;
 
 import com.hrznstudio.galacticraft.api.addon.AddonRegistry;
 import com.mojang.datafixers.Dynamic;
-import com.mojang.datafixers.types.DynamicOps;
-import net.minecraft.util.DynamicSerializable;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
-public class AtmosphericGas implements DynamicSerializable {
+public class AtmosphericGas {
 
     public static final AtmosphericGas HYDROGEN = register(
             new AtmosphericGas(
@@ -187,11 +185,6 @@ public class AtmosphericGas implements DynamicSerializable {
                 .replaceAll("7", "\u2086")
                 .replaceAll("8", "\u2087")
                 .replaceAll("9", "\u2088");
-    }
-
-    @Override
-    public <T> T serialize(DynamicOps<T> ops) {
-        return ops.createString(AddonRegistry.ATMOSPHERIC_GASES.getId(this).toString());
     }
 
     public static AtmosphericGas deserialize(Dynamic<?> dynamic) {

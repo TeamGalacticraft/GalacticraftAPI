@@ -4,7 +4,12 @@
   "compatibilityLevel": "JAVA_8",
   "mixins": [
     "RegistryAccessor",
-    "LivingEntityMixin"
+    "LivingEntityMixin",
+    "MinecraftServerMixin"
+  ],
+  "client": [
+    "ClientWorldMixin",
+    "ClientPlayNetworkHandlerMixin"
   ],
   "minVersion": "0.1.0",
   "injectors": {

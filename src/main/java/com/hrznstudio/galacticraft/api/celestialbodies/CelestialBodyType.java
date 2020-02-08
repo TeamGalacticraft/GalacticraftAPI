@@ -26,15 +26,13 @@ import com.hrznstudio.galacticraft.api.addon.AddonRegistry;
 import com.hrznstudio.galacticraft.api.atmosphere.AtmosphericGas;
 import com.hrznstudio.galacticraft.api.atmosphere.AtmosphericInfo;
 import com.mojang.datafixers.Dynamic;
-import com.mojang.datafixers.types.DynamicOps;
-import net.minecraft.util.DynamicSerializable;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.dimension.DimensionType;
 
 import java.util.Optional;
 
-public class CelestialBodyType implements DynamicSerializable {
+public class CelestialBodyType {
     public static final CelestialBodyType THE_SUN = register(
             new CelestialBodyType.Builder(new Identifier("galacticraft-api", "the_sun"))
                     .translationKey("ui.galacticraft-api.bodies.the_sun")
@@ -171,11 +169,6 @@ public class CelestialBodyType implements DynamicSerializable {
 
     public AtmosphericInfo getAtmosphere() {
         return atmosphere;
-    }
-
-    @Override
-    public <T> T serialize(DynamicOps<T> ops) {
-        return ops.createString(AddonRegistry.CELESTIAL_BODIES.getId(this).toString());
     }
 
     public static CelestialBodyType deserialize(Dynamic<?> dynamic) {
