@@ -13,11 +13,11 @@ jobs:
         with:
           ref: minecraft/1.14.4
           path: 1.14.4
-      - name: Checkout 1.15.1
+      - name: Checkout 1.15.2
         uses: actions/checkout@v2
         with:
-          ref: minecraft/1.15.1
-          path: 1.15.1
+          ref: minecraft/1.15.2
+          path: 1.15.2
       - name: Set up JDK 1.8
         uses: actions/setup-java@v1
         with:
@@ -31,6 +31,6 @@ jobs:
           chmod +x gradlew
           ./gradlew publish
           cd ..
-          cd 1.15.1
+          cd 1.15.2
           chmod +x gradlew
           ./gradlew publish
