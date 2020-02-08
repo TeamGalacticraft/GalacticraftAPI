@@ -24,11 +24,4 @@ public class ServerTeams extends Teams {
             runnable.run();
         }
     }
-
-    public void updatesTeams() {
-        Packet<?> packet = new TeamsS2CPacket(this);
-        for (ServerPlayerEntity p : this.server.getPlayerManager().getPlayerList()) {
-            p.networkHandler.sendPacket(packet);
-        }
-    }
 }
