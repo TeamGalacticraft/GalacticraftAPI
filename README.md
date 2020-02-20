@@ -61,9 +61,15 @@ import com.hrznstudio.galacticraft.api.addon.*;
 
 public class MyNewAddonGCHook implements AddonInitializer {
     @Override
-    public onInitialize() {
+    public onAddonInitialize() {
         // addon init code
     }
+    
+    @Override
+    public  onCompatInitialize() {
+        // init things that do not need gc to be running here.
+    }
+
 
     @Override
     public String getModId() {
@@ -76,7 +82,7 @@ And add this class to your `fabric.mod.json` in the entrypoints section.
 ```json
 {
     "entrypoints": {
-        "gc_addon": "mynewaddon.hooks.MyNewAddonGCHook"
+        "gc_addon": [ "mynewaddon.hooks.MyNewAddonGCHook" ]
     }
 }
 ```
