@@ -19,6 +19,13 @@
         "homepage": "https://hrznstudio.com",
         "email": "contact@hrznstudio.com"
       }
+    },
+    {
+      "name": "Stellar Horizons",
+      "contact": {
+        "homepage": "https://github.com/StellarHorizons",
+        "discord": "https://discord.gg/8eVjQrb"
+      }
     }
   ],
   "environment": "*",
