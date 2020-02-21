@@ -5,7 +5,7 @@ plugins {
 }
 
 group 'com.hrznstudio'
-version "0.1.5-alpha+${project.minecraft_version}"
+version "0.1.6-alpha+${project.minecraft_version}"
 archivesBaseName = 'GalacticraftAPI'
 
 sourceCompatibility = targetCompatibility = JavaVersion.VERSION_1_8
