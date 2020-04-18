@@ -4,8 +4,7 @@ import com.hrznstudio.galacticraft.api.teams.packet.listener.ClientTeamsPacketLi
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.network.Packet;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.PacketByteBuf;
+import net.minecraft.network.PacketByteBuf;
 
 import java.io.IOException;
 
@@ -19,7 +18,7 @@ public class TeamDeleteS2CPacket implements Packet<ClientTeamsPacketListener> {
 
     @Override
     public void read(PacketByteBuf buf) throws IOException {
-        this.name = buf.readString();
+        this.name = buf.readString(1024);
     }
 
     @Override

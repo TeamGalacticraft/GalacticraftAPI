@@ -68,7 +68,7 @@ public class Team {
         tTag.putString("id", this.id.toString());
         tTag.putString("name", this.name);
         tTag.putInt("color", this.color.getColorIndex());
-        tTag.putUuid("owner", this.owner);
+        tTag.putUuidNew("owner", this.owner);
 
         CompoundTag players = new CompoundTag();
         for(Map.Entry<UUID, Identifier> p : this.players.entrySet()) {
@@ -82,7 +82,7 @@ public class Team {
             role.putString("name", r.getValue().name);
             ListTag perms = new ListTag();
             for(Permission p : r.getValue().permissions) {
-                perms.add(new StringTag(p.getIdentifier().toString()));
+                perms.add(StringTag.of(p.getIdentifier().toString()));
             }
             role.put("permissions", perms);
             roles.put(r.getKey().toString(), role);
@@ -90,7 +90,7 @@ public class Team {
 
         ListTag invites = new ListTag();
         for(UUID uuid : this.invites) {
-            invites.add(new StringTag(uuid.toString()));
+            invites.add(StringTag.of(uuid.toString()));
         }
         tTag.put("players", players);
         tTag.put("roles", roles);

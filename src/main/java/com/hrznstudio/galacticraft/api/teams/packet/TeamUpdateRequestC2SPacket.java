@@ -5,7 +5,7 @@ import com.hrznstudio.galacticraft.api.teams.packet.listener.ServerTeamsPacketLi
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.network.Packet;
-import net.minecraft.util.PacketByteBuf;
+import net.minecraft.network.PacketByteBuf;
 
 import java.io.IOException;
 import java.util.UUID;
@@ -25,7 +25,7 @@ public class TeamUpdateRequestC2SPacket implements Packet<ServerTeamsPacketListe
     @Override
     public void read(PacketByteBuf buf) throws IOException {
         this.requester = buf.readUuid();
-        this.oldName = buf.readString();
+        this.oldName = buf.readString(1024);
         this.updatedTeam = Team.fromTag(buf.readCompoundTag());
     }
 

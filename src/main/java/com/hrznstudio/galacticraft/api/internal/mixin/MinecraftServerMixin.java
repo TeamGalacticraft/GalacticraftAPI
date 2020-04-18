@@ -5,8 +5,8 @@ import com.hrznstudio.galacticraft.api.teams.*;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.ServerTask;
 import net.minecraft.server.command.CommandOutput;
-import net.minecraft.util.NonBlockingThreadExecutor;
 import net.minecraft.util.snooper.SnooperListener;
+import net.minecraft.util.thread.ReentrantThreadExecutor;
 import net.minecraft.world.PersistentStateManager;
 import org.spongepowered.asm.mixin.Implements;
 import org.spongepowered.asm.mixin.Interface;
@@ -17,7 +17,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin({MinecraftServer.class})
 @Implements(@Interface(iface = MinecraftServerTeamsGetter.class, prefix = "gcr$"))
-public abstract class MinecraftServerMixin extends NonBlockingThreadExecutor<ServerTask> implements SnooperListener, CommandOutput, AutoCloseable, Runnable {
+public abstract class MinecraftServerMixin extends ReentrantThreadExecutor<ServerTask> implements SnooperListener, CommandOutput, AutoCloseable, Runnable {
 
     public final ServerTeams gcr_teams = new ServerTeams((MinecraftServer)(Object)this);
 

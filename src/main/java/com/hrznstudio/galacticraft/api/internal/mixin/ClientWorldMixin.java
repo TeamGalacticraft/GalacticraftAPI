@@ -17,6 +17,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.function.BiFunction;
+import java.util.function.Supplier;
 
 @Mixin({ClientWorld.class})
 @Implements(@Interface(iface = ClientWorldTeamsGetter.class, prefix = "cwtg$"))
@@ -24,8 +25,8 @@ public abstract class ClientWorldMixin extends World {
 
     private Teams spaceRaceTeams;
 
-    protected ClientWorldMixin(LevelProperties levelProperties, DimensionType dimensionType, BiFunction<World, Dimension, ChunkManager> chunkManagerProvider, Profiler profiler, boolean isClient) {
-        super(levelProperties, dimensionType, chunkManagerProvider, profiler, isClient);
+    protected ClientWorldMixin(LevelProperties levelProperties, DimensionType dimensionType, BiFunction<World, Dimension, ChunkManager> chunkManagerProvider, Supplier<Profiler> supplier, boolean isClient) {
+        super(levelProperties, dimensionType, chunkManagerProvider, supplier, isClient);
     }
 
     @Inject(method = "<init>", at = @At("TAIL"))

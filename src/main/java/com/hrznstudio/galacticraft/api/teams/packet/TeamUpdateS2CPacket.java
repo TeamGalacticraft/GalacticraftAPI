@@ -1,12 +1,12 @@
 package com.hrznstudio.galacticraft.api.teams.packet;
 
-import com.hrznstudio.galacticraft.api.teams.TeamsTagUtil;
+
 import com.hrznstudio.galacticraft.api.teams.data.Team;
 import com.hrznstudio.galacticraft.api.teams.packet.listener.ClientTeamsPacketListener;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.network.Packet;
-import net.minecraft.util.PacketByteBuf;
+import net.minecraft.network.PacketByteBuf;
 
 import java.io.IOException;
 
@@ -23,7 +23,7 @@ public class TeamUpdateS2CPacket implements Packet<ClientTeamsPacketListener> {
     @Override
     public void read(PacketByteBuf buf) throws IOException {
         this.team = Team.fromTag(buf.readCompoundTag());
-        this.oldName = buf.readString();
+        this.oldName = buf.readString(1024);
     }
 
     @Override

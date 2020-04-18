@@ -31,7 +31,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.List;
 
-public class GalacticraftAPIMain implements ModInitializer {
+public class GalacticraftAPI implements ModInitializer {
 
     public static final Logger LOGGER = LogManager.getLogger();
 

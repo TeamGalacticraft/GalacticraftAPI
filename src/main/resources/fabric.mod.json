@@ -31,7 +31,7 @@
   "environment": "*",
   "entrypoints": {
     "main": [
-      "com.hrznstudio.galacticraft.api.internal.fabric.GalacticraftAPIMain"
+      "com.hrznstudio.galacticraft.api.internal.fabric.GalacticraftAPI"
     ]
   },
   "mixins": [
@@ -39,7 +39,7 @@
   ],
   "depends": {
     "fabricloader": ">=0.7.0",
-    "minecraft": "1.14.4"
+    "minecraft": "*"
   },
   "suggests": {
     "modmenu": "*"

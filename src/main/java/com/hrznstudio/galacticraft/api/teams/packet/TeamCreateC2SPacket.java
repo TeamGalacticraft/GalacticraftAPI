@@ -4,7 +4,7 @@ import com.hrznstudio.galacticraft.api.teams.packet.listener.ServerTeamsPacketLi
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.network.Packet;
-import net.minecraft.util.PacketByteBuf;
+import net.minecraft.network.PacketByteBuf;
 
 import java.io.IOException;
 import java.util.UUID;
@@ -22,7 +22,7 @@ public class TeamCreateC2SPacket implements Packet<ServerTeamsPacketListener> {
     @Override
     public void read(PacketByteBuf buf) throws IOException {
         this.owner = buf.readUuid();
-        this.name = buf.readString();
+        this.name = buf.readString(1024);
     }
 
     @Override
