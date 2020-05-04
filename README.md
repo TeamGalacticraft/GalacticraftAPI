@@ -39,7 +39,7 @@ You will also need to add the addon API to your `fabric.mod.json` in the `depend
 ```json
 {
     "depends": {
-        "galacitcraft-api": "^{VERSION}"
+        "galacticraft-api": "^{VERSION}"
     },
     "suggests": {
         "galacticraft-rewoven": "^{VERSION}"
