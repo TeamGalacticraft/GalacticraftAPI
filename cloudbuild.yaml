@@ -1,5 +1,3 @@
 steps:
-- name: 'ubuntu'
-  args: ['chmod', '+x', 'gradlew']
 - name: 'adoptopenjdk/openjdk8-openj9'
   args: ['./gradlew', 'build', '--stacktrace']
