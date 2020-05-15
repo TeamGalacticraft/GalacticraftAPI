@@ -12,5 +12,15 @@
       "allowedVersions": "~0.2"
     }
   ],
+  "regexManagers": [
+    {
+      "fileMatch": ["^cloudbuild.yaml$"],
+      "matchStrings": [
+        "name: (?<depName>.*):(?<currentValue>.*)\n"
+      ],
+      "datasourceTemplate": "docker",
+      "versioningTemplate": "docker"
+    }
+  ],
   "commitMessagePrefix": "⬆️"
 }
