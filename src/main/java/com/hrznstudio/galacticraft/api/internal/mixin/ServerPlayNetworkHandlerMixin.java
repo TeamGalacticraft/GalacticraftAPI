@@ -7,6 +7,8 @@ import com.hrznstudio.galacticraft.api.teams.data.Permission;
 import com.hrznstudio.galacticraft.api.teams.data.Team;
 import com.hrznstudio.galacticraft.api.teams.packet.*;
 import com.hrznstudio.galacticraft.api.teams.packet.listener.ServerTeamsPacketListener;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.network.listener.ServerPlayPacketListener;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
@@ -15,6 +17,7 @@ import org.spongepowered.asm.mixin.*;
 
 @Mixin({ServerPlayNetworkHandler.class})
 @Implements(@Interface(iface = ServerTeamsPacketListener.class, prefix = "stpl$"))
+@Environment(EnvType.SERVER)
 public abstract class ServerPlayNetworkHandlerMixin implements ServerPlayPacketListener {
 
     @Shadow @Final private MinecraftServer server;

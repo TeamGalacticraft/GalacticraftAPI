@@ -2,6 +2,7 @@ package com.hrznstudio.galacticraft.api.internal.mixin;
 
 import com.hrznstudio.galacticraft.api.internal.data.ClientWorldTeamsGetter;
 import com.hrznstudio.galacticraft.api.teams.Teams;
+import net.minecraft.class_5269;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.util.profiler.Profiler;
 import net.minecraft.world.World;
@@ -25,8 +26,8 @@ public abstract class ClientWorldMixin extends World {
 
     private Teams spaceRaceTeams;
 
-    protected ClientWorldMixin(LevelProperties levelProperties, DimensionType dimensionType, BiFunction<World, Dimension, ChunkManager> chunkManagerProvider, Supplier<Profiler> supplier, boolean isClient) {
-        super(levelProperties, dimensionType, chunkManagerProvider, supplier, isClient);
+    protected ClientWorldMixin(class_5269 arg, DimensionType dimensionType, Supplier<Profiler> supplier, boolean bl, boolean bl2, long l) {
+        super(arg, dimensionType, supplier, bl, bl2, l);
     }
 
     @Inject(method = "<init>", at = @At("TAIL"))
