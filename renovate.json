@@ -1,5 +1,16 @@
 {
   "extends": [
     "config:base"
-  ]
+  ],
+  "packageRules": [
+    {
+      "packageNames": ["com.mojang:minecraft"],
+      "enabled": false
+    },
+    {
+      "packageNames": ["fabric-loom:fabric-loom.gradle.plugin"],
+      "allowedVersions": "~0.2"
+    }
+  ],
+  "commitMessagePrefix": "⬆️"
 }
