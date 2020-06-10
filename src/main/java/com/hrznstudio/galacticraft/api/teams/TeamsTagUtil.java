@@ -1,6 +1,6 @@
 package com.hrznstudio.galacticraft.api.teams;
 
-import com.hrznstudio.galacticraft.api.addon.AddonRegistry;
+import com.hrznstudio.galacticraft.api.regisry.AddonRegistry;
 import com.hrznstudio.galacticraft.api.teams.data.Permission;
 import com.hrznstudio.galacticraft.api.teams.data.Role;
 import com.hrznstudio.galacticraft.api.teams.data.Team;
@@ -22,7 +22,7 @@ public class TeamsTagUtil {
             tTag.putString("id", t.getValue().id.toString());
             tTag.putString("name", t.getValue().name);
             tTag.putInt("color", t.getValue().color.getColorIndex());
-            tTag.putUuidNew("owner", t.getValue().owner);
+            tTag.putUuid("owner", t.getValue().owner);
 
             CompoundTag players = new CompoundTag();
             for(Map.Entry<UUID, Identifier> p : t.getValue().players.entrySet()) {

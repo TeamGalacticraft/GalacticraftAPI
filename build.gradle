@@ -22,7 +22,8 @@ dependencies {
     mappings "net.fabricmc:yarn:${project.mc}+build.${project.yarn}:v2"
     modImplementation "net.fabricmc:fabric-loader:${project.loader}"
 	
-	modImplementation fabricApi.module("fabric-events-lifecycle-v0", project.fabric)
+	modImplementation fabricApi.module("fabric-api-base", project.fabric)
+	
 }
 
 processResources {

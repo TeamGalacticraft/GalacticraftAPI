@@ -22,63 +22,56 @@
 
 package com.hrznstudio.galacticraft.api.celestialbodies;
 
-import com.hrznstudio.galacticraft.api.addon.AddonRegistry;
+import com.hrznstudio.galacticraft.api.regisry.AddonRegistry;
 import com.hrznstudio.galacticraft.api.atmosphere.AtmosphericGas;
 import com.hrznstudio.galacticraft.api.atmosphere.AtmosphericInfo;
-import com.mojang.datafixers.Dynamic;
+import com.mojang.serialization.Dynamic;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
 import net.minecraft.world.dimension.DimensionType;
 
 import java.util.Optional;
 
 public class CelestialBodyType {
-    public static final CelestialBodyType THE_SUN = register(
-            new CelestialBodyType.Builder(new Identifier("galacticraft-api", "the_sun"))
-                    .translationKey("ui.galacticraft-api.bodies.the_sun")
-                    .display(
-                            new CelestialBodyDisplayInfo.Builder()
-                                .texture(new Identifier("galacticraft-api", "body_icons"))
-                                .build()
-                    )
-                    .build()
-    );
+    public static final CelestialBodyType THE_SUN = new CelestialBodyType.Builder(new Identifier("galacticraft-api", "the_sun"))
+            .translationKey("ui.galacticraft-api.bodies.the_sun")
+            .display(
+                    new CelestialBodyDisplayInfo.Builder()
+                            .texture(new Identifier("galacticraft-api", "body_icons"))
+                            .build()
+            ).build();
 
-    public static final CelestialBodyType EARTH = register(
-            new Builder(new Identifier("galacticraft-api", "earth"))
-                    .translationKey("ui.galacticraft-api.bodies.earth")
-                    .dimension(DimensionType.OVERWORLD)
-                    .weight(0)
-                    .display(
-                            new CelestialBodyDisplayInfo.Builder()
-                                    .texture(new Identifier("galacticraft-api", "body_icons"))
-                                    .y(16)
-                                    .build()
-                    )
-                    .atmosphere(
-                            new AtmosphericInfo.Builder()
-                                    .pressure(1.0f)
-                                    .temperature(15.0f)
-                                    .gas(AtmosphericGas.NITROGEN,       780840d     )
-                                    .gas(AtmosphericGas.OXYGEN,         209500d     )
-                                    .gas(AtmosphericGas.WATER_VAPOR,     25000d     )
-                                    .gas(AtmosphericGas.ARGON,            9300d     )
-                                    .gas(AtmosphericGas.CARBON_DIOXIDE,    399d     )
-                                    .gas(AtmosphericGas.NEON,               18d     )
-                                    .gas(AtmosphericGas.HELIUM,              5.42d  )
-                                    .gas(AtmosphericGas.METHANE,             1.79d  )
-                                    .gas(AtmosphericGas.KRYPTON,             1.14d  )
-                                    .gas(AtmosphericGas.HYDROGEN,            0.55d  )
-                                    .gas(AtmosphericGas.NITROUS_OXIDE,       0.325d )
-                                    .gas(AtmosphericGas.CARBON_MONOXIDE,     0.1d   )
-                                    .gas(AtmosphericGas.XENON,               0.09d  )
-                                    .gas(AtmosphericGas.OZONE,               0.07d  )
-                                    .gas(AtmosphericGas.IODINE,              0.01d  )
-                                    .gas(AtmosphericGas.NITROUS_DIOXIDE,     0.02d  )
-                                    .build()
-                    )
-                    .build()
-    );
+    public static final CelestialBodyType EARTH = new Builder(new Identifier("galacticraft-api", "earth"))
+            .translationKey("ui.galacticraft-api.bodies.earth")
+            .dimension(DimensionType.getOverworldDimensionType())
+            .weight(0)
+            .display(
+                    new CelestialBodyDisplayInfo.Builder()
+                            .texture(new Identifier("galacticraft-api", "body_icons"))
+                            .y(16)
+                            .build()
+            )
+            .atmosphere(
+                    new AtmosphericInfo.Builder()
+                            .pressure(1.0f)
+                            .temperature(15.0f)
+                            .gas(AtmosphericGas.NITROGEN,       780840d     )
+                            .gas(AtmosphericGas.OXYGEN,         209500d     )
+                            .gas(AtmosphericGas.WATER_VAPOR,     25000d     )
+                            .gas(AtmosphericGas.ARGON,            9300d     )
+                            .gas(AtmosphericGas.CARBON_DIOXIDE,    399d     )
+                            .gas(AtmosphericGas.NEON,               18d     )
+                            .gas(AtmosphericGas.HELIUM,              5.42d  )
+                            .gas(AtmosphericGas.METHANE,             1.79d  )
+                            .gas(AtmosphericGas.KRYPTON,             1.14d  )
+                            .gas(AtmosphericGas.HYDROGEN,            0.55d  )
+                            .gas(AtmosphericGas.NITROUS_OXIDE,       0.325d )
+                            .gas(AtmosphericGas.CARBON_MONOXIDE,     0.1d   )
+                            .gas(AtmosphericGas.XENON,               0.09d  )
+                            .gas(AtmosphericGas.OZONE,               0.07d  )
+                            .gas(AtmosphericGas.IODINE,              0.01d  )
+                            .gas(AtmosphericGas.NITROUS_DIOXIDE,     0.02d  )
+                            .build()
+            ).build();
     private final Identifier id;
     private final String translationKey;
     private final DimensionType dimension;
@@ -87,10 +80,6 @@ public class CelestialBodyType {
     private final CelestialBodyDisplayInfo displayInfo;
     private final float gravity;
     private final AtmosphericInfo atmosphere;
-
-    private static CelestialBodyType register(CelestialBodyType type) {
-        return Registry.register(AddonRegistry.CELESTIAL_BODIES, type.getId(), type);
-    }
 
     /**
      * Used to register a new Celestial Body. {@link AddonRegistry#CELESTIAL_BODIES}

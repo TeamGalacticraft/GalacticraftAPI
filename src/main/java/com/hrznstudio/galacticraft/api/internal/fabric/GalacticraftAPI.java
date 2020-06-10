@@ -22,14 +22,18 @@
 
 package com.hrznstudio.galacticraft.api.internal.fabric;
 
-import com.hrznstudio.galacticraft.api.addon.AddonInitializer;
+import com.hrznstudio.galacticraft.api.regisry.AddonRegistry;
+import com.hrznstudio.galacticraft.api.atmosphere.AtmosphericGas;
+import com.hrznstudio.galacticraft.api.celestialbodies.CelestialBodyType;
+import com.hrznstudio.galacticraft.api.event.AtmosphericGasRegistryCallback;
+import com.hrznstudio.galacticraft.api.event.CelestialBodyRegistryCallback;
+import com.hrznstudio.galacticraft.api.event.SpaceRaceTeamPermissionRegistryCallback;
+import com.hrznstudio.galacticraft.api.teams.data.Permission;
 import net.fabricmc.api.ModInitializer;
-import net.fabricmc.loader.api.FabricLoader;
-import net.fabricmc.loader.api.ModContainer;
+import net.minecraft.util.registry.Registry;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.List;
 
 public class GalacticraftAPI implements ModInitializer {
 
@@ -38,47 +42,37 @@ public class GalacticraftAPI implements ModInitializer {
     @Override
     public void onInitialize() {
         long startInitTime = System.currentTimeMillis();
-        LOGGER.info("[GC-API] Starting Initialization.");
-        List<AddonInitializer> addonInitializers = FabricLoader.getInstance().getEntrypoints("gc_addons", AddonInitializer.class);
-
-        // compat init
-        LOGGER.info("[GC-API] Initializing compatibility method.");
-        for (AddonInitializer addonInitializer : addonInitializers) {
-            if(FabricLoader.getInstance().getModContainer(addonInitializer.getModId()).isPresent()) {
-                ModContainer container = FabricLoader.getInstance().getModContainer(addonInitializer.getModId()).get();
-                LOGGER.info("[GC-API] Initializing Compat entry point for {} (v{}).", container.getMetadata().getName(), container.getMetadata().getVersion().getFriendlyString());
-                addonInitializer.onCompatInitialize();
-            } else {
-                LOGGER.warn("[GC-API] Mod not found with ID \"{}\".", addonInitializer.getModId());
-            }
-        }
-
-        // GC detection.
-        // only initialize if gc is present.
-        LOGGER.info("[GC-API] Searching for Galacticraft.");
-        if(FabricLoader.getInstance().isModLoaded("galacticraft-rewoven")) {
-            // Addon detection
-            LOGGER.info("[GC-API] Scanning for Addons...");
-            long startAddonInitTime = System.currentTimeMillis();
-            LOGGER.info("[GC-API] Addon scan complete, found {} addons.", addonInitializers.size());
-            for (AddonInitializer addonInitializer : addonInitializers) {
-                if(FabricLoader.getInstance().getModContainer(addonInitializer.getModId()).isPresent()) {
-                    ModContainer container = FabricLoader.getInstance().getModContainer(addonInitializer.getModId()).get();
-                    LOGGER.info("[GC-API] Initializing Addon entry point for {} (v{}).", container.getMetadata().getName(), container.getMetadata().getVersion().getFriendlyString());
-
-                    addonInitializer.onAddonInitialize();
-                } else {
-                    LOGGER.warn("[GC-API] Mod not found with ID \"{}\".", addonInitializer.getModId());
-                }
-            }
-            LOGGER.info("[GC-API] Addon initialization complete. (Took {}ms)", System.currentTimeMillis()-startAddonInitTime);
-        } else {
-            LOGGER.info("[GC-API] Galacticraft not found, stopping addon initialization.");
-            if(FabricLoader.getInstance().isDevelopmentEnvironment()) {
-                LOGGER.warn("[GC-API] If you are developing an addon, you may have forgotten to add Galacticraft to your build.gradle.");
-            }
-        }
-
+        LOGGER.info("Initializing...");
+        // register our things
+        AtmosphericGasRegistryCallback.EVENT.register(registry -> {
+            Registry.register(registry, AtmosphericGas.HYDROGEN.getId(), AtmosphericGas.HYDROGEN);
+            Registry.register(registry, AtmosphericGas.NITROGEN.getId(), AtmosphericGas.NITROGEN);
+            Registry.register(registry, AtmosphericGas.OXYGEN.getId(), AtmosphericGas.OXYGEN);
+            Registry.register(registry, AtmosphericGas.CARBON_DIOXIDE.getId(), AtmosphericGas.CARBON_DIOXIDE);
+            Registry.register(registry, AtmosphericGas.WATER_VAPOR.getId(), AtmosphericGas.WATER_VAPOR);
+            Registry.register(registry, AtmosphericGas.METHANE.getId(), AtmosphericGas.METHANE);
+            Registry.register(registry, AtmosphericGas.HELIUM.getId(), AtmosphericGas.HELIUM);
+            Registry.register(registry, AtmosphericGas.ARGON.getId(), AtmosphericGas.ARGON);
+            Registry.register(registry, AtmosphericGas.NEON.getId(), AtmosphericGas.NEON);
+            Registry.register(registry, AtmosphericGas.KRYPTON.getId(), AtmosphericGas.KRYPTON);
+            Registry.register(registry, AtmosphericGas.NITROUS_OXIDE.getId(), AtmosphericGas.NITROUS_OXIDE);
+            Registry.register(registry, AtmosphericGas.CARBON_MONOXIDE.getId(), AtmosphericGas.CARBON_MONOXIDE);
+            Registry.register(registry, AtmosphericGas.XENON.getId(), AtmosphericGas.XENON);
+            Registry.register(registry, AtmosphericGas.OZONE.getId(), AtmosphericGas.OZONE);
+            Registry.register(registry, AtmosphericGas.NITROUS_DIOXIDE.getId(), AtmosphericGas.NITROUS_DIOXIDE);
+            Registry.register(registry, AtmosphericGas.IODINE.getId(), AtmosphericGas.IODINE);
+        });
+        CelestialBodyRegistryCallback.EVENT.register(registry -> {
+            Registry.register(registry, CelestialBodyType.EARTH.getId(), CelestialBodyType.EARTH);
+        });
+        SpaceRaceTeamPermissionRegistryCallback.EVENT.register(registry -> {
+            Registry.register(registry, Permission.MODIFY_COLOR.getIdentifier(), Permission.MODIFY_COLOR);
+            Registry.register(registry, Permission.MODIFY_FLAG.getIdentifier(), Permission.MODIFY_FLAG);
+            Registry.register(registry, Permission.MODIFY_NAME.getIdentifier(), Permission.MODIFY_NAME);
+            Registry.register(registry, Permission.MODIFY_ROLES.getIdentifier(), Permission.MODIFY_ROLES);
+        });
+        // run registry callbacks
+        AddonRegistry.runRegistryCallbacks();
         LOGGER.info("[GC-API] Initialization Complete. (Took {}ms).", System.currentTimeMillis()-startInitTime);
     }
 }
