@@ -1,3 +1,7 @@
+![Maven metadata URL](https://img.shields.io/maven-metadata/v?metadataUrl=https%3A%2F%2Fcdn.hrzn.studio%2Fmaven%2Fcom%2Fhrznstudio%2FGalacticraftAPI%2Fmaven-metadata.xml&style=flat-square)
+[![HRZN Discord](https://img.shields.io/discord/422424112863117312.svg?colorB=7289DA&label=discord&style=flat-square)](https://discord.gg/8eVjQrb/)
+[![Issues](https://img.shields.io/github/issues/StellarHorizons/Addon-API?style=flat-square)](https://github.com/StellarHorizons/Addon-API/issues)
+[![HRZN Studio Twitch](https://img.shields.io/twitch/status/hrznstudio.svg?style=flat-square)](https://twitch.tv/hrznstudio)
 # Addon-API
 The [Galacticraft: Rewoven](https://github.com/StellarHorizons/Galacticraft-Rewoven) addon API.
 
