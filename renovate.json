@@ -2,14 +2,21 @@
   "extends": [
     "config:base"
   ],
+  "ignoreDeps": [
+    "com.mojang:minecraft",
+    "net.fabricmc*"
+  ],
+
   "packageRules": [
     {
-      "packageNames": ["com.mojang:minecraft"],
-      "enabled": false
+      "packageNames": [
+        "net.fabric.fabric-api:fabric-api"
+      ],
+      "enabled": true
     },
     {
       "packageNames": ["fabric-loom:fabric-loom.gradle.plugin"],
-      "allowedVersions": "~0.2"
+      "allowedVersions": "0.4-SNAPSHOT"
     }
   ],
   "regexManagers": [
@@ -21,6 +28,5 @@
       "datasourceTemplate": "docker",
       "versioningTemplate": "docker"
     }
-  ],
-  "commitMessagePrefix": "⬆️"
+  ]
 }
