@@ -19,7 +19,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import java.util.function.Supplier;
 
 @Mixin({ClientWorld.class})
-@Implements(@Interface(iface = ClientWorldTeamsGetter.class, prefix = "cwtg$"))
+@Implements(@Interface(iface = ClientWorldTeamsGetter.class, prefix = "cwtg$", remap = Interface.Remap.NONE))
 public abstract class ClientWorldMixin extends World {
 
     private Teams spaceRaceTeams;

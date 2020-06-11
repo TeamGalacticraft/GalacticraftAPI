@@ -12,17 +12,14 @@ import net.fabricmc.api.Environment;
 import net.minecraft.network.listener.ServerPlayPacketListener;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
-import net.minecraft.server.network.ServerPlayerEntity;
 import org.spongepowered.asm.mixin.*;
 
 @Mixin({ServerPlayNetworkHandler.class})
-@Implements(@Interface(iface = ServerTeamsPacketListener.class, prefix = "stpl$"))
+@Implements(@Interface(iface = ServerTeamsPacketListener.class, prefix = "stpl$", remap = Interface.Remap.NONE))
 @Environment(EnvType.SERVER)
 public abstract class ServerPlayNetworkHandlerMixin implements ServerPlayPacketListener {
 
     @Shadow @Final private MinecraftServer server;
-
-    @Shadow public ServerPlayerEntity player;
 
     public void stpl$onTeamUpdateRequest(TeamUpdateRequestC2SPacket packet) {
         Teams teams = ((MinecraftServerTeamsGetter)this.server).getSpaceRaceTeams();

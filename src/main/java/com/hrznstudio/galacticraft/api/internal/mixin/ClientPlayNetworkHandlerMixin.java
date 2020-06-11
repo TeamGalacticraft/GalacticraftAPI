@@ -6,6 +6,8 @@ import com.hrznstudio.galacticraft.api.teams.packet.TeamPlayerInviteS2CPacket;
 import com.hrznstudio.galacticraft.api.teams.packet.TeamPlayerLeaveS2CPacket;
 import com.hrznstudio.galacticraft.api.teams.packet.TeamUpdateS2CPacket;
 import com.hrznstudio.galacticraft.api.teams.packet.listener.ClientTeamsPacketListener;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.network.listener.ClientPlayPacketListener;
@@ -14,7 +16,8 @@ import org.spongepowered.asm.mixin.Interface;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
-@Implements(@Interface(iface = ClientTeamsPacketListener.class, prefix = "ctpl$"))
+@Environment(EnvType.CLIENT)
+@Implements(@Interface(iface = ClientTeamsPacketListener.class, prefix = "ctpl$", remap = Interface.Remap.NONE))
 @Mixin({ClientPlayNetworkHandler.class})
 public abstract class ClientPlayNetworkHandlerMixin implements ClientPlayPacketListener {
 

@@ -16,7 +16,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin({MinecraftServer.class})
-@Implements(@Interface(iface = MinecraftServerTeamsGetter.class, prefix = "gcr$"))
+@Implements(@Interface(iface = MinecraftServerTeamsGetter.class, prefix = "gcr$", remap = Interface.Remap.NONE))
 public abstract class MinecraftServerMixin extends ReentrantThreadExecutor<ServerTask> implements SnooperListener, CommandOutput, AutoCloseable, Runnable {
 
     public final ServerTeams gcr_teams = new ServerTeams((MinecraftServer)(Object)this);
