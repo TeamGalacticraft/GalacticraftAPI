@@ -42,7 +42,8 @@
     "minecraft": "*"
   },
   "suggests": {
-    "modmenu": "*"
+    "modmenu": "*",
+    "galacticraft-rewoven": "*"
   },
   "custom": {
     "modmenu:api": true,

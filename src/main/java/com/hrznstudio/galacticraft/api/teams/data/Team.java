@@ -1,6 +1,6 @@
 package com.hrznstudio.galacticraft.api.teams.data;
 
-import com.hrznstudio.galacticraft.api.addon.AddonRegistry;
+import com.hrznstudio.galacticraft.api.regisry.AddonRegistry;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
@@ -68,7 +68,7 @@ public class Team {
         tTag.putString("id", this.id.toString());
         tTag.putString("name", this.name);
         tTag.putInt("color", this.color.getColorIndex());
-        tTag.putUuidNew("owner", this.owner);
+        tTag.putUuid("owner", this.owner);
 
         CompoundTag players = new CompoundTag();
         for(Map.Entry<UUID, Identifier> p : this.players.entrySet()) {

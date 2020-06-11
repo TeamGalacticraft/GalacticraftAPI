@@ -1,6 +1,6 @@
 package com.hrznstudio.galacticraft.api.teams.data;
 
-import com.hrznstudio.galacticraft.api.addon.AddonRegistry;
+import com.hrznstudio.galacticraft.api.regisry.AddonRegistry;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
@@ -8,31 +8,21 @@ import java.util.List;
 import java.util.UUID;
 
 public class Permission {
-    public static final Permission INVITE_PLAYER = register(
-            new Permission.Builder(
-                    new Identifier("galacticraft-api", "invite_player")
-            ).build()
-    );
-    public static final Permission MODIFY_FLAG = register(
-            new Permission.Builder(
-                    new Identifier("galacticraft-api", "modify_flag")
-            ).build()
-    );
-    public static final Permission MODIFY_NAME = register(
-            new Permission.Builder(
-                    new Identifier("galacticraft-api", "modify_flag")
-            ).build()
-    );
-    public static final Permission MODIFY_COLOR = register(
-            new Permission.Builder(
-                    new Identifier("galacticraft-api", "modify_color")
-            ).build()
-    );
-    public static final Permission MODIFY_ROLES = register(
-            new Permission.Builder(
-                    new Identifier("galacticraft-api", "modify_roles")
-            ).build()
-    );
+    public static final Permission INVITE_PLAYER = new Permission.Builder(
+            new Identifier("galacticraft-api", "invite_player")
+    ).build();
+    public static final Permission MODIFY_FLAG = new Permission.Builder(
+            new Identifier("galacticraft-api", "modify_flag")
+    ).build();
+    public static final Permission MODIFY_NAME = new Permission.Builder(
+            new Identifier("galacticraft-api", "modify_flag")
+    ).build();
+    public static final Permission MODIFY_COLOR = new Permission.Builder(
+            new Identifier("galacticraft-api", "modify_color")
+    ).build();
+    public static final Permission MODIFY_ROLES = new Permission.Builder(
+            new Identifier("galacticraft-api", "modify_roles")
+    ).build();
 
     private static Permission register(Permission permission) {
         return Registry.register(AddonRegistry.PERMISSIONS, permission.identifier, permission);

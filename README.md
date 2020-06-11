@@ -2,9 +2,8 @@
 The [Galacticraft: Rewoven](https://github.com/StellarHorizons/Galacticraft-Rewoven) addon API.
 
 ## Feautes
-Here are a list of features, both planned an implemented.
+Here are a list of features, both planned and implemented.
 
-* [x] Addon entrypoint loading.
 * [x] Celestial bodies.
 * [x] Celestial body registry.
 * [x] Celestial body display info.
@@ -51,39 +50,36 @@ Replace `{VERSION}` with the version of Galacticraft you want to use. Versions u
 
 For more versioning information visit the [semver](https://semver.org/) website.
 
-### The Addon Entry Point
-Your addon needs somewhere to start, so why take advantage of the same system Fabric uses?
+### Adding Celestial Bodies
+A Celestial Body is, at its core, a dimension with a fancy name. To learn how to make a dimension you can follow [this](https://fabricmc.net/wiki/tutorial:dimension) tutorial on the FabricMC wiki.
 
-To start you will need to create a new class that implements `GCAddonInitializer`. (You will still need to setup the normal Fabric mod initializers.)
+Now you have your dimension you can register it as a celestial body. Let's start by creating a `CelestialBodyType`, for this example we'll setup the Moon.
 
 ```java
-import com.hrznstudio.galacticraft.api.addon.*;
-
-public class MyNewAddonGCHook implements AddonInitializer {
+public class MyCelestialBodies {
+    public static final CelestialBodyType MOON = new CelestialBodyType.Builder(
+        new Identifier("mymod", "moon")) // the body's id
+            .translationKey("ui.mymod.bodies.moon") // the translation key for its name
+            .dimension(GalacticraftDimensions.MOON) // the dimension its linked to
+            .parent(CelestialBodyType.EARTH) // the parent body
+            .weight(1) // what rocket tier is required to access it
+            .gravity(0.16f) // the gravity of the planet. NOTE: the overworld is 1.0f.
+            .display(
+                new CelestialBodyDisplayInfo.Builder()
+                    .texture(new Identifier("mymod", "planet_icons")) // icon identifier
+                    .distance(5d) // distance from parent body
+                    .time(46656000d) // 27 mc days in ticks
+                    .build())
+            .build();
+}
+```
+Now we have our body type let's go ahead and register it in your mod's main initializer.
+```java
+public class MyMod implements ModInitializer {
     @Override
-    public onAddonInitialize() {
-        // addon init code
-    }
-    
-    @Override
-    public  onCompatInitialize() {
-        // init things that do not need gc to be running here.
-    }
-
-
-    @Override
-    public String getModId() {
-        return "mynewaddon";
+    public void onInitialize() {
+        CelestialBodyRegistryCallback.EVENT.register(registry -> Registry.register(registry, MyCelestialBodies.MOON.getId(), MyCelestialBodies.MOON));
     }
 }
 ```
-And add this class to your `fabric.mod.json` in the entrypoints section.
-
-```json
-{
-    "entrypoints": {
-        "gc_addon": [ "mynewaddon.hooks.MyNewAddonGCHook" ]
-    }
-}
-```
-This will tell the addon api to load your addon from here.
+You're done, enjoy your new celestial body.
