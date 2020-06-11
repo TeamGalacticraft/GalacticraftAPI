@@ -4,16 +4,19 @@
   ],
   "ignoreDeps": [
     "com.mojang:minecraft",
-    "net.fabricmc*"
+    "net.fabricmc:yarn",
+    "net.fabricmc:sponge-mixin",
+    "net.fabricmc:tiny-mappings-parser",
+    "net.fabricmc:tiny-remapper",
+    "net.fabric.fabric-api:fabric-api",
+    "org.ow2.asm:asm",
+    "org.ow2.asm:asm-analysis",
+    "org.ow2.asm:asm-commons",
+    "org.ow2.asm:asm-tree",
+    "org.ow2.asm:asm-util"
   ],
 
   "packageRules": [
-    {
-      "packageNames": [
-        "net.fabric.fabric-api:fabric-api"
-      ],
-      "enabled": true
-    },
     {
       "packageNames": ["fabric-loom:fabric-loom.gradle.plugin"],
       "allowedVersions": "0.4-SNAPSHOT"
