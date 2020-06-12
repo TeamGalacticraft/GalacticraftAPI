@@ -15,7 +15,7 @@ public class Permission {
             new Identifier("galacticraft-api", "modify_flag")
     ).build();
     public static final Permission MODIFY_NAME = new Permission.Builder(
-            new Identifier("galacticraft-api", "modify_flag")
+            new Identifier("galacticraft-api", "modify_name")
     ).build();
     public static final Permission MODIFY_COLOR = new Permission.Builder(
             new Identifier("galacticraft-api", "modify_color")
