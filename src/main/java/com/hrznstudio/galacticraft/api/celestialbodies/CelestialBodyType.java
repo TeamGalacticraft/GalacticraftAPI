@@ -27,7 +27,8 @@ import com.hrznstudio.galacticraft.api.atmosphere.AtmosphericGas;
 import com.hrznstudio.galacticraft.api.atmosphere.AtmosphericInfo;
 import com.mojang.serialization.Dynamic;
 import net.minecraft.util.Identifier;
-import net.minecraft.world.dimension.DimensionType;
+import net.minecraft.util.registry.RegistryKey;
+import net.minecraft.world.World;
 
 import java.util.Optional;
 
@@ -42,7 +43,7 @@ public class CelestialBodyType {
 
     public static final CelestialBodyType EARTH = new Builder(new Identifier("galacticraft-api", "earth"))
             .translationKey("ui.galacticraft-api.bodies.earth")
-            .dimension(DimensionType.getOverworldDimensionType())
+            .world(World.OVERWORLD)
             .weight(0)
             .display(
                     new CelestialBodyDisplayInfo.Builder()
@@ -74,7 +75,7 @@ public class CelestialBodyType {
             ).build();
     private final Identifier id;
     private final String translationKey;
-    private final DimensionType dimension;
+    private final RegistryKey<World> worldKey;
     private final int accessWeight;
     private final CelestialBodyType parent;
     private final CelestialBodyDisplayInfo displayInfo;
@@ -85,17 +86,17 @@ public class CelestialBodyType {
      * Used to register a new Celestial Body. {@link AddonRegistry#CELESTIAL_BODIES}
      * @param id Unique identifier
      * @param translationKey Key used to translate the body's name
-     * @param dimension The dimension the body type is for
+     * @param worldKey The world the body type is for
      * @param accessWeight The rocket tier/access weight for the body. (-1 for inaccessible)
      * @param parent Parent body.
      * @param displayInfo Information used to display the body
      * @param gravity The gravity applied to entities on the body (1.0f is the same as the overworld)
      * @param atmosphere The atmosphere of the body
      */
-    public CelestialBodyType(Identifier id, String translationKey, DimensionType dimension, int accessWeight, CelestialBodyType parent, CelestialBodyDisplayInfo displayInfo, float gravity, AtmosphericInfo atmosphere) {
+    public CelestialBodyType(Identifier id, String translationKey, RegistryKey<World> worldKey, int accessWeight, CelestialBodyType parent, CelestialBodyDisplayInfo displayInfo, float gravity, AtmosphericInfo atmosphere) {
         this.id = id;
         this.translationKey = translationKey;
-        this.dimension = dimension;
+        this.worldKey = worldKey;
         this.accessWeight = accessWeight;
         this.parent = parent;
         this.displayInfo = displayInfo;
@@ -120,8 +121,8 @@ public class CelestialBodyType {
         return AddonRegistry.CELESTIAL_BODIES.get(id);
     }
 
-    public static Optional<CelestialBodyType> getByDimType(DimensionType dimensionType) {
-        return AddonRegistry.CELESTIAL_BODIES.stream().filter(celestialBodyType -> celestialBodyType.getDimension() == dimensionType).findFirst();
+    public static Optional<CelestialBodyType> getByDimType(RegistryKey<World> world) {
+        return AddonRegistry.CELESTIAL_BODIES.stream().filter(celestialBodyType -> celestialBodyType.getWorld() == world).findFirst();
     }
 
     public Identifier getId() {
@@ -136,8 +137,8 @@ public class CelestialBodyType {
         return translationKey;
     }
 
-    public DimensionType getDimension() {
-        return dimension;
+    public RegistryKey<World> getWorld() {
+        return worldKey;
     }
 
     public int getAccessWeight() {
@@ -172,7 +173,7 @@ public class CelestialBodyType {
     public static class Builder {
         private final Identifier id;
         private String translationKey;
-        private DimensionType dimension = null;
+        private RegistryKey<World> worldKey = null;
         private int accessWeight = -1;
         private CelestialBodyType parent = THE_SUN;
         private CelestialBodyDisplayInfo displayInfo = null;
@@ -189,8 +190,8 @@ public class CelestialBodyType {
             return this;
         }
 
-        public Builder dimension(DimensionType dimension) {
-            this.dimension = dimension;
+        public Builder world(RegistryKey<World> worldKey) {
+            this.worldKey = worldKey;
             return this;
         }
 
@@ -220,7 +221,7 @@ public class CelestialBodyType {
         }
 
         public CelestialBodyType build() {
-            return new CelestialBodyType(this.id, this.translationKey, this.dimension, this.accessWeight, this.parent, this.displayInfo, this.gravity, this.atmosphere);
+            return new CelestialBodyType(this.id, this.translationKey, this.worldKey, this.accessWeight, this.parent, this.displayInfo, this.gravity, this.atmosphere);
         }
     }
 }

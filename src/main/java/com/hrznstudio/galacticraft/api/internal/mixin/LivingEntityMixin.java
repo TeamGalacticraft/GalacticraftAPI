@@ -20,7 +20,7 @@ public abstract class LivingEntityMixin extends Entity {
 
     @ModifyVariable(method = "travel", at = @At(value = "FIELD"), ordinal = 0, name = "d")
     private double modifyGravity(double d) {
-        Optional<CelestialBodyType> type = CelestialBodyType.getByDimType(((LivingEntity)(Object)this).world.getDimension());
+        Optional<CelestialBodyType> type = CelestialBodyType.getByDimType(((LivingEntity)(Object)this).world.getRegistryKey());
         return type.map(celestialBodyType -> celestialBodyType.getGravity() * 0.08d).orElse(0.08d);
     }
 }
