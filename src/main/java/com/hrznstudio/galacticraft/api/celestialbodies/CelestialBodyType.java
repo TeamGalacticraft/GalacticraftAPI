@@ -35,6 +35,7 @@ import java.util.Optional;
 public class CelestialBodyType {
     public static final CelestialBodyType THE_SUN = new CelestialBodyType.Builder(new Identifier("galacticraft-api", "the_sun"))
             .translationKey("ui.galacticraft-api.bodies.the_sun")
+            .parent(null)
             .display(
                     new CelestialBodyDisplayInfo.Builder()
                             .texture(new Identifier("galacticraft-api", "body_icons"))
