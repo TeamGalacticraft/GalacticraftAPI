@@ -41,12 +41,11 @@ public abstract class LivingEntityMixin extends Entity {
     @Inject(method = "computeFallDamage", at = @At("HEAD"), cancellable = true)
     protected void onComputeFallDamage(float fallDistance, float damageMultiplier, CallbackInfoReturnable<Integer> cir) {
         RegistryKey<World> worldRegistryKey = this.world.getRegistryKey();
-        for (CelestialBodyType body : CelestialBodyType.getAll()) {
-            if (body.getWorld() == worldRegistryKey) {
-                StatusEffectInstance statusEffectInstanc = this.getStatusEffect(StatusEffects.JUMP_BOOST);
-                float ff = statusEffectInstanc == null ? 0.0F : (float) (statusEffectInstanc.getAmplifier() + 6);
-                cir.setReturnValue(MathHelper.ceil(((fallDistance / (1 / body.getGravity())) - 3.0F - ff) * damageMultiplier));
-            }
+        CelestialBodyType body = CelestialBodyType.getByDimType(worldRegistryKey).get();
+        if (body != null) {
+            StatusEffectInstance statusEffectInstanc = this.getStatusEffect(StatusEffects.JUMP_BOOST);
+            float ff = statusEffectInstanc == null ? 0.0F : (float) (statusEffectInstanc.getAmplifier() + 6);
+            cir.setReturnValue(MathHelper.ceil(((fallDistance / (1 / body.getGravity())) - 3.0F - ff) * damageMultiplier));
         }
     }
 }
