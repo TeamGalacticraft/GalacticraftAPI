@@ -33,9 +33,6 @@ public abstract class LivingEntityMixin extends Entity {
     }
 
     @Shadow
-    protected abstract int getNextAirUnderwater(int air);
-
-    @Shadow
     public abstract StatusEffectInstance getStatusEffect(StatusEffect effect);
 
     @Inject(method = "computeFallDamage", at = @At("HEAD"), cancellable = true)
