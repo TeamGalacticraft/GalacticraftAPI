@@ -17,6 +17,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Mixin({LivingEntity.class})
@@ -38,11 +39,14 @@ public abstract class LivingEntityMixin extends Entity {
     @Inject(method = "computeFallDamage", at = @At("HEAD"), cancellable = true)
     protected void onComputeFallDamage(float fallDistance, float damageMultiplier, CallbackInfoReturnable<Integer> cir) {
         RegistryKey<World> worldRegistryKey = this.world.getRegistryKey();
-        CelestialBodyType body = CelestialBodyType.getByDimType(worldRegistryKey).get();
-        if (body != null) {
-            StatusEffectInstance statusEffectInstanc = this.getStatusEffect(StatusEffects.JUMP_BOOST);
-            float ff = statusEffectInstanc == null ? 0.0F : (float) (statusEffectInstanc.getAmplifier() + 6);
+        StatusEffectInstance statusEffectInstanc = this.getStatusEffect(StatusEffects.JUMP_BOOST);
+        float ff = statusEffectInstanc == null ? 0.0F : (float) (statusEffectInstanc.getAmplifier() + 6);
+        try {
+            CelestialBodyType body = CelestialBodyType.getByDimType(worldRegistryKey).get();
             cir.setReturnValue(MathHelper.ceil(((fallDistance / (1 / body.getGravity())) - 3.0F - ff) * damageMultiplier));
+        } catch (NoSuchElementException e) {
+            // Nether, End, possibly other dimensions that aren't celestial bodies
+            cir.setReturnValue(MathHelper.ceil((fallDistance - 3.0F - ff) * damageMultiplier));
         }
     }
 }
