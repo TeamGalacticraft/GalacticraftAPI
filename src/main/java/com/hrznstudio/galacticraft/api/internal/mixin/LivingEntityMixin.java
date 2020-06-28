@@ -43,9 +43,6 @@ public abstract class LivingEntityMixin extends Entity {
         Optional<CelestialBodyType> body = CelestialBodyType.getByDimType(worldRegistryKey);
         if (body.isPresent()) {
             cir.setReturnValue(MathHelper.ceil(((fallDistance / (1 / body.get().getGravity())) - 3.0F - ff) * damageMultiplier));
-        } else {
-            // Nether, End, possibly other dimensions that aren't celestial bodies
-            cir.setReturnValue(MathHelper.ceil((fallDistance - 3.0F - ff) * damageMultiplier));
         }
     }
 }
