@@ -19,7 +19,7 @@ public abstract class ClientParticleMixin {
     @Shadow
     protected float gravityStrength;
 
-    @Inject(method = "<init>", at = @At("RETURN"))
+    @Inject(method = "<init>(Lnet/minecraft/client/world/ClientWorld;DDD)V", at = @At("RETURN"))
     protected void Particle(ClientWorld world, double x, double y, double z, CallbackInfo ci) {
         this.gravityStrength = 1.0f;
         RegistryKey<World> worldRegistryKey = world.getRegistryKey();
