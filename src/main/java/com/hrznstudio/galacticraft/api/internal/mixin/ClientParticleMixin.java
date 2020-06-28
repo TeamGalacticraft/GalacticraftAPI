@@ -26,9 +26,6 @@ public abstract class ClientParticleMixin {
         Optional<CelestialBodyType> body = CelestialBodyType.getByDimType(worldRegistryKey);
         if (body.isPresent()) {
             this.gravityStrength = body.get().getGravity();
-        } else {
-            // Nether, End, potentially other modded dimensions
-            this.gravityStrength = 1.0f;
         }
     }
 }
