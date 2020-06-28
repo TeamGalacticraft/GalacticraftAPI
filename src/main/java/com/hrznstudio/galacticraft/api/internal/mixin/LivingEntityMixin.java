@@ -41,10 +41,10 @@ public abstract class LivingEntityMixin extends Entity {
         RegistryKey<World> worldRegistryKey = this.world.getRegistryKey();
         StatusEffectInstance statusEffectInstanc = this.getStatusEffect(StatusEffects.JUMP_BOOST);
         float ff = statusEffectInstanc == null ? 0.0F : (float) (statusEffectInstanc.getAmplifier() + 6);
-        try {
-            CelestialBodyType body = CelestialBodyType.getByDimType(worldRegistryKey).get();
-            cir.setReturnValue(MathHelper.ceil(((fallDistance / (1 / body.getGravity())) - 3.0F - ff) * damageMultiplier));
-        } catch (NoSuchElementException e) {
+        Optional<CelestialBodyType> body = CelestialBodyType.getByDimType(worldRegistryKey);
+        if (body.isPresent()) {
+            cir.setReturnValue(MathHelper.ceil(((fallDistance / (1 / body.get().getGravity())) - 3.0F - ff) * damageMultiplier));
+        } else {
             // Nether, End, possibly other dimensions that aren't celestial bodies
             cir.setReturnValue(MathHelper.ceil((fallDistance - 3.0F - ff) * damageMultiplier));
         }
