@@ -28,8 +28,7 @@ public abstract class LivingEntityMixin extends Entity {
 
     @ModifyVariable(method = "travel", at = @At(value = "FIELD"), ordinal = 0, name = "d")
     private double modifyGravity(double d) {
-        Optional<CelestialBodyType> type = CelestialBodyType.getByDimType(((LivingEntity)(Object)this).world.getRegistryKey());
-        return type.map(celestialBodyType -> celestialBodyType.getGravity() * 0.08d).orElse(0.08d);
+        return CelestialBodyType.getByDimType(this.world.getRegistryKey()).map(celestialBodyType -> celestialBodyType.getGravity() * 0.08d).orElse(0.08d);
     }
 
     @Shadow
@@ -37,12 +36,8 @@ public abstract class LivingEntityMixin extends Entity {
 
     @Inject(method = "computeFallDamage", at = @At("HEAD"), cancellable = true)
     protected void onComputeFallDamage(float fallDistance, float damageMultiplier, CallbackInfoReturnable<Integer> cir) {
-        RegistryKey<World> worldRegistryKey = this.world.getRegistryKey();
-        StatusEffectInstance statusEffectInstanc = this.getStatusEffect(StatusEffects.JUMP_BOOST);
-        float ff = statusEffectInstanc == null ? 0.0F : (float) (statusEffectInstanc.getAmplifier() + 6);
-        Optional<CelestialBodyType> body = CelestialBodyType.getByDimType(worldRegistryKey);
-        if (body.isPresent()) {
-            cir.setReturnValue(MathHelper.ceil(((fallDistance / (1 / body.get().getGravity())) - 3.0F - ff) * damageMultiplier));
-        }
+        StatusEffectInstance effectInstance = this.getStatusEffect(StatusEffects.JUMP_BOOST);
+        float ff = effectInstance == null ? 0.0F : (float) (effectInstance.getAmplifier() + 6);
+        CelestialBodyType.getByDimType(this.world.getRegistryKey()).ifPresent(celestialBodyType -> cir.setReturnValue(MathHelper.ceil(((fallDistance / (1 / celestialBodyType.getGravity())) - 3.0F - ff) * damageMultiplier)));
     }
 }

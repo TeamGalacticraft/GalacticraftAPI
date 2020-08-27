@@ -22,25 +22,18 @@
 
 package com.hrznstudio.galacticraft.api.internal.mixin;
 
-import net.minecraft.util.Identifier;
+import com.mojang.serialization.Lifecycle;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryKey;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.gen.Accessor;
 import org.spongepowered.asm.mixin.gen.Invoker;
 
-import java.util.Map;
 import java.util.function.Supplier;
 
 @Mixin({Registry.class})
 public interface RegistryAccessor {
-    @Accessor("DEFAULT_ENTRIES")
-    static Map<Identifier, Supplier<?>> getDefaultEntries() {
-        return null; // ignored
-    }
-
     @Invoker
-    static <T> Registry<T> callCreate(RegistryKey<Registry<T>> registryKey, Supplier<T> defaultEntry) {
-        return null; // ignored
+    static <T> Registry<T> callCreate(RegistryKey<? extends Registry<T>> registryKey, Lifecycle lifecycle, Supplier<T> defaultEntry) {
+        throw new UnsupportedOperationException("Mixin was not transformed");
     }
 }

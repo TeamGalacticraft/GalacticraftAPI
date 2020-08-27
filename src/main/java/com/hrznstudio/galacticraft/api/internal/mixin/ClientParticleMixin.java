@@ -22,10 +22,6 @@ public abstract class ClientParticleMixin {
     @Inject(method = "<init>(Lnet/minecraft/client/world/ClientWorld;DDD)V", at = @At("RETURN"))
     protected void Particle(ClientWorld world, double x, double y, double z, CallbackInfo ci) {
         this.gravityStrength = 1.0f;
-        RegistryKey<World> worldRegistryKey = world.getRegistryKey();
-        Optional<CelestialBodyType> body = CelestialBodyType.getByDimType(worldRegistryKey);
-        if (body.isPresent()) {
-            this.gravityStrength = body.get().getGravity();
-        }
+        CelestialBodyType.getByDimType(world.getRegistryKey()).ifPresent(celestialBodyType -> this.gravityStrength = celestialBodyType.getGravity());
     }
 }

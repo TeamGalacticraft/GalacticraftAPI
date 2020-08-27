@@ -36,14 +36,17 @@ import net.minecraft.util.registry.*;
 public abstract class AddonRegistry<T> extends Registry<T> {
     public static final Registry<CelestialBodyType> CELESTIAL_BODIES = RegistryAccessor.callCreate(
             RegistryKey.ofRegistry(new Identifier("galacticraft-api", "celestial_bodies")),
+            Lifecycle.stable(),
             () -> CelestialBodyType.THE_SUN);
 
     public static final Registry<AtmosphericGas> ATMOSPHERIC_GASES = RegistryAccessor.callCreate(
             RegistryKey.ofRegistry(new Identifier("galacticraft-api", "atmospheric_gases")),
+            Lifecycle.stable(),
             () -> AtmosphericGas.OXYGEN);
 
     public static final Registry<Permission> PERMISSIONS = RegistryAccessor.callCreate(
             RegistryKey.ofRegistry(new Identifier("galacticraft-api", "permissions")),
+            Lifecycle.stable(),
             () -> Permission.INVITE_PLAYER);
 
     protected AddonRegistry(RegistryKey<Registry<T>> registryKey, Lifecycle lifecycle) {

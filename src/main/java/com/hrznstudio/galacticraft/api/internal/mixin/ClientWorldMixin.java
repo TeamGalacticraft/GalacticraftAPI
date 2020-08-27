@@ -7,6 +7,7 @@ import net.minecraft.client.render.WorldRenderer;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.util.profiler.Profiler;
 import net.minecraft.util.registry.RegistryKey;
+import net.minecraft.world.MutableWorldProperties;
 import net.minecraft.world.World;
 import net.minecraft.world.dimension.DimensionType;
 import org.spongepowered.asm.mixin.Implements;
@@ -24,8 +25,8 @@ public abstract class ClientWorldMixin extends World {
 
     private Teams spaceRaceTeams;
 
-    protected ClientWorldMixin(ClientPlayNetworkHandler clientPlayNetworkHandler, ClientWorld.Properties properties, RegistryKey<World> registryKey, RegistryKey<DimensionType> registryKey2, DimensionType dimensionType, int i, Supplier<Profiler> supplier, WorldRenderer worldRenderer, boolean bl, long l) {
-        super(properties, registryKey, registryKey2, dimensionType, supplier, true, bl, l);
+    protected ClientWorldMixin(MutableWorldProperties properties, RegistryKey<World> registryKey, DimensionType dimensionType, Supplier<Profiler> supplier, boolean bl, boolean debugWorld, long l) {
+        super(properties, registryKey, dimensionType, supplier, bl, debugWorld, l);
     }
 
     @Inject(method = "<init>", at = @At("TAIL"))

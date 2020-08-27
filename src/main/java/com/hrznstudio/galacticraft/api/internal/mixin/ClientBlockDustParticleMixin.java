@@ -21,10 +21,6 @@ public abstract class ClientBlockDustParticleMixin extends Particle {
     @Inject(method = "<init>", at = @At("RETURN"))
     protected void BlockDustParticle(ClientWorld world, double x, double y, double z, double velocityX, double velocityY, double velocityZ, BlockState blockState, CallbackInfo ci) {
         this.gravityStrength = 1.0f;
-        RegistryKey<World> worldRegistryKey = world.getRegistryKey();
-        Optional<CelestialBodyType> body = CelestialBodyType.getByDimType(worldRegistryKey);
-        if (body.isPresent()) {
-            this.gravityStrength = body.get().getGravity();
-        }
+        CelestialBodyType.getByDimType(world.getRegistryKey()).ifPresent(celestialBodyType -> this.gravityStrength = celestialBodyType.getGravity());
     }
 }
