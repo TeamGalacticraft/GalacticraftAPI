@@ -27,6 +27,7 @@ import com.hrznstudio.galacticraft.api.celestialbodies.CelestialBodyType;
 import com.hrznstudio.galacticraft.api.event.AtmosphericGasRegistryCallback;
 import com.hrznstudio.galacticraft.api.event.CelestialBodyRegistryCallback;
 import com.hrznstudio.galacticraft.api.event.SpaceRaceTeamPermissionRegistryCallback;
+import com.hrznstudio.galacticraft.api.internal.fabric.GalacticraftAPI;
 import com.hrznstudio.galacticraft.api.internal.mixin.RegistryAccessor;
 import com.hrznstudio.galacticraft.api.teams.data.Permission;
 import com.mojang.serialization.Lifecycle;
@@ -57,5 +58,9 @@ public abstract class AddonRegistry<T> extends Registry<T> {
         SpaceRaceTeamPermissionRegistryCallback.EVENT.invoker().register(AddonRegistry.PERMISSIONS);
         AtmosphericGasRegistryCallback.EVENT.invoker().register(AddonRegistry.ATMOSPHERIC_GASES);
         CelestialBodyRegistryCallback.EVENT.invoker().register(AddonRegistry.CELESTIAL_BODIES);
+
+        GalacticraftAPI.LOGGER.info("[GC-API] Loaded {} Celestial Bodies", AddonRegistry.CELESTIAL_BODIES.getIds().size());
+        GalacticraftAPI.LOGGER.info("[GC-API] Loaded {} Atmospheric Gases", AddonRegistry.ATMOSPHERIC_GASES.getIds().size());
+        GalacticraftAPI.LOGGER.info("[GC-API] Loaded {} Team Permissions", AddonRegistry.PERMISSIONS.getIds().size());
     }
 }

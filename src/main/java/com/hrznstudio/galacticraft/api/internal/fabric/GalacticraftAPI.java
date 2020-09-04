@@ -62,17 +62,13 @@ public class GalacticraftAPI implements ModInitializer {
             Registry.register(registry, AtmosphericGas.NITROUS_DIOXIDE.getId(), AtmosphericGas.NITROUS_DIOXIDE);
             Registry.register(registry, AtmosphericGas.IODINE.getId(), AtmosphericGas.IODINE);
         });
-        CelestialBodyRegistryCallback.EVENT.register(registry -> {
-            Registry.register(registry, CelestialBodyType.EARTH.getId(), CelestialBodyType.EARTH);
-        });
+        CelestialBodyRegistryCallback.EVENT.register(registry -> Registry.register(registry, CelestialBodyType.EARTH.getId(), CelestialBodyType.EARTH));
         SpaceRaceTeamPermissionRegistryCallback.EVENT.register(registry -> {
             Registry.register(registry, Permission.MODIFY_COLOR.getIdentifier(), Permission.MODIFY_COLOR);
             Registry.register(registry, Permission.MODIFY_FLAG.getIdentifier(), Permission.MODIFY_FLAG);
             Registry.register(registry, Permission.MODIFY_NAME.getIdentifier(), Permission.MODIFY_NAME);
             Registry.register(registry, Permission.MODIFY_ROLES.getIdentifier(), Permission.MODIFY_ROLES);
         });
-        // run registry callbacks
-        AddonRegistry.runRegistryCallbacks();
         LOGGER.info("[GC-API] Initialization Complete. (Took {}ms).", System.currentTimeMillis()-startInitTime);
     }
 }
