@@ -16,7 +16,6 @@ import org.spongepowered.asm.mixin.*;
 
 @Mixin({ServerPlayNetworkHandler.class})
 @Implements(@Interface(iface = ServerTeamsPacketListener.class, prefix = "stpl$", remap = Interface.Remap.NONE))
-@Environment(EnvType.SERVER)
 public abstract class ServerPlayNetworkHandlerMixin implements ServerPlayPacketListener {
 
     @Shadow @Final private MinecraftServer server;
