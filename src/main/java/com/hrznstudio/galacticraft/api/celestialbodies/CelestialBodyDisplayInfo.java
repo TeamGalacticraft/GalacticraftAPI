@@ -27,11 +27,13 @@ import net.minecraft.util.Identifier;
 public class CelestialBodyDisplayInfo {
 
     private final double orbitTime;
-    private final double orbitOffsetX;
-    private final double orbitOffsetY;
-    private final double orbitRadX;
-    private final double orbitRadY;
-    private final double scale;
+    private final double dayLength;
+    private final float orbitOffsetX;
+    private final float orbitOffsetY;
+    private final float orbitRadX;
+    private final float orbitRadY;
+    private final float orbitRot;
+    private final float scale;
 
     private final Identifier iconTexture;
     private final int iconX;
@@ -42,23 +44,27 @@ public class CelestialBodyDisplayInfo {
     /**
      * Display information for celestial bodies
      * @param orbitTime The time it takes for the body to complete a single orbit (in ticks)
+     * @param dayLength The time it takes for a full day/night cycle on this planet (in ticks)
      * @param orbitOffsetX The distance on the X axis from the parent planet
      * @param orbitOffsetY The distance on the Y axis from the parent planet
      * @param orbitRadX The planet's orbit radius on the X axis
      * @param orbitRadY The planet's orbit radius on the Y axis
-     * @param scale The planet's scale, relative to earth
+     * @param orbitRot The planet's orbit rotation on the Z axis
+     * @param scale The planet's size, relative to earth
      * @param iconTexture Identifier for body's icon texture
      * @param iconX X chord in icon texture
      * @param iconY Y chord in icon texture
      * @param iconW Width of icon in texture
      * @param iconH Height of icon in texture
      */
-    public CelestialBodyDisplayInfo(double orbitTime, double orbitOffsetX, double orbitOffsetY, double orbitRadX, double orbitRadY, double scale, Identifier iconTexture, int iconX, int iconY, int iconW, int iconH) {
+    public CelestialBodyDisplayInfo(double orbitTime, double dayLength, float orbitOffsetX, float orbitOffsetY, float orbitRadX, float orbitRadY, float orbitRot, float scale, Identifier iconTexture, int iconX, int iconY, int iconW, int iconH) {
         this.orbitTime = orbitTime;
+        this.dayLength = dayLength;
         this.orbitOffsetX = orbitOffsetX;
         this.orbitOffsetY = orbitOffsetY;
         this.orbitRadX = orbitRadX;
         this.orbitRadY = orbitRadY;
+        this.orbitRot = orbitRot;
         this.scale = scale;
 
         this.iconTexture = iconTexture;
@@ -72,23 +78,31 @@ public class CelestialBodyDisplayInfo {
         return orbitTime;
     }
 
-    public double getOrbitOffsetX() {
+    public double getDayLength() {
+        return dayLength;
+    }
+
+    public float getOrbitOffsetX() {
         return orbitOffsetX;
     }
 
-    public double getOrbitOffsetY() {
+    public float getOrbitOffsetY() {
         return orbitOffsetY;
     }
 
-    public double getOrbitRadX() {
+    public float getOrbitRadX() {
         return orbitRadX;
     }
 
-    public double getOrbitRadY() {
+    public float getOrbitRadY() {
         return orbitRadY;
     }
 
-    public double getScale() {
+    public float getOrbitRot() {
+        return orbitRot;
+    }
+
+    public float getScale() {
         return scale;
     }
 
@@ -114,12 +128,14 @@ public class CelestialBodyDisplayInfo {
 
 
     public static class Builder {
-        private double orbitTime = 0d;
-        private double orbitOffsetX = 0.0d;
-        private double orbitOffsetY = 0.0d;
-        private double orbitRadX = 25.0d;
-        private double orbitRadY = 25.0d;
-        private double scale = 1.0d;
+        private double orbitTime = 1536000.0d; // 64 day obit default
+        private double dayLength = 24000d;
+        private float orbitOffsetX = 0.0f;
+        private float orbitOffsetY = 0.0f;
+        private float orbitRadX = 25.0f;
+        private float orbitRadY = 25.0f;
+        private float orbitRot = 0.0f;
+        private float scale = 1.0f;
 
         private Identifier iconTexture = null;
         private int iconX = 0;
@@ -132,27 +148,37 @@ public class CelestialBodyDisplayInfo {
             return this;
         }
 
-        public Builder offsetX(int offX) {
+        public Builder dayLength(double dayLength) {
+            this.dayLength = dayLength;
+            return this;
+        }
+
+        public Builder offsetX(float offX) {
             this.orbitOffsetX = offX;
             return this;
         }
 
-        public Builder offsetY(int offY) {
+        public Builder offsetY(float offY) {
             this.orbitOffsetY = offY;
             return this;
         }
 
-        public Builder radX(int radX) {
+        public Builder radX(float radX) {
             this.orbitRadX = radX;
             return this;
         }
 
-        public Builder radY(int radY) {
+        public Builder radY(float radY) {
             this.orbitRadY = radY;
             return this;
         }
 
-        public Builder scale(double scale) {
+        public Builder rot(float rot) {
+            this.orbitRot = rot;
+            return this;
+        }
+
+        public Builder scale(float scale) {
             this.scale = scale;
             return this;
         }
@@ -184,7 +210,7 @@ public class CelestialBodyDisplayInfo {
 
         public CelestialBodyDisplayInfo build() {
             if (this.iconTexture == null) throw new NullPointerException("Tried to create display info without icon!");
-            return new CelestialBodyDisplayInfo(this.orbitTime, this.orbitOffsetX, this.orbitOffsetY, this.orbitRadX, this.orbitRadY, this.scale, this.iconTexture, this.iconX, this.iconY, this.iconW, this.iconH);
+            return new CelestialBodyDisplayInfo(this.orbitTime, this.dayLength, this.orbitOffsetX, this.orbitOffsetY, this.orbitRadX, this.orbitRadY, this.orbitRot, this.scale, this.iconTexture, this.iconX, this.iconY, this.iconW, this.iconH);
         }
     }
 }
