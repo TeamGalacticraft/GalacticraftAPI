@@ -14,10 +14,7 @@
     "ClientPlayNetworkHandlerMixin",
     "ClientWorldMixin"
   ],
-  "server": [
-    "MinecraftDedicatedServerMixin"
-  ],
-  "minVersion": "0.1.0",
+  "minVersion": "0.8.0",
   "injectors": {
     "defaultRequire": 1
   }

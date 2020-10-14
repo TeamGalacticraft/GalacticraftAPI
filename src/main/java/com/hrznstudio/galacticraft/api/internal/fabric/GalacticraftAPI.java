@@ -22,7 +22,6 @@
 
 package com.hrznstudio.galacticraft.api.internal.fabric;
 
-import com.hrznstudio.galacticraft.api.regisry.AddonRegistry;
 import com.hrznstudio.galacticraft.api.atmosphere.AtmosphericGas;
 import com.hrznstudio.galacticraft.api.celestialbodies.CelestialBodyType;
 import com.hrznstudio.galacticraft.api.event.AtmosphericGasRegistryCallback;
@@ -62,7 +61,10 @@ public class GalacticraftAPI implements ModInitializer {
             Registry.register(registry, AtmosphericGas.NITROUS_DIOXIDE.getId(), AtmosphericGas.NITROUS_DIOXIDE);
             Registry.register(registry, AtmosphericGas.IODINE.getId(), AtmosphericGas.IODINE);
         });
-        CelestialBodyRegistryCallback.EVENT.register(registry -> Registry.register(registry, CelestialBodyType.EARTH.getId(), CelestialBodyType.EARTH));
+        CelestialBodyRegistryCallback.EVENT.register(registry -> {
+            Registry.register(registry, CelestialBodyType.THE_SUN.getId(), CelestialBodyType.THE_SUN);
+            Registry.register(registry, CelestialBodyType.EARTH.getId(), CelestialBodyType.EARTH);
+        });
         SpaceRaceTeamPermissionRegistryCallback.EVENT.register(registry -> {
             Registry.register(registry, Permission.MODIFY_COLOR.getIdentifier(), Permission.MODIFY_COLOR);
             Registry.register(registry, Permission.MODIFY_FLAG.getIdentifier(), Permission.MODIFY_FLAG);
