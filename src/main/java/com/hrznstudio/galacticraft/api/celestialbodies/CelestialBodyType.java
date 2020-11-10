@@ -29,6 +29,7 @@ import com.mojang.serialization.Dynamic;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 
@@ -76,7 +77,8 @@ public class CelestialBodyType {
             ).build();
     private final Identifier id;
     private final String translationKey;
-    private final RegistryKey<World> worldKey;
+    private final @Nullable RegistryKey<World> worldKey;
+    private final SolarSystemType parentSystem;
     private final int accessWeight;
     private final CelestialBodyType parent;
     private final CelestialBodyDisplayInfo displayInfo;
@@ -88,16 +90,18 @@ public class CelestialBodyType {
      * @param id Unique identifier
      * @param translationKey Key used to translate the body's name
      * @param worldKey The world the body type is for
+     * @param parentSystem The celestial body's parent solar system
      * @param accessWeight The rocket tier/access weight for the body. (-1 for inaccessible)
      * @param parent Parent body.
      * @param displayInfo Information used to display the body
      * @param gravity The gravity applied to entities on the body (1.0f is the same as the overworld)
      * @param atmosphere The atmosphere of the body
      */
-    public CelestialBodyType(Identifier id, String translationKey, RegistryKey<World> worldKey, int accessWeight, CelestialBodyType parent, CelestialBodyDisplayInfo displayInfo, float gravity, AtmosphericInfo atmosphere) {
+    public CelestialBodyType(Identifier id, String translationKey, @Nullable RegistryKey<World> worldKey, SolarSystemType parentSystem, int accessWeight, CelestialBodyType parent, CelestialBodyDisplayInfo displayInfo, float gravity, AtmosphericInfo atmosphere) {
         this.id = id;
         this.translationKey = translationKey;
         this.worldKey = worldKey;
+        this.parentSystem = parentSystem;
         this.accessWeight = accessWeight;
         this.parent = parent;
         this.displayInfo = displayInfo;
@@ -138,8 +142,12 @@ public class CelestialBodyType {
         return translationKey;
     }
 
-    public RegistryKey<World> getWorld() {
+    public @Nullable RegistryKey<World> getWorld() {
         return worldKey;
+    }
+
+    public SolarSystemType getParentSystem() {
+        return parentSystem;
     }
 
     public int getAccessWeight() {
@@ -175,6 +183,7 @@ public class CelestialBodyType {
         private final Identifier id;
         private String translationKey;
         private RegistryKey<World> worldKey = null;
+        private SolarSystemType parentSystem = SolarSystemType.SOL;
         private int accessWeight = -1;
         private CelestialBodyType parent = THE_SUN;
         private CelestialBodyDisplayInfo displayInfo = null;
@@ -193,6 +202,11 @@ public class CelestialBodyType {
 
         public Builder world(RegistryKey<World> worldKey) {
             this.worldKey = worldKey;
+            return this;
+        }
+
+        public Builder system(SolarSystemType system) {
+            this.parentSystem = system;
             return this;
         }
 
@@ -222,7 +236,7 @@ public class CelestialBodyType {
         }
 
         public CelestialBodyType build() {
-            return new CelestialBodyType(this.id, this.translationKey, this.worldKey, this.accessWeight, this.parent, this.displayInfo, this.gravity, this.atmosphere);
+            return new CelestialBodyType(this.id, this.translationKey, this.worldKey, this.parentSystem, this.accessWeight, this.parent, this.displayInfo, this.gravity, this.atmosphere);
         }
     }
 }
