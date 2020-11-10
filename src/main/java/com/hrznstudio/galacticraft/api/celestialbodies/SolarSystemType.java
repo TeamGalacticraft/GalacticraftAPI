@@ -20,6 +20,22 @@ public class SolarSystemType {
         this.galaxyTranslationKey = galaxyTranslationKey;
     }
 
+    public float getX() {
+        return x;
+    }
+
+    public float getY() {
+        return y;
+    }
+
+    public String getTranslationKey() {
+        return translationKey;
+    }
+
+    public String getGalaxyTranslationKey() {
+        return galaxyTranslationKey;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
