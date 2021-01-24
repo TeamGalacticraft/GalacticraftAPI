@@ -1,0 +1,4 @@
+accessWidener v1 named
+accessible class net/minecraft/util/registry/DynamicRegistryManager$Info
+accessible method net/minecraft/util/dynamic/RegistryOps decodeOrId (Ljava/lang/Object;Lnet/minecraft/util/registry/RegistryKey;Lcom/mojang/serialization/Codec;Z)Lcom/mojang/serialization/DataResult;
+accessible method net/minecraft/util/dynamic/RegistryReadingOps encodeOrId (Ljava/lang/Object;Ljava/lang/Object;Lnet/minecraft/util/registry/RegistryKey;Lcom/mojang/serialization/Codec;)Lcom/mojang/serialization/DataResult;

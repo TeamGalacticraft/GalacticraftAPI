@@ -1,11 +1,10 @@
 {
   "schemaVersion": 1,
-  "id": "galacticraft-api",
+  "id": "gc-testmod",
   "version": "$version",
 
-  "name": "Galacticraft Addon API",
-  "icon": "assets/galacticraft-api/icon.png",
-  "description": "Addon API for the FabricMC port of Galacticraft.",
+  "name": "Galacticraft API Test Mod",
+  "description": "Test mod for the Addon API for the FabricMC port of Galacticraft.",
   "license": "MIT",
   "contact": {
     "homepage": "https://hrznstudio.com",
@@ -31,27 +30,16 @@
   "environment": "*",
   "entrypoints": {
     "main": [
-      "com.hrznstudio.galacticraft.api.internal.fabric.GalacticraftAPI"
+      "com.hrznstudio.galacticraft.testmod.GCApiTestMod"
     ]
   },
-  "mixins": [
-    "gc-api.mixins.json"
-  ],
-  "accessWidener": "galacticraft-api.accesswidener",
   "depends": {
     "fabricloader": ">=0.9.0",
     "minecraft": ">=1.16.2",
-    "fabric-api-base": "*",
-    "fabric-command-api-v1": "*",
-    "fabric-registry-sync-v0": "*",
-    "fabric-resource-loader-v0": "*"
+    "galacticraft-api": "*"
   },
   "suggests": {
     "modmenu": "*",
     "galacticraft-rewoven": "*"
-  },
-  "custom": {
-    "modmenu:api": true,
-    "modmenu:parent": "galacticraft-rewoven"
   }
 }

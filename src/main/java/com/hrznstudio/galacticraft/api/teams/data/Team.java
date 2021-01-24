@@ -82,7 +82,7 @@ public class Team {
             role.putString("name", r.getValue().name);
             ListTag perms = new ListTag();
             for(Permission p : r.getValue().permissions) {
-                perms.add(StringTag.of(p.getIdentifier().toString()));
+                perms.add(StringTag.of(p.getId().toString()));
             }
             role.put("permissions", perms);
             roles.put(r.getKey().toString(), role);

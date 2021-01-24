@@ -1,7 +1,6 @@
 package com.hrznstudio.galacticraft.api.celestialbodies;
 
 import com.google.common.annotations.Beta;
-import net.minecraft.item.ItemStack;
 import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;

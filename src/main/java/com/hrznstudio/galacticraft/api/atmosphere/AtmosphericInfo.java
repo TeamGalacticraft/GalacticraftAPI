@@ -22,10 +22,36 @@
 
 package com.hrznstudio.galacticraft.api.atmosphere;
 
+import com.google.common.collect.ImmutableMap;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.util.Pair;
+
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
+import java.util.function.Supplier;
 
 public class AtmosphericInfo {
+    public static final Codec<AtmosphericInfo> CODEC = RecordCodecBuilder.create(atmosphericInfoInstance -> atmosphericInfoInstance.group(
+            RecordCodecBuilder.create((RecordCodecBuilder.Instance<Pair<Supplier<AtmosphericGas>, Double>> instance) -> instance.group(AtmosphericGas.REGISTRY_CODEC.fieldOf("gas").forGetter(Pair::getLeft),
+                    Codec.DOUBLE.fieldOf("ppm").forGetter(Pair::getRight)).apply(instance, Pair::new)).listOf().fieldOf("composition").forGetter(i -> {
+                List<Pair<Supplier<AtmosphericGas>, Double>> list = new LinkedList<>();
+                for (Map.Entry<AtmosphericGas, Double> entry : i.composition.entrySet()) {
+                    list.add(new Pair<>(entry::getKey, entry.getValue()));
+                }
+                return list;
+            }),
+            Codec.DOUBLE.fieldOf("temperature").forGetter(i -> i.temperature),
+            Codec.FLOAT.fieldOf("pressure").forGetter(i -> i.pressure)
+    ).apply(atmosphericInfoInstance, (pairs, temp, pressure) -> {
+        ImmutableMap.Builder<AtmosphericGas, Double> map = ImmutableMap.builder();
+        for (Pair<Supplier<AtmosphericGas>, Double> pair : pairs) {
+            map.put(pair.getLeft().get(), pair.getRight());
+        }
+        return new AtmosphericInfo(map.build(), temp, pressure);
+    }));
 
     private final Map<AtmosphericGas, Double> composition;
     private final double temperature;
@@ -57,7 +83,7 @@ public class AtmosphericInfo {
     }
 
     public static class Builder {
-        private Map<AtmosphericGas, Double> composition = new HashMap<>();
+        private final Map<AtmosphericGas, Double> composition = new HashMap<>();
         private double temperature = 15.0f;
         private float pressure = 1.0f;
 

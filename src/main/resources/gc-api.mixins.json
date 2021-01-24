@@ -3,9 +3,10 @@
   "package": "com.hrznstudio.galacticraft.api.internal.mixin",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
+    "BuiltinRegistriesMixin",
+    "DynamicRegistryManagerMixin",
     "LivingEntityMixin",
     "MinecraftServerMixin",
-    "RegistryAccessor",
     "ServerPlayNetworkHandlerMixin"
   ],
   "client": [

@@ -22,9 +22,24 @@
 
 package com.hrznstudio.galacticraft.api.celestialbodies;
 
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.Identifier;
 
 public class CelestialBodyDisplayInfo {
+    public static final Codec<CelestialBodyDisplayInfo> CODEC = RecordCodecBuilder.create(celestialBodyDisplayInfoInstance ->
+        celestialBodyDisplayInfoInstance.group(
+                Codec.DOUBLE.fieldOf("orbit_time").forGetter(i -> i.orbitTime),
+                Codec.DOUBLE.fieldOf("day_length").forGetter(i -> i.dayLength),
+                Codec.FLOAT.fieldOf("distance").forGetter(i -> i.relativeDistance),
+                Codec.FLOAT.fieldOf("scale").forGetter(i -> i.scale),
+                Identifier.CODEC.fieldOf("icon_texture").forGetter(i -> i.iconTexture),
+                Codec.INT.fieldOf("icon_x").forGetter(i -> i.iconX),
+                Codec.INT.fieldOf("icon_y").forGetter(i -> i.iconY),
+                Codec.INT.fieldOf("icon_w").forGetter(i -> i.iconW),
+                Codec.INT.fieldOf("icon_h").forGetter(i -> i.iconH)
+        ).apply(celestialBodyDisplayInfoInstance, CelestialBodyDisplayInfo::new)
+    );
 
     private final double orbitTime;
     private final double dayLength;

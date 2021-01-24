@@ -22,19 +22,37 @@
 
 package com.hrznstudio.galacticraft.api.celestialbodies;
 
+import com.hrznstudio.galacticraft.api.internal.dynamic.RegistryElementCodec;
 import com.hrznstudio.galacticraft.api.regisry.AddonRegistry;
 import com.hrznstudio.galacticraft.api.atmosphere.AtmosphericGas;
 import com.hrznstudio.galacticraft.api.atmosphere.AtmosphericInfo;
+import com.mojang.serialization.Codec;
 import com.mojang.serialization.Dynamic;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
+import java.util.function.Supplier;
 
 public class CelestialBodyType {
-    public static final CelestialBodyType THE_SUN = new CelestialBodyType.Builder(new Identifier("galacticraft-api", "the_sun"))
+    public static final Codec<Supplier<CelestialBodyType>> REGISTRY_CODEC = RegistryElementCodec.of(AddonRegistry.CELESTIAL_BODY_TYPE_KEY, () -> CelestialBodyType.CODEC);
+    public static final Codec<CelestialBodyType> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+            Identifier.CODEC.fieldOf("id").forGetter(i -> i.id),
+            Codec.STRING.fieldOf("translation_key").forGetter(i -> i.translationKey),
+            World.CODEC.optionalFieldOf("dimension").forGetter(i -> Optional.ofNullable(i.worldKey)),
+            SolarSystemType.REGISTRY_CODEC.fieldOf("solar_system").forGetter(i -> () -> i.parentSystem),
+            Codec.INT.fieldOf("access_weight").forGetter(i -> i.accessWeight),
+            CelestialBodyType.REGISTRY_CODEC.optionalFieldOf("parent").forGetter(i -> i.parent == null ? Optional.empty() : Optional.of(() -> i.parent)),
+            CelestialBodyDisplayInfo.CODEC.fieldOf("display").forGetter(i -> i.displayInfo),
+            Codec.FLOAT.fieldOf("gravity").forGetter(i -> i.gravity),
+            AtmosphericInfo.CODEC.fieldOf("atmosphere").forGetter(i -> i.atmosphere)
+    ).apply(instance, (identifier, s, worldRegistryKey, solarSystem, integer, celestialBodyTypeSupplier, celestialBodyDisplayInfo, aFloat, atmosphericInfo) ->
+            new CelestialBodyType(identifier, s, worldRegistryKey.orElse(null), solarSystem.get(), integer, celestialBodyTypeSupplier.orElse(() -> null).get(), celestialBodyDisplayInfo, aFloat, atmosphericInfo)));
+
+    public static final CelestialBodyType THE_SUN = new Builder(new Identifier("galacticraft-api", "the_sun"))
             .translationKey("ui.galacticraft-api.bodies.the_sun")
             .parent(null)
             .display(
@@ -236,6 +254,7 @@ public class CelestialBodyType {
         }
 
         public CelestialBodyType build() {
+            assert this.id != null;
             return new CelestialBodyType(this.id, this.translationKey, this.worldKey, this.parentSystem, this.accessWeight, this.parent, this.displayInfo, this.gravity, this.atmosphere);
         }
     }

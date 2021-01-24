@@ -23,10 +23,24 @@
 package com.hrznstudio.galacticraft.api.atmosphere;
 
 import com.hrznstudio.galacticraft.api.regisry.AddonRegistry;
+import com.mojang.serialization.Codec;
 import com.mojang.serialization.Dynamic;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.dynamic.RegistryElementCodec;
+
+import java.util.function.Supplier;
 
 public class AtmosphericGas {
+    public static final Codec<AtmosphericGas> CODEC = RecordCodecBuilder.create(atmosphericGasInstance ->
+        atmosphericGasInstance.group(
+                Identifier.CODEC.fieldOf("id").forGetter(i -> i.id),
+                Codec.STRING.fieldOf("translation_key").forGetter(i -> i.translationKey),
+                Codec.STRING.fieldOf("symbol").forGetter(i -> i.symbol)
+        ).apply(atmosphericGasInstance, AtmosphericGas::new)
+    );
+
+    public static final Codec<Supplier<AtmosphericGas>> REGISTRY_CODEC = RegistryElementCodec.of(AddonRegistry.ATMOSPHERIC_GAS_KEY, CODEC);
 
     public static final AtmosphericGas HYDROGEN = new AtmosphericGas(
             new Identifier("galacticraft-api", "hydrogen"),

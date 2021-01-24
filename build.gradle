@@ -1,10 +1,13 @@
+import net.fabricmc.loom.task.RunClientTask
+import net.fabricmc.loom.task.RunServerTask
+
 plugins {
     id 'fabric-loom' version '0.5-SNAPSHOT'
     id 'maven-publish'
 }
 
 group 'com.hrznstudio'
-version "0.2.14-alpha+${project.mc}"
+version "0.3.0-prealpha+${project.mc}"
 archivesBaseName = 'GalacticraftAPI'
 
 sourceCompatibility = targetCompatibility = JavaVersion.VERSION_1_8
@@ -13,8 +16,16 @@ repositories {
     mavenCentral()
 }
 
-minecraft {
+loom {
     refmapName = "galacticraft-api.refmap.json"
+    accessWidener "src/main/resources/galacticraft-api.accesswidener"
+}
+
+sourceSets {
+    testmod {
+        compileClasspath += main.compileClasspath
+        runtimeClasspath += main.runtimeClasspath
+    }
 }
 
 dependencies {
@@ -23,7 +34,14 @@ dependencies {
     modImplementation "net.fabricmc:fabric-loader:${project.loader}"
 	
 	modImplementation fabricApi.module("fabric-api-base", project.fabric)
-	
+    modImplementation fabricApi.module("fabric-command-api-v1", project.fabric)
+    modImplementation fabricApi.module("fabric-registry-sync-v0", project.fabric)
+    modImplementation fabricApi.module("fabric-resource-loader-v0", project.fabric)
+    testmodCompile sourceSets.main.output
+}
+
+configurations {
+    testmodCompile
 }
 
 processResources {
@@ -51,6 +69,15 @@ task sourcesJar(type: Jar, dependsOn: classes) {
 task javadocJar(type: Jar) {
     from javadoc
     archiveClassifier = 'javadoc'
+}
+
+
+task runTestmodClient(type: RunClientTask) {
+    classpath sourceSets.testmod.runtimeClasspath
+}
+
+task runTestmodServer(type: RunServerTask) {
+    classpath sourceSets.testmod.runtimeClasspath
 }
 
 jar {
@@ -82,12 +109,13 @@ publishing {
         }
     }
     repositories {
-        maven {
-            url "s3://cdn.hrzn.studio/maven"
-            authentication {
-                awsIm(AwsImAuthentication)
-            }
-        }
+        mavenLocal()
+//        maven {
+//            url "s3://cdn.hrzn.studio/maven"
+//            authentication {
+//                awsIm(AwsImAuthentication)
+//            }
+//        }
     }
 }
 

@@ -1,13 +1,25 @@
 package com.hrznstudio.galacticraft.api.teams.data;
 
+import com.hrznstudio.galacticraft.api.atmosphere.AtmosphericGas;
 import com.hrznstudio.galacticraft.api.regisry.AddonRegistry;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
+import java.util.function.Function;
 
 public class Permission {
+    public static final Codec<Permission> CODEC = RecordCodecBuilder.create(permissionInstance ->
+            permissionInstance.group(
+                    Identifier.CODEC.fieldOf("id").forGetter(permission -> permission.identifier),
+                    Codec.STRING.optionalFieldOf("translation_key").forGetter(permission -> Optional.of(permission.translationKey))
+            ).apply(permissionInstance, (identifier1, s) -> s.map(value -> new Permission(identifier1, value)).orElseGet(() -> new Builder(identifier1).build()))
+    );
+
     public static final Permission INVITE_PLAYER = new Permission.Builder(
             new Identifier("galacticraft-api", "invite_player")
     ).build();
@@ -40,7 +52,7 @@ public class Permission {
         this.translationKey = translationKey;
     }
 
-    public Identifier getIdentifier() {
+    public Identifier getId() {
         return identifier;
     }
 
