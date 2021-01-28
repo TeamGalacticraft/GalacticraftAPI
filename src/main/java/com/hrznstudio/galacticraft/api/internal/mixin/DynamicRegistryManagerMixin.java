@@ -48,8 +48,8 @@ public abstract class DynamicRegistryManagerMixin {
 		builder.put(AddonRegistry.PERMISSIONS_KEY, new DynamicRegistryManager.Info<>(AddonRegistry.PERMISSIONS_KEY, Permission.CODEC, Permission.CODEC));
 	}
 
-	@Redirect(method = "method_31141", at = @At(value = "INVOKE", target = "Ljava/lang/Object;equals(Ljava/lang/Object;)Z", ordinal = 0))
-	private static boolean gc(Object o, Object obj) {
+	@Redirect(method = "method_31141", at = @At(value = "INVOKE", target = "Ljava/lang/Object;equals(Ljava/lang/Object;)Z", ordinal = 0, remap = false))
+	private static boolean alternateGC(Object o, Object obj) {
 		return o.equals(obj) || o.equals(AddonRegistry.CELESTIAL_BODY_TYPE_KEY) || o.equals(AddonRegistry.ATMOSPHERIC_GAS_KEY) || o.equals(AddonRegistry.SOLAR_SYSTEM_TYPE_KEY) || o.equals(AddonRegistry.PERMISSIONS_KEY);
 	}
 }

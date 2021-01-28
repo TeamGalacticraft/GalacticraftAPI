@@ -55,22 +55,22 @@ public class AtmosphericGas {
     public static final AtmosphericGas OXYGEN = new AtmosphericGas(
             new Identifier("galacticraft-api", "oxygen"),
             "ui.galacticraft-api.gases.oxygen",
-            "O2"
+            "O\u2082"
     );
     public static final AtmosphericGas CARBON_DIOXIDE = new AtmosphericGas(
             new Identifier("galacticraft-api", "carbon_dioxide"),
             "ui.galacticraft-api.gases.carbon_dioxide",
-            "CO2"
+            "CO\u2082"
     );
     public static final AtmosphericGas WATER_VAPOR = new AtmosphericGas(
             new Identifier("galacticraft-api", "water_vapor"),
             "ui.galacticraft-api.gases.water_vapor",
-            "H2O"
+            "H\u2082O"
     );
     public static final AtmosphericGas METHANE = new AtmosphericGas(
             new Identifier("galacticraft-api", "methane"),
             "ui.galacticraft-api.gases.methane",
-            "CH4"
+            "CH\u2084"
     );
     public static final AtmosphericGas HELIUM = new AtmosphericGas(
             new Identifier("galacticraft-api", "helium"),
@@ -110,17 +110,17 @@ public class AtmosphericGas {
     public static final AtmosphericGas OZONE = new AtmosphericGas(
             new Identifier("galacticraft-api", "ozone"),
             "ui.galacticraft-api.gases.ozone",
-            "O3"
+            "O\u2083"
     );
     public static final AtmosphericGas NITROUS_DIOXIDE = new AtmosphericGas(
             new Identifier("galacticraft-api", "nitrous_dioxide"),
             "ui.galacticraft-api.gases.nitrous_dioxide",
-            "NO2"
+            "NO\u2082"
     );
     public static final AtmosphericGas IODINE = new AtmosphericGas(
             new Identifier("galacticraft-api", "iodine"),
             "ui.galacticraft-api.gases.iodine",
-            "I2"
+            "I\u2082"
     );
 
     private final Identifier id;
