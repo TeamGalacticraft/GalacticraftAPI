@@ -152,10 +152,6 @@ public class CelestialBodyType {
         return id;
     }
 
-    public static Identifier getId(CelestialBodyType type) {
-        return AddonRegistry.CELESTIAL_BODIES.getId(type);
-    }
-
     public String getTranslationKey() {
         return translationKey;
     }
@@ -194,7 +190,7 @@ public class CelestialBodyType {
 
     @Override
     public String toString() {
-        return getId(this).toString();
+        return this.id.toString();
     }
 
     public static class Builder {

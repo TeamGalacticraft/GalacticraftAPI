@@ -28,28 +28,41 @@ import com.hrznstudio.galacticraft.api.celestialbodies.CelestialBodyType;
 import com.hrznstudio.galacticraft.api.celestialbodies.SolarSystemType;
 import com.hrznstudio.galacticraft.api.regisry.AddonRegistry;
 import com.hrznstudio.galacticraft.api.teams.data.Permission;
+import net.minecraft.util.dynamic.RegistryOps;
 import net.minecraft.util.registry.DynamicRegistryManager;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryKey;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.ModifyVariable;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 @Mixin(DynamicRegistryManager.class)
 public abstract class DynamicRegistryManagerMixin {
+	@Unique
+	private static boolean override = false;
+
+	@Inject(method = "method_31141", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/registry/DynamicRegistryManager$Impl;get(Lnet/minecraft/util/registry/RegistryKey;)Lnet/minecraft/util/registry/MutableRegistry;", shift = At.Shift.BEFORE, ordinal = 0))
+	private static <E> void testGC(DynamicRegistryManager.Impl impl, RegistryOps.EntryLoader.Impl impl2, DynamicRegistryManager.Info<E> info, CallbackInfo ci) {
+		RegistryKey<? extends Registry<E>> registryKey = info.getRegistry();
+		override = (registryKey.equals(AddonRegistry.CELESTIAL_BODY_TYPE_KEY) || registryKey.equals(AddonRegistry.ATMOSPHERIC_GAS_KEY) || registryKey.equals(AddonRegistry.SOLAR_SYSTEM_TYPE_KEY) || registryKey.equals(AddonRegistry.PERMISSIONS_KEY));
+	}
+
+	@ModifyVariable(method = "method_31141", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/registry/DynamicRegistryManager$Impl;get(Lnet/minecraft/util/registry/RegistryKey;)Lnet/minecraft/util/registry/MutableRegistry;", ordinal = 0), name = "b", ordinal = 0, index = 4)
+	private static boolean modifyGC(boolean b) {
+		return b && !override;
+	}
+
+	@SuppressWarnings("UnresolvedMixinReference") //synthetic >:(
 	@Inject(method = "method_30531", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/registry/DynamicRegistryManager;register(Lcom/google/common/collect/ImmutableMap$Builder;Lnet/minecraft/util/registry/RegistryKey;Lcom/mojang/serialization/Codec;)V", ordinal = 0), locals = LocalCapture.CAPTURE_FAILHARD)
 	private static void registerCustom(CallbackInfoReturnable<ImmutableMap<RegistryKey<? extends Registry<?>>, DynamicRegistryManager.Info<?>>> ci, ImmutableMap.Builder<RegistryKey<? extends Registry<?>>, DynamicRegistryManager.Info<?>> builder) {
 		builder.put(AddonRegistry.ATMOSPHERIC_GAS_KEY, new DynamicRegistryManager.Info<>(AddonRegistry.ATMOSPHERIC_GAS_KEY, AtmosphericGas.CODEC, AtmosphericGas.CODEC));
 		builder.put(AddonRegistry.SOLAR_SYSTEM_TYPE_KEY, new DynamicRegistryManager.Info<>(AddonRegistry.SOLAR_SYSTEM_TYPE_KEY, SolarSystemType.CODEC, SolarSystemType.CODEC));
 		builder.put(AddonRegistry.CELESTIAL_BODY_TYPE_KEY, new DynamicRegistryManager.Info<>(AddonRegistry.CELESTIAL_BODY_TYPE_KEY, CelestialBodyType.CODEC, CelestialBodyType.CODEC));
 		builder.put(AddonRegistry.PERMISSIONS_KEY, new DynamicRegistryManager.Info<>(AddonRegistry.PERMISSIONS_KEY, Permission.CODEC, Permission.CODEC));
-	}
-
-	@Redirect(method = "method_31141", at = @At(value = "INVOKE", target = "Ljava/lang/Object;equals(Ljava/lang/Object;)Z", ordinal = 0, remap = false))
-	private static boolean alternateGC(Object o, Object obj) {
-		return o.equals(obj) || o.equals(AddonRegistry.CELESTIAL_BODY_TYPE_KEY) || o.equals(AddonRegistry.ATMOSPHERIC_GAS_KEY) || o.equals(AddonRegistry.SOLAR_SYSTEM_TYPE_KEY) || o.equals(AddonRegistry.PERMISSIONS_KEY);
 	}
 }
