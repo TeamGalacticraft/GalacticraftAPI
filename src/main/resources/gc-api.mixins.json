@@ -5,6 +5,7 @@
   "mixins": [
     "BuiltinRegistriesMixin",
     "DynamicRegistryManagerMixin",
+    "ItemEntityMixin",
     "LivingEntityMixin",
     "MinecraftServerMixin",
     "ServerPlayNetworkHandlerMixin"
