@@ -31,6 +31,7 @@ import com.hrznstudio.galacticraft.api.reaserch.criteria.ConfiguredResearchCrite
 import com.hrznstudio.galacticraft.api.reaserch.criteria.ConfiguredResearchCriterias;
 import com.hrznstudio.galacticraft.api.reaserch.reward.ConfiguredResearchReward;
 import com.hrznstudio.galacticraft.api.regisry.AddonRegistry;
+import com.hrznstudio.galacticraft.api.rocket.part.RocketPart;
 import com.hrznstudio.galacticraft.api.teams.data.Permission;
 import net.minecraft.util.dynamic.RegistryOps;
 import net.minecraft.util.registry.DynamicRegistryManager;
@@ -71,5 +72,6 @@ public abstract class DynamicRegistryManagerMixin {
 		builder.put(AddonRegistry.CONFIGURED_RESEARCH_REWARD_KEY, new DynamicRegistryManager.Info<>(AddonRegistry.CONFIGURED_RESEARCH_REWARD_KEY, ConfiguredResearchReward.CODEC, ConfiguredResearchReward.CODEC));
 		builder.put(AddonRegistry.CONFIGURED_RESEARCH_CRITERIA_KEY, new DynamicRegistryManager.Info<>(AddonRegistry.CONFIGURED_RESEARCH_CRITERIA_KEY, ConfiguredResearchCriteria.CODEC, ConfiguredResearchCriteria.CODEC));
 		builder.put(AddonRegistry.RESEARCH_NODE_KEY, new DynamicRegistryManager.Info<>(AddonRegistry.RESEARCH_NODE_KEY, ResearchNode.CODEC, ResearchNode.CODEC));
+		builder.put(AddonRegistry.ROCKET_PART_KEY, new DynamicRegistryManager.Info<>(AddonRegistry.ROCKET_PART_KEY, RocketPart.CODEC, RocketPart.CODEC));
 	}
 }

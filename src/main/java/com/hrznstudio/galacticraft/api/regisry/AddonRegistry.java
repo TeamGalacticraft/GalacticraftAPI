@@ -29,6 +29,8 @@ import com.hrznstudio.galacticraft.api.reaserch.ResearchNodes;
 import com.hrznstudio.galacticraft.api.reaserch.ResearchNode;
 import com.hrznstudio.galacticraft.api.reaserch.criteria.*;
 import com.hrznstudio.galacticraft.api.reaserch.reward.*;
+import com.hrznstudio.galacticraft.api.rocket.part.RocketPart;
+import com.hrznstudio.galacticraft.api.rocket.part.RocketParts;
 import com.hrznstudio.galacticraft.api.teams.data.Permission;
 import com.mojang.serialization.Lifecycle;
 import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder;
@@ -81,6 +83,11 @@ public abstract class AddonRegistry<T> extends Registry<T> {
             new DefaultedRegistry<>(new Identifier("galacticraft-api", "always_true").toString(),
                     CONFIGURED_RESEARCH_CRITERIA_KEY, Lifecycle.experimental())).buildAndRegister();
 
+    public static final RegistryKey<Registry<RocketPart>> ROCKET_PART_KEY = RegistryKey.ofRegistry(new Identifier("galacticraft-api", "rocket_parts"));
+    public static final MutableRegistry<RocketPart> ROCKET_PARTS = FabricRegistryBuilder.from(
+            new DefaultedRegistry<>(new Identifier("galacticraft-api", "invalid").toString(),
+                    ROCKET_PART_KEY, Lifecycle.experimental())).buildAndRegister();
+
     protected AddonRegistry(RegistryKey<Registry<T>> registryKey, Lifecycle lifecycle) {
         super(registryKey, lifecycle);
     }
@@ -122,6 +129,8 @@ public abstract class AddonRegistry<T> extends Registry<T> {
         Registry.register(AddonRegistry.CONFIGURED_RESEARCH_CRITERIA, new Identifier("galacticraft-api", "always_true"), ConfiguredResearchCriterias.ALWAYS_TRUE);
         Registry.register(AddonRegistry.CONFIGURED_RESEARCH_CRITERIA, new Identifier("galacticraft-api", "always_false"), ConfiguredResearchCriterias.ALWAYS_FALSE);
 
-        Registry.register(AddonRegistry.RESEARCH_NODES, new Identifier("galacticraft-api", "empty"), ResearchNodes.EMPTY);
+        Registry.register(AddonRegistry.RESEARCH_NODES, ResearchNodes.EMPTY.getId(), ResearchNodes.EMPTY);
+
+        Registry.register(AddonRegistry.ROCKET_PARTS, RocketParts.INVALID.getId(), RocketParts.INVALID);
     }
 }

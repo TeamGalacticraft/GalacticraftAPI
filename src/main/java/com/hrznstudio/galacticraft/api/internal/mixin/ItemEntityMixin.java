@@ -31,11 +31,9 @@ import com.hrznstudio.galacticraft.api.celestialbodies.CelestialBodyType;
 import net.minecraft.entity.ItemEntity;
 
 @Mixin(ItemEntity.class)
-public class ItemEntityMixin
-{
+public abstract class ItemEntityMixin {
     @ModifyConstant(method = "tick", constant = @Constant(doubleValue = -0.04D))
-    private double changeItemGravity(double defaultValue)
-    {
+    private double changeItemGravity(double defaultValue) {
         return CelestialBodyType.getByDimType(((ItemEntity)(Object)this).world.getRegistryKey()).map(celestialBodyType -> celestialBodyType.getGravity() / 1.75D * defaultValue).orElse(defaultValue);
     }
 }

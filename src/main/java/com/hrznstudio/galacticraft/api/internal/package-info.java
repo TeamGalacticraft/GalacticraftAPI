@@ -24,4 +24,7 @@
  * Classes to make the Addon API run as an independent mod.
  * Includes ModInitializers and Mixins for the API.
  */
+@ApiStatus.Internal
 package com.hrznstudio.galacticraft.api.internal;
+
+import org.jetbrains.annotations.ApiStatus;
