@@ -26,6 +26,10 @@ import com.google.common.collect.ImmutableMap;
 import com.hrznstudio.galacticraft.api.atmosphere.AtmosphericGas;
 import com.hrznstudio.galacticraft.api.celestialbodies.CelestialBodyType;
 import com.hrznstudio.galacticraft.api.celestialbodies.SolarSystemType;
+import com.hrznstudio.galacticraft.api.reaserch.ResearchNode;
+import com.hrznstudio.galacticraft.api.reaserch.criteria.ConfiguredResearchCriteria;
+import com.hrznstudio.galacticraft.api.reaserch.criteria.ConfiguredResearchCriterias;
+import com.hrznstudio.galacticraft.api.reaserch.reward.ConfiguredResearchReward;
 import com.hrznstudio.galacticraft.api.regisry.AddonRegistry;
 import com.hrznstudio.galacticraft.api.teams.data.Permission;
 import net.minecraft.util.dynamic.RegistryOps;
@@ -64,5 +68,8 @@ public abstract class DynamicRegistryManagerMixin {
 		builder.put(AddonRegistry.SOLAR_SYSTEM_TYPE_KEY, new DynamicRegistryManager.Info<>(AddonRegistry.SOLAR_SYSTEM_TYPE_KEY, SolarSystemType.CODEC, SolarSystemType.CODEC));
 		builder.put(AddonRegistry.CELESTIAL_BODY_TYPE_KEY, new DynamicRegistryManager.Info<>(AddonRegistry.CELESTIAL_BODY_TYPE_KEY, CelestialBodyType.CODEC, CelestialBodyType.CODEC));
 		builder.put(AddonRegistry.PERMISSIONS_KEY, new DynamicRegistryManager.Info<>(AddonRegistry.PERMISSIONS_KEY, Permission.CODEC, Permission.CODEC));
+		builder.put(AddonRegistry.CONFIGURED_RESEARCH_REWARD_KEY, new DynamicRegistryManager.Info<>(AddonRegistry.CONFIGURED_RESEARCH_REWARD_KEY, ConfiguredResearchReward.CODEC, ConfiguredResearchReward.CODEC));
+		builder.put(AddonRegistry.CONFIGURED_RESEARCH_CRITERIA_KEY, new DynamicRegistryManager.Info<>(AddonRegistry.CONFIGURED_RESEARCH_CRITERIA_KEY, ConfiguredResearchCriteria.CODEC, ConfiguredResearchCriteria.CODEC));
+		builder.put(AddonRegistry.RESEARCH_NODE_KEY, new DynamicRegistryManager.Info<>(AddonRegistry.RESEARCH_NODE_KEY, ResearchNode.CODEC, ResearchNode.CODEC));
 	}
 }

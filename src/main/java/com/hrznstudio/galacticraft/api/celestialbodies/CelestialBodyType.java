@@ -22,7 +22,7 @@
 
 package com.hrznstudio.galacticraft.api.celestialbodies;
 
-import com.hrznstudio.galacticraft.api.internal.dynamic.RegistryElementCodec;
+import com.hrznstudio.galacticraft.api.internal.dynamic.LazyRegistryElementCodec;
 import com.hrznstudio.galacticraft.api.regisry.AddonRegistry;
 import com.hrznstudio.galacticraft.api.atmosphere.AtmosphericGas;
 import com.hrznstudio.galacticraft.api.atmosphere.AtmosphericInfo;
@@ -30,6 +30,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.Dynamic;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.Lazy;
 import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
@@ -38,7 +39,7 @@ import java.util.Optional;
 import java.util.function.Supplier;
 
 public class CelestialBodyType {
-    public static final Codec<Supplier<CelestialBodyType>> REGISTRY_CODEC = RegistryElementCodec.of(AddonRegistry.CELESTIAL_BODY_TYPE_KEY, () -> CelestialBodyType.CODEC);
+    public static final Codec<Supplier<CelestialBodyType>> REGISTRY_CODEC = LazyRegistryElementCodec.of(AddonRegistry.CELESTIAL_BODY_TYPE_KEY, new Lazy<>(() -> CelestialBodyType.CODEC));
     public static final Codec<CelestialBodyType> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             Identifier.CODEC.fieldOf("id").forGetter(i -> i.id),
             Codec.STRING.fieldOf("translation_key").forGetter(i -> i.translationKey),

@@ -39,7 +39,7 @@
   ],
   "accessWidener": "galacticraft-api.accesswidener",
   "depends": {
-    "fabricloader": ">=0.9.0",
+    "fabricloader": ">=0.11.1",
     "minecraft": ">=1.16.2",
     "fabric-api-base": "*",
     "fabric-command-api-v1": "*",
@@ -51,7 +51,9 @@
     "galacticraft-rewoven": "*"
   },
   "custom": {
-    "modmenu:api": true,
-    "modmenu:parent": "galacticraft-rewoven"
+    "modmenu": {
+      "badges": [ "library" ],
+      "parent": "galacticraft-rewoven"
+    }
   }
 }

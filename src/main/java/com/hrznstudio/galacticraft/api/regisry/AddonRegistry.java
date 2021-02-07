@@ -25,6 +25,10 @@ package com.hrznstudio.galacticraft.api.regisry;
 import com.hrznstudio.galacticraft.api.atmosphere.AtmosphericGas;
 import com.hrznstudio.galacticraft.api.celestialbodies.CelestialBodyType;
 import com.hrznstudio.galacticraft.api.celestialbodies.SolarSystemType;
+import com.hrznstudio.galacticraft.api.reaserch.ResearchNodes;
+import com.hrznstudio.galacticraft.api.reaserch.ResearchNode;
+import com.hrznstudio.galacticraft.api.reaserch.criteria.*;
+import com.hrznstudio.galacticraft.api.reaserch.reward.*;
 import com.hrznstudio.galacticraft.api.teams.data.Permission;
 import com.mojang.serialization.Lifecycle;
 import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder;
@@ -51,6 +55,31 @@ public abstract class AddonRegistry<T> extends Registry<T> {
     public static final MutableRegistry<Permission> PERMISSIONS = FabricRegistryBuilder.from(
             new DefaultedRegistry<>(Permission.INVITE_PLAYER.getId().toString(),
                     PERMISSIONS_KEY, Lifecycle.experimental())).buildAndRegister();
+
+    public static final RegistryKey<Registry<ResearchReward<?>>> RESEARCH_REWARD_KEY = RegistryKey.ofRegistry(new Identifier("galacticraft-api", "research_rewards"));
+    public static final MutableRegistry<ResearchReward<?>> RESEARCH_REWARDS = FabricRegistryBuilder.from(
+            new DefaultedRegistry<>(new Identifier("galacticraft-api", "empty").toString(),
+                    RESEARCH_REWARD_KEY, Lifecycle.experimental())).buildAndRegister();
+
+    public static final RegistryKey<Registry<ResearchCriteria<?>>> RESEARCH_CRITERIA_KEY = RegistryKey.ofRegistry(new Identifier("galacticraft-api", "research_criteria"));
+    public static final MutableRegistry<ResearchCriteria<?>> RESEARCH_CRITERIA = FabricRegistryBuilder.from(
+            new DefaultedRegistry<>(new Identifier("galacticraft-api", "constant").toString(),
+                    RESEARCH_CRITERIA_KEY, Lifecycle.experimental())).buildAndRegister();
+
+    public static final RegistryKey<Registry<ResearchNode>> RESEARCH_NODE_KEY = RegistryKey.ofRegistry(new Identifier("galacticraft-api", "research_nodes"));
+    public static final MutableRegistry<ResearchNode> RESEARCH_NODES = FabricRegistryBuilder.from(
+            new DefaultedRegistry<>(new Identifier("galacticraft-api", "empty").toString(),
+                    RESEARCH_NODE_KEY, Lifecycle.experimental())).buildAndRegister();
+
+    public static final RegistryKey<Registry<ConfiguredResearchReward<?, ?>>> CONFIGURED_RESEARCH_REWARD_KEY = RegistryKey.ofRegistry(new Identifier("galacticraft-api", "configured_research_reward"));
+    public static final MutableRegistry<ConfiguredResearchReward<?, ?>> CONFIGURED_RESEARCH_REWARDS = FabricRegistryBuilder.from(
+            new DefaultedRegistry<>(new Identifier("galacticraft-api", "empty").toString(),
+                    CONFIGURED_RESEARCH_REWARD_KEY, Lifecycle.experimental())).buildAndRegister();
+
+    public static final RegistryKey<Registry<ConfiguredResearchCriteria<?, ?>>> CONFIGURED_RESEARCH_CRITERIA_KEY = RegistryKey.ofRegistry(new Identifier("galacticraft-api", "configured_research_criteria"));
+    public static final MutableRegistry<ConfiguredResearchCriteria<?, ?>> CONFIGURED_RESEARCH_CRITERIA = FabricRegistryBuilder.from(
+            new DefaultedRegistry<>(new Identifier("galacticraft-api", "always_true").toString(),
+                    CONFIGURED_RESEARCH_CRITERIA_KEY, Lifecycle.experimental())).buildAndRegister();
 
     protected AddonRegistry(RegistryKey<Registry<T>> registryKey, Lifecycle lifecycle) {
         super(registryKey, lifecycle);
@@ -85,5 +114,14 @@ public abstract class AddonRegistry<T> extends Registry<T> {
         Registry.register(AddonRegistry.PERMISSIONS, Permission.MODIFY_NAME.getId(), Permission.MODIFY_NAME);
         Registry.register(AddonRegistry.PERMISSIONS, Permission.MODIFY_ROLES.getId(), Permission.MODIFY_ROLES);
 
+        Registry.register(AddonRegistry.RESEARCH_REWARDS, new Identifier("galacticraft-api", "empty"), ResearchRewards.EMPTY);
+        Registry.register(AddonRegistry.RESEARCH_CRITERIA, new Identifier("galacticraft-api", "constant"), ResearchCriterias.CONSTANT_RESEARCH_CRITERIA);
+
+        Registry.register(AddonRegistry.CONFIGURED_RESEARCH_REWARDS, new Identifier("galacticraft-api", "empty"), ConfiguredResearchRewards.EMPTY);
+
+        Registry.register(AddonRegistry.CONFIGURED_RESEARCH_CRITERIA, new Identifier("galacticraft-api", "always_true"), ConfiguredResearchCriterias.ALWAYS_TRUE);
+        Registry.register(AddonRegistry.CONFIGURED_RESEARCH_CRITERIA, new Identifier("galacticraft-api", "always_false"), ConfiguredResearchCriterias.ALWAYS_FALSE);
+
+        Registry.register(AddonRegistry.RESEARCH_NODES, new Identifier("galacticraft-api", "empty"), ResearchNodes.EMPTY);
     }
 }
