@@ -32,6 +32,9 @@
   "entrypoints": {
     "main": [
       "com.hrznstudio.galacticraft.api.internal.fabric.GalacticraftAPI"
+    ],
+    "cardinal-components-entity": [
+      "com.hrznstudio.galacticraft.api.component.GCApiComponents"
     ]
   },
   "mixins": [
@@ -44,7 +47,9 @@
     "fabric-api-base": "*",
     "fabric-command-api-v1": "*",
     "fabric-registry-sync-v0": "*",
-    "fabric-resource-loader-v0": "*"
+    "fabric-resource-loader-v0": "*",
+    "cardinal-components-base": ">=2.7",
+    "cardinal-components-entity": ">=2.7"
   },
   "suggests": {
     "modmenu": "*",
@@ -54,6 +59,9 @@
     "modmenu": {
       "badges": [ "library" ],
       "parent": "galacticraft-rewoven"
-    }
+    },
+    "cardinal-components": [
+      "galacticraft-api:research"
+    ]
   }
 }

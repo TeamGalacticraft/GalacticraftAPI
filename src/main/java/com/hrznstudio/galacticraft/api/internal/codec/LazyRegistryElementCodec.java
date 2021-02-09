@@ -1,4 +1,4 @@
-package com.hrznstudio.galacticraft.api.internal.dynamic;
+package com.hrznstudio.galacticraft.api.internal.codec;
 
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;

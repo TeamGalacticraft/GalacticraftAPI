@@ -10,7 +10,10 @@ import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.registry.MutableRegistry;
 import net.minecraft.util.registry.Registry;
+
+import java.util.Optional;
 
 public class GCApiCommands {
     public static void register() {
@@ -23,29 +26,24 @@ public class GCApiCommands {
                     });
             builder.then(CommandManager.literal("registry").then(CommandManager.argument("registry", RegistryArgumentType.create()).then(CommandManager.literal("dump_values").executes(context -> {
                 ServerCommandSource source = context.getSource();
-                Registry<?> registry = context.getArgument("registry", Registry.class);
+                Registry<?> registry = RegistryArgumentType.getRegistry(context, "registry");
                 source.sendFeedback(new TranslatableText("command.galacticraft-api.debug.registry.dump", registry.getKey().getValue().toString()), true);
                 for (Identifier id : registry.getIds()) {
                     source.sendFeedback(new LiteralText(id.toString()), false);
                 }
                 return 1;
             })).then(CommandManager.literal("get").then(CommandManager.argument("id", IdentifierArgumentType.identifier()).executes(context -> {
-                ServerCommandSource source = context.getSource();
-                Registry<?> registry = context.getArgument("registry", Registry.class);
-
-                source.sendFeedback(new TranslatableText("command.galacticraft-api.debug.registry.id", registry.getKey().getValue(), registry.get(IdentifierArgumentType.getIdentifier(context, "id"))), true);
+                Registry<?> registry = RegistryArgumentType.getRegistry(context, "registry");
+                context.getSource().sendFeedback(new TranslatableText("command.galacticraft-api.debug.registry.id", registry.getKey().getValue(), registry.get(IdentifierArgumentType.getIdentifier(context, "id"))), true);
                 return 1;
             }))).then(CommandManager.literal("get_raw").then(CommandManager.argument("id", IntegerArgumentType.integer()).executes(context -> {
-                ServerCommandSource source = context.getSource();
-                Registry<?> registry = context.getArgument("registry", Registry.class);
-
-                source.sendFeedback(new TranslatableText("command.galacticraft-api.debug.registry.id", registry.getKey().getValue(), registry.get(IntegerArgumentType.getInteger(context, "id"))), true);
+                Registry<?> registry = RegistryArgumentType.getRegistry(context, "registry");
+                context.getSource().sendFeedback(new TranslatableText("command.galacticraft-api.debug.registry.id", registry.getKey().getValue(), registry.get(IntegerArgumentType.getInteger(context, "id"))), true);
                 return 1;
             }))).then(CommandManager.literal("to_raw").then(CommandManager.argument("id", IdentifierArgumentType.identifier()).executes(context -> {
-                ServerCommandSource source = context.getSource();
-                Registry<Object> registry = context.getArgument("registry", Registry.class);
+                Registry registry = RegistryArgumentType.getRegistry(context, "registry");
                 Object o = registry.get(IdentifierArgumentType.getIdentifier(context, "id"));
-                source.sendFeedback(new TranslatableText("command.galacticraft-api.debug.registry.id", registry.getKey().getValue(), registry.getRawId(o)), true);
+                context.getSource().sendFeedback(new TranslatableText("command.galacticraft-api.debug.registry.id", registry.getKey().getValue(), registry.getRawId(o)), true);
                 return 1;
             })))));
             commandDispatcher.register(builder);

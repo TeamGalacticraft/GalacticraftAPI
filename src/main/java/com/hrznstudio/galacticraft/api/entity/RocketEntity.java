@@ -37,5 +37,5 @@ public interface RocketEntity {
 
     void setParts(RocketPart[] parts);
 
-    public RocketPart getPartForType(RocketPartType type);
+    RocketPart getPartForType(RocketPartType type);
 }

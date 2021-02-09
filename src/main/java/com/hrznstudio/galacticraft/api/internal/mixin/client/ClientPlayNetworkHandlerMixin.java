@@ -1,4 +1,4 @@
-package com.hrznstudio.galacticraft.api.internal.mixin;
+package com.hrznstudio.galacticraft.api.internal.mixin.client;
 
 import com.hrznstudio.galacticraft.api.internal.data.ClientWorldTeamsGetter;
 import com.hrznstudio.galacticraft.api.teams.packet.TeamDeleteS2CPacket;

@@ -13,7 +13,12 @@ archivesBaseName = 'GalacticraftAPI'
 sourceCompatibility = targetCompatibility = JavaVersion.VERSION_1_8
 
 repositories {
-    mavenCentral()
+    maven {
+        url "https://dl.bintray.com/ladysnake/libs"
+        content {
+            includeGroup "io.github.onyxstudios.Cardinal-Components-API"
+        }
+    }
 }
 
 loom {
@@ -37,6 +42,10 @@ dependencies {
     modImplementation fabricApi.module("fabric-command-api-v1", project.fabric)
     modImplementation fabricApi.module("fabric-registry-sync-v0", project.fabric)
     modImplementation fabricApi.module("fabric-resource-loader-v0", project.fabric)
+
+    modImplementation("io.github.onyxstudios.Cardinal-Components-API:cardinal-components-base:${project.cca}")
+    modImplementation("io.github.onyxstudios.Cardinal-Components-API:cardinal-components-entity:${project.cca}")
+
     testmodCompile sourceSets.main.output
 }
 

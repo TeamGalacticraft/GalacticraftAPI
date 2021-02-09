@@ -29,7 +29,6 @@ import com.hrznstudio.galacticraft.api.reaserch.ResearchNodes;
 import com.hrznstudio.galacticraft.api.reaserch.criteria.ConfiguredResearchCriterias;
 import com.hrznstudio.galacticraft.api.reaserch.reward.ConfiguredResearchRewards;
 import com.hrznstudio.galacticraft.api.regisry.AddonRegistry;
-import com.hrznstudio.galacticraft.api.rocket.part.RocketPart;
 import com.hrznstudio.galacticraft.api.rocket.part.RocketParts;
 import com.hrznstudio.galacticraft.api.teams.data.Permission;
 import com.mojang.serialization.Lifecycle;
@@ -58,7 +57,7 @@ public abstract class BuiltinRegistriesMixin {
         addRegistry(AddonRegistry.PERMISSIONS_KEY, AddonRegistry.PERMISSIONS, () -> Permission.INVITE_PLAYER, Lifecycle.experimental());
         addRegistry(AddonRegistry.CONFIGURED_RESEARCH_CRITERIA_KEY, AddonRegistry.CONFIGURED_RESEARCH_CRITERIA, () -> ConfiguredResearchCriterias.ALWAYS_TRUE, Lifecycle.experimental());
         addRegistry(AddonRegistry.CONFIGURED_RESEARCH_REWARD_KEY, AddonRegistry.CONFIGURED_RESEARCH_REWARDS, () -> ConfiguredResearchRewards.EMPTY, Lifecycle.experimental());
-        addRegistry(AddonRegistry.RESEARCH_NODE_KEY, AddonRegistry.RESEARCH_NODES, () -> ResearchNodes.EMPTY, Lifecycle.experimental());
+        addRegistry(AddonRegistry.RESEARCH_NODE_KEY, AddonRegistry.RESEARCH_NODES, () -> ResearchNodes.NONE, Lifecycle.experimental());
         addRegistry(AddonRegistry.ROCKET_PART_KEY, AddonRegistry.ROCKET_PARTS, () -> RocketParts.INVALID, Lifecycle.experimental());
     }
 }

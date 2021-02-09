@@ -11,10 +11,10 @@
     "ServerPlayNetworkHandlerMixin"
   ],
   "client": [
-    "ClientBlockDustParticleMixin",
-    "ClientParticleMixin",
-    "ClientPlayNetworkHandlerMixin",
-    "ClientWorldMixin"
+    "client.BlockDustParticleMixin",
+    "client.ParticleMixin",
+    "client.ClientPlayNetworkHandlerMixin",
+    "client.ClientWorldMixin"
   ],
   "minVersion": "0.8.0",
   "injectors": {

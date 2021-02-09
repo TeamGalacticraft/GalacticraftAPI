@@ -22,7 +22,7 @@
 
 package com.hrznstudio.galacticraft.api.celestialbodies;
 
-import com.hrznstudio.galacticraft.api.internal.dynamic.LazyRegistryElementCodec;
+import com.hrznstudio.galacticraft.api.internal.codec.LazyRegistryElementCodec;
 import com.hrznstudio.galacticraft.api.regisry.AddonRegistry;
 import com.hrznstudio.galacticraft.api.atmosphere.AtmosphericGas;
 import com.hrznstudio.galacticraft.api.atmosphere.AtmosphericInfo;

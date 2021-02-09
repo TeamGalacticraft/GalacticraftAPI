@@ -1,6 +1,6 @@
 package com.hrznstudio.galacticraft.api.reaserch;
 
-import com.hrznstudio.galacticraft.api.internal.dynamic.LazyRegistryElementCodec;
+import com.hrznstudio.galacticraft.api.internal.codec.LazyRegistryElementCodec;
 import com.hrznstudio.galacticraft.api.reaserch.criteria.ResearchCriteriaContainer;
 import com.hrznstudio.galacticraft.api.reaserch.reward.ResearchRewardContainer;
 import com.hrznstudio.galacticraft.api.regisry.AddonRegistry;
@@ -11,8 +11,8 @@ import net.minecraft.util.Lazy;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 public class ResearchNode {
     public static final Codec<Supplier<ResearchNode>> REGISTRY_CODEC = LazyRegistryElementCodec.of(AddonRegistry.RESEARCH_NODE_KEY, new Lazy<>(() -> ResearchNode.CODEC));
@@ -73,6 +73,23 @@ public class ResearchNode {
 
     public ResearchRewardContainer getRewardContainer() {
         return rewardContainer;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ResearchNode that = (ResearchNode) o;
+        return getId().equals(that.getId())
+                && getParents().equals(that.getParents())
+                && getCriteriaContainer().equals(that.getCriteriaContainer())
+                && getDisplay().equals(that.getDisplay())
+                && getRewardContainer().equals(that.getRewardContainer());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId(), getParents(), getCriteriaContainer(), getDisplay(), getRewardContainer());
     }
 
     @Override

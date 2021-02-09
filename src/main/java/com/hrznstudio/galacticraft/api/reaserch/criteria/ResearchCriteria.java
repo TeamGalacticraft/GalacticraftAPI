@@ -1,8 +1,9 @@
 package com.hrznstudio.galacticraft.api.reaserch.criteria;
 
+import com.hrznstudio.galacticraft.api.reaserch.progress.ResearchNodeProgress;
 import com.hrznstudio.galacticraft.api.regisry.AddonRegistry;
 import com.mojang.serialization.Codec;
-import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.registry.Registry;
 
 public abstract class ResearchCriteria<C extends ResearchCriteriaConfig> {
@@ -13,7 +14,7 @@ public abstract class ResearchCriteria<C extends ResearchCriteriaConfig> {
    }
 
    public ResearchCriteria(Codec<C> configCodec) {
-      this.codec = configCodec.fieldOf("config").xmap((config) -> new ConfiguredResearchCriteria<>(this, config), (configuredResearchCriteria) -> configuredResearchCriteria.config).codec();
+      this.codec = configCodec.fieldOf("config").xmap((config) -> new ConfiguredResearchCriteria<>(this, config), ConfiguredResearchCriteria::getConfig).codec();
    }
 
    public Codec<ConfiguredResearchCriteria<C, ResearchCriteria<C>>> getCodec() {
@@ -24,5 +25,5 @@ public abstract class ResearchCriteria<C extends ResearchCriteriaConfig> {
       return new ConfiguredResearchCriteria<>(this, config);
    }
 
-   public abstract boolean test(ServerPlayerEntity player, C config);
+   public abstract ResearchNodeProgress getProgress(PlayerEntity player, C config);
 }

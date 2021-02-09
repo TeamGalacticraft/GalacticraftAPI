@@ -1,7 +1,9 @@
-package com.hrznstudio.galacticraft.api.internal.mixin;
+package com.hrznstudio.galacticraft.api.internal.mixin.client;
 
 import com.hrznstudio.galacticraft.api.internal.data.ClientWorldTeamsGetter;
 import com.hrznstudio.galacticraft.api.teams.Teams;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.render.WorldRenderer;
 import net.minecraft.client.world.ClientWorld;
@@ -20,6 +22,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import java.util.function.Supplier;
 
 @Mixin({ClientWorld.class})
+@Environment(EnvType.CLIENT)
 @Implements(@Interface(iface = ClientWorldTeamsGetter.class, prefix = "cwtg$", remap = Interface.Remap.NONE))
 public abstract class ClientWorldMixin extends World {
 

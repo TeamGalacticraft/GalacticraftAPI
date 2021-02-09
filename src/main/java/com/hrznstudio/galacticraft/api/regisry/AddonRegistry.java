@@ -129,7 +129,7 @@ public abstract class AddonRegistry<T> extends Registry<T> {
         Registry.register(AddonRegistry.CONFIGURED_RESEARCH_CRITERIA, new Identifier("galacticraft-api", "always_true"), ConfiguredResearchCriterias.ALWAYS_TRUE);
         Registry.register(AddonRegistry.CONFIGURED_RESEARCH_CRITERIA, new Identifier("galacticraft-api", "always_false"), ConfiguredResearchCriterias.ALWAYS_FALSE);
 
-        Registry.register(AddonRegistry.RESEARCH_NODES, ResearchNodes.EMPTY.getId(), ResearchNodes.EMPTY);
+        Registry.register(AddonRegistry.RESEARCH_NODES, ResearchNodes.NONE.getId(), ResearchNodes.NONE);
 
         Registry.register(AddonRegistry.ROCKET_PARTS, RocketParts.INVALID.getId(), RocketParts.INVALID);
     }
