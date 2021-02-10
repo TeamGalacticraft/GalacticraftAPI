@@ -5,6 +5,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.DynamicOps;
 
+import java.util.Optional;
 import java.util.function.Supplier;
 
 import net.minecraft.util.Lazy;
@@ -29,14 +30,23 @@ public final class LazyRegistryElementCodec<E> implements Codec<Supplier<E>> {
     }
 
     public <T> DataResult<T> encode(Supplier<E> supplier, DynamicOps<T> dynamicOps, T object) {
+        if (supplier.get() == null) {
+            return dynamicOps.mergeToPrimitive(object, dynamicOps.createString("null"));
+        }
         return dynamicOps instanceof RegistryReadingOps ? ((RegistryReadingOps<T>)dynamicOps).encodeOrId(supplier.get(), object, this.registryRef, this.codec.get()) : this.codec.get().encode(supplier.get(), dynamicOps, object);
     }
 
     public <T> DataResult<Pair<Supplier<E>, T>> decode(DynamicOps<T> ops, T input) {
+        Optional<String> optional = ops.getStringValue(input).get().left();
+        if (optional.isPresent()) {
+            if (optional.get().equals("null")) {
+                return DataResult.success(new Pair<>(() -> null, input));
+            }
+        }
         return ops instanceof RegistryOps ? ((RegistryOps<T>)ops).decodeOrId(input, this.registryRef, this.codec.get(), this.allowInlineDefinitions) : this.codec.get().decode(ops, input).map((pair) -> pair.mapFirst((object) -> () -> object));
     }
 
     public String toString() {
-        return "RegistryElementCodec[" + this.registryRef + " " + this.codec.get() + "]";
+        return "RegistryElementCodec[" + this.registryRef + " " + this.codec.get().getClass() + "]";
     }
 }

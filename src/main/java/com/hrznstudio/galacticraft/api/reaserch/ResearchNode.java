@@ -9,21 +9,19 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Lazy;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.Supplier;
 
 public class ResearchNode {
     public static final Codec<Supplier<ResearchNode>> REGISTRY_CODEC = LazyRegistryElementCodec.of(AddonRegistry.RESEARCH_NODE_KEY, new Lazy<>(() -> ResearchNode.CODEC));
     public static final Codec<ResearchNode> CODEC = RecordCodecBuilder.create(i ->
             i.group(Identifier.CODEC.fieldOf("id").forGetter(ResearchNode::getId),
-                    ResearchNode.REGISTRY_CODEC.listOf().fieldOf("parents").forGetter(node -> {
+                    ResearchNode.REGISTRY_CODEC.listOf().optionalFieldOf("parents").forGetter(node -> {
                         List<Supplier<ResearchNode>> list = new ArrayList<>(node.getParents().size());
                         for (Lazy<ResearchNode> researchNodeLazy : node.getParents()) {
                             list.add(researchNodeLazy::get);
                         }
-                        return list;
+                        return list.isEmpty() ? Optional.empty() : Optional.of(list);
                     }),
                     ResearchNodeDisplay.CODEC.fieldOf("display").forGetter(ResearchNode::getDisplay),
                     ResearchCriteriaContainer.CODEC.fieldOf("criteria").forGetter(ResearchNode::getCriteriaContainer),
@@ -35,13 +33,17 @@ public class ResearchNode {
     private final ResearchNodeDisplay display;
     private final ResearchRewardContainer rewardContainer;
 
-    private ResearchNode(Identifier id, List<Supplier<ResearchNode>> parents, ResearchNodeDisplay display, ResearchCriteriaContainer criteriaContainer, ResearchRewardContainer rewardContainer) {
+    private ResearchNode(Identifier id, Optional<List<Supplier<ResearchNode>>> parents, ResearchNodeDisplay display, ResearchCriteriaContainer criteriaContainer, ResearchRewardContainer rewardContainer) {
         this.id = id;
-        List<Lazy<ResearchNode>> list = new ArrayList<>(parents.size());
-        for (Supplier<ResearchNode> parent : parents) {
-            list.add(new Lazy<>(parent));
+        if (parents.isPresent()) {
+            List<Lazy<ResearchNode>> list = new ArrayList<>(parents.get().size());
+            for (Supplier<ResearchNode> parent : parents.get()) {
+                list.add(new Lazy<>(parent));
+            }
+            this.parents = list;
+        } else {
+            this.parents = Collections.emptyList();
         }
-        this.parents = list;
         this.criteriaContainer = criteriaContainer;
         this.display = display;
         this.rewardContainer = rewardContainer;

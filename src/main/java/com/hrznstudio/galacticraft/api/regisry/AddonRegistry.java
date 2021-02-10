@@ -70,7 +70,7 @@ public abstract class AddonRegistry<T> extends Registry<T> {
 
     public static final RegistryKey<Registry<ResearchNode>> RESEARCH_NODE_KEY = RegistryKey.ofRegistry(new Identifier("galacticraft-api", "research_nodes"));
     public static final MutableRegistry<ResearchNode> RESEARCH_NODES = FabricRegistryBuilder.from(
-            new DefaultedRegistry<>(new Identifier("galacticraft-api", "empty").toString(),
+            new DefaultedRegistry<>(new Identifier("galacticraft-api", "none").toString(),
                     RESEARCH_NODE_KEY, Lifecycle.experimental())).buildAndRegister();
 
     public static final RegistryKey<Registry<ConfiguredResearchReward<?, ?>>> CONFIGURED_RESEARCH_REWARD_KEY = RegistryKey.ofRegistry(new Identifier("galacticraft-api", "configured_research_reward"));
