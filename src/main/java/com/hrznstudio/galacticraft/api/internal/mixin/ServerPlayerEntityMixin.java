@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Mixin(ServerPlayerEntity.class)
-public abstract class ServerPlayerEntityMixin implements ServerResearchAccessor { //todo: FTBq compat
+public abstract class ServerPlayerEntityMixin implements ServerResearchAccessor {
     @Unique
     private final List<Identifier> unlockedResearch = new ArrayList<>();
     @Unique

@@ -14,15 +14,6 @@ archivesBaseName = 'GalacticraftAPI'
 
 sourceCompatibility = targetCompatibility = JavaVersion.VERSION_1_8
 
-repositories {
-    maven {
-        url "https://dl.bintray.com/ladysnake/libs"
-        content {
-            includeGroup "io.github.onyxstudios.Cardinal-Components-API"
-        }
-    }
-}
-
 loom {
     refmapName = "galacticraft-api.refmap.json"
     accessWidener "src/main/resources/galacticraft-api.accesswidener"
