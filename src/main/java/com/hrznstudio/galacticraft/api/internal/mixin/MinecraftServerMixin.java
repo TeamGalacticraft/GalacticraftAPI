@@ -23,7 +23,9 @@
 package com.hrznstudio.galacticraft.api.internal.mixin;
 
 import com.hrznstudio.galacticraft.api.internal.data.MinecraftServerTeamsGetter;
-import com.hrznstudio.galacticraft.api.teams.*;
+import com.hrznstudio.galacticraft.api.teams.ServerTeams;
+import com.hrznstudio.galacticraft.api.teams.TeamsState;
+import com.hrznstudio.galacticraft.api.teams.TeamsSync;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.ServerTask;
 import net.minecraft.server.command.CommandOutput;

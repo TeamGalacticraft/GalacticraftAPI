@@ -22,10 +22,11 @@
 
 package com.hrznstudio.galacticraft.api.celestialbodies;
 
-import com.hrznstudio.galacticraft.api.internal.codec.LazyRegistryElementCodec;
-import com.hrznstudio.galacticraft.api.regisry.AddonRegistry;
 import com.hrznstudio.galacticraft.api.atmosphere.AtmosphericGas;
 import com.hrznstudio.galacticraft.api.atmosphere.AtmosphericInfo;
+import com.hrznstudio.galacticraft.api.internal.codec.LazyRegistryElementCodec;
+import com.hrznstudio.galacticraft.api.internal.fabric.GalacticraftAPI;
+import com.hrznstudio.galacticraft.api.regisry.AddonRegistry;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.Dynamic;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -53,22 +54,22 @@ public class CelestialBodyType {
     ).apply(instance, (identifier, s, worldRegistryKey, solarSystem, integer, celestialBodyTypeSupplier, celestialBodyDisplayInfo, aFloat, atmosphericInfo) ->
             new CelestialBodyType(identifier, s, worldRegistryKey.orElse(null), solarSystem.get(), integer, celestialBodyTypeSupplier.orElse(() -> null).get(), celestialBodyDisplayInfo, aFloat, atmosphericInfo)));
 
-    public static final CelestialBodyType THE_SUN = new Builder(new Identifier("galacticraft-api", "the_sun"))
+    public static final CelestialBodyType THE_SUN = new Builder(new Identifier(GalacticraftAPI.MOD_ID, "the_sun"))
             .translationKey("ui.galacticraft-api.bodies.the_sun")
             .parent(null)
             .display(
                     new CelestialBodyDisplayInfo.Builder()
-                            .texture(new Identifier("galacticraft-api", "body_icons"))
+                            .texture(new Identifier(GalacticraftAPI.MOD_ID, "body_icons"))
                             .build()
             ).build();
 
-    public static final CelestialBodyType EARTH = new Builder(new Identifier("galacticraft-api", "earth"))
+    public static final CelestialBodyType EARTH = new Builder(new Identifier(GalacticraftAPI.MOD_ID, "earth"))
             .translationKey("ui.galacticraft-api.bodies.earth")
             .world(World.OVERWORLD)
             .weight(0)
             .display(
                     new CelestialBodyDisplayInfo.Builder()
-                            .texture(new Identifier("galacticraft-api", "body_icons"))
+                            .texture(new Identifier(GalacticraftAPI.MOD_ID, "body_icons"))
                             .y(16)
                             .build()
             )

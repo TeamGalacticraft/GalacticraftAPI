@@ -22,7 +22,7 @@
 
 package com.hrznstudio.galacticraft.api.teams.data;
 
-import com.hrznstudio.galacticraft.api.atmosphere.AtmosphericGas;
+import com.hrznstudio.galacticraft.api.internal.fabric.GalacticraftAPI;
 import com.hrznstudio.galacticraft.api.regisry.AddonRegistry;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -32,7 +32,6 @@ import net.minecraft.util.registry.Registry;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.function.Function;
 
 public class Permission {
     public static final Codec<Permission> CODEC = RecordCodecBuilder.create(permissionInstance ->
@@ -43,19 +42,19 @@ public class Permission {
     );
 
     public static final Permission INVITE_PLAYER = new Permission.Builder(
-            new Identifier("galacticraft-api", "invite_player")
+            new Identifier(GalacticraftAPI.MOD_ID, "invite_player")
     ).build();
     public static final Permission MODIFY_FLAG = new Permission.Builder(
-            new Identifier("galacticraft-api", "modify_flag")
+            new Identifier(GalacticraftAPI.MOD_ID, "modify_flag")
     ).build();
     public static final Permission MODIFY_NAME = new Permission.Builder(
-            new Identifier("galacticraft-api", "modify_name")
+            new Identifier(GalacticraftAPI.MOD_ID, "modify_name")
     ).build();
     public static final Permission MODIFY_COLOR = new Permission.Builder(
-            new Identifier("galacticraft-api", "modify_color")
+            new Identifier(GalacticraftAPI.MOD_ID, "modify_color")
     ).build();
     public static final Permission MODIFY_ROLES = new Permission.Builder(
-            new Identifier("galacticraft-api", "modify_roles")
+            new Identifier(GalacticraftAPI.MOD_ID, "modify_roles")
     ).build();
 
     private static Permission register(Permission permission) {

@@ -33,8 +33,8 @@
     "main": [
       "com.hrznstudio.galacticraft.api.internal.fabric.GalacticraftAPI"
     ],
-    "cardinal-components-entity": [
-      "com.hrznstudio.galacticraft.api.component.GCApiComponents"
+    "client": [
+      "com.hrznstudio.galacticraft.api.internal.client.fabric.ClientGalacticraftAPI"
     ]
   },
   "mixins": [
@@ -46,10 +46,9 @@
     "minecraft": ">=1.16.2",
     "fabric-api-base": "*",
     "fabric-command-api-v1": "*",
+    "fabric-lifecycle-events-v1": "*",
     "fabric-registry-sync-v0": "*",
-    "fabric-resource-loader-v0": "*",
-    "cardinal-components-base": ">=2.7",
-    "cardinal-components-entity": ">=2.7"
+    "fabric-resource-loader-v0": "*"
   },
   "suggests": {
     "modmenu": "*",

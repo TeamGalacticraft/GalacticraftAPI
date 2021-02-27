@@ -23,14 +23,11 @@
 package com.hrznstudio.galacticraft.api.internal.mixin;
 
 import com.hrznstudio.galacticraft.api.internal.data.MinecraftServerTeamsGetter;
-import com.hrznstudio.galacticraft.api.teams.ServerTeams;
 import com.hrznstudio.galacticraft.api.teams.Teams;
 import com.hrznstudio.galacticraft.api.teams.data.Permission;
 import com.hrznstudio.galacticraft.api.teams.data.Team;
 import com.hrznstudio.galacticraft.api.teams.packet.*;
 import com.hrznstudio.galacticraft.api.teams.packet.listener.ServerTeamsPacketListener;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.minecraft.network.listener.ServerPlayPacketListener;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayNetworkHandler;

@@ -22,6 +22,7 @@
 
 package com.hrznstudio.galacticraft.api.celestialbodies;
 
+import com.hrznstudio.galacticraft.api.internal.fabric.GalacticraftAPI;
 import com.hrznstudio.galacticraft.api.regisry.AddonRegistry;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -42,7 +43,7 @@ public class SolarSystemType {
 
     public static final Codec<Supplier<SolarSystemType>> REGISTRY_CODEC = RegistryElementCodec.of(AddonRegistry.SOLAR_SYSTEM_TYPE_KEY, SolarSystemType.CODEC);
 
-    public static final SolarSystemType SOL = new SolarSystemType.Builder(new Identifier("galacticraft-api", "sol"))
+    public static final SolarSystemType SOL = new SolarSystemType.Builder(new Identifier(GalacticraftAPI.MOD_ID, "sol"))
             .translationKey("galacticraft-api.solar_system.sol")
             .galaxyTranslationKey("galacticraft-api.galaxy.milky_way")
             .build();

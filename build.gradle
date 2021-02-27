@@ -42,11 +42,9 @@ dependencies {
 	
 	modImplementation fabricApi.module("fabric-api-base", project.fabric)
     modImplementation fabricApi.module("fabric-command-api-v1", project.fabric)
+    modImplementation fabricApi.module("fabric-lifecycle-events-v1", project.fabric)
     modImplementation fabricApi.module("fabric-registry-sync-v0", project.fabric)
     modImplementation fabricApi.module("fabric-resource-loader-v0", project.fabric)
-
-    modImplementation("io.github.onyxstudios.Cardinal-Components-API:cardinal-components-base:${project.cca}")
-    modImplementation("io.github.onyxstudios.Cardinal-Components-API:cardinal-components-entity:${project.cca}")
 
     testmodCompile sourceSets.main.output
 }

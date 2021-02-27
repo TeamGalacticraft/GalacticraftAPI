@@ -29,14 +29,10 @@ import net.minecraft.block.BlockState;
 import net.minecraft.client.particle.BlockDustParticle;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.client.world.ClientWorld;
-import net.minecraft.util.registry.RegistryKey;
-import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-
-import java.util.Optional;
 
 @Mixin(BlockDustParticle.class)
 @Environment(EnvType.CLIENT)

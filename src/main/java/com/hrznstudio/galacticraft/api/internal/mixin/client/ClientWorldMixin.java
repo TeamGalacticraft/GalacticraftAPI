@@ -26,8 +26,6 @@ import com.hrznstudio.galacticraft.api.internal.data.ClientWorldTeamsGetter;
 import com.hrznstudio.galacticraft.api.teams.Teams;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.network.ClientPlayNetworkHandler;
-import net.minecraft.client.render.WorldRenderer;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.util.profiler.Profiler;
 import net.minecraft.util.registry.RegistryKey;

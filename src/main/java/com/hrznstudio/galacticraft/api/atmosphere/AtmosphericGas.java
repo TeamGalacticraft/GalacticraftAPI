@@ -22,6 +22,7 @@
 
 package com.hrznstudio.galacticraft.api.atmosphere;
 
+import com.hrznstudio.galacticraft.api.internal.fabric.GalacticraftAPI;
 import com.hrznstudio.galacticraft.api.regisry.AddonRegistry;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.Dynamic;
@@ -43,82 +44,82 @@ public class AtmosphericGas {
     public static final Codec<Supplier<AtmosphericGas>> REGISTRY_CODEC = RegistryElementCodec.of(AddonRegistry.ATMOSPHERIC_GAS_KEY, CODEC);
 
     public static final AtmosphericGas HYDROGEN = new AtmosphericGas(
-            new Identifier("galacticraft-api", "hydrogen"),
+            new Identifier(GalacticraftAPI.MOD_ID, "hydrogen"),
             "ui.galacticraft-api.gases.hydrogen",
             "H"
     );
     public static final AtmosphericGas NITROGEN = new AtmosphericGas(
-            new Identifier("galacticraft-api", "nitrogen"),
+            new Identifier(GalacticraftAPI.MOD_ID, "nitrogen"),
             "ui.galacticraft-api.gases.nitrogen",
             "N"
     );
     public static final AtmosphericGas OXYGEN = new AtmosphericGas(
-            new Identifier("galacticraft-api", "oxygen"),
+            new Identifier(GalacticraftAPI.MOD_ID, "oxygen"),
             "ui.galacticraft-api.gases.oxygen",
             "O\u2082"
     );
     public static final AtmosphericGas CARBON_DIOXIDE = new AtmosphericGas(
-            new Identifier("galacticraft-api", "carbon_dioxide"),
+            new Identifier(GalacticraftAPI.MOD_ID, "carbon_dioxide"),
             "ui.galacticraft-api.gases.carbon_dioxide",
             "CO\u2082"
     );
     public static final AtmosphericGas WATER_VAPOR = new AtmosphericGas(
-            new Identifier("galacticraft-api", "water_vapor"),
+            new Identifier(GalacticraftAPI.MOD_ID, "water_vapor"),
             "ui.galacticraft-api.gases.water_vapor",
             "H\u2082O"
     );
     public static final AtmosphericGas METHANE = new AtmosphericGas(
-            new Identifier("galacticraft-api", "methane"),
+            new Identifier(GalacticraftAPI.MOD_ID, "methane"),
             "ui.galacticraft-api.gases.methane",
             "CH\u2084"
     );
     public static final AtmosphericGas HELIUM = new AtmosphericGas(
-            new Identifier("galacticraft-api", "helium"),
+            new Identifier(GalacticraftAPI.MOD_ID, "helium"),
             "ui.galacticraft-api.gases.helium",
             "He"
     );
     public static final AtmosphericGas ARGON = new AtmosphericGas(
-            new Identifier("galacticraft-api", "argon"),
+            new Identifier(GalacticraftAPI.MOD_ID, "argon"),
             "ui.galacticraft-api.gases.argon",
             "Ar"
     );
     public static final AtmosphericGas NEON = new AtmosphericGas(
-            new Identifier("galacticraft-api", "neon"),
+            new Identifier(GalacticraftAPI.MOD_ID, "neon"),
             "ui.galacticraft-api.gases.neon",
             "Ne"
     );
     public static final AtmosphericGas KRYPTON = new AtmosphericGas(
-            new Identifier("galacticraft-api", "krypton"),
+            new Identifier(GalacticraftAPI.MOD_ID, "krypton"),
             "ui.galacticraft-api.gases.krypton",
             "Kr"
     );
     public static final AtmosphericGas NITROUS_OXIDE = new AtmosphericGas(
-            new Identifier("galacticraft-api", "nitrous_oxide"),
+            new Identifier(GalacticraftAPI.MOD_ID, "nitrous_oxide"),
             "ui.galacticraft-api.gases.nitrous_oxide",
             "N2O"
     );
     public static final AtmosphericGas CARBON_MONOXIDE = new AtmosphericGas(
-            new Identifier("galacticraft-api", "carbon_monoxide"),
+            new Identifier(GalacticraftAPI.MOD_ID, "carbon_monoxide"),
             "ui.galacticraft-api.gases.carbon_monoxide",
             "CO"
     );
     public static final AtmosphericGas XENON = new AtmosphericGas(
-            new Identifier("galacticraft-api", "xenon"),
+            new Identifier(GalacticraftAPI.MOD_ID, "xenon"),
             "ui.galacticraft-api.gases.xenon",
             "Xe"
     );
     public static final AtmosphericGas OZONE = new AtmosphericGas(
-            new Identifier("galacticraft-api", "ozone"),
+            new Identifier(GalacticraftAPI.MOD_ID, "ozone"),
             "ui.galacticraft-api.gases.ozone",
             "O\u2083"
     );
     public static final AtmosphericGas NITROUS_DIOXIDE = new AtmosphericGas(
-            new Identifier("galacticraft-api", "nitrous_dioxide"),
+            new Identifier(GalacticraftAPI.MOD_ID, "nitrous_dioxide"),
             "ui.galacticraft-api.gases.nitrous_dioxide",
             "NO\u2082"
     );
     public static final AtmosphericGas IODINE = new AtmosphericGas(
-            new Identifier("galacticraft-api", "iodine"),
+            new Identifier(GalacticraftAPI.MOD_ID, "iodine"),
             "ui.galacticraft-api.gases.iodine",
             "I\u2082"
     );

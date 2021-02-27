@@ -25,67 +25,42 @@ package com.hrznstudio.galacticraft.api.regisry;
 import com.hrznstudio.galacticraft.api.atmosphere.AtmosphericGas;
 import com.hrznstudio.galacticraft.api.celestialbodies.CelestialBodyType;
 import com.hrznstudio.galacticraft.api.celestialbodies.SolarSystemType;
-import com.hrznstudio.galacticraft.api.reaserch.ResearchNodes;
-import com.hrznstudio.galacticraft.api.reaserch.ResearchNode;
-import com.hrznstudio.galacticraft.api.reaserch.criteria.*;
-import com.hrznstudio.galacticraft.api.reaserch.reward.*;
+import com.hrznstudio.galacticraft.api.internal.fabric.GalacticraftAPI;
 import com.hrznstudio.galacticraft.api.rocket.part.RocketPart;
 import com.hrznstudio.galacticraft.api.rocket.part.RocketParts;
 import com.hrznstudio.galacticraft.api.teams.data.Permission;
 import com.mojang.serialization.Lifecycle;
 import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.*;
+import net.minecraft.util.registry.DefaultedRegistry;
+import net.minecraft.util.registry.MutableRegistry;
+import net.minecraft.util.registry.Registry;
+import net.minecraft.util.registry.RegistryKey;
 
 public abstract class AddonRegistry<T> extends Registry<T> {
-    public static final RegistryKey<Registry<AtmosphericGas>> ATMOSPHERIC_GAS_KEY = RegistryKey.ofRegistry(new Identifier("galacticraft-api", "atmospheric_gases"));
+    public static final RegistryKey<Registry<AtmosphericGas>> ATMOSPHERIC_GAS_KEY = RegistryKey.ofRegistry(new Identifier(GalacticraftAPI.MOD_ID, "atmospheric_gases"));
     public static final MutableRegistry<AtmosphericGas> ATMOSPHERIC_GASES = FabricRegistryBuilder.from(
             new DefaultedRegistry<>(AtmosphericGas.OXYGEN.getId().toString(),
                     ATMOSPHERIC_GAS_KEY, Lifecycle.experimental())).buildAndRegister();
 
-    public static final RegistryKey<Registry<SolarSystemType>> SOLAR_SYSTEM_TYPE_KEY = RegistryKey.ofRegistry(new Identifier("galacticraft-api", "solar_systems"));
+    public static final RegistryKey<Registry<SolarSystemType>> SOLAR_SYSTEM_TYPE_KEY = RegistryKey.ofRegistry(new Identifier(GalacticraftAPI.MOD_ID, "solar_systems"));
     public static final MutableRegistry<SolarSystemType> SOLAR_SYSTEMS = FabricRegistryBuilder.from(
             new DefaultedRegistry<>(SolarSystemType.SOL.getId().toString(),
                     SOLAR_SYSTEM_TYPE_KEY, Lifecycle.experimental())).buildAndRegister();
 
-    public static final RegistryKey<Registry<CelestialBodyType>> CELESTIAL_BODY_TYPE_KEY = RegistryKey.ofRegistry(new Identifier("galacticraft-api", "celestial_bodies"));
+    public static final RegistryKey<Registry<CelestialBodyType>> CELESTIAL_BODY_TYPE_KEY = RegistryKey.ofRegistry(new Identifier(GalacticraftAPI.MOD_ID, "celestial_bodies"));
     public static final MutableRegistry<CelestialBodyType> CELESTIAL_BODIES = FabricRegistryBuilder.from(
             new DefaultedRegistry<>(CelestialBodyType.THE_SUN.getId().toString(),
                     CELESTIAL_BODY_TYPE_KEY, Lifecycle.experimental())).buildAndRegister();
 
-    public static final RegistryKey<Registry<Permission>> PERMISSIONS_KEY = RegistryKey.ofRegistry(new Identifier("galacticraft-api", "permissions"));
+    public static final RegistryKey<Registry<Permission>> PERMISSIONS_KEY = RegistryKey.ofRegistry(new Identifier(GalacticraftAPI.MOD_ID, "permissions"));
     public static final MutableRegistry<Permission> PERMISSIONS = FabricRegistryBuilder.from(
             new DefaultedRegistry<>(Permission.INVITE_PLAYER.getId().toString(),
                     PERMISSIONS_KEY, Lifecycle.experimental())).buildAndRegister();
 
-    public static final RegistryKey<Registry<ResearchReward<?>>> RESEARCH_REWARD_KEY = RegistryKey.ofRegistry(new Identifier("galacticraft-api", "research_rewards"));
-    public static final MutableRegistry<ResearchReward<?>> RESEARCH_REWARDS = FabricRegistryBuilder.from(
-            new DefaultedRegistry<>(new Identifier("galacticraft-api", "empty").toString(),
-                    RESEARCH_REWARD_KEY, Lifecycle.experimental())).buildAndRegister();
-
-    public static final RegistryKey<Registry<ResearchCriteria<?>>> RESEARCH_CRITERIA_KEY = RegistryKey.ofRegistry(new Identifier("galacticraft-api", "research_criteria"));
-    public static final MutableRegistry<ResearchCriteria<?>> RESEARCH_CRITERIA = FabricRegistryBuilder.from(
-            new DefaultedRegistry<>(new Identifier("galacticraft-api", "constant").toString(),
-                    RESEARCH_CRITERIA_KEY, Lifecycle.experimental())).buildAndRegister();
-
-    public static final RegistryKey<Registry<ResearchNode>> RESEARCH_NODE_KEY = RegistryKey.ofRegistry(new Identifier("galacticraft-api", "research_nodes"));
-    public static final MutableRegistry<ResearchNode> RESEARCH_NODES = FabricRegistryBuilder.from(
-            new DefaultedRegistry<>(new Identifier("galacticraft-api", "none").toString(),
-                    RESEARCH_NODE_KEY, Lifecycle.experimental())).buildAndRegister();
-
-    public static final RegistryKey<Registry<ConfiguredResearchReward<?, ?>>> CONFIGURED_RESEARCH_REWARD_KEY = RegistryKey.ofRegistry(new Identifier("galacticraft-api", "configured_research_reward"));
-    public static final MutableRegistry<ConfiguredResearchReward<?, ?>> CONFIGURED_RESEARCH_REWARDS = FabricRegistryBuilder.from(
-            new DefaultedRegistry<>(new Identifier("galacticraft-api", "empty").toString(),
-                    CONFIGURED_RESEARCH_REWARD_KEY, Lifecycle.experimental())).buildAndRegister();
-
-    public static final RegistryKey<Registry<ConfiguredResearchCriteria<?, ?>>> CONFIGURED_RESEARCH_CRITERIA_KEY = RegistryKey.ofRegistry(new Identifier("galacticraft-api", "configured_research_criteria"));
-    public static final MutableRegistry<ConfiguredResearchCriteria<?, ?>> CONFIGURED_RESEARCH_CRITERIA = FabricRegistryBuilder.from(
-            new DefaultedRegistry<>(new Identifier("galacticraft-api", "always_true").toString(),
-                    CONFIGURED_RESEARCH_CRITERIA_KEY, Lifecycle.experimental())).buildAndRegister();
-
-    public static final RegistryKey<Registry<RocketPart>> ROCKET_PART_KEY = RegistryKey.ofRegistry(new Identifier("galacticraft-api", "rocket_parts"));
+    public static final RegistryKey<Registry<RocketPart>> ROCKET_PART_KEY = RegistryKey.ofRegistry(new Identifier(GalacticraftAPI.MOD_ID, "rocket_parts"));
     public static final MutableRegistry<RocketPart> ROCKET_PARTS = FabricRegistryBuilder.from(
-            new DefaultedRegistry<>(new Identifier("galacticraft-api", "invalid").toString(),
+            new DefaultedRegistry<>(new Identifier(GalacticraftAPI.MOD_ID, "invalid").toString(),
                     ROCKET_PART_KEY, Lifecycle.experimental())).buildAndRegister();
 
     protected AddonRegistry(RegistryKey<Registry<T>> registryKey, Lifecycle lifecycle) {
@@ -120,16 +95,6 @@ public abstract class AddonRegistry<T> extends Registry<T> {
         Registry.register(AddonRegistry.PERMISSIONS, Permission.MODIFY_FLAG.getId(), Permission.MODIFY_FLAG);
         Registry.register(AddonRegistry.PERMISSIONS, Permission.MODIFY_NAME.getId(), Permission.MODIFY_NAME);
         Registry.register(AddonRegistry.PERMISSIONS, Permission.MODIFY_ROLES.getId(), Permission.MODIFY_ROLES);
-
-        Registry.register(AddonRegistry.RESEARCH_REWARDS, new Identifier("galacticraft-api", "empty"), ResearchRewards.EMPTY);
-        Registry.register(AddonRegistry.RESEARCH_CRITERIA, new Identifier("galacticraft-api", "constant"), ResearchCriterias.CONSTANT_RESEARCH_CRITERIA);
-
-        Registry.register(AddonRegistry.CONFIGURED_RESEARCH_REWARDS, new Identifier("galacticraft-api", "empty"), ConfiguredResearchRewards.EMPTY);
-
-        Registry.register(AddonRegistry.CONFIGURED_RESEARCH_CRITERIA, new Identifier("galacticraft-api", "always_true"), ConfiguredResearchCriterias.ALWAYS_TRUE);
-        Registry.register(AddonRegistry.CONFIGURED_RESEARCH_CRITERIA, new Identifier("galacticraft-api", "always_false"), ConfiguredResearchCriterias.ALWAYS_FALSE);
-
-        Registry.register(AddonRegistry.RESEARCH_NODES, ResearchNodes.NONE.getId(), ResearchNodes.NONE);
 
         Registry.register(AddonRegistry.ROCKET_PARTS, RocketParts.INVALID.getId(), RocketParts.INVALID);
     }

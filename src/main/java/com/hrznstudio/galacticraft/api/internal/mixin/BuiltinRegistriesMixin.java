@@ -25,14 +25,14 @@ package com.hrznstudio.galacticraft.api.internal.mixin;
 import com.hrznstudio.galacticraft.api.atmosphere.AtmosphericGas;
 import com.hrznstudio.galacticraft.api.celestialbodies.CelestialBodyType;
 import com.hrznstudio.galacticraft.api.celestialbodies.SolarSystemType;
-import com.hrznstudio.galacticraft.api.reaserch.ResearchNodes;
-import com.hrznstudio.galacticraft.api.reaserch.criteria.ConfiguredResearchCriterias;
-import com.hrznstudio.galacticraft.api.reaserch.reward.ConfiguredResearchRewards;
 import com.hrznstudio.galacticraft.api.regisry.AddonRegistry;
 import com.hrznstudio.galacticraft.api.rocket.part.RocketParts;
 import com.hrznstudio.galacticraft.api.teams.data.Permission;
 import com.mojang.serialization.Lifecycle;
-import net.minecraft.util.registry.*;
+import net.minecraft.util.registry.BuiltinRegistries;
+import net.minecraft.util.registry.MutableRegistry;
+import net.minecraft.util.registry.Registry;
+import net.minecraft.util.registry.RegistryKey;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -55,9 +55,6 @@ public abstract class BuiltinRegistriesMixin {
         addRegistry(AddonRegistry.SOLAR_SYSTEM_TYPE_KEY, AddonRegistry.SOLAR_SYSTEMS, () -> SolarSystemType.SOL, Lifecycle.experimental());
         addRegistry(AddonRegistry.CELESTIAL_BODY_TYPE_KEY, AddonRegistry.CELESTIAL_BODIES, () -> CelestialBodyType.THE_SUN, Lifecycle.experimental());
         addRegistry(AddonRegistry.PERMISSIONS_KEY, AddonRegistry.PERMISSIONS, () -> Permission.INVITE_PLAYER, Lifecycle.experimental());
-        addRegistry(AddonRegistry.CONFIGURED_RESEARCH_CRITERIA_KEY, AddonRegistry.CONFIGURED_RESEARCH_CRITERIA, () -> ConfiguredResearchCriterias.ALWAYS_TRUE, Lifecycle.experimental());
-        addRegistry(AddonRegistry.CONFIGURED_RESEARCH_REWARD_KEY, AddonRegistry.CONFIGURED_RESEARCH_REWARDS, () -> ConfiguredResearchRewards.EMPTY, Lifecycle.experimental());
-        addRegistry(AddonRegistry.RESEARCH_NODE_KEY, AddonRegistry.RESEARCH_NODES, () -> ResearchNodes.NONE, Lifecycle.experimental());
         addRegistry(AddonRegistry.ROCKET_PART_KEY, AddonRegistry.ROCKET_PARTS, () -> RocketParts.INVALID, Lifecycle.experimental());
     }
 }

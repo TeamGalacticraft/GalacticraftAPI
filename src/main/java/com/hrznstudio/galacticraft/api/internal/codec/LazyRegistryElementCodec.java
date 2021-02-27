@@ -26,15 +26,14 @@ import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.DynamicOps;
-
-import java.util.Optional;
-import java.util.function.Supplier;
-
 import net.minecraft.util.Lazy;
 import net.minecraft.util.dynamic.RegistryOps;
 import net.minecraft.util.dynamic.RegistryReadingOps;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryKey;
+
+import java.util.Optional;
+import java.util.function.Supplier;
 
 public final class LazyRegistryElementCodec<E> implements Codec<Supplier<E>> {
     private final RegistryKey<? extends Registry<E>> registryRef;

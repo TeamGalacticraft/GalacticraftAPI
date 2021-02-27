@@ -22,14 +22,20 @@
 
 package com.hrznstudio.galacticraft.api.internal.fabric;
 
+import com.hrznstudio.galacticraft.api.internal.accessor.ServerResearchAccessor;
 import com.hrznstudio.galacticraft.api.internal.command.GCApiCommands;
+import io.netty.buffer.Unpooled;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.minecraft.network.PacketByteBuf;
+import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.util.Identifier;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-
 public class GalacticraftAPI implements ModInitializer {
-
+    public static final String MOD_ID = "galacticraft-api";
     public static final Logger LOGGER = LogManager.getLogger();
 
     @Override
@@ -37,6 +43,13 @@ public class GalacticraftAPI implements ModInitializer {
         long startInitTime = System.currentTimeMillis();
         LOGGER.info("Initializing...");
         GCApiCommands.register();
+        ServerTickEvents.END_SERVER_TICK.register(server -> {
+            for (ServerPlayerEntity player : server.getPlayerManager().getPlayerList()) {
+                if (((ServerResearchAccessor)player).changed_gcr()) {
+                    ServerPlayNetworking.send(player, new Identifier(GalacticraftAPI.MOD_ID, "research_update"), ((ServerResearchAccessor) player).writeResearchChanges_gcr(new PacketByteBuf(Unpooled.buffer())));
+                }
+            }
+        });
         LOGGER.info("[GC-API] Initialization Complete. (Took {}ms).", System.currentTimeMillis()-startInitTime);
     }
 }
