@@ -44,6 +44,7 @@ public class CelestialBodyType {
     public static final Codec<CelestialBodyType> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             Identifier.CODEC.fieldOf("id").forGetter(i -> i.id),
             Codec.STRING.fieldOf("translation_key").forGetter(i -> i.translationKey),
+            CelestialObjectType.CODEC.fieldOf("type").forGetter(i -> i.type),
             World.CODEC.optionalFieldOf("dimension").forGetter(i -> Optional.ofNullable(i.worldKey)),
             SolarSystemType.REGISTRY_CODEC.fieldOf("solar_system").forGetter(i -> () -> i.parentSystem),
             Codec.INT.fieldOf("access_weight").forGetter(i -> i.accessWeight),
@@ -51,11 +52,12 @@ public class CelestialBodyType {
             CelestialBodyDisplayInfo.CODEC.fieldOf("display").forGetter(i -> i.displayInfo),
             Codec.FLOAT.fieldOf("gravity").forGetter(i -> i.gravity),
             AtmosphericInfo.CODEC.fieldOf("atmosphere").forGetter(i -> i.atmosphere)
-    ).apply(instance, (identifier, s, worldRegistryKey, solarSystem, integer, celestialBodyTypeSupplier, celestialBodyDisplayInfo, aFloat, atmosphericInfo) ->
-            new CelestialBodyType(identifier, s, worldRegistryKey.orElse(null), solarSystem.get(), integer, celestialBodyTypeSupplier.orElse(() -> null).get(), celestialBodyDisplayInfo, aFloat, atmosphericInfo)));
+    ).apply(instance, (identifier, s, type, worldRegistryKey, solarSystem, integer, celestialBodyTypeSupplier, celestialBodyDisplayInfo, aFloat, atmosphericInfo) ->
+            new CelestialBodyType(identifier, s, type, worldRegistryKey.orElse(null), solarSystem.get(), integer, celestialBodyTypeSupplier.orElse(() -> null).get(), celestialBodyDisplayInfo, aFloat, atmosphericInfo)));
 
     public static final CelestialBodyType THE_SUN = new Builder(new Identifier(GalacticraftAPI.MOD_ID, "the_sun"))
             .translationKey("ui.galacticraft-api.bodies.the_sun")
+            .type(CelestialObjectType.STAR)
             .parent(null)
             .display(
                     new CelestialBodyDisplayInfo.Builder()
@@ -97,6 +99,7 @@ public class CelestialBodyType {
             ).build();
     private final Identifier id;
     private final String translationKey;
+    private final CelestialObjectType type;
     private final @Nullable RegistryKey<World> worldKey;
     private final SolarSystemType parentSystem;
     private final int accessWeight;
@@ -109,6 +112,7 @@ public class CelestialBodyType {
      * Used to register a new Celestial Body. {@link AddonRegistry#CELESTIAL_BODIES}
      * @param id Unique identifier
      * @param translationKey Key used to translate the body's name
+     * @param type The type of celestial body this is
      * @param worldKey The world the body type is for
      * @param parentSystem The celestial body's parent solar system
      * @param accessWeight The rocket tier/access weight for the body. (-1 for inaccessible)
@@ -117,9 +121,10 @@ public class CelestialBodyType {
      * @param gravity The gravity applied to entities on the body (1.0f is the same as the overworld)
      * @param atmosphere The atmosphere of the body
      */
-    public CelestialBodyType(Identifier id, String translationKey, @Nullable RegistryKey<World> worldKey, SolarSystemType parentSystem, int accessWeight, CelestialBodyType parent, CelestialBodyDisplayInfo displayInfo, float gravity, AtmosphericInfo atmosphere) {
+    public CelestialBodyType(Identifier id, String translationKey, CelestialObjectType type, @Nullable RegistryKey<World> worldKey, SolarSystemType parentSystem, int accessWeight, CelestialBodyType parent, CelestialBodyDisplayInfo displayInfo, float gravity, AtmosphericInfo atmosphere) {
         this.id = id;
         this.translationKey = translationKey;
+        this.type = type;
         this.worldKey = worldKey;
         this.parentSystem = parentSystem;
         this.accessWeight = accessWeight;
@@ -156,6 +161,10 @@ public class CelestialBodyType {
 
     public String getTranslationKey() {
         return translationKey;
+    }
+
+    public CelestialObjectType getType() {
+        return type;
     }
 
     public @Nullable RegistryKey<World> getWorld() {
@@ -198,6 +207,7 @@ public class CelestialBodyType {
     public static class Builder {
         private final Identifier id;
         private String translationKey;
+        private CelestialObjectType type = CelestialObjectType.PLANET;
         private RegistryKey<World> worldKey = null;
         private SolarSystemType parentSystem = SolarSystemType.SOL;
         private int accessWeight = -1;
@@ -213,6 +223,11 @@ public class CelestialBodyType {
 
         public Builder translationKey(String key) {
             this.translationKey = key;
+            return this;
+        }
+
+        public Builder type(CelestialObjectType type) {
+            this.type = type;
             return this;
         }
 
@@ -253,7 +268,7 @@ public class CelestialBodyType {
 
         public CelestialBodyType build() {
             assert this.id != null;
-            return new CelestialBodyType(this.id, this.translationKey, this.worldKey, this.parentSystem, this.accessWeight, this.parent, this.displayInfo, this.gravity, this.atmosphere);
+            return new CelestialBodyType(this.id, this.translationKey, this.type, this.worldKey, this.parentSystem, this.accessWeight, this.parent, this.displayInfo, this.gravity, this.atmosphere);
         }
     }
 }
