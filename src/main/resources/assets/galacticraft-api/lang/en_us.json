@@ -1,6 +1,7 @@
 {
   "ui.galacticraft-api.bodies.the_sun": "The Sun",
   "ui.galacticraft-api.bodies.earth": "Earth",
+  "ui.galacticraft-api.bodies.satellite": "Satellite",
 
   "ui.galacticraft-api.gases.hydrogen": "Hydrogen",
   "ui.galacticraft-api.gases.nitrogen": "Nitrogen",

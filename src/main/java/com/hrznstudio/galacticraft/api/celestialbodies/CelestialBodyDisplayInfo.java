@@ -24,6 +24,8 @@ package com.hrznstudio.galacticraft.api.celestialbodies;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.Identifier;
 
 public class CelestialBodyDisplayInfo {
@@ -76,6 +78,23 @@ public class CelestialBodyDisplayInfo {
         this.iconH = iconH;
     }
 
+    public static CelestialBodyDisplayInfo fromTag(CompoundTag tag) {
+        return new CelestialBodyDisplayInfo(tag.getDouble("orbitTime"),
+                tag.getDouble("dayLength"),
+                tag.getFloat("distance"),
+                tag.getFloat("scale"),
+                new Identifier(tag.getString("icon")),
+                tag.getInt("iconX"),
+                tag.getInt("iconY"),
+                tag.getInt("iconW"),
+                tag.getInt("iconH")
+        );
+    }
+
+    public static CelestialBodyDisplayInfo fromPacket(PacketByteBuf buf) {
+        return new CelestialBodyDisplayInfo(buf.readDouble(), buf.readDouble(), buf.readFloat(), buf.readFloat(), buf.readIdentifier(), buf.readInt(), buf.readInt(), buf.readInt(), buf.readInt());
+    }
+
     public double getOrbitTime() {
         return orbitTime;
     }
@@ -110,6 +129,31 @@ public class CelestialBodyDisplayInfo {
 
     public int getIconH() {
         return iconH;
+    }
+
+    public CompoundTag toTag(CompoundTag tag) {
+        tag.putDouble("orbitTime", orbitTime);
+        tag.putDouble("dayLength", dayLength);
+        tag.putFloat("distance", relativeDistance);
+        tag.putFloat("scale", scale);
+        tag.putString("icon", iconTexture.toString());
+        tag.putInt("iconX", iconX);
+        tag.putInt("iconY", iconY);
+        tag.putInt("iconW", iconW);
+        tag.putInt("iconH", iconH);
+        return tag;
+    }
+
+    public void writePacket(PacketByteBuf buf) {
+        buf.writeDouble(orbitTime);
+        buf.writeDouble(dayLength);
+        buf.writeFloat(relativeDistance);
+        buf.writeFloat(scale);
+        buf.writeIdentifier(iconTexture);
+        buf.writeInt(iconX);
+        buf.writeInt(iconY);
+        buf.writeInt(iconW);
+        buf.writeInt(iconH);
     }
 
     public static class Builder {

@@ -22,6 +22,8 @@
 
 package com.hrznstudio.galacticraft.api.internal.mixin.client;
 
+import com.hrznstudio.galacticraft.api.celestialbodies.satellite.Satellite;
+import com.hrznstudio.galacticraft.api.internal.accessor.SatelliteAccessor;
 import com.hrznstudio.galacticraft.api.internal.data.ClientWorldTeamsGetter;
 import com.hrznstudio.galacticraft.api.teams.packet.TeamDeleteS2CPacket;
 import com.hrznstudio.galacticraft.api.teams.packet.TeamPlayerInviteS2CPacket;
@@ -33,16 +35,21 @@ import net.fabricmc.api.Environment;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.network.listener.ClientPlayPacketListener;
+import net.minecraft.util.Identifier;
+import org.jetbrains.annotations.Unmodifiable;
 import org.spongepowered.asm.mixin.Implements;
 import org.spongepowered.asm.mixin.Interface;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Environment(EnvType.CLIENT)
 @Implements(@Interface(iface = ClientTeamsPacketListener.class, prefix = "ctpl$", remap = Interface.Remap.NONE))
 @Mixin({ClientPlayNetworkHandler.class})
-public abstract class ClientPlayNetworkHandlerMixin implements ClientPlayPacketListener {
-
+public abstract class ClientPlayNetworkHandlerMixin implements ClientPlayPacketListener, SatelliteAccessor {
+    private final List<Satellite> satellites = new ArrayList<>();
     @Shadow private ClientWorld world;
 
     public void ctpl$onTeamUpdate(TeamUpdateS2CPacket packet) {
@@ -67,5 +74,27 @@ public abstract class ClientPlayNetworkHandlerMixin implements ClientPlayPacketL
         if(this.world != null) {
             ((ClientWorldTeamsGetter)world).getSpaceRaceTeams().getTeam(packet.getPlayer()).players.remove(packet.getPlayer());
         }
+    }
+
+    @Override
+    public @Unmodifiable List<Satellite> getSatellites() {
+        return this.satellites;
+    }
+
+    @Override
+    public void addSatellite(Satellite satellite) {
+        this.satellites.add(satellite);
+    }
+
+    @Override
+    public void removeSatellite(Identifier id) {
+        int index = -1;
+        for (int i = 0; i < this.satellites.size(); i++) {
+            if (this.satellites.get(i).getId() ==id) {
+                index = i;
+                break;
+            }
+        }
+        this.satellites.remove(index);
     }
 }

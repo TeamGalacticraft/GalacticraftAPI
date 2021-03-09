@@ -24,6 +24,7 @@ package com.hrznstudio.galacticraft.api.celestialbodies;
 
 import com.hrznstudio.galacticraft.api.atmosphere.AtmosphericGas;
 import com.hrznstudio.galacticraft.api.atmosphere.AtmosphericInfo;
+import com.hrznstudio.galacticraft.api.celestialbodies.satellite.SatelliteRecipe;
 import com.hrznstudio.galacticraft.api.internal.codec.LazyRegistryElementCodec;
 import com.hrznstudio.galacticraft.api.internal.fabric.GalacticraftAPI;
 import com.hrznstudio.galacticraft.api.regisry.AddonRegistry;
@@ -32,8 +33,11 @@ import com.mojang.serialization.Dynamic;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Lazy;
+import net.minecraft.util.registry.DynamicRegistryManager;
+import net.minecraft.util.registry.MutableRegistry;
 import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
@@ -51,9 +55,10 @@ public class CelestialBodyType {
             CelestialBodyType.REGISTRY_CODEC.optionalFieldOf("parent").forGetter(i -> i.parent == null ? Optional.empty() : Optional.of(() -> i.parent)),
             CelestialBodyDisplayInfo.CODEC.fieldOf("display").forGetter(i -> i.displayInfo),
             Codec.FLOAT.fieldOf("gravity").forGetter(i -> i.gravity),
-            AtmosphericInfo.CODEC.fieldOf("atmosphere").forGetter(i -> i.atmosphere)
-    ).apply(instance, (identifier, s, type, worldRegistryKey, solarSystem, integer, celestialBodyTypeSupplier, celestialBodyDisplayInfo, aFloat, atmosphericInfo) ->
-            new CelestialBodyType(identifier, s, type, worldRegistryKey.orElse(null), solarSystem.get(), integer, celestialBodyTypeSupplier.orElse(() -> null).get(), celestialBodyDisplayInfo, aFloat, atmosphericInfo)));
+            AtmosphericInfo.CODEC.fieldOf("atmosphere").forGetter(i -> i.atmosphere),
+            SatelliteRecipe.CODEC.optionalFieldOf("satellite_recipe").forGetter(i -> Optional.ofNullable(i.satelliteRecipe))
+    ).apply(instance, (id, s, type, world, solarSystem, tier, parent, display, gravity, atmosphere, recipe) ->
+            new CelestialBodyType(id, s, type, world.orElse(null), solarSystem.get(), tier, parent.orElse(() -> null).get(), display, gravity, atmosphere, recipe.orElse(null))));
 
     public static final CelestialBodyType THE_SUN = new Builder(new Identifier(GalacticraftAPI.MOD_ID, "the_sun"))
             .translationKey("ui.galacticraft-api.bodies.the_sun")
@@ -103,10 +108,11 @@ public class CelestialBodyType {
     private final @Nullable RegistryKey<World> worldKey;
     private final SolarSystemType parentSystem;
     private final int accessWeight;
-    private final CelestialBodyType parent;
+    private final @Nullable CelestialBodyType parent;
     private final CelestialBodyDisplayInfo displayInfo;
     private final float gravity;
     private final AtmosphericInfo atmosphere;
+    private final @Nullable SatelliteRecipe satelliteRecipe;
 
     /**
      * Used to register a new Celestial Body. {@link AddonRegistry#CELESTIAL_BODIES}
@@ -120,8 +126,9 @@ public class CelestialBodyType {
      * @param displayInfo Information used to display the body
      * @param gravity The gravity applied to entities on the body (1.0f is the same as the overworld)
      * @param atmosphere The atmosphere of the body
+     * @param satelliteRecipe The resources required create a space station
      */
-    public CelestialBodyType(Identifier id, String translationKey, CelestialObjectType type, @Nullable RegistryKey<World> worldKey, SolarSystemType parentSystem, int accessWeight, CelestialBodyType parent, CelestialBodyDisplayInfo displayInfo, float gravity, AtmosphericInfo atmosphere) {
+    public CelestialBodyType(@NotNull Identifier id, String translationKey, @NotNull CelestialObjectType type, @Nullable RegistryKey<World> worldKey, @NotNull SolarSystemType parentSystem, int accessWeight, @Nullable CelestialBodyType parent, @NotNull CelestialBodyDisplayInfo displayInfo, float gravity, @NotNull AtmosphericInfo atmosphere, @Nullable SatelliteRecipe satelliteRecipe) {
         this.id = id;
         this.translationKey = translationKey;
         this.type = type;
@@ -132,14 +139,15 @@ public class CelestialBodyType {
         this.displayInfo = displayInfo;
         this.gravity = gravity;
         this.atmosphere = atmosphere;
+        this.satelliteRecipe = satelliteRecipe;
     }
 
     /**
      *
      * @return all registered Celestial Bodies
      */
-    public static Iterable<CelestialBodyType> getAll() {
-        return AddonRegistry.CELESTIAL_BODIES;
+    public static MutableRegistry<CelestialBodyType> getAll(DynamicRegistryManager registryManager) {
+        return registryManager.get(AddonRegistry.CELESTIAL_BODY_TYPE_KEY);
     }
 
     /**
@@ -147,23 +155,23 @@ public class CelestialBodyType {
      * @param id The identifier of the body
      * @return the celestial body or null
      */
-    public static CelestialBodyType getById(Identifier id) {
-        return AddonRegistry.CELESTIAL_BODIES.get(id);
+    public static CelestialBodyType getById(DynamicRegistryManager registryManager, Identifier id) {
+        return registryManager.get(AddonRegistry.CELESTIAL_BODY_TYPE_KEY).get(id);
     }
 
-    public static Optional<CelestialBodyType> getByDimType(RegistryKey<World> world) {
-        return AddonRegistry.CELESTIAL_BODIES.stream().filter(celestialBodyType -> celestialBodyType.getWorld() == world).findFirst();
+    public static Optional<CelestialBodyType> getByDimType(DynamicRegistryManager registryManager, RegistryKey<World> world) {
+        return registryManager.get(AddonRegistry.CELESTIAL_BODY_TYPE_KEY).stream().filter(celestialBodyType -> celestialBodyType.getWorld() == world).findFirst();
     }
 
-    public Identifier getId() {
+    public @NotNull Identifier getId() {
         return id;
     }
 
-    public String getTranslationKey() {
+    public @NotNull String getTranslationKey() {
         return translationKey;
     }
 
-    public CelestialObjectType getType() {
+    public @NotNull CelestialObjectType getType() {
         return type;
     }
 
@@ -171,7 +179,7 @@ public class CelestialBodyType {
         return worldKey;
     }
 
-    public SolarSystemType getParentSystem() {
+    public @NotNull SolarSystemType getParentSystem() {
         return parentSystem;
     }
 
@@ -179,11 +187,11 @@ public class CelestialBodyType {
         return accessWeight;
     }
 
-    public CelestialBodyType getParent() {
+    public @Nullable CelestialBodyType getParent() {
         return parent;
     }
 
-    public CelestialBodyDisplayInfo getDisplayInfo() {
+    public @NotNull CelestialBodyDisplayInfo getDisplayInfo() {
         return displayInfo;
     }
 
@@ -191,12 +199,16 @@ public class CelestialBodyType {
         return gravity;
     }
 
-    public AtmosphericInfo getAtmosphere() {
+    public @NotNull AtmosphericInfo getAtmosphere() {
         return atmosphere;
     }
 
-    public static CelestialBodyType deserialize(Dynamic<?> dynamic) {
-        return AddonRegistry.CELESTIAL_BODIES.get(new Identifier(dynamic.asString("")));
+    public @Nullable SatelliteRecipe getSatelliteRecipe() {
+        return satelliteRecipe;
+    }
+
+    public static CelestialBodyType deserialize(DynamicRegistryManager registryManager, Dynamic<?> dynamic) {
+        return registryManager.get(AddonRegistry.CELESTIAL_BODY_TYPE_KEY).get(new Identifier(dynamic.asString("")));
     }
 
     @Override
@@ -215,6 +227,7 @@ public class CelestialBodyType {
         private CelestialBodyDisplayInfo displayInfo = null;
         private float gravity = 1.0f;
         private AtmosphericInfo atmosphere = new AtmosphericInfo.Builder().build();
+        private SatelliteRecipe satelliteRecipe = null;
 
         public Builder(Identifier id) {
             this.id = id;
@@ -246,7 +259,7 @@ public class CelestialBodyType {
             return this;
         }
 
-        public Builder parent(CelestialBodyType parent) {
+        public Builder parent(@Nullable CelestialBodyType parent) {
             this.parent = parent;
             return this;
         }
@@ -265,10 +278,14 @@ public class CelestialBodyType {
             this.atmosphere = atmosphericInfo;
             return this;
         }
+        public Builder recipe(SatelliteRecipe recipe) {
+            this.satelliteRecipe = recipe;
+            return this;
+        }
 
         public CelestialBodyType build() {
             assert this.id != null;
-            return new CelestialBodyType(this.id, this.translationKey, this.type, this.worldKey, this.parentSystem, this.accessWeight, this.parent, this.displayInfo, this.gravity, this.atmosphere);
+            return new CelestialBodyType(this.id, this.translationKey, this.type, this.worldKey, this.parentSystem, this.accessWeight, this.parent, this.displayInfo, this.gravity, this.atmosphere, this.satelliteRecipe);
         }
     }
 }

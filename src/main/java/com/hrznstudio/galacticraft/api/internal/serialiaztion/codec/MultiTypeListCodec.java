@@ -59,9 +59,7 @@ public final class MultiTypeListCodec<A extends CodecProvider<A>> implements Cod
             final Stream.Builder<T> failed = Stream.builder();
             final MutableObject<DataResult<Unit>> result = new MutableObject<>(DataResult.success(Unit.INSTANCE, Lifecycle.stable()));
             stream.accept(t -> {
-                Pair<Identifier, T> id = Identifier.CODEC.decode(ops, t).getOrThrow(false, s -> {
-                    throw new RuntimeException(s);
-                });
+                Pair<Identifier, T> id = Identifier.CODEC.decode(ops, t).get().orThrow();
                 final DataResult<? extends Pair<? extends A, T>> element = this.registry.get(id.getFirst()).getCodec().decode(ops, id.getSecond());
 
                 element.error().ifPresent(e -> failed.add(t));

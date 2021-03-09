@@ -28,6 +28,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.dynamic.RegistryElementCodec;
+import net.minecraft.util.registry.DynamicRegistryManager;
 
 import java.util.Objects;
 import java.util.function.Supplier;
@@ -106,6 +107,10 @@ public class SolarSystemType {
 
     public Identifier getId() {
         return this.id;
+    }
+
+    public static SolarSystemType getById(DynamicRegistryManager registryManager, Identifier id) {
+        return registryManager.get(AddonRegistry.SOLAR_SYSTEM_TYPE_KEY).get(id);
     }
 
     public static class Builder {

@@ -32,6 +32,6 @@ import org.spongepowered.asm.mixin.injection.ModifyConstant;
 public abstract class ItemEntityMixin {
     @ModifyConstant(method = "tick", constant = @Constant(doubleValue = -0.04D))
     private double changeItemGravity(double defaultValue) {
-        return CelestialBodyType.getByDimType(((ItemEntity)(Object)this).world.getRegistryKey()).map(celestialBodyType -> celestialBodyType.getGravity() / 1.75D * defaultValue).orElse(defaultValue);
+        return CelestialBodyType.getByDimType(((ItemEntity)(Object)this).world.getRegistryManager(), ((ItemEntity)(Object)this).world.getRegistryKey()).map(celestialBodyType -> celestialBodyType.getGravity() / 1.75D * defaultValue).orElse(defaultValue);
     }
 }

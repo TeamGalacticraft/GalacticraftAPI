@@ -22,7 +22,9 @@
 
 package com.hrznstudio.galacticraft.api.internal.client.fabric;
 
+import com.hrznstudio.galacticraft.api.celestialbodies.satellite.Satellite;
 import com.hrznstudio.galacticraft.api.internal.accessor.ClientResearchAccessor;
+import com.hrznstudio.galacticraft.api.internal.accessor.SatelliteAccessor;
 import com.hrznstudio.galacticraft.api.internal.fabric.GalacticraftAPI;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
@@ -37,9 +39,18 @@ import java.util.Objects;
 public class ClientGalacticraftAPI implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
+        GalacticraftAPI.LOGGER.info("Loaded client module");
         ClientPlayNetworking.registerGlobalReceiver(new Identifier(GalacticraftAPI.MOD_ID, "research_update"), (client, networkHandler, buffer, sender) -> {
             PacketByteBuf buf = new PacketByteBuf(buffer.copy());
             client.execute(() -> ((ClientResearchAccessor) Objects.requireNonNull(client.player)).readChanges(buf));
+        });
+        ClientPlayNetworking.registerGlobalReceiver(new Identifier(GalacticraftAPI.MOD_ID, "add_satellite"), (client, networkHandler, buffer, sender) -> {
+            PacketByteBuf buf = new PacketByteBuf(buffer.copy());
+            /*client.execute(() -> */((SatelliteAccessor) networkHandler).addSatellite(Satellite.fromPacket(client.getNetworkHandler().getRegistryManager(), buf))/*)*/;
+        });
+        ClientPlayNetworking.registerGlobalReceiver(new Identifier(GalacticraftAPI.MOD_ID, "remove_satellite"), (client, networkHandler, buffer, sender) -> {
+            PacketByteBuf buf = new PacketByteBuf(buffer.copy());
+            /*client.execute(() -> */((SatelliteAccessor) networkHandler).removeSatellite(buf.readIdentifier())/*)*/;
         });
     }
 }

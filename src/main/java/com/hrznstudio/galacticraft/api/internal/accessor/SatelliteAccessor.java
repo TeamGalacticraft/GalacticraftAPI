@@ -20,20 +20,18 @@
  * SOFTWARE.
  */
 
-package com.hrznstudio.galacticraft.api.celestialbodies;
+package com.hrznstudio.galacticraft.api.internal.accessor;
 
-import com.google.common.annotations.Beta;
-import net.minecraft.util.registry.RegistryKey;
-import net.minecraft.world.World;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.hrznstudio.galacticraft.api.celestialbodies.satellite.Satellite;
+import net.minecraft.util.Identifier;
+import org.jetbrains.annotations.Unmodifiable;
 
-/**
- * basic satellite interface, subject to change
- */
-@Beta
-public interface Satellite {
-    @Nullable RegistryKey<World> getWorld();
+import java.util.List;
 
-    @NotNull CelestialBodyType getParent();
+public interface SatelliteAccessor {
+    @Unmodifiable List<Satellite> getSatellites();
+
+    void addSatellite(Satellite satellite);
+
+    void removeSatellite(Identifier id);
 }

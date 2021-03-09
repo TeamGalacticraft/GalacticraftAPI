@@ -30,7 +30,8 @@ import java.util.Locale;
 public enum CelestialObjectType {
     STAR,
     PLANET,
-    MOON;
+    MOON,
+    SATELLITE;
 
     public static final Codec<CelestialObjectType> CODEC = Codec.of(new Encoder<CelestialObjectType>() {
         @Override
@@ -40,7 +41,7 @@ public enum CelestialObjectType {
     }, new Decoder<CelestialObjectType>() {
         @Override
         public <T> DataResult<Pair<CelestialObjectType, T>> decode(DynamicOps<T> ops, T input) {
-            return DataResult.success(new Pair<>(valueOf(ops.getStringValue(input).getOrThrow(false, s -> {throw new RuntimeException(s);}).toUpperCase(Locale.ROOT)), input));
+            return DataResult.success(new Pair<>(valueOf(ops.getStringValue(input).get().orThrow().toUpperCase(Locale.ROOT)), input));
         }
     });
 }

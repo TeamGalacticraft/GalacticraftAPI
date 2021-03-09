@@ -56,6 +56,9 @@ public class Permission {
     public static final Permission MODIFY_ROLES = new Permission.Builder(
             new Identifier(GalacticraftAPI.MOD_ID, "modify_roles")
     ).build();
+    public static final Permission ACCESS_SPACE_STATION = new Permission.Builder(
+            new Identifier(GalacticraftAPI.MOD_ID, "access_space_station")
+    ).build();
 
     private static Permission register(Permission permission) {
         return Registry.register(AddonRegistry.PERMISSIONS, permission.identifier, permission);

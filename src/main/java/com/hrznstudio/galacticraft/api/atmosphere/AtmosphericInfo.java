@@ -23,9 +23,13 @@
 package com.hrznstudio.galacticraft.api.atmosphere;
 
 import com.google.common.collect.ImmutableMap;
+import com.hrznstudio.galacticraft.api.regisry.AddonRegistry;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.Pair;
+import net.minecraft.util.registry.DynamicRegistryManager;
+import net.minecraft.util.registry.MutableRegistry;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -57,7 +61,6 @@ public class AtmosphericInfo {
     private final double temperature;
     private final float pressure;
 
-
     /**
      *
      * @param composition make up of the atmosphere (gas, ppm)
@@ -82,12 +85,34 @@ public class AtmosphericInfo {
         return pressure;
     }
 
+    public void writePacket(PacketByteBuf buf) {
+        buf.writeInt(this.composition.size());
+        buf.writeFloat(this.pressure);
+        buf.writeDouble(this.temperature);
+        for (Map.Entry<AtmosphericGas, Double> entry : this.composition.entrySet()) {;
+            buf.writeIdentifier(entry.getKey().getId());
+            buf.writeDouble(entry.getValue());
+        }
+    }
+
+    public static AtmosphericInfo readPacket(DynamicRegistryManager dynamicRegistryManager, PacketByteBuf buf) {
+        MutableRegistry<AtmosphericGas> reg = dynamicRegistryManager.get(AddonRegistry.ATMOSPHERIC_GAS_KEY);
+        int size = buf.readInt();
+        Builder builder = new Builder();
+        builder.pressure(buf.readFloat());
+        builder.temperature(buf.readDouble());
+        for (int i = 0; i < size; i++) {
+            builder.gas(reg.get(buf.readIdentifier()), buf.readDouble());
+        }
+        return builder.build();
+    }
+
     public static class Builder {
         private final Map<AtmosphericGas, Double> composition = new HashMap<>();
-        private double temperature = 15.0f;
+        private double temperature = 15.0;
         private float pressure = 1.0f;
 
-        public Builder temperature(float temperature) {
+        public Builder temperature(double temperature) {
             this.temperature = temperature;
             return this;
         }

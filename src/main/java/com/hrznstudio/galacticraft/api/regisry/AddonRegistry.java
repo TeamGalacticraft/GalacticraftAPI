@@ -95,6 +95,7 @@ public abstract class AddonRegistry<T> extends Registry<T> {
         Registry.register(AddonRegistry.PERMISSIONS, Permission.MODIFY_FLAG.getId(), Permission.MODIFY_FLAG);
         Registry.register(AddonRegistry.PERMISSIONS, Permission.MODIFY_NAME.getId(), Permission.MODIFY_NAME);
         Registry.register(AddonRegistry.PERMISSIONS, Permission.MODIFY_ROLES.getId(), Permission.MODIFY_ROLES);
+        Registry.register(AddonRegistry.PERMISSIONS, Permission.ACCESS_SPACE_STATION.getId(), Permission.ACCESS_SPACE_STATION);
 
         Registry.register(AddonRegistry.ROCKET_PARTS, RocketParts.INVALID.getId(), RocketParts.INVALID);
     }

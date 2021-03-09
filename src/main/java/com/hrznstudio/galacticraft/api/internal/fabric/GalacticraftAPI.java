@@ -24,6 +24,7 @@ package com.hrznstudio.galacticraft.api.internal.fabric;
 
 import com.hrznstudio.galacticraft.api.internal.accessor.ServerResearchAccessor;
 import com.hrznstudio.galacticraft.api.internal.command.GCApiCommands;
+import com.hrznstudio.galacticraft.api.internal.world.gen.FlatChunkGenerator;
 import io.netty.buffer.Unpooled;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
@@ -31,12 +32,20 @@ import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.registry.Registry;
+import net.minecraft.util.registry.RegistryKey;
+import net.minecraft.world.biome.*;
+import net.minecraft.world.gen.surfacebuilder.ConfiguredSurfaceBuilders;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public class GalacticraftAPI implements ModInitializer {
     public static final String MOD_ID = "galacticraft-api";
     public static final Logger LOGGER = LogManager.getLogger();
+
+    @Deprecated
+    //todo look into why accessing this constant rather than getting it from a registry breaks everything - its not the same object somehow?!?
+    public static final Biome SPACE = new Biome.Builder().generationSettings(new GenerationSettings.Builder().surfaceBuilder(ConfiguredSurfaceBuilders.NOPE).build()).precipitation(Biome.Precipitation.NONE).category(Biome.Category.NONE).depth(0).downfall(0).spawnSettings(SpawnSettings.INSTANCE).effects(new BiomeEffects.Builder().fogColor(0).waterFogColor(0).waterColor(0).skyColor(0).build()).temperature(0).scale(0).build();
 
     @Override
     public void onInitialize() {
@@ -50,6 +59,8 @@ public class GalacticraftAPI implements ModInitializer {
                 }
             }
         });
+        Registry.register(Registry.CHUNK_GENERATOR, new Identifier(MOD_ID, "empty"), FlatChunkGenerator.CODEC);
+        BuiltinBiomes.register(284, RegistryKey.of(Registry.BIOME_KEY, new Identifier(MOD_ID, "space")), SPACE);
         LOGGER.info("[GC-API] Initialization Complete. (Took {}ms).", System.currentTimeMillis()-startInitTime);
     }
 }
