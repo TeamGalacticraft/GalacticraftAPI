@@ -139,7 +139,7 @@ public class Satellite extends CelestialBodyType {
             }
         }, new Identifier(GalacticraftAPI.MOD_ID, "infiniburn_space"), new Identifier(GalacticraftAPI.MOD_ID, "space_sky"), 0);
         DimensionOptions options = new DimensionOptions(() -> type, new FlatChunkGenerator(new FlatChunkGeneratorConfig(server.getRegistryManager().get(Registry.BIOME_KEY), new StructuresConfig(false), Collections.emptyList(), false, false, Optional.of(() -> server.getRegistryManager().get(Registry.BIOME_KEY).get(new Identifier(GalacticraftAPI.MOD_ID, "space"))))));
-        CelestialBodyDisplayInfo info = new CelestialBodyDisplayInfo.Builder().texture(new Identifier(GalacticraftAPI.MOD_ID, "satellite")).build();
+        CelestialBodyDisplayInfo info = new CelestialBodyDisplayInfo.Builder().time(24000 * 2).distance(5.0f).scale(0.5f).texture(new Identifier(GalacticraftAPI.MOD_ID, "satellite")).build();
         SatelliteOwnershipData ownershipData = new SatelliteOwnershipData(player.getUuid(), player.getEntityName());
         ServerTeams teams = ((MinecraftServerTeamsGetter) server).getSpaceRaceTeams();
         if (teams.getTeam(player.getUuid()) != null) {

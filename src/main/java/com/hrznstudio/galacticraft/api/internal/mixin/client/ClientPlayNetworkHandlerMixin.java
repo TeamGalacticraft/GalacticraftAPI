@@ -23,7 +23,7 @@
 package com.hrznstudio.galacticraft.api.internal.mixin.client;
 
 import com.hrznstudio.galacticraft.api.celestialbodies.satellite.Satellite;
-import com.hrznstudio.galacticraft.api.internal.accessor.SatelliteAccessor;
+import com.hrznstudio.galacticraft.api.internal.accessor.ClientSatelliteAccessor;
 import com.hrznstudio.galacticraft.api.internal.data.ClientWorldTeamsGetter;
 import com.hrznstudio.galacticraft.api.teams.packet.TeamDeleteS2CPacket;
 import com.hrznstudio.galacticraft.api.teams.packet.TeamPlayerInviteS2CPacket;
@@ -37,10 +37,7 @@ import net.minecraft.client.world.ClientWorld;
 import net.minecraft.network.listener.ClientPlayPacketListener;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Unmodifiable;
-import org.spongepowered.asm.mixin.Implements;
-import org.spongepowered.asm.mixin.Interface;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,8 +45,9 @@ import java.util.List;
 @Environment(EnvType.CLIENT)
 @Implements(@Interface(iface = ClientTeamsPacketListener.class, prefix = "ctpl$", remap = Interface.Remap.NONE))
 @Mixin({ClientPlayNetworkHandler.class})
-public abstract class ClientPlayNetworkHandlerMixin implements ClientPlayPacketListener, SatelliteAccessor {
-    private final List<Satellite> satellites = new ArrayList<>();
+public abstract class ClientPlayNetworkHandlerMixin implements ClientPlayPacketListener, ClientSatelliteAccessor {
+    private final @Unique List<Satellite> satellites_gcr = new ArrayList<>();
+    private final @Unique List<SatelliteListener> listeners_gcr = new ArrayList<>();
     @Shadow private ClientWorld world;
 
     public void ctpl$onTeamUpdate(TeamUpdateS2CPacket packet) {
@@ -78,23 +76,40 @@ public abstract class ClientPlayNetworkHandlerMixin implements ClientPlayPacketL
 
     @Override
     public @Unmodifiable List<Satellite> getSatellites() {
-        return this.satellites;
+        return this.satellites_gcr;
     }
 
     @Override
     public void addSatellite(Satellite satellite) {
-        this.satellites.add(satellite);
+        this.satellites_gcr.add(satellite);
+        for (SatelliteListener listener : this.listeners_gcr) {
+            listener.onSatelliteUpdated(satellite, true);
+        }
     }
 
     @Override
     public void removeSatellite(Identifier id) {
         int index = -1;
-        for (int i = 0; i < this.satellites.size(); i++) {
-            if (this.satellites.get(i).getId() ==id) {
+        for (int i = 0; i < this.satellites_gcr.size(); i++) {
+            if (this.satellites_gcr.get(i).getId() ==id) {
                 index = i;
                 break;
             }
         }
-        this.satellites.remove(index);
+
+        Satellite removed = this.satellites_gcr.remove(index);;
+        for (SatelliteListener listener : this.listeners_gcr) {
+            listener.onSatelliteUpdated(removed, false);
+        }
+    }
+
+    @Override
+    public void addListener(SatelliteListener listener) {
+        this.listeners_gcr.add(listener);
+    }
+
+    @Override
+    public void removeListener(SatelliteListener listener) {
+        this.listeners_gcr.remove(listener);
     }
 }
