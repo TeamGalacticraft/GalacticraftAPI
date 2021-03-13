@@ -20,18 +20,22 @@
  * SOFTWARE.
  */
 
-package com.hrznstudio.galacticraft.api.rocket.part;
+package com.hrznstudio.galacticraft.api.client.rocket.part;
 
-import com.hrznstudio.galacticraft.api.internal.fabric.GalacticraftAPI;
-import net.minecraft.block.Blocks;
-import net.minecraft.text.TranslatableText;
-import net.minecraft.util.Identifier;
+import com.hrznstudio.galacticraft.api.entity.RocketEntity;
+import com.hrznstudio.galacticraft.api.rocket.part.RocketPart;
+import net.minecraft.client.render.VertexConsumerProvider;
+import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.client.world.ClientWorld;
 
-public class RocketParts {
-    public static final RocketPart INVALID = RocketPart.Builder.create(new Identifier(GalacticraftAPI.MOD_ID, "invalid"))
-            .name(new TranslatableText("tooltip.galacticraft-api.something_went_wrong"))
-            .type(RocketPartType.UPGRADE)
-            .tier(-1)
-            .recipe(false)
-            .build();
+public enum EmptyRocketPartRenderer implements RocketPartRendererRegistry.RocketPartRenderer {
+    INSTANCE;
+
+    @Override
+    public void renderGUI(ClientWorld world, MatrixStack matrices, VertexConsumerProvider vertices, float delta) {
+    }
+
+    @Override
+    public void render(ClientWorld world, MatrixStack matrices, RocketEntity rocket, VertexConsumerProvider vertices, float delta, int light) {
+    }
 }

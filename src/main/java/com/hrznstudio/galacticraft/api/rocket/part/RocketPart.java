@@ -25,12 +25,12 @@ package com.hrznstudio.galacticraft.api.rocket.part;
 import com.hrznstudio.galacticraft.api.internal.accessor.ResearchAccessor;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Optional;
 
 public class RocketPart {
     public static final Codec<RocketPart> CODEC = RecordCodecBuilder.create(i -> i.group(
@@ -38,34 +38,28 @@ public class RocketPart {
             Codec.STRING.fieldOf("name").forGetter(part -> part.getName().getKey()),
             Codec.INT.fieldOf("tier").forGetter(RocketPart::getTier),
             RocketPartType.CODEC.fieldOf("type").forGetter(RocketPart::getType),
-            BlockState.CODEC.fieldOf("render_state").forGetter(RocketPart::getRenderState),
-            ItemStack.CODEC.fieldOf("render_stack").forGetter(RocketPart::getRenderStack),
             Codec.BOOL.fieldOf("recipe").forGetter(RocketPart::hasRecipe),
-            Identifier.CODEC.fieldOf("research").forGetter(RocketPart::getResearch)
+            Identifier.CODEC.optionalFieldOf("research").forGetter(RocketPart::getResearch)
     ).apply(i, RocketPart::new));
 
     private final Identifier id;
     private final TranslatableText name;
     private final int tier;
     private final RocketPartType type;
-    private final BlockState renderState;
-    private final ItemStack renderStack;
     private final boolean hasRecipe;
-    private final Identifier research;
+    private final Optional<Identifier> research;
 
-    private RocketPart(@NotNull Identifier id, @NotNull TranslatableText name, @NotNull RocketPartType type, int tier, @NotNull BlockState renderState, @NotNull ItemStack renderStack, boolean hasRecipe, Identifier research) {
+    private RocketPart(@NotNull Identifier id, @NotNull TranslatableText name, @NotNull RocketPartType type, int tier, boolean hasRecipe, Optional<Identifier> research) {
         this.id = id;
         this.type = type;
         this.name = name;
-        this.renderState = renderState;
-        this.renderStack = renderStack;
         this.tier = tier;
         this.hasRecipe = hasRecipe;
         this.research = research;
     }
 
-    private RocketPart(@NotNull Identifier id, @NotNull String name, int tier, @NotNull RocketPartType type, @NotNull BlockState renderState, @NotNull ItemStack renderStack, boolean hasRecipe, Identifier research) {
-        this(id, new TranslatableText(name), type, tier, renderState, renderStack, hasRecipe, research);
+    private RocketPart(@NotNull Identifier id, @NotNull String name, int tier, @NotNull RocketPartType type, boolean hasRecipe, Optional<Identifier> research) {
+        this(id, new TranslatableText(name), type, tier, hasRecipe, research);
     }
 
     public Identifier getId() {
@@ -84,21 +78,13 @@ public class RocketPart {
         return type;
     }
 
-    public BlockState getRenderState() {
-        return renderState;
-    }
-
-    public ItemStack getRenderStack() {
-        return renderStack;
-    }
-
-    public Identifier getResearch() {
+    public Optional<Identifier> getResearch() {
         return this.research;
     }
 
     public boolean isUnlocked(PlayerEntity player) {
-        if (this.getResearch() == null) return true;
-        return ((ResearchAccessor) player).hasUnlocked_gcr(this.getResearch());
+        if (!this.getResearch().isPresent()) return true;
+        return ((ResearchAccessor) player).hasUnlocked_gcr(this.getResearch().get());
     }
 
     public boolean hasRecipe() {
@@ -109,8 +95,6 @@ public class RocketPart {
         private Identifier id;
         private TranslatableText name;
         private RocketPartType partType;
-        private BlockState renderState;
-        private ItemStack renderItem;
         private int tier = 0;
         private boolean hasRecipe = true;
         private Identifier research = new Identifier("empty");
@@ -138,18 +122,8 @@ public class RocketPart {
             return this;
         }
 
-        public Builder renderState(BlockState renderState) {
-            this.renderState = renderState;
-            return this;
-        }
-
         public Builder recipe(boolean hasRecipe) {
             this.hasRecipe = hasRecipe;
-            return this;
-        }
-
-        public Builder renderItem(ItemStack renderItem) {
-            this.renderItem = renderItem;
             return this;
         }
 
@@ -164,10 +138,10 @@ public class RocketPart {
         }
 
         public RocketPart build() {
-            if (id == null || name == null || partType == null || renderState == null) {
+            if (id == null || name == null || partType == null) {
                 throw new RuntimeException("Tried to build incomplete RocketPart!");
             }
-            return new RocketPart(id, name, partType, tier, renderState, renderItem == null ? new ItemStack(renderState.getBlock().asItem()) : renderItem, hasRecipe, research);
+            return new RocketPart(id, name, partType, tier, hasRecipe, Optional.ofNullable(research));
         }
     }
 }
