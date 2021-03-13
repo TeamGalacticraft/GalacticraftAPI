@@ -97,7 +97,7 @@ public class RocketPart {
         private RocketPartType partType;
         private int tier = 0;
         private boolean hasRecipe = true;
-        private Identifier research = new Identifier("empty");
+        private Identifier research = null;
 
         public Builder(Identifier id) {
             this.id = id;
