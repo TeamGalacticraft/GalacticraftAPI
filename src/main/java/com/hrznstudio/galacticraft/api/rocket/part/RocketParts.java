@@ -28,7 +28,7 @@ import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
 
 public class RocketParts {
-    public static final RocketPart INVALID = RocketPart.Builder.create(new Identifier(GalacticraftAPI.MOD_ID,unobtainable "invalid"))
+    public static final RocketPart INVALID = RocketPart.Builder.create(new Identifier(GalacticraftAPI.MOD_ID, "invalid"))
             .name(new TranslatableText("tooltip.galacticraft-api.something_went_wrong"))
             .type(RocketPartType.UPGRADE)
             .tier(-1)
