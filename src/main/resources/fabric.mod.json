@@ -6,7 +6,7 @@
   "name": "Galacticraft Addon API",
   "icon": "assets/galacticraft-api/icon.png",
   "description": "Addon API for the FabricMC port of Galacticraft.",
-  "licence": "MIT",
+  "license": "MIT",
   "contact": {
     "homepage": "https://hrznstudio.com",
     "sources": "https://github.com/StellarHorizons/Addon-API",
