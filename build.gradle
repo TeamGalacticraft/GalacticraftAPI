@@ -109,13 +109,12 @@ publishing {
         }
     }
     repositories {
-        mavenLocal()
-//        maven {
-//            url "s3://cdn.hrzn.studio/maven"
-//            authentication {
-//                awsIm(AwsImAuthentication)
-//            }
-//        }
+        maven {
+            url "s3://cdn.hrzn.studio/maven"
+            authentication {
+                awsIm(AwsImAuthentication)
+            }
+        }
     }
 }
 
