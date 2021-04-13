@@ -6,7 +6,7 @@
   "name": "Galacticraft Addon API",
   "icon": "assets/galacticraft-api/icon.png",
   "description": "Addon API for the FabricMC port of Galacticraft.",
-  "licence": "MIT",
+  "license": "MIT",
   "contact": {
     "homepage": "https://hrznstudio.com",
     "sources": "https://github.com/StellarHorizons/Addon-API",
@@ -34,25 +34,33 @@
       "com.hrznstudio.galacticraft.api.internal.fabric.GalacticraftAPI"
     ],
     "client": [
-      "com.hrznstudio.galacticraft.api.internal.fabric.GalacticraftAPIClient"
-    ],
-    "server": [
-      "com.hrznstudio.galacticraft.api.internal.fabric.GalacticraftAPIServer"
+      "com.hrznstudio.galacticraft.api.internal.client.fabric.ClientGalacticraftAPI"
     ]
   },
   "mixins": [
     "gc-api.mixins.json"
   ],
+  "accessWidener": "galacticraft-api.accesswidener",
   "depends": {
-    "fabricloader": ">=0.9.0",
-    "minecraft": ">=1.16.2"
+    "fabricloader": ">=0.11.1",
+    "minecraft": ">=1.16.2",
+    "fabric-api-base": "*",
+    "fabric-command-api-v1": "*",
+    "fabric-lifecycle-events-v1": "*",
+    "fabric-registry-sync-v0": "*",
+    "fabric-resource-loader-v0": "*"
   },
   "suggests": {
     "modmenu": "*",
     "galacticraft-rewoven": "*"
   },
   "custom": {
-    "modmenu:api": true,
-    "modmenu:parent": "galacticraft-rewoven"
+    "modmenu": {
+      "badges": [ "library" ],
+      "parent": "galacticraft-rewoven"
+    },
+    "cardinal-components": [
+      "galacticraft-api:research"
+    ]
   }
 }

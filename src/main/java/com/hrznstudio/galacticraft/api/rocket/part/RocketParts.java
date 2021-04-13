@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 HRZN LTD
+ * Copyright (c) 2019-2021 HRZN LTD
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -20,20 +20,19 @@
  * SOFTWARE.
  */
 
-package com.hrznstudio.galacticraft.api.internal.mixin;
+package com.hrznstudio.galacticraft.api.rocket.part;
 
-import com.mojang.serialization.Lifecycle;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.util.registry.RegistryKey;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.gen.Invoker;
+import com.hrznstudio.galacticraft.api.internal.fabric.GalacticraftAPI;
+import net.minecraft.block.Blocks;
+import net.minecraft.text.TranslatableText;
+import net.minecraft.util.Identifier;
 
-import java.util.function.Supplier;
-
-@Mixin({Registry.class})
-public interface RegistryAccessor {
-    @Invoker
-    static <T> Registry<T> callCreate(RegistryKey<? extends Registry<T>> registryKey, Lifecycle lifecycle, Supplier<T> defaultEntry) {
-        throw new UnsupportedOperationException("Mixin was not transformed");
-    }
+public class RocketParts {
+    public static final RocketPart INVALID = RocketPart.Builder.create(new Identifier(GalacticraftAPI.MOD_ID, "invalid"))
+            .name(new TranslatableText("tooltip.galacticraft-api.something_went_wrong"))
+            .type(RocketPartType.UPGRADE)
+            .tier(-1)
+            .research(new Identifier(GalacticraftAPI.MOD_ID, "unobtainable"))
+            .recipe(false)
+            .build();
 }

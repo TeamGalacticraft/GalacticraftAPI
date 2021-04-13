@@ -1,6 +1,7 @@
 {
   "ui.galacticraft-api.bodies.the_sun": "The Sun",
   "ui.galacticraft-api.bodies.earth": "Earth",
+  "ui.galacticraft-api.bodies.satellite": "Satellite",
 
   "ui.galacticraft-api.gases.hydrogen": "Hydrogen",
   "ui.galacticraft-api.gases.nitrogen": "Nitrogen",
@@ -17,5 +18,8 @@
   "ui.galacticraft-api.gases.xenon": "Xenon",
   "ui.galacticraft-api.gases.ozone": "Ozone",
   "ui.galacticraft-api.gases.nitrous_dioxide": "Nitrous Dioxide",
-  "ui.galacticraft-api.gases.iodine": "Iodine"
+  "ui.galacticraft-api.gases.iodine": "Iodine",
+
+  "command.galacticraft-api.debug.registry.dump": "Dumped: %s",
+  "command.galacticraft-api.debug.registry.id": "%s - %s: %s"
 }

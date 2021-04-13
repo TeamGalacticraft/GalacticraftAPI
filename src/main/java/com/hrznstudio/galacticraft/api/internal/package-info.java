@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 HRZN LTD
+ * Copyright (c) 2019-2021 HRZN LTD
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,4 +24,7 @@
  * Classes to make the Addon API run as an independent mod.
  * Includes ModInitializers and Mixins for the API.
  */
+@ApiStatus.Internal
 package com.hrznstudio.galacticraft.api.internal;
+
+import org.jetbrains.annotations.ApiStatus;

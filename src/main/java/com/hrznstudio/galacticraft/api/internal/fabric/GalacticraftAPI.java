@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 HRZN LTD
+ * Copyright (c) 2019-2021 HRZN LTD
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,55 +22,45 @@
 
 package com.hrznstudio.galacticraft.api.internal.fabric;
 
-import com.hrznstudio.galacticraft.api.atmosphere.AtmosphericGas;
-import com.hrznstudio.galacticraft.api.celestialbodies.CelestialBodyType;
-import com.hrznstudio.galacticraft.api.event.AtmosphericGasRegistryCallback;
-import com.hrznstudio.galacticraft.api.event.CelestialBodyRegistryCallback;
-import com.hrznstudio.galacticraft.api.event.SpaceRaceTeamPermissionRegistryCallback;
-import com.hrznstudio.galacticraft.api.teams.data.Permission;
+import com.hrznstudio.galacticraft.api.internal.accessor.ServerResearchAccessor;
+import com.hrznstudio.galacticraft.api.internal.command.GCApiCommands;
+import com.hrznstudio.galacticraft.api.internal.world.gen.FlatChunkGenerator;
+import io.netty.buffer.Unpooled;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.minecraft.network.PacketByteBuf;
+import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
+import net.minecraft.util.registry.RegistryKey;
+import net.minecraft.world.biome.*;
+import net.minecraft.world.gen.surfacebuilder.ConfiguredSurfaceBuilders;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-
 public class GalacticraftAPI implements ModInitializer {
-
+    public static final String MOD_ID = "galacticraft-api";
     public static final Logger LOGGER = LogManager.getLogger();
+
+    @Deprecated
+    //todo look into why accessing this constant rather than getting it from a registry breaks everything - its not the same object somehow?!?
+    public static final Biome SPACE = new Biome.Builder().generationSettings(new GenerationSettings.Builder().surfaceBuilder(ConfiguredSurfaceBuilders.NOPE).build()).precipitation(Biome.Precipitation.NONE).category(Biome.Category.NONE).depth(0).downfall(0).spawnSettings(SpawnSettings.INSTANCE).effects(new BiomeEffects.Builder().fogColor(0).waterFogColor(0).waterColor(0).skyColor(0).build()).temperature(0).scale(0).build();
 
     @Override
     public void onInitialize() {
         long startInitTime = System.currentTimeMillis();
         LOGGER.info("Initializing...");
-        // register our things
-        AtmosphericGasRegistryCallback.EVENT.register(registry -> {
-            Registry.register(registry, AtmosphericGas.HYDROGEN.getId(), AtmosphericGas.HYDROGEN);
-            Registry.register(registry, AtmosphericGas.NITROGEN.getId(), AtmosphericGas.NITROGEN);
-            Registry.register(registry, AtmosphericGas.OXYGEN.getId(), AtmosphericGas.OXYGEN);
-            Registry.register(registry, AtmosphericGas.CARBON_DIOXIDE.getId(), AtmosphericGas.CARBON_DIOXIDE);
-            Registry.register(registry, AtmosphericGas.WATER_VAPOR.getId(), AtmosphericGas.WATER_VAPOR);
-            Registry.register(registry, AtmosphericGas.METHANE.getId(), AtmosphericGas.METHANE);
-            Registry.register(registry, AtmosphericGas.HELIUM.getId(), AtmosphericGas.HELIUM);
-            Registry.register(registry, AtmosphericGas.ARGON.getId(), AtmosphericGas.ARGON);
-            Registry.register(registry, AtmosphericGas.NEON.getId(), AtmosphericGas.NEON);
-            Registry.register(registry, AtmosphericGas.KRYPTON.getId(), AtmosphericGas.KRYPTON);
-            Registry.register(registry, AtmosphericGas.NITROUS_OXIDE.getId(), AtmosphericGas.NITROUS_OXIDE);
-            Registry.register(registry, AtmosphericGas.CARBON_MONOXIDE.getId(), AtmosphericGas.CARBON_MONOXIDE);
-            Registry.register(registry, AtmosphericGas.XENON.getId(), AtmosphericGas.XENON);
-            Registry.register(registry, AtmosphericGas.OZONE.getId(), AtmosphericGas.OZONE);
-            Registry.register(registry, AtmosphericGas.NITROUS_DIOXIDE.getId(), AtmosphericGas.NITROUS_DIOXIDE);
-            Registry.register(registry, AtmosphericGas.IODINE.getId(), AtmosphericGas.IODINE);
+        GCApiCommands.register();
+        ServerTickEvents.END_SERVER_TICK.register(server -> {
+            for (ServerPlayerEntity player : server.getPlayerManager().getPlayerList()) {
+                if (((ServerResearchAccessor)player).changed_gcr()) {
+                    ServerPlayNetworking.send(player, new Identifier(GalacticraftAPI.MOD_ID, "research_update"), ((ServerResearchAccessor) player).writeResearchChanges_gcr(new PacketByteBuf(Unpooled.buffer())));
+                }
+            }
         });
-        CelestialBodyRegistryCallback.EVENT.register(registry -> {
-            Registry.register(registry, CelestialBodyType.THE_SUN.getId(), CelestialBodyType.THE_SUN);
-            Registry.register(registry, CelestialBodyType.EARTH.getId(), CelestialBodyType.EARTH);
-        });
-        SpaceRaceTeamPermissionRegistryCallback.EVENT.register(registry -> {
-            Registry.register(registry, Permission.MODIFY_COLOR.getIdentifier(), Permission.MODIFY_COLOR);
-            Registry.register(registry, Permission.MODIFY_FLAG.getIdentifier(), Permission.MODIFY_FLAG);
-            Registry.register(registry, Permission.MODIFY_NAME.getIdentifier(), Permission.MODIFY_NAME);
-            Registry.register(registry, Permission.MODIFY_ROLES.getIdentifier(), Permission.MODIFY_ROLES);
-        });
+        Registry.register(Registry.CHUNK_GENERATOR, new Identifier(MOD_ID, "empty"), FlatChunkGenerator.CODEC);
+        BuiltinBiomes.register(284, RegistryKey.of(Registry.BIOME_KEY, new Identifier(MOD_ID, "space")), SPACE);
         LOGGER.info("[GC-API] Initialization Complete. (Took {}ms).", System.currentTimeMillis()-startInitTime);
     }
 }

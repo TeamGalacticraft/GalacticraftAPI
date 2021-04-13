@@ -3,16 +3,21 @@
   "package": "com.hrznstudio.galacticraft.api.internal.mixin",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
+    "AdvancementRewardsMixin",
+    "BuiltinRegistriesMixin",
+    "DynamicRegistryManagerMixin",
+    "ItemEntityMixin",
     "LivingEntityMixin",
     "MinecraftServerMixin",
-    "RegistryAccessor",
-    "ServerPlayNetworkHandlerMixin"
+    "ServerPlayerEntityMixin",
+    "ServerPlayNetworkHandlerMixin",
+    "client.ClientPlayerEntityMixin"
   ],
   "client": [
-    "ClientBlockDustParticleMixin",
-    "ClientParticleMixin",
-    "ClientPlayNetworkHandlerMixin",
-    "ClientWorldMixin"
+    "client.BlockDustParticleMixin",
+    "client.ClientPlayNetworkHandlerMixin",
+    "client.ClientWorldMixin",
+    "client.ParticleMixin"
   ],
   "minVersion": "0.8.0",
   "injectors": {

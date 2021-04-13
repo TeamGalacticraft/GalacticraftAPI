@@ -1,0 +1,45 @@
+{
+  "schemaVersion": 1,
+  "id": "gc-testmod",
+  "version": "$version",
+
+  "name": "Galacticraft API Test Mod",
+  "description": "Test mod for the Addon API for the FabricMC port of Galacticraft.",
+  "license": "MIT",
+  "contact": {
+    "homepage": "https://hrznstudio.com",
+    "sources": "https://github.com/StellarHorizons/Addon-API",
+    "issues": "https://github.com/StellarHorizons/Addon-API/issues"
+  },
+  "authors": [
+    {
+      "name": "Horizon Studio",
+      "contact": {
+        "homepage": "https://hrznstudio.com",
+        "email": "contact@hrznstudio.com"
+      }
+    },
+    {
+      "name": "Stellar Horizons",
+      "contact": {
+        "homepage": "https://github.com/StellarHorizons",
+        "discord": "https://discord.gg/8eVjQrb"
+      }
+    }
+  ],
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "com.hrznstudio.galacticraft.testmod.GCApiTestMod"
+    ]
+  },
+  "depends": {
+    "fabricloader": ">=0.9.0",
+    "minecraft": ">=1.16.2",
+    "galacticraft-api": "*"
+  },
+  "suggests": {
+    "modmenu": "*",
+    "galacticraft-rewoven": "*"
+  }
+}

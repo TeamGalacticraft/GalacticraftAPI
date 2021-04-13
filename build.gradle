@@ -1,20 +1,29 @@
+import net.fabricmc.loom.task.RunClientTask
+import net.fabricmc.loom.task.RunServerTask
+import java.time.Year
+
 plugins {
     id 'fabric-loom' version '0.5-SNAPSHOT'
     id 'maven-publish'
+    id 'org.cadixdev.licenser' version '0.5.0'
 }
 
 group 'com.hrznstudio'
-version "0.2.13-alpha+${project.mc}"
+version "0.3.0-prealpha+${project.mc}"
 archivesBaseName = 'GalacticraftAPI'
 
 sourceCompatibility = targetCompatibility = JavaVersion.VERSION_1_8
 
-repositories {
-    mavenCentral()
+loom {
+    refmapName = "galacticraft-api.refmap.json"
+    accessWidener "src/main/resources/galacticraft-api.accesswidener"
 }
 
-minecraft {
-    refmapName = "galacticraft-api.refmap.json"
+sourceSets {
+    testmod {
+        compileClasspath += main.compileClasspath
+        runtimeClasspath += main.runtimeClasspath
+    }
 }
 
 dependencies {
@@ -23,7 +32,16 @@ dependencies {
     modImplementation "net.fabricmc:fabric-loader:${project.loader}"
 	
 	modImplementation fabricApi.module("fabric-api-base", project.fabric)
-	
+    modImplementation fabricApi.module("fabric-command-api-v1", project.fabric)
+    modImplementation fabricApi.module("fabric-lifecycle-events-v1", project.fabric)
+    modImplementation fabricApi.module("fabric-registry-sync-v0", project.fabric)
+    modImplementation fabricApi.module("fabric-resource-loader-v0", project.fabric)
+
+    testmodCompile sourceSets.main.output
+}
+
+configurations {
+    testmodCompile
 }
 
 processResources {
@@ -53,13 +71,22 @@ task javadocJar(type: Jar) {
     archiveClassifier = 'javadoc'
 }
 
+
+task runTestmodClient(type: RunClientTask) {
+    classpath sourceSets.testmod.runtimeClasspath
+}
+
+task runTestmodServer(type: RunServerTask) {
+    classpath sourceSets.testmod.runtimeClasspath
+}
+
 jar {
     from "LICENSE"
     manifest {
         attributes([
                 "Implementation-Title"    : "GalacticraftAPI",
                 "Implementation-Version"  : "${project.version}",
-                "Implementation-Vendor"   : "Horizon Studio",
+                "Implementation-Vendor"   : "HRZN LTD",
                 "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
                 "Maven-Artifact"          : "${project.group}:GalacticraftAPI:${project.version}",
                 "ModSide"                 : "BOTH",
@@ -82,12 +109,22 @@ publishing {
         }
     }
     repositories {
-        maven {
-            url "s3://cdn.hrzn.studio/maven"
-            authentication {
-                awsIm(AwsImAuthentication)
-            }
-        }
+        mavenLocal()
+//        maven {
+//            url "s3://cdn.hrzn.studio/maven"
+//            authentication {
+//                awsIm(AwsImAuthentication)
+//            }
+//        }
     }
 }
 
+license {
+    header = project.file("LICENSE_HEADER.txt")
+    include '**/com/hrznstudio/**/*.java'
+    include 'build.gradle'
+    ext {
+        year = Year.now().getValue()
+        company = "HRZN LTD"
+    }
+}

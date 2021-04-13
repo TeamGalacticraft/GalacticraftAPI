@@ -1,0 +1,31 @@
+{
+  "id": "testmod:custom",
+  "translation_key": "ui.testmod.bodies.custom",
+  "solar_system": {"y":0.0,"translation_key":"galacticraft-api.solar_system.sol","galaxy_translation_key":"galacticraft-api.galaxy.milky_way","id":"galacticraft-api:sol","x":0.0},
+  "access_weight": 1,
+  "display": {
+    "orbit_time": 1536000,
+    "day_length": 24000,
+    "distance": 1,
+    "scale": 1,
+    "icon_texture": "testmod:invalid_for_now",
+    "icon_x": 0,
+    "icon_y": 0,
+    "icon_u": 0,
+    "icon_v": 0,
+    "icon_w": 16,
+    "icon_h": 16
+  },
+  "gravity": 1.0,
+  "atmosphere": {
+    "composition": [
+      {
+        "gas": "galacticraft-api:hydrogen",
+        "ppm": 99
+      }
+    ],
+    "temperature": 15.0,
+    "pressure": 1.0
+
+}
+}
