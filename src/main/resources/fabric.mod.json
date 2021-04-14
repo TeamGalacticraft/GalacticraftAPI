@@ -9,8 +9,8 @@
   "license": "MIT",
   "contact": {
     "homepage": "https://galacticraft.team",
-    "sources": "https://github.com/StellarHorizons/Addon-API",
-    "issues": "https://github.com/StellarHorizons/Addon-API/issues"
+    "sources": "https://github.com/TeamGalacticraft/Addon-API",
+    "issues": "https://github.com/TeamGalacticraft/Addon-API/issues"
   },
   "authors": [
     {
@@ -24,10 +24,10 @@
   "environment": "*",
   "entrypoints": {
     "main": [
-      "com.hrznstudio.galacticraft.api.internal.fabric.GalacticraftAPI"
+      "dev.galacticraft.api.internal.fabric.GalacticraftAPI"
     ],
     "client": [
-      "com.hrznstudio.galacticraft.api.internal.client.fabric.ClientGalacticraftAPI"
+      "dev.galacticraft.api.internal.client.fabric.ClientGalacticraftAPI"
     ]
   },
   "mixins": [
