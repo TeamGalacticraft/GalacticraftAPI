@@ -97,7 +97,7 @@ jar {
 publishing {
     publications {
         mavenJava(MavenPublication) {
-			groupId = 'com.hrznstudio'
+			groupId = 'dev.galacticraft'
 			artifactId = 'GalacticraftAPI'
             artifact(file("${project.buildDir}/libs/${project.archivesBaseName}-${project.version}.jar")) { // thanks shedaniel
                 builtBy remapJar
