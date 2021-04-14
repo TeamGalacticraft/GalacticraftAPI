@@ -86,7 +86,7 @@ jar {
         attributes([
                 "Implementation-Title"    : "GalacticraftAPI",
                 "Implementation-Version"  : "${project.version}",
-                "Implementation-Vendor"   : "HRZN LTD",
+                "Implementation-Vendor"   : "Team Galacticraft",
                 "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
                 "Maven-Artifact"          : "${project.group}:GalacticraftAPI:${project.version}",
                 "ModSide"                 : "BOTH",
