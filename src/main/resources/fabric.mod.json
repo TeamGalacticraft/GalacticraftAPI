@@ -8,23 +8,16 @@
   "description": "Addon API for the FabricMC port of Galacticraft.",
   "license": "MIT",
   "contact": {
-    "homepage": "https://hrznstudio.com",
+    "homepage": "https://galacticraft.team",
     "sources": "https://github.com/StellarHorizons/Addon-API",
     "issues": "https://github.com/StellarHorizons/Addon-API/issues"
   },
   "authors": [
     {
-      "name": "Horizon Studio",
+      "name": "Team Galacticraft",
       "contact": {
-        "homepage": "https://hrznstudio.com",
-        "email": "contact@hrznstudio.com"
-      }
-    },
-    {
-      "name": "Stellar Horizons",
-      "contact": {
-        "homepage": "https://github.com/StellarHorizons",
-        "discord": "https://discord.gg/8eVjQrb"
+        "homepage": "https://github.com/TeamGalacticraft",
+        "discord": "https://discord.gg/n3QqhMYyFK"
       }
     }
   ],
