@@ -30,7 +30,7 @@
   "environment": "*",
   "entrypoints": {
     "main": [
-      "com.hrznstudio.galacticraft.testmod.GCApiTestMod"
+      "dev.galacticraft.api.testmod.GCApiTestMod"
     ]
   },
   "depends": {

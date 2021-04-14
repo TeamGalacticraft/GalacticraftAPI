@@ -110,7 +110,7 @@ publishing {
     }
     repositories {
         maven {
-            url "s3://cdn.hrzn.studio/maven"
+            url "s3://maven.galacticraft.dev"
             authentication {
                 awsIm(AwsImAuthentication)
             }
@@ -120,7 +120,7 @@ publishing {
 
 license {
     header = project.file("LICENSE_HEADER.txt")
-    include '**/com/hrznstudio/**/*.java'
+    include '**/dev/galacticraft/**/*.java'
     include 'build.gradle'
     ext {
         year = Year.now().getValue()
