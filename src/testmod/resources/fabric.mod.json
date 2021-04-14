@@ -7,30 +7,23 @@
   "description": "Test mod for the Addon API for the FabricMC port of Galacticraft.",
   "license": "MIT",
   "contact": {
-    "homepage": "https://hrznstudio.com",
-    "sources": "https://github.com/StellarHorizons/Addon-API",
-    "issues": "https://github.com/StellarHorizons/Addon-API/issues"
+    "homepage": "https://galacticraft.team",
+    "sources": "https://github.com/TeamGalacticraft/Addon-API",
+    "issues": "https://github.com/TeamGalacticraft/Addon-API/issues"
   },
   "authors": [
     {
-      "name": "Horizon Studio",
+      "name": "Team Galacticraft",
       "contact": {
-        "homepage": "https://hrznstudio.com",
-        "email": "contact@hrznstudio.com"
-      }
-    },
-    {
-      "name": "Stellar Horizons",
-      "contact": {
-        "homepage": "https://github.com/StellarHorizons",
-        "discord": "https://discord.gg/8eVjQrb"
+        "homepage": "https://github.com/TeamGalacticraft",
+        "discord": "https://discord.gg/n3QqhMYyFK"
       }
     }
   ],
   "environment": "*",
   "entrypoints": {
     "main": [
-      "com.hrznstudio.galacticraft.testmod.GCApiTestMod"
+      "dev.galacticraft.api.testmod.GCApiTestMod"
     ]
   },
   "depends": {
