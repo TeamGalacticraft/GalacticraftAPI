@@ -124,6 +124,6 @@ license {
     include 'build.gradle'
     ext {
         year = Year.now().getValue()
-        company = "HRZN LTD"
+        company = "Team Galacticraft"
     }
 }
