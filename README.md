@@ -1,8 +1,8 @@
 ![Maven metadata URL](https://img.shields.io/maven-metadata/v?metadataUrl=https%3A%2F%2Fmaven.galacticraft.dev%2Fdev%2Fgalacticraft%2FGalacticraftAPI%2Fmaven-metadata.xml&style=flat-square)
 [![Team Galacticraft Discord](https://img.shields.io/discord/775251052517523467.svg?colorB=7289DA&label=discord&style=flat-square)](https://discord.gg/n3QqhMYyFK)
-[![Issues](https://img.shields.io/github/issues/TeamGalacticraft/Addon-API?style=flat-square)](https://github.com/TeamGalacticraft/Addon-API/issues)
+[![Issues](https://img.shields.io/github/issues/TeamGalacticraft/GalacticraftAPI?style=flat-square)](https://github.com/TeamGalacticraft/GalacticraftAPI/issues)
 [![GalacticraftDev Twitch](https://img.shields.io/twitch/status/galacticraftdev.svg?style=flat-square)](https://twitch.tv/GalacticraftDev)
-# Addon-API
+# Galacticraft API
 The [Galacticraft](https://github.com/TeamGalacticraft/Galacticraft) addon API.
 
 ## Features
