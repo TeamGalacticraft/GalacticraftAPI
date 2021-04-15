@@ -23,7 +23,7 @@
 package dev.galacticraft.api.internal.command.argument;
 
 import com.google.common.collect.ImmutableList;
-import dev.galacticraft.api.regisry.AddonRegistry;
+import dev.galacticraft.api.registry.AddonRegistry;
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.arguments.ArgumentType;
 import com.mojang.brigadier.context.CommandContext;
