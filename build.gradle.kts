@@ -6,7 +6,7 @@ import java.time.format.DateTimeFormatter
 plugins {
     java
     `maven-publish`
-    id("fabric-loom") version "0.5-SNAPSHOT"
+    id("fabric-loom") version "0.6-SNAPSHOT"
     id("org.cadixdev.licenser") version "0.5.0"
 }
 
