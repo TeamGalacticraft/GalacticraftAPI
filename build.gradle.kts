@@ -6,7 +6,7 @@ import java.time.format.DateTimeFormatter
 plugins {
     java
     `maven-publish`
-    id("fabric-loom") version "0.6-SNAPSHOT"
+    id("fabric-loom") version "0.7-SNAPSHOT"
     id("org.cadixdev.licenser") version "0.5.0"
 }
 
@@ -26,7 +26,7 @@ loom {
     accessWidener("src/main/resources/galacticraft-api.accesswidener")
 }
 
-val testmodCompile by configurations.creating { extendsFrom(configurations.compile.get()) }
+val testmodCompile by configurations.creating { extendsFrom(configurations.implementation.get()) }
 
 dependencies {
     minecraft("com.mojang:minecraft:$mc")
