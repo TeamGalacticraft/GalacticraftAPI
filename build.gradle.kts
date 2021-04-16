@@ -26,7 +26,7 @@ loom {
     accessWidener("src/main/resources/galacticraft-api.accesswidener")
 }
 
-val testmodCompile by configurations.creating { extendsFrom(configurations.implementation.get()) }
+val testmodCompile by configurations.creating { extendsFrom(configurations.runtimeOnly.get()) }
 
 dependencies {
     minecraft("com.mojang:minecraft:$mc")
@@ -51,6 +51,7 @@ val testmodSourceSet = sourceSets.create("testmod") {
 
 tasks.processResources {
     inputs.property("version", project.version)
+    duplicatesStrategy = DuplicatesStrategy.WARN
 
     from(sourceSets.main.get().resources.srcDirs) {
         include("fabric.mod.json")
@@ -60,6 +61,10 @@ tasks.processResources {
     from(sourceSets.main.get().resources.srcDirs) {
         exclude("fabric.mod.json")
     }
+}
+
+tasks.getByName<ProcessResources>("processTestmodResources") {
+    duplicatesStrategy = DuplicatesStrategy.WARN
 }
 
 java {
