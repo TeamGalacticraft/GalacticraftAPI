@@ -23,7 +23,7 @@
 package dev.galacticraft.api.atmosphere;
 
 import com.google.common.collect.ImmutableMap;
-import dev.galacticraft.api.regisry.AddonRegistry;
+import dev.galacticraft.api.registry.AddonRegistry;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.network.PacketByteBuf;

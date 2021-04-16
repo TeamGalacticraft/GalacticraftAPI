@@ -20,7 +20,7 @@
  * SOFTWARE.
  */
 
-package dev.galacticraft.api.regisry;
+package dev.galacticraft.api.registry;
 
 import dev.galacticraft.api.atmosphere.AtmosphericGas;
 import dev.galacticraft.api.celestialbodies.CelestialBodyType;

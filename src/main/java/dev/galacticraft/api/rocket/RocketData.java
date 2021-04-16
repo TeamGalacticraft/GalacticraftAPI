@@ -23,7 +23,7 @@
 package dev.galacticraft.api.rocket;
 
 import com.google.common.collect.Lists;
-import dev.galacticraft.api.regisry.AddonRegistry;
+import dev.galacticraft.api.registry.AddonRegistry;
 import dev.galacticraft.api.rocket.part.RocketPart;
 import dev.galacticraft.api.rocket.part.RocketPartType;
 import net.minecraft.item.ItemStack;

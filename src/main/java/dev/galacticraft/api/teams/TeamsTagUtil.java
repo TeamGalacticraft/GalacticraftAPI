@@ -22,7 +22,7 @@
 
 package dev.galacticraft.api.teams;
 
-import dev.galacticraft.api.regisry.AddonRegistry;
+import dev.galacticraft.api.registry.AddonRegistry;
 import dev.galacticraft.api.teams.data.Permission;
 import dev.galacticraft.api.teams.data.Role;
 import dev.galacticraft.api.teams.data.Team;

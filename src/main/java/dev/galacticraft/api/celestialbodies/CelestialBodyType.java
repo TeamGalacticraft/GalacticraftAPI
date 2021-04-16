@@ -27,7 +27,7 @@ import dev.galacticraft.api.atmosphere.AtmosphericInfo;
 import dev.galacticraft.api.celestialbodies.satellite.SatelliteRecipe;
 import dev.galacticraft.api.internal.codec.LazyRegistryElementCodec;
 import dev.galacticraft.api.internal.fabric.GalacticraftAPI;
-import dev.galacticraft.api.regisry.AddonRegistry;
+import dev.galacticraft.api.registry.AddonRegistry;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.Dynamic;
 import com.mojang.serialization.codecs.RecordCodecBuilder;

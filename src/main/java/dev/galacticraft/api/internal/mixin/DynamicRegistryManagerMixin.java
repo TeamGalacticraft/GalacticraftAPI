@@ -26,7 +26,7 @@ import com.google.common.collect.ImmutableMap;
 import dev.galacticraft.api.atmosphere.AtmosphericGas;
 import dev.galacticraft.api.celestialbodies.CelestialBodyType;
 import dev.galacticraft.api.celestialbodies.SolarSystemType;
-import dev.galacticraft.api.regisry.AddonRegistry;
+import dev.galacticraft.api.registry.AddonRegistry;
 import dev.galacticraft.api.rocket.part.RocketPart;
 import dev.galacticraft.api.teams.data.Permission;
 import net.minecraft.util.dynamic.RegistryOps;

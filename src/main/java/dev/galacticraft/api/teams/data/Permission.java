@@ -23,7 +23,7 @@
 package dev.galacticraft.api.teams.data;
 
 import dev.galacticraft.api.internal.fabric.GalacticraftAPI;
-import dev.galacticraft.api.regisry.AddonRegistry;
+import dev.galacticraft.api.registry.AddonRegistry;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.Identifier;
