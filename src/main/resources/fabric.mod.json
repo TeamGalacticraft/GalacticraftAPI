@@ -40,17 +40,18 @@
     "fabric-api-base": "*",
     "fabric-command-api-v1": "*",
     "fabric-lifecycle-events-v1": "*",
+    "fabric-networking-api-v1": "*",
     "fabric-registry-sync-v0": "*",
     "fabric-resource-loader-v0": "*"
   },
   "suggests": {
     "modmenu": "*",
-    "galacticraft-rewoven": "*"
+    "galacticraft": "*"
   },
   "custom": {
     "modmenu": {
       "badges": [ "library" ],
-      "parent": "galacticraft-rewoven"
+      "parent": "galacticraft"
     },
     "cardinal-components": [
       "galacticraft-api:research"

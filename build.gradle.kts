@@ -7,39 +7,20 @@ plugins {
     java
     `maven-publish`
     id("fabric-loom") version "0.7-SNAPSHOT"
-    id("org.cadixdev.licenser") version "0.5.0"
+    id("org.cadixdev.licenser") version "0.5.1"
 }
 
 val mc = "1.16.5"
-val yarn = "4"
-val loader = "0.11.1"
-val fabric = "0.30.0+1.16"
+val yarn = "6"
+val loader = "0.11.3"
+val fabric = "0.32.5+1.16"
+val lba = "0.8.8"
 
 group = "dev.galacticraft"
-version ="0.3.1-alpha+$mc"
+version ="0.4.0-prealpha+$mc"
+
 base {
     archivesBaseName = "GalacticraftAPI"
-}
-
-loom {
-    refmapName = "galacticraft-api.refmap.json"
-    accessWidener("src/main/resources/galacticraft-api.accesswidener")
-}
-
-val testmodCompile by configurations.creating { extendsFrom(configurations.runtimeOnly.get()) }
-
-dependencies {
-    minecraft("com.mojang:minecraft:$mc")
-    mappings("net.fabricmc:yarn:$mc+build.$yarn:v2")
-    modImplementation("net.fabricmc:fabric-loader:$loader")
-	
-	modImplementation(fabricApi.module("fabric-api-base", fabric))
-    modImplementation(fabricApi.module("fabric-command-api-v1", fabric))
-    modImplementation(fabricApi.module("fabric-lifecycle-events-v1", fabric))
-    modImplementation(fabricApi.module("fabric-registry-sync-v0", fabric))
-    modImplementation(fabricApi.module("fabric-resource-loader-v0", fabric))
-
-    testmodCompile(sourceSets.main.get().output)
 }
 
 val testmodSourceSet = sourceSets.create("testmod") {
@@ -47,6 +28,66 @@ val testmodSourceSet = sourceSets.create("testmod") {
     runtimeClasspath += sourceSets.main.get().runtimeClasspath
     java.srcDir("src/testmod/java")
     resources.srcDir("src/testmod/resources")
+}
+
+loom {
+    refmapName = "galacticraft-api.refmap.json"
+    accessWidener("src/main/resources/galacticraft-api.accesswidener")
+
+    @Suppress("UnstableApiUsage")
+    runs {
+        register("TestMod Client") {
+            client()
+            source(testmodSourceSet)
+            vmArgs(
+                    "-ea",
+                    "-XX:+ShowCodeDetailsInExceptionMessages"
+            )
+            property("fabric.log.level", "debug")
+            name("TestMod Client")
+        }
+        register("TestMod Server") {
+            server()
+            source(testmodSourceSet)
+            vmArgs(
+                    "-ea",
+                    "-XX:+ShowCodeDetailsInExceptionMessages"
+            )
+            property("fabric.log.level", "debug")
+            name("TestMod Server")
+        }
+    }
+}
+
+val testmodCompile by configurations.creating { extendsFrom(configurations.runtimeOnly.get()) }
+
+repositories {
+    maven("https://alexiil.uk/maven/") {
+        content {
+            includeGroup("alexiil.mc.lib")
+        }
+    }
+}
+
+dependencies {
+    minecraft("com.mojang:minecraft:$mc")
+    mappings("net.fabricmc:yarn:$mc+build.$yarn:v2")
+    modImplementation("net.fabricmc:fabric-loader:$loader")
+
+    listOf(
+            "fabric-api-base",
+            "fabric-command-api-v1",
+            "fabric-lifecycle-events-v1",
+            "fabric-networking-api-v1",
+            "fabric-registry-sync-v0",
+            "fabric-resource-loader-v0",
+    ).forEach {
+        modImplementation(fabricApi.module(it, fabric))
+    }
+
+    modImplementation("alexiil.mc.lib:libblockattributes-core:$lba")
+
+    testmodCompile(sourceSets.main.get().output)
 }
 
 tasks.processResources {
@@ -90,14 +131,6 @@ val javadocJar = tasks.create<Jar>("javadocJarGC") {
     from(tasks.javadoc)
 }
 
-val runTestmodClient = tasks.create<RunClientTask>("runTestmodClient") {
-    classpath(sourceSets.getByName("testmod").runtimeClasspath)
-}
-
-val runTestmodServer = tasks.create<RunServerTask>("runTestmodServer") {
-    classpath(sourceSets.getByName("testmod").runtimeClasspath)
-}
-
 tasks.jar {
     from("LICENSE")
     manifest {
@@ -124,11 +157,15 @@ publishing {
         }
     }
     repositories {
-        maven {
-            setUrl("s3://maven.galacticraft.dev")
-            authentication {
-                register("awsIm", AwsImAuthentication::class)
+        if (net.fabricmc.loom.util.OperatingSystem.isCIBuild()) {
+            maven {
+                setUrl("s3://maven.galacticraft.dev")
+                authentication {
+                    register("awsIm", AwsImAuthentication::class)
+                }
             }
+        } else {
+            mavenLocal()
         }
     }
 }

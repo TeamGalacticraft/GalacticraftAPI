@@ -27,12 +27,12 @@
     ]
   },
   "depends": {
-    "fabricloader": ">=0.9.0",
+    "fabricloader": ">=0.10.0",
     "minecraft": ">=1.16.2",
-    "galacticraft-api": "*"
+    "galacticraft-api": ">=0.3"
   },
   "suggests": {
     "modmenu": "*",
-    "galacticraft-rewoven": "*"
+    "galacticraft": "*"
   }
 }
