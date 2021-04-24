@@ -36,7 +36,7 @@ loom {
 
     @Suppress("UnstableApiUsage")
     runs {
-        register("TestMod Client") {
+        register("TestModClient") {
             client()
             source(testmodSourceSet)
             vmArgs(
@@ -46,7 +46,7 @@ loom {
             property("fabric.log.level", "debug")
             name("TestMod Client")
         }
-        register("TestMod Server") {
+        register("TestModServer") {
             server()
             source(testmodSourceSet)
             vmArgs(
