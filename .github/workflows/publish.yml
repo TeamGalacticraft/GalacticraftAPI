@@ -13,9 +13,11 @@ jobs:
         with:
           java-version: 1.8
       - name: Publish Artifacts
+        uses: eskatos/gradle-command-action@v1
+        with:
+          arguments: checkLicenses publish
+          wrapper-cache-enabled: true
+          dependencies-cache-enabled: true
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.GC_AWS_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.GC_AWS_KEY }}
-        run: |
-          chmod +x gradlew
-          ./gradlew publish
