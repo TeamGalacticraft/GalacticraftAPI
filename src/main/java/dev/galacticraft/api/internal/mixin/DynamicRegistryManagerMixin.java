@@ -58,8 +58,8 @@ public abstract class DynamicRegistryManagerMixin {
 		return b && !override;
 	}
 
-	@SuppressWarnings("UnresolvedMixinReference") //synthetic >:(
-	@Inject(method = "method_30531", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/registry/DynamicRegistryManager;register(Lcom/google/common/collect/ImmutableMap$Builder;Lnet/minecraft/util/registry/RegistryKey;Lcom/mojang/serialization/Codec;)V", ordinal = 0), locals = LocalCapture.CAPTURE_FAILHARD)
+	@SuppressWarnings("UnresolvedMixinReference")
+	@Inject(method = "method_30531", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/registry/DynamicRegistryManager;register(Lcom/google/common/collect/ImmutableMap$Builder;Lnet/minecraft/util/registry/RegistryKey;Lcom/mojang/serialization/Codec;)V", ordinal = 0), locals = LocalCapture.CAPTURE_FAILHARD) //synthetic method
 	private static void registerCustom(CallbackInfoReturnable<ImmutableMap<RegistryKey<? extends Registry<?>>, DynamicRegistryManager.Info<?>>> ci, ImmutableMap.Builder<RegistryKey<? extends Registry<?>>, DynamicRegistryManager.Info<?>> builder) {
 		builder.put(AddonRegistry.ATMOSPHERIC_GAS_KEY, new DynamicRegistryManager.Info<>(AddonRegistry.ATMOSPHERIC_GAS_KEY, AtmosphericGas.CODEC, AtmosphericGas.CODEC));
 		builder.put(AddonRegistry.SOLAR_SYSTEM_TYPE_KEY, new DynamicRegistryManager.Info<>(AddonRegistry.SOLAR_SYSTEM_TYPE_KEY, SolarSystemType.CODEC, SolarSystemType.CODEC));

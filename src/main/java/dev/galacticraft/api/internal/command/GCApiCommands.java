@@ -61,7 +61,7 @@ public class GCApiCommands {
                 context.getSource().sendFeedback(new TranslatableText("command.galacticraft-api.debug.registry.id", registry.getKey().getValue(), registry.get(IntegerArgumentType.getInteger(context, "id"))), true);
                 return 1;
             }))).then(CommandManager.literal("to_raw").then(CommandManager.argument("id", IdentifierArgumentType.identifier()).executes(context -> {
-                Registry registry = RegistryArgumentType.getRegistry(context, "registry");
+                Registry<? super Object> registry = RegistryArgumentType.getRegistry(context, "registry");
                 Object o = registry.get(IdentifierArgumentType.getIdentifier(context, "id"));
                 context.getSource().sendFeedback(new TranslatableText("command.galacticraft-api.debug.registry.id", registry.getKey().getValue(), registry.getRawId(o)), true);
                 return 1;

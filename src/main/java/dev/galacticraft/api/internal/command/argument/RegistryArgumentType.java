@@ -33,6 +33,7 @@ import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import net.minecraft.command.CommandSource;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.registry.MutableRegistry;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryKey;
 
@@ -40,23 +41,23 @@ import java.util.Collection;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
-public class RegistryArgumentType implements ArgumentType<Registry<?>> {
+public class RegistryArgumentType<T> implements ArgumentType<Registry<T>> {
     private RegistryArgumentType() {
     }
 
-    public static RegistryArgumentType create() {
-        return new RegistryArgumentType();
+    public static <T> RegistryArgumentType<T> create() {
+        return new RegistryArgumentType<>();
     }
 
     @Override
-    public Registry<?> parse(StringReader reader) throws CommandSyntaxException {
-        RegistryKey<? extends Registry<?>> key = RegistryKey.ofRegistry(new Identifier(reader.readString()));
-        return Registry.REGISTRIES.get(key.getValue());
+    public Registry<T> parse(StringReader reader) throws CommandSyntaxException {
+        RegistryKey<Registry<T>> key = RegistryKey.ofRegistry(Identifier.fromCommandInput(reader));
+        return ((Registry<Registry<T>>)Registry.REGISTRIES).get(key);
     }
 
-    public static Registry<?> getRegistry(CommandContext<ServerCommandSource> context, String id) {
-        Registry<?> registry = context.getArgument(id, Registry.class);
-        Optional<? extends Registry<?>> dynamic = context.getSource().getRegistryManager().getOptional(registry.getKey());
+    public static <T> Registry<T> getRegistry(CommandContext<ServerCommandSource> context, String id) {
+        Registry<T> registry = context.getArgument(id, Registry.class);
+        Optional<MutableRegistry<T>> dynamic = context.getSource().getRegistryManager().getOptional(registry.getKey());
         return dynamic.isPresent() ? dynamic.get() : registry;
     }
 

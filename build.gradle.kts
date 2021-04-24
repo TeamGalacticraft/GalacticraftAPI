@@ -86,6 +86,7 @@ dependencies {
     }
 
     modImplementation("alexiil.mc.lib:libblockattributes-core:$lba")
+    modRuntime("net.fabricmc.fabric-api:fabric-api:$fabric")
 
     testmodCompile(sourceSets.main.get().output)
 }
