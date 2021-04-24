@@ -20,21 +20,39 @@
  * SOFTWARE.
  */
 
-package dev.galacticraft.api.part;
+package dev.galacticraft.api.rocket.part;
 
 import dev.galacticraft.api.entity.RocketEntity;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.client.world.ClientWorld;
+import org.jetbrains.annotations.ApiStatus;
 
-public enum EmptyRocketPartRenderer implements RocketPartRendererRegistry.RocketPartRenderer {
-    INSTANCE;
+import java.util.HashMap;
+import java.util.Map;
 
-    @Override
-    public void renderGUI(ClientWorld world, MatrixStack matrices, VertexConsumerProvider vertices, float delta) {
+@Environment(EnvType.CLIENT)
+public class RocketPartRendererRegistry {
+    @ApiStatus.Internal private static final Map<RocketPart, RocketPartRenderer> RENDERERS = new HashMap<>();
+
+    private RocketPartRendererRegistry() {}
+
+    public static void register(RocketPart part, RocketPartRenderer renderer) {
+        RENDERERS.put(part, renderer);
     }
 
-    @Override
-    public void render(ClientWorld world, MatrixStack matrices, RocketEntity rocket, VertexConsumerProvider vertices, float delta, int light) {
+    public static RocketPartRenderer getRenderer(RocketPart part) {
+        return RENDERERS.getOrDefault(part, EmptyRocketPartRenderer.INSTANCE);
     }
+
+    @FunctionalInterface
+    public interface RocketPartRenderer {
+        default void renderGUI(ClientWorld world, MatrixStack matrices, VertexConsumerProvider vertices, float delta) {
+        }
+
+        void render(ClientWorld world, MatrixStack matrices, RocketEntity rocket, VertexConsumerProvider vertices, float delta, int light);
+    }
+
 }

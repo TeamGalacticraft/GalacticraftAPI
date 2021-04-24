@@ -20,7 +20,7 @@
  * SOFTWARE.
  */
 
-package dev.galacticraft.api.part;
+package dev.galacticraft.api.rocket.part;
 
 import dev.galacticraft.api.entity.RocketEntity;
 import net.minecraft.client.render.*;
@@ -29,24 +29,37 @@ import net.minecraft.client.render.model.BakedQuad;
 import net.minecraft.client.render.model.json.ModelTransformation;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.client.world.ClientWorld;
+import net.minecraft.util.Lazy;
 
 public class BakedModelRocketPartRenderer implements RocketPartRendererRegistry.RocketPartRenderer {
-    private final BakedModel model;
-    private final RenderLayer layer;
+    private final Lazy<BakedModel> model;
+    private final Lazy<RenderLayer> layer;
+
+    public BakedModelRocketPartRenderer(Lazy<BakedModel> model, Lazy<RenderLayer> layer) {
+        this.model = model;
+        this.layer = layer;
+    }
+
+    public BakedModelRocketPartRenderer(BakedModel model, RenderLayer layer) {
+        this(new Lazy<>(() -> model), new Lazy<>(() -> layer));
+    }
+
+    public BakedModelRocketPartRenderer(Lazy<BakedModel> model) {
+        this(model, new Lazy<>(() -> RenderLayer.getEntityTranslucent(model.get().getSprite().getId(), true)));
+    }
 
     public BakedModelRocketPartRenderer(BakedModel model) {
-        this.model = model;
-        this.layer = RenderLayer.getEntityTranslucent(model.getSprite().getId(), true);
+        this(new Lazy<>(() -> model));
     }
 
     @Override
     public void renderGUI(ClientWorld world, MatrixStack matrices, VertexConsumerProvider vertices, float delta) {
-        model.getTransformation().getTransformation(ModelTransformation.Mode.GUI).apply(false, matrices);
+        model.get().getTransformation().getTransformation(ModelTransformation.Mode.GUI).apply(false, matrices);
         matrices.translate(-0.5D, -0.5D, -0.5D);
 
         MatrixStack.Entry entry = matrices.peek();
         VertexConsumer vertexConsumer = vertices.getBuffer(TexturedRenderLayers.getItemEntityTranslucentCull());
-        for (BakedQuad quad : this.model.getQuads(null, null, world.random)) {
+        for (BakedQuad quad : this.model.get().getQuads(null, null, world.random)) {
             vertexConsumer.quad(
                     entry,
                     quad,
@@ -63,8 +76,8 @@ public class BakedModelRocketPartRenderer implements RocketPartRendererRegistry.
     @Override
     public void render(ClientWorld world, MatrixStack matrices, RocketEntity rocket, VertexConsumerProvider vertices, float delta, int light) {
         MatrixStack.Entry entry = matrices.peek();
-        VertexConsumer vertexConsumer = vertices.getBuffer(layer);
-        for (BakedQuad quad : this.model.getQuads(null, null, world.random)) {
+        VertexConsumer vertexConsumer = vertices.getBuffer(layer.get());
+        for (BakedQuad quad : this.model.get().getQuads(null, null, world.random)) {
             vertexConsumer.quad(
                     entry,
                     quad,

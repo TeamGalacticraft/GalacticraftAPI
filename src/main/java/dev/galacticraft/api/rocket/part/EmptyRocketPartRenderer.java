@@ -20,40 +20,31 @@
  * SOFTWARE.
  */
 
-package dev.galacticraft.api.part;
+package dev.galacticraft.api.rocket.part;
 
 import dev.galacticraft.api.entity.RocketEntity;
-import dev.galacticraft.api.rocket.part.RocketPart;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
+import dev.galacticraft.api.internal.fabric.GalacticraftAPI;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.client.world.ClientWorld;
-import org.jetbrains.annotations.ApiStatus;
 
-import java.util.HashMap;
-import java.util.Map;
+public enum EmptyRocketPartRenderer implements RocketPartRendererRegistry.RocketPartRenderer {
+    INSTANCE;
+    private static boolean hasWarned = false;
 
-@Environment(EnvType.CLIENT)
-public class RocketPartRendererRegistry {
-    @SuppressWarnings("rawtypes") @ApiStatus.Internal private static final Map<RocketPart, RocketPartRenderer> RENDERERS = new HashMap<>();
-
-    private RocketPartRendererRegistry() {}
-
-    public static void register(RocketPart part, RocketPartRenderer renderer) {
-        RENDERERS.put(part, renderer);
-    }
-
-    public static RocketPartRenderer getRenderer(RocketPart part) {
-        return RENDERERS.getOrDefault(part, EmptyRocketPartRenderer.INSTANCE);
-    }
-
-    @FunctionalInterface
-    public interface RocketPartRenderer {
-        default void renderGUI(ClientWorld world, MatrixStack matrices, VertexConsumerProvider vertices, float delta) {
+    @Override
+    public void renderGUI(ClientWorld world, MatrixStack matrices, VertexConsumerProvider vertices, float delta) {
+        if (!hasWarned) {
+            hasWarned = true;
+            GalacticraftAPI.LOGGER.warn("EmptyRocketPartRenderer renderer is in use! RocketPartRenderer wasn't registered?");
         }
-
-        void render(ClientWorld world, MatrixStack matrices, RocketEntity rocket, VertexConsumerProvider vertices, float delta, int light);
     }
 
+    @Override
+    public void render(ClientWorld world, MatrixStack matrices, RocketEntity rocket, VertexConsumerProvider vertices, float delta, int light) {
+        if (!hasWarned) {
+            hasWarned = true;
+            GalacticraftAPI.LOGGER.warn("EmptyRocketPartRenderer renderer is in use! RocketPartRenderer wasn't registered?");
+        }
+    }
 }

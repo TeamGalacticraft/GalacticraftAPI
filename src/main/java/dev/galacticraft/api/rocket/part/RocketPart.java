@@ -39,7 +39,7 @@ public class RocketPart {
             Codec.INT.fieldOf("tier").forGetter(RocketPart::getTier),
             RocketPartType.CODEC.fieldOf("type").forGetter(RocketPart::getType),
             Codec.BOOL.fieldOf("recipe").forGetter(RocketPart::hasRecipe),
-            Identifier.CODEC.optionalFieldOf("research").forGetter(RocketPart::getResearch)
+            Identifier.CODEC.optionalFieldOf("research").forGetter(part -> Optional.ofNullable(part.getResearch()))
     ).apply(i, RocketPart::new));
 
     private final Identifier id;
@@ -47,9 +47,9 @@ public class RocketPart {
     private final int tier;
     private final RocketPartType type;
     private final boolean hasRecipe;
-    private final Optional<Identifier> research;
+    private final Identifier research;
 
-    private RocketPart(@NotNull Identifier id, @NotNull TranslatableText name, @NotNull RocketPartType type, int tier, boolean hasRecipe, Optional<Identifier> research) {
+    private RocketPart(@NotNull Identifier id, @NotNull TranslatableText name, @NotNull RocketPartType type, int tier, boolean hasRecipe, Identifier research) {
         this.id = id;
         this.type = type;
         this.name = name;
@@ -59,7 +59,7 @@ public class RocketPart {
     }
 
     private RocketPart(@NotNull Identifier id, @NotNull String name, int tier, @NotNull RocketPartType type, boolean hasRecipe, Optional<Identifier> research) {
-        this(id, new TranslatableText(name), type, tier, hasRecipe, research);
+        this(id, new TranslatableText(name), type, tier, hasRecipe, research.orElse(null));
     }
 
     public Identifier getId() {
@@ -78,13 +78,13 @@ public class RocketPart {
         return type;
     }
 
-    public Optional<Identifier> getResearch() {
+    public Identifier getResearch() {
         return this.research;
     }
 
     public boolean isUnlocked(PlayerEntity player) {
-        if (!this.getResearch().isPresent()) return true;
-        return ((ResearchAccessor) player).hasUnlocked_gcr(this.getResearch().get());
+        if (this.getResearch() == null) return true;
+        return ((ResearchAccessor) player).hasUnlocked_gcr(this.getResearch());
     }
 
     public boolean hasRecipe() {
@@ -141,7 +141,7 @@ public class RocketPart {
             if (id == null || name == null || partType == null) {
                 throw new RuntimeException("Tried to build incomplete RocketPart!");
             }
-            return new RocketPart(id, name, partType, tier, hasRecipe, Optional.ofNullable(research));
+            return new RocketPart(id, name, partType, tier, hasRecipe, research);
         }
     }
 }
