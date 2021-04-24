@@ -34,13 +34,10 @@ import java.util.List;
 import java.util.Objects;
 
 public class RocketData {
-    public static final RocketData EMPTY = new RocketData(-1, 0, 0, 0, 1, null, null, null, null, null, null);
+    public static final RocketData EMPTY = new RocketData(-1, -1, null, null, null, null, null, null);
 
     private final int tier;
-    private final int red;
-    private final int green;
-    private final int blue;
-    private final int alpha;
+    private final int color; //ARGB
     private final RocketPart cone;
     private final RocketPart body;
     private final RocketPart fin;
@@ -48,12 +45,9 @@ public class RocketData {
     private final RocketPart bottom;
     private final RocketPart upgrade;
 
-    public RocketData(int tier, int red, int green, int blue, int alpha, RocketPart cone, RocketPart body, RocketPart fin, RocketPart booster, RocketPart bottom, RocketPart upgrade) {
+    public RocketData(int tier, int color, RocketPart cone, RocketPart body, RocketPart fin, RocketPart booster, RocketPart bottom, RocketPart upgrade) {
         this.tier = tier;
-        this.red = red;
-        this.green = green;
-        this.blue = blue;
-        this.alpha = alpha;
+        this.color = color;
         this.cone = cone;
         this.body = body;
         this.fin = fin;
@@ -68,14 +62,12 @@ public class RocketData {
 
     public static RocketData fromTag(CompoundTag tag) {
         if (tag.contains("tier")
-                && tag.contains("red")
-                && tag.contains("green") && tag.contains("blue")
-                && tag.contains("alpha")
+                && tag.contains("color")
                 && tag.contains("cone")
                 && tag.contains("body") && tag.contains("fin")
                 && tag.contains("booster") && tag.contains("bottom")
                 && tag.contains("upgrade")) {
-            return new RocketData(tag.getInt("tier"), tag.getInt("red"), tag.getInt("green"), tag.getInt("blue"), tag.contains("alpha") ? tag.getInt("alpha") : 1,
+            return new RocketData(tag.getInt("tier"), tag.getInt("color"),
                     AddonRegistry.ROCKET_PARTS.get(new Identifier(tag.getString("cone"))), AddonRegistry.ROCKET_PARTS.get(new Identifier(tag.getString("body"))),
                     AddonRegistry.ROCKET_PARTS.get(new Identifier(tag.getString("fin"))), AddonRegistry.ROCKET_PARTS.get(new Identifier(tag.getString("booster"))),
                     AddonRegistry.ROCKET_PARTS.get(new Identifier(tag.getString("bottom"))), AddonRegistry.ROCKET_PARTS.get(new Identifier(tag.getString("upgrade"))));
@@ -87,10 +79,7 @@ public class RocketData {
     public ItemStack toSchematic(ItemStack stack) {
         CompoundTag tag = stack.getOrCreateTag();
         tag.putInt("tier", tier);
-        tag.putInt("red", red);
-        tag.putInt("green", green);
-        tag.putInt("blue", blue);
-        tag.putInt("alpha", alpha);
+        tag.putInt("color", color);
         tag.putString("cone", Objects.requireNonNull(AddonRegistry.ROCKET_PARTS.getId(cone)).toString());
         tag.putString("body", Objects.requireNonNull(AddonRegistry.ROCKET_PARTS.getId(body)).toString());
         tag.putString("fin", Objects.requireNonNull(AddonRegistry.ROCKET_PARTS.getId(fin)).toString());
@@ -106,10 +95,7 @@ public class RocketData {
         tag.putBoolean("empty", isEmpty());
         if (!isEmpty()) {
             tag.putInt("tier", tier);
-            tag.putInt("red", red);
-            tag.putInt("green", green);
-            tag.putInt("blue", blue);
-            tag.putInt("alpha", alpha);
+            tag.putInt("color", color);
             tag.putString("cone", Objects.requireNonNull(AddonRegistry.ROCKET_PARTS.getId(cone)).toString());
             tag.putString("body", Objects.requireNonNull(AddonRegistry.ROCKET_PARTS.getId(body)).toString());
             tag.putString("fin", Objects.requireNonNull(AddonRegistry.ROCKET_PARTS.getId(fin)).toString());
@@ -124,20 +110,24 @@ public class RocketData {
         return tier;
     }
 
+    public int getColor() {
+        return color;
+    }
+
     public int getRed() {
-        return red;
+        return this.getColor() >> 4 & 0xFF;
     }
 
     public int getGreen() {
-        return green;
+        return this.getColor() >> 2 & 0xFF;
     }
 
     public int getBlue() {
-        return blue;
+        return this.getColor() & 0xFF;
     }
 
     public int getAlpha() {
-        return alpha;
+        return this.getColor() >> 6 & 0xFF;
     }
 
     public RocketPart getCone() {
@@ -174,10 +164,7 @@ public class RocketData {
         if (o == null || getClass() != o.getClass()) return false;
         RocketData that = (RocketData) o;
         return tier == that.tier &&
-                red == that.red &&
-                green == that.green &&
-                blue == that.blue &&
-                alpha == that.alpha &&
+                color == that.color &&
                 cone == that.cone &&
                 body == that.body &&
                 fin == that.fin &&
@@ -188,17 +175,14 @@ public class RocketData {
 
     @Override
     public int hashCode() {
-        return Objects.hash(tier, red, green, blue, alpha, cone, body, fin, booster, bottom, upgrade);
+        return Objects.hash(tier, color, cone, body, fin, booster, bottom, upgrade);
     }
 
     @Override
     public String toString() {
         return "RocketData{" +
                 "tier=" + tier +
-                ", red=" + red +
-                ", green=" + green +
-                ", blue=" + blue +
-                ", alpha=" + alpha +
+                ", color=" + color +
                 ", cone=" + cone +
                 ", body=" + body +
                 ", fin=" + fin +
