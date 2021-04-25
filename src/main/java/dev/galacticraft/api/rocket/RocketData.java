@@ -115,11 +115,11 @@ public class RocketData {
     }
 
     public int getRed() {
-        return this.getColor() >> 4 & 0xFF;
+        return this.getColor() >> 16 & 0xFF;
     }
 
     public int getGreen() {
-        return this.getColor() >> 2 & 0xFF;
+        return this.getColor() >> 8 & 0xFF;
     }
 
     public int getBlue() {
@@ -127,7 +127,7 @@ public class RocketData {
     }
 
     public int getAlpha() {
-        return this.getColor() >> 6 & 0xFF;
+        return this.getColor() >> 24 & 0xFF;
     }
 
     public RocketPart getCone() {
