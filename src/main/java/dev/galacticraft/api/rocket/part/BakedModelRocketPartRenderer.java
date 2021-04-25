@@ -30,6 +30,7 @@ import net.minecraft.client.render.model.json.ModelTransformation;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.util.Lazy;
+import org.lwjgl.opengl.GL11;
 
 public class BakedModelRocketPartRenderer implements RocketPartRendererRegistry.RocketPartRenderer {
     private final Lazy<BakedModel> model;
@@ -59,6 +60,7 @@ public class BakedModelRocketPartRenderer implements RocketPartRendererRegistry.
 
         MatrixStack.Entry entry = matrices.peek();
         VertexConsumer vertexConsumer = Tessellator.getInstance().getBuffer();
+        Tessellator.getInstance().getBuffer().begin(GL11.GL_QUADS, VertexFormats.POSITION_COLOR_TEXTURE_LIGHT_NORMAL);
         for (BakedQuad quad : this.model.get().getQuads(null, null, world.random)) {
             vertexConsumer.quad(
                     entry,
