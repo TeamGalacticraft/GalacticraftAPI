@@ -33,7 +33,7 @@ public enum EmptyRocketPartRenderer implements RocketPartRendererRegistry.Rocket
     private static boolean hasWarned = false;
 
     @Override
-    public void renderGUI(ClientWorld world, MatrixStack matrices, VertexConsumerProvider vertices, float delta) {
+    public void renderGUI(ClientWorld world, MatrixStack matrices, int mouseX, int mouseY, float delta) {
         if (!hasWarned) {
             hasWarned = true;
             GalacticraftAPI.LOGGER.warn("EmptyRocketPartRenderer renderer is in use! RocketPartRenderer wasn't registered?");

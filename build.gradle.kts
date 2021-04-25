@@ -132,6 +132,10 @@ val javadocJar = tasks.create<Jar>("javadocJarGC") {
     from(tasks.javadoc)
 }
 
+tasks.remapSourcesJar.configure {
+    dependsOn.add(sourcesJar)
+}
+
 tasks.jar {
     from("LICENSE")
     manifest {

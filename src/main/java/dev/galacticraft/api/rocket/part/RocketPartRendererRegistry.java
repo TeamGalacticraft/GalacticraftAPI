@@ -49,7 +49,7 @@ public class RocketPartRendererRegistry {
 
     @FunctionalInterface
     public interface RocketPartRenderer {
-        default void renderGUI(ClientWorld world, MatrixStack matrices, VertexConsumerProvider vertices, float delta) {
+        default void renderGUI(ClientWorld world, MatrixStack matrices, int mouseX, int mouseY, float delta) {
         }
 
         void render(ClientWorld world, MatrixStack matrices, RocketEntity rocket, VertexConsumerProvider vertices, float delta, int light);

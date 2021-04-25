@@ -53,12 +53,12 @@ public class BakedModelRocketPartRenderer implements RocketPartRendererRegistry.
     }
 
     @Override
-    public void renderGUI(ClientWorld world, MatrixStack matrices, VertexConsumerProvider vertices, float delta) {
+    public void renderGUI(ClientWorld world, MatrixStack matrices, int mouseX, int mouseY, float delta) {
         model.get().getTransformation().getTransformation(ModelTransformation.Mode.GUI).apply(false, matrices);
         matrices.translate(-0.5D, -0.5D, -0.5D);
 
         MatrixStack.Entry entry = matrices.peek();
-        VertexConsumer vertexConsumer = vertices.getBuffer(TexturedRenderLayers.getItemEntityTranslucentCull());
+        VertexConsumer vertexConsumer = Tessellator.getInstance().getBuffer();
         for (BakedQuad quad : this.model.get().getQuads(null, null, world.random)) {
             vertexConsumer.quad(
                     entry,
@@ -70,11 +70,12 @@ public class BakedModelRocketPartRenderer implements RocketPartRendererRegistry.
                     OverlayTexture.DEFAULT_UV
             );
         }
-
+        BufferRenderer.draw(Tessellator.getInstance().getBuffer());
     }
 
     @Override
     public void render(ClientWorld world, MatrixStack matrices, RocketEntity rocket, VertexConsumerProvider vertices, float delta, int light) {
+        matrices.translate(-0.5D, -0.5D, -0.5D);
         MatrixStack.Entry entry = matrices.peek();
         VertexConsumer vertexConsumer = vertices.getBuffer(layer.get());
         for (BakedQuad quad : this.model.get().getQuads(null, null, world.random)) {
