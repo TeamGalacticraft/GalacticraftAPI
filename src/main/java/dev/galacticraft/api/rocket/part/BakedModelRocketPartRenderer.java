@@ -32,6 +32,8 @@ import net.minecraft.client.world.ClientWorld;
 import net.minecraft.util.Lazy;
 import org.lwjgl.opengl.GL11;
 
+import java.util.List;
+
 public class BakedModelRocketPartRenderer implements RocketPartRendererRegistry.RocketPartRenderer {
     private final Lazy<BakedModel> model;
     private final Lazy<RenderLayer> layer;
@@ -60,19 +62,22 @@ public class BakedModelRocketPartRenderer implements RocketPartRendererRegistry.
 
         MatrixStack.Entry entry = matrices.peek();
         VertexConsumer vertexConsumer = Tessellator.getInstance().getBuffer();
-        Tessellator.getInstance().getBuffer().begin(GL11.GL_QUADS, VertexFormats.POSITION_COLOR_TEXTURE_LIGHT_NORMAL);
-        for (BakedQuad quad : this.model.get().getQuads(null, null, world.random)) {
-            vertexConsumer.quad(
-                    entry,
-                    quad,
-                    1,
-                    1,
-                    1,
-                    15728880,
-                    OverlayTexture.DEFAULT_UV
-            );
+        List<BakedQuad> quads = this.model.get().getQuads(null, null, world.random);
+        if (!quads.isEmpty()) {
+            Tessellator.getInstance().getBuffer().begin(GL11.GL_QUADS, VertexFormats.POSITION_COLOR_TEXTURE_LIGHT_NORMAL);
+            for (BakedQuad quad : quads) {
+                vertexConsumer.quad(
+                        entry,
+                        quad,
+                        1,
+                        1,
+                        1,
+                        15728880,
+                        OverlayTexture.DEFAULT_UV
+                );
+            }
+            BufferRenderer.draw(Tessellator.getInstance().getBuffer());
         }
-        BufferRenderer.draw(Tessellator.getInstance().getBuffer());
     }
 
     @Override
