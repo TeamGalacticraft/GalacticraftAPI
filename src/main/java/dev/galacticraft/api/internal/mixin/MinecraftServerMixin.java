@@ -23,7 +23,7 @@
 package dev.galacticraft.api.internal.mixin;
 
 import com.google.common.collect.ImmutableList;
-import dev.galacticraft.api.celestialbodies.satellite.Satellite;
+import dev.galacticraft.api.celestialbody.satellite.Satellite;
 import dev.galacticraft.api.internal.accessor.SatelliteAccessor;
 import dev.galacticraft.api.internal.data.MinecraftServerTeamsGetter;
 import dev.galacticraft.api.internal.fabric.GalacticraftAPI;

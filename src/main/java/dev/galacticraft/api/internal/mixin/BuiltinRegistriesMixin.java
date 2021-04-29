@@ -23,10 +23,10 @@
 package dev.galacticraft.api.internal.mixin;
 
 import dev.galacticraft.api.atmosphere.AtmosphericGas;
-import dev.galacticraft.api.celestialbodies.CelestialBodyType;
-import dev.galacticraft.api.celestialbodies.SolarSystemType;
+import dev.galacticraft.api.celestialbody.CelestialBodyType;
+import dev.galacticraft.api.celestialbody.SolarSystemType;
 import dev.galacticraft.api.registry.AddonRegistry;
-import dev.galacticraft.api.rocket.part.RocketParts;
+import dev.galacticraft.api.rocket.part.RocketPart;
 import dev.galacticraft.api.teams.data.Permission;
 import com.mojang.serialization.Lifecycle;
 import net.minecraft.util.registry.BuiltinRegistries;
@@ -51,10 +51,10 @@ public abstract class BuiltinRegistriesMixin {
     @SuppressWarnings("UnresolvedMixinReference")
     @Inject(method = "<clinit>", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/registry/BuiltinRegistries;addRegistry(Lnet/minecraft/util/registry/RegistryKey;Ljava/util/function/Supplier;)Lnet/minecraft/util/registry/Registry;", ordinal = 0))
     private static void addGCRegistries(CallbackInfo ci) {
-        addRegistry(AddonRegistry.ATMOSPHERIC_GAS_KEY, AddonRegistry.ATMOSPHERIC_GASES, () -> AtmosphericGas.OXYGEN, Lifecycle.experimental());
-        addRegistry(AddonRegistry.SOLAR_SYSTEM_TYPE_KEY, AddonRegistry.SOLAR_SYSTEMS, () -> SolarSystemType.SOL, Lifecycle.experimental());
-        addRegistry(AddonRegistry.CELESTIAL_BODY_TYPE_KEY, AddonRegistry.CELESTIAL_BODIES, () -> CelestialBodyType.THE_SUN, Lifecycle.experimental());
-        addRegistry(AddonRegistry.PERMISSIONS_KEY, AddonRegistry.PERMISSIONS, () -> Permission.INVITE_PLAYER, Lifecycle.experimental());
-        addRegistry(AddonRegistry.ROCKET_PART_KEY, AddonRegistry.ROCKET_PARTS, () -> RocketParts.INVALID, Lifecycle.experimental());
+        addRegistry(AddonRegistry.ATMOSPHERIC_GAS_KEY, AddonRegistry.ATMOSPHERIC_GAS, () -> AtmosphericGas.OXYGEN, Lifecycle.experimental());
+        addRegistry(AddonRegistry.SOLAR_SYSTEM_TYPE_KEY, AddonRegistry.SOLAR_SYSTEM_TYPE, () -> SolarSystemType.SOL, Lifecycle.experimental());
+        addRegistry(AddonRegistry.CELESTIAL_BODY_TYPE_KEY, AddonRegistry.CELESTIAL_BODY_TYPE, () -> CelestialBodyType.THE_SUN, Lifecycle.experimental());
+        addRegistry(AddonRegistry.PERMISSION_KEY, AddonRegistry.PERMISSION, () -> Permission.INVITE_PLAYER, Lifecycle.experimental());
+        addRegistry(AddonRegistry.ROCKET_PART_KEY, AddonRegistry.ROCKET_PART, () -> RocketPart.INVALID, Lifecycle.experimental());
     }
 }

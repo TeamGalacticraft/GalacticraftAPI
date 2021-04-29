@@ -20,18 +20,19 @@
  * SOFTWARE.
  */
 
-package dev.galacticraft.api.celestialbodies.satellite;
+package dev.galacticraft.api.celestialbody.satellite;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
 import dev.galacticraft.api.atmosphere.AtmosphericInfo;
-import dev.galacticraft.api.celestialbodies.CelestialBodyDisplayInfo;
-import dev.galacticraft.api.celestialbodies.CelestialBodyType;
-import dev.galacticraft.api.celestialbodies.CelestialObjectType;
-import dev.galacticraft.api.celestialbodies.SolarSystemType;
+import dev.galacticraft.api.celestialbody.CelestialBodyDisplayInfo;
+import dev.galacticraft.api.celestialbody.CelestialBodyType;
+import dev.galacticraft.api.celestialbody.CelestialObjectType;
+import dev.galacticraft.api.celestialbody.SolarSystemType;
 import dev.galacticraft.api.internal.accessor.SatelliteAccessor;
 import dev.galacticraft.api.internal.data.MinecraftServerTeamsGetter;
 import dev.galacticraft.api.internal.fabric.GalacticraftAPI;
+import dev.galacticraft.api.internal.util.NetworkUtil;
 import dev.galacticraft.api.internal.world.gen.FlatChunkGenerator;
 import dev.galacticraft.api.teams.ServerTeams;
 import dev.galacticraft.api.teams.data.Permission;
@@ -131,7 +132,7 @@ public class Satellite extends CelestialBodyType {
     }
 
     public static Satellite create(MinecraftServer server, ServerPlayerEntity player, CelestialBodyType parent) {
-        Identifier id = new Identifier(parent.getId().toString() + "_" + player.getEntityName().toLowerCase(Locale.ROOT));
+        Identifier id = new Identifier(parent.getId() + "_" + player.getEntityName().toLowerCase(Locale.ROOT));
         DimensionType type = new DimensionType(OptionalLong.empty(), true, false, false, true, 1, false, false, false, false, false, 256, new BiomeAccessType() {
             @Override
             public Biome getBiome(long seed, int x, int y, int z, BiomeAccess.Storage storage) {
@@ -156,66 +157,58 @@ public class Satellite extends CelestialBodyType {
     public static Satellite create(Identifier id, MinecraftServer server, CelestialBodyType parent, CelestialBodyDisplayInfo info, DimensionType type, DimensionOptions options, SatelliteOwnershipData ownershipData, String name) {
         RegistryKey<World> key = RegistryKey.of(Registry.DIMENSION, id);
         RegistryKey<DimensionType> key2 = RegistryKey.of(Registry.DIMENSION_TYPE_KEY, id);
-//        RegistryKey<DimensionOptions> key3 = RegistryKey.of(Registry.DIMENSION_OPTIONS, id);
         assert server.getWorld(key) == null : "World already registered";
         assert server.getRegistryManager().get(Registry.DIMENSION_TYPE_KEY).get(key2) == null : "Dimension Type already registered";
-//        assert server.getRegistryManager().get(Registry.DIMENSION_OPTIONS).get(key3) == null;
         Registry.register(server.getRegistryManager().get(Registry.DIMENSION_TYPE_KEY), id, type);
-//        Registry.register(server.getRegistryManager().get(Registry.DIMENSION_OPTIONS), id, options);
 
         Satellite satellite = new Satellite(id, "ui.galacticraft-api.bodies.satellite", key, parent.getParentSystem(), parent, info, 0.0f, ownershipData, name, type, options.getChunkGenerator());
         ((SatelliteAccessor) server).addSatellite(satellite);
         GalacticraftAPI.LOGGER.debug("Attempting to create a world dynamically (" + id + ')');
         {
-//            Map.Entry<RegistryKey<DimensionOptions>, DimensionOptions> entry = (Map.Entry)var17.next();
-//            RegistryKey<DimensionOptions> registryKey = options.;
-//            if (registryKey != DimensionOptions.OVERWORLD) {
                 DimensionType dimensionType3 = options.getDimensionType();
                 ChunkGenerator chunkGenerator3 = options.getChunkGenerator();
                 UnmodifiableLevelProperties unmodifiableLevelProperties = new UnmodifiableLevelProperties(server.getSaveProperties(), server.getSaveProperties().getMainWorldProperties());
                 ServerWorld serverWorld2 = new ServerWorld(server, server.workerExecutor, server.session, unmodifiableLevelProperties, key, dimensionType3, EMPTY_PROGRESS_LISTENER, chunkGenerator3, server.getSaveProperties().getGeneratorOptions().isDebugWorld(), BiomeAccess.hashSeed(server.getSaveProperties().getGeneratorOptions().getSeed()), ImmutableList.of(), false);
                 server.getWorld(World.OVERWORLD).getWorldBorder().addListener(new WorldBorderListener.WorldBorderSyncer(serverWorld2.getWorldBorder()));
                 server.worlds.put(key, serverWorld2);
-//            }
         }
         for (ServerPlayerEntity player : server.getPlayerManager().getPlayerList()) {
             PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
-            satellite.toPacket(buf);
+            satellite.serializeSatellite(buf, server.getRegistryManager());
             ServerPlayNetworking.send(player, new Identifier(GalacticraftAPI.MOD_ID, "add_satellite"), buf);
         }
         return satellite;
     }
 
-    public PacketByteBuf toPacket(PacketByteBuf buf) {
-        buf.writeIdentifier(this.getId());
-        buf.writeString(this.getTranslationKey());
-//        buf.writeEnumConstant(this.getType());
-        buf.writeIdentifier(this.getWorld().getValue());
-        buf.writeIdentifier(this.getParentSystem().getId());
-        buf.writeIdentifier(this.getParent().getId());
-        this.getDisplayInfo().writePacket(buf);
-        buf.writeFloat(this.getGravity());
-        this.getAtmosphere().writePacket(buf);
+    @Override
+    public PacketByteBuf serialize(PacketByteBuf buf, DynamicRegistryManager registryManager, boolean registeredToClient) {
+        throw new UnsupportedOperationException("Use Satellite#serializeSatellite instead!");
+    }
+
+    public PacketByteBuf serializeSatellite(PacketByteBuf buf, DynamicRegistryManager registryManager) {
+        super.serialize(buf, registryManager, false);
         this.getOwnershipData().writePacket(buf);
         buf.writeString(this.getName());
         return buf;
     }
 
     @Environment(EnvType.CLIENT)
-    public static Satellite fromPacket(DynamicRegistryManager dynamicRegistryManager, PacketByteBuf buf) {
-        return new Satellite(
-                buf.readIdentifier(),
+    public static Satellite deserializeSatellite(DynamicRegistryManager registryManager, PacketByteBuf buf) {
+        Identifier id = buf.readIdentifier();
+        assert !NetworkUtil.unpackBoolean(buf.readByte(), 0);
+        return new Satellite(id,
                 buf.readString(),
                 RegistryKey.of(Registry.DIMENSION, buf.readIdentifier()),
-                SolarSystemType.getById(dynamicRegistryManager, buf.readIdentifier()),
-                CelestialBodyType.getById(dynamicRegistryManager, buf.readIdentifier()),
+                SolarSystemType.getById(registryManager, buf.readIdentifier()),
+                CelestialBodyType.getById(registryManager, buf.readIdentifier()),
                 CelestialBodyDisplayInfo.fromPacket(buf),
                 buf.readFloat(),
-                AtmosphericInfo.readPacket(dynamicRegistryManager, buf),
+                AtmosphericInfo.readPacket(registryManager, buf),
                 SatelliteOwnershipData.fromPacket(buf),
                 buf.readString(),
                 null,
-                null);
+                null
+        );
     }
 
     public CompoundTag toTag(CompoundTag tag) {

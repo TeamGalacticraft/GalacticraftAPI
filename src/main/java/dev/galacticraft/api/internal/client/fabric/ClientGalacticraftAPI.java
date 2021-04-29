@@ -22,7 +22,7 @@
 
 package dev.galacticraft.api.internal.client.fabric;
 
-import dev.galacticraft.api.celestialbodies.satellite.Satellite;
+import dev.galacticraft.api.celestialbody.satellite.Satellite;
 import dev.galacticraft.api.internal.accessor.ClientResearchAccessor;
 import dev.galacticraft.api.internal.accessor.SatelliteAccessor;
 import dev.galacticraft.api.internal.fabric.GalacticraftAPI;
@@ -46,7 +46,7 @@ public class ClientGalacticraftAPI implements ClientModInitializer {
         });
         ClientPlayNetworking.registerGlobalReceiver(new Identifier(GalacticraftAPI.MOD_ID, "add_satellite"), (client, networkHandler, buffer, sender) -> {
             PacketByteBuf buf = new PacketByteBuf(buffer.copy());
-            /*client.execute(() -> */((SatelliteAccessor) networkHandler).addSatellite(Satellite.fromPacket(client.getNetworkHandler().getRegistryManager(), buf))/*)*/;
+            /*client.execute(() -> */((SatelliteAccessor) networkHandler).addSatellite(Satellite.deserializeSatellite(client.getNetworkHandler().getRegistryManager(), buf))/*)*/;
         });
         ClientPlayNetworking.registerGlobalReceiver(new Identifier(GalacticraftAPI.MOD_ID, "remove_satellite"), (client, networkHandler, buffer, sender) -> {
             PacketByteBuf buf = new PacketByteBuf(buffer.copy());

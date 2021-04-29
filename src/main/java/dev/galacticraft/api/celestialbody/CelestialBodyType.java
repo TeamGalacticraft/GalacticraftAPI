@@ -20,21 +20,24 @@
  * SOFTWARE.
  */
 
-package dev.galacticraft.api.celestialbodies;
+package dev.galacticraft.api.celestialbody;
 
 import dev.galacticraft.api.atmosphere.AtmosphericGas;
 import dev.galacticraft.api.atmosphere.AtmosphericInfo;
-import dev.galacticraft.api.celestialbodies.satellite.SatelliteRecipe;
+import dev.galacticraft.api.celestialbody.satellite.SatelliteRecipe;
 import dev.galacticraft.api.internal.codec.LazyRegistryElementCodec;
 import dev.galacticraft.api.internal.fabric.GalacticraftAPI;
+import dev.galacticraft.api.internal.util.NetworkUtil;
 import dev.galacticraft.api.registry.AddonRegistry;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.Dynamic;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Lazy;
 import net.minecraft.util.registry.DynamicRegistryManager;
 import net.minecraft.util.registry.MutableRegistry;
+import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
@@ -46,19 +49,18 @@ import java.util.function.Supplier;
 public class CelestialBodyType {
     public static final Codec<Supplier<CelestialBodyType>> REGISTRY_CODEC = LazyRegistryElementCodec.of(AddonRegistry.CELESTIAL_BODY_TYPE_KEY, new Lazy<>(() -> CelestialBodyType.CODEC));
     public static final Codec<CelestialBodyType> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-            Identifier.CODEC.fieldOf("id").forGetter(i -> i.id),
-            Codec.STRING.fieldOf("translation_key").forGetter(i -> i.translationKey),
-            CelestialObjectType.CODEC.fieldOf("type").forGetter(i -> i.type),
-            World.CODEC.optionalFieldOf("dimension").forGetter(i -> Optional.ofNullable(i.worldKey)),
-            SolarSystemType.REGISTRY_CODEC.fieldOf("solar_system").forGetter(i -> () -> i.parentSystem),
-            Codec.INT.fieldOf("access_weight").forGetter(i -> i.accessWeight),
-            CelestialBodyType.REGISTRY_CODEC.optionalFieldOf("parent").forGetter(i -> i.parent == null ? Optional.empty() : Optional.of(() -> i.parent)),
-            CelestialBodyDisplayInfo.CODEC.fieldOf("display").forGetter(i -> i.displayInfo),
-            Codec.FLOAT.fieldOf("gravity").forGetter(i -> i.gravity),
-            AtmosphericInfo.CODEC.fieldOf("atmosphere").forGetter(i -> i.atmosphere),
-            SatelliteRecipe.CODEC.optionalFieldOf("satellite_recipe").forGetter(i -> Optional.ofNullable(i.satelliteRecipe))
-    ).apply(instance, (id, s, type, world, solarSystem, tier, parent, display, gravity, atmosphere, recipe) ->
-            new CelestialBodyType(id, s, type, world.orElse(null), solarSystem.get(), tier, parent.orElse(() -> null).get(), display, gravity, atmosphere, recipe.orElse(null))));
+            Identifier.CODEC.fieldOf("id").forGetter(CelestialBodyType::getId),
+            Codec.STRING.fieldOf("translation_key").forGetter(CelestialBodyType::getTranslationKey),
+            CelestialObjectType.CODEC.fieldOf("type").forGetter(CelestialBodyType::getType),
+            World.CODEC.optionalFieldOf("dimension").xmap(optional -> optional.orElse(null), Optional::ofNullable).forGetter(CelestialBodyType::getWorld),
+            SolarSystemType.REGISTRY_CODEC.fieldOf("solar_system").xmap(Supplier::get, system -> () -> system).forGetter(CelestialBodyType::getParentSystem),
+            Codec.INT.fieldOf("access_weight").forGetter(CelestialBodyType::getAccessWeight),
+            CelestialBodyType.REGISTRY_CODEC.optionalFieldOf("parent").xmap(optional -> optional.orElse(() -> null).get(), parent -> parent == null ? Optional.empty() : Optional.of(() -> parent)).forGetter(CelestialBodyType::getParent),
+            CelestialBodyDisplayInfo.CODEC.fieldOf("display").forGetter(CelestialBodyType::getDisplayInfo),
+            Codec.FLOAT.fieldOf("gravity").forGetter(CelestialBodyType::getGravity),
+            AtmosphericInfo.CODEC.fieldOf("atmosphere").forGetter(CelestialBodyType::getAtmosphere),
+            SatelliteRecipe.CODEC.optionalFieldOf("satellite_recipe").xmap(optional -> optional.orElse(null), Optional::ofNullable).forGetter(CelestialBodyType::getSatelliteRecipe)
+    ).apply(instance, CelestialBodyType::new));
 
     public static final CelestialBodyType THE_SUN = new Builder(new Identifier(GalacticraftAPI.MOD_ID, "the_sun"))
             .translationKey("ui.galacticraft-api.bodies.the_sun")
@@ -115,7 +117,6 @@ public class CelestialBodyType {
     private final @Nullable SatelliteRecipe satelliteRecipe;
 
     /**
-     * Used to register a new Celestial Body. {@link AddonRegistry#CELESTIAL_BODIES}
      * @param id Unique identifier
      * @param translationKey Key used to translate the body's name
      * @param type The type of celestial body this is
@@ -128,7 +129,7 @@ public class CelestialBodyType {
      * @param atmosphere The atmosphere of the body
      * @param satelliteRecipe The resources required create a space station
      */
-    public CelestialBodyType(@NotNull Identifier id, String translationKey, @NotNull CelestialObjectType type, @Nullable RegistryKey<World> worldKey, @NotNull SolarSystemType parentSystem, int accessWeight, @Nullable CelestialBodyType parent, @NotNull CelestialBodyDisplayInfo displayInfo, float gravity, @NotNull AtmosphericInfo atmosphere, @Nullable SatelliteRecipe satelliteRecipe) {
+    protected CelestialBodyType(@NotNull Identifier id, String translationKey, @NotNull CelestialObjectType type, @Nullable RegistryKey<World> worldKey, @NotNull SolarSystemType parentSystem, int accessWeight, @Nullable CelestialBodyType parent, @NotNull CelestialBodyDisplayInfo displayInfo, float gravity, @NotNull AtmosphericInfo atmosphere, @Nullable SatelliteRecipe satelliteRecipe) {
         this.id = id;
         this.translationKey = translationKey;
         this.type = type;
@@ -140,27 +141,6 @@ public class CelestialBodyType {
         this.gravity = gravity;
         this.atmosphere = atmosphere;
         this.satelliteRecipe = satelliteRecipe;
-    }
-
-    /**
-     *
-     * @return all registered Celestial Bodies
-     */
-    public static MutableRegistry<CelestialBodyType> getAll(DynamicRegistryManager registryManager) {
-        return registryManager.get(AddonRegistry.CELESTIAL_BODY_TYPE_KEY);
-    }
-
-    /**
-     *
-     * @param id The identifier of the body
-     * @return the celestial body or null
-     */
-    public static CelestialBodyType getById(DynamicRegistryManager registryManager, Identifier id) {
-        return registryManager.get(AddonRegistry.CELESTIAL_BODY_TYPE_KEY).get(id);
-    }
-
-    public static Optional<CelestialBodyType> getByDimType(DynamicRegistryManager registryManager, RegistryKey<World> world) {
-        return registryManager.get(AddonRegistry.CELESTIAL_BODY_TYPE_KEY).stream().filter(celestialBodyType -> celestialBodyType.getWorld() == world).findFirst();
     }
 
     public @NotNull Identifier getId() {
@@ -209,6 +189,70 @@ public class CelestialBodyType {
 
     public static CelestialBodyType deserialize(DynamicRegistryManager registryManager, Dynamic<?> dynamic) {
         return registryManager.get(AddonRegistry.CELESTIAL_BODY_TYPE_KEY).get(new Identifier(dynamic.asString("")));
+    }
+
+    /**
+     * @return all registered Celestial Bodies
+     */
+    public static MutableRegistry<CelestialBodyType> getAll(DynamicRegistryManager registryManager) {
+        return registryManager.get(AddonRegistry.CELESTIAL_BODY_TYPE_KEY);
+    }
+
+    /**
+     * @param id The identifier of the body
+     * @return the celestial body or null
+     */
+    public static CelestialBodyType getById(DynamicRegistryManager registryManager, Identifier id) {
+        return registryManager.get(AddonRegistry.CELESTIAL_BODY_TYPE_KEY).get(id);
+    }
+
+    public static Identifier getId(DynamicRegistryManager registryManager, CelestialBodyType type) {
+        return registryManager.get(AddonRegistry.CELESTIAL_BODY_TYPE_KEY).getId(type);
+    }
+
+    public static Optional<CelestialBodyType> getByDimType(DynamicRegistryManager registryManager, RegistryKey<World> world) {
+        return registryManager.get(AddonRegistry.CELESTIAL_BODY_TYPE_KEY).stream().filter(celestialBodyType -> celestialBodyType.getWorld() == world).findFirst();
+    }
+
+    public PacketByteBuf serialize(PacketByteBuf buf, DynamicRegistryManager registryManager, boolean registeredToClient) {
+        buf.writeIdentifier(this.getId());
+        if (!registeredToClient) {
+            buf.writeByte(NetworkUtil.packBooleans(false, this.getWorld() != null, this.getParent() != null, this.getSatelliteRecipe() != null));
+            buf.writeString(this.getTranslationKey());
+            buf.writeByte(this.getType().ordinal());
+            if (this.getWorld() != null) buf.writeIdentifier(this.getWorld().getValue());
+            buf.writeIdentifier(SolarSystemType.getId(registryManager, this.getParentSystem()));
+            buf.writeInt(this.getAccessWeight());
+            if (this.getParent() != null) buf.writeIdentifier(CelestialBodyType.getId(registryManager, this.getParent()));
+            this.getDisplayInfo().writePacket(buf);
+            buf.writeFloat(this.getGravity());
+            this.getAtmosphere().writePacket(buf);
+            if (this.getSatelliteRecipe() != null) this.getSatelliteRecipe().serialize(buf);
+        } else {
+            buf.writeBoolean(true);
+        }
+        return buf;
+    }
+
+    public static CelestialBodyType deserialize(PacketByteBuf buf, DynamicRegistryManager registryManager) {
+        Identifier id = buf.readIdentifier();
+        byte packed = buf.readByte();
+        if (!NetworkUtil.unpackBoolean(packed, 0)) {
+            return new CelestialBodyType(id,
+                    buf.readString(),
+                    CelestialObjectType.values()[buf.readByte()],
+                    NetworkUtil.unpackBoolean(packed, 1) ? RegistryKey.of(Registry.DIMENSION, buf.readIdentifier()) : null,
+                    SolarSystemType.getById(registryManager, buf.readIdentifier()),
+                    buf.readInt(),
+                    NetworkUtil.unpackBoolean(packed, 2) ? CelestialBodyType.getById(registryManager, buf.readIdentifier()) : null,
+                    CelestialBodyDisplayInfo.fromPacket(buf),
+                    buf.readFloat(),
+                    AtmosphericInfo.readPacket(registryManager, buf),
+                    NetworkUtil.unpackBoolean(packed, 3) ? SatelliteRecipe.deserialize(buf) : null
+            );
+        } else {
+            return CelestialBodyType.getById(registryManager, id);
+        }
     }
 
     @Override

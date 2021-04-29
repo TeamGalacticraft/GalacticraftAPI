@@ -29,6 +29,7 @@ import dev.galacticraft.api.rocket.part.RocketPartType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.registry.DynamicRegistryManager;
 
 import java.util.List;
 import java.util.Objects;
@@ -55,12 +56,8 @@ public class RocketData {
         this.bottom = bottom;
         this.upgrade = upgrade;
     }
-
-    public static RocketData fromItem(ItemStack stack) {
-        return fromTag(stack.getOrCreateTag());
-    }
-
-    public static RocketData fromTag(CompoundTag tag) {
+    
+    public static RocketData fromTag(CompoundTag tag, DynamicRegistryManager registryManager) {
         if (tag.contains("tier")
                 && tag.contains("color")
                 && tag.contains("cone")
@@ -68,40 +65,26 @@ public class RocketData {
                 && tag.contains("booster") && tag.contains("bottom")
                 && tag.contains("upgrade")) {
             return new RocketData(tag.getInt("tier"), tag.getInt("color"),
-                    AddonRegistry.ROCKET_PARTS.get(new Identifier(tag.getString("cone"))), AddonRegistry.ROCKET_PARTS.get(new Identifier(tag.getString("body"))),
-                    AddonRegistry.ROCKET_PARTS.get(new Identifier(tag.getString("fin"))), AddonRegistry.ROCKET_PARTS.get(new Identifier(tag.getString("booster"))),
-                    AddonRegistry.ROCKET_PARTS.get(new Identifier(tag.getString("bottom"))), AddonRegistry.ROCKET_PARTS.get(new Identifier(tag.getString("upgrade"))));
+                    RocketPart.getById(registryManager, new Identifier(tag.getString("cone"))), RocketPart.getById(registryManager, new Identifier(tag.getString("body"))),
+                    RocketPart.getById(registryManager, new Identifier(tag.getString("fin"))), RocketPart.getById(registryManager, new Identifier(tag.getString("booster"))),
+                    RocketPart.getById(registryManager, new Identifier(tag.getString("bottom"))), RocketPart.getById(registryManager, new Identifier(tag.getString("upgrade"))));
         } else {
             return EMPTY;
         }
     }
 
-    public ItemStack toSchematic(ItemStack stack) {
-        CompoundTag tag = stack.getOrCreateTag();
-        tag.putInt("tier", tier);
-        tag.putInt("color", color);
-        tag.putString("cone", Objects.requireNonNull(AddonRegistry.ROCKET_PARTS.getId(cone)).toString());
-        tag.putString("body", Objects.requireNonNull(AddonRegistry.ROCKET_PARTS.getId(body)).toString());
-        tag.putString("fin", Objects.requireNonNull(AddonRegistry.ROCKET_PARTS.getId(fin)).toString());
-        tag.putString("booster", Objects.requireNonNull(AddonRegistry.ROCKET_PARTS.getId(booster)).toString());
-        tag.putString("bottom", Objects.requireNonNull(AddonRegistry.ROCKET_PARTS.getId(bottom)).toString());
-        tag.putString("upgrade", Objects.requireNonNull(AddonRegistry.ROCKET_PARTS.getId(upgrade)).toString());
-        stack.setTag(tag);
-        return stack;
-    }
-
-    public CompoundTag toTag() {
+    public CompoundTag toTag(DynamicRegistryManager registryManager) {
         CompoundTag tag = new CompoundTag();
         tag.putBoolean("empty", isEmpty());
         if (!isEmpty()) {
             tag.putInt("tier", tier);
             tag.putInt("color", color);
-            tag.putString("cone", Objects.requireNonNull(AddonRegistry.ROCKET_PARTS.getId(cone)).toString());
-            tag.putString("body", Objects.requireNonNull(AddonRegistry.ROCKET_PARTS.getId(body)).toString());
-            tag.putString("fin", Objects.requireNonNull(AddonRegistry.ROCKET_PARTS.getId(fin)).toString());
-            tag.putString("booster", Objects.requireNonNull(AddonRegistry.ROCKET_PARTS.getId(booster)).toString());
-            tag.putString("bottom", Objects.requireNonNull(AddonRegistry.ROCKET_PARTS.getId(bottom)).toString());
-            tag.putString("upgrade", Objects.requireNonNull(AddonRegistry.ROCKET_PARTS.getId(upgrade)).toString());
+            tag.putString("cone", Objects.requireNonNull(RocketPart.getId(registryManager, cone)).toString());
+            tag.putString("body", Objects.requireNonNull(RocketPart.getId(registryManager, body)).toString());
+            tag.putString("fin", Objects.requireNonNull(RocketPart.getId(registryManager, fin)).toString());
+            tag.putString("booster", Objects.requireNonNull(RocketPart.getId(registryManager, booster)).toString());
+            tag.putString("bottom", Objects.requireNonNull(RocketPart.getId(registryManager, bottom)).toString());
+            tag.putString("upgrade", Objects.requireNonNull(RocketPart.getId(registryManager, upgrade)).toString());
         }
         return tag;
     }

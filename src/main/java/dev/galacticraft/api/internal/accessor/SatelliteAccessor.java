@@ -22,7 +22,7 @@
 
 package dev.galacticraft.api.internal.accessor;
 
-import dev.galacticraft.api.celestialbodies.satellite.Satellite;
+import dev.galacticraft.api.celestialbody.satellite.Satellite;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Unmodifiable;
 

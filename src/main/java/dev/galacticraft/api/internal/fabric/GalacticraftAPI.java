@@ -22,9 +22,12 @@
 
 package dev.galacticraft.api.internal.fabric;
 
+import dev.galacticraft.api.event.RegistrationEvent;
 import dev.galacticraft.api.internal.accessor.ServerResearchAccessor;
 import dev.galacticraft.api.internal.command.GCApiCommands;
+import dev.galacticraft.api.internal.log.GCAPILogPrepender;
 import dev.galacticraft.api.internal.world.gen.FlatChunkGenerator;
+import dev.galacticraft.api.registry.AddonRegistry;
 import io.netty.buffer.Unpooled;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
@@ -41,7 +44,7 @@ import org.apache.logging.log4j.Logger;
 
 public class GalacticraftAPI implements ModInitializer {
     public static final String MOD_ID = "galacticraft-api";
-    public static final Logger LOGGER = LogManager.getLogger();
+    public static final Logger LOGGER = LogManager.getLogger("GalacticraftAPI", GCAPILogPrepender.INSTANCE);
 
     @Deprecated
     //todo look into why accessing this constant rather than getting it from a registry breaks everything - its not the same object somehow?!?
@@ -61,6 +64,10 @@ public class GalacticraftAPI implements ModInitializer {
         });
         Registry.register(Registry.CHUNK_GENERATOR, new Identifier(MOD_ID, "empty"), FlatChunkGenerator.CODEC);
         BuiltinBiomes.register(284, RegistryKey.of(Registry.BIOME_KEY, new Identifier(MOD_ID, "space")), SPACE);
-        LOGGER.info("[GC-API] Initialization Complete. (Took {}ms).", System.currentTimeMillis()-startInitTime);
+        LOGGER.info("Initialization Complete. (Took {}ms).", System.currentTimeMillis() - startInitTime);
+        startInitTime = System.currentTimeMillis();
+        LOGGER.info("Registering entries...");
+        AddonRegistry.invokeEvents();
+        LOGGER.info("All registered. (Took {}ms)", System.currentTimeMillis() - startInitTime);
     }
 }

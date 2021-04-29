@@ -29,6 +29,8 @@ import com.mojang.serialization.Dynamic;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.dynamic.RegistryElementCodec;
+import net.minecraft.util.registry.DynamicRegistryManager;
+import net.minecraft.util.registry.MutableRegistry;
 
 import java.util.function.Supplier;
 
@@ -166,31 +168,31 @@ public class AtmosphericGas {
                 .replaceAll("9", "\u2089");
     }
 
-    public static AtmosphericGas deserialize(Dynamic<?> dynamic) {
-        return AddonRegistry.ATMOSPHERIC_GASES.get(new Identifier(dynamic.asString("")));
+    public static AtmosphericGas deserialize(DynamicRegistryManager registryManager, Dynamic<?> dynamic) {
+        return registryManager.get(AddonRegistry.ATMOSPHERIC_GAS_KEY).get(new Identifier(dynamic.asString("")));
     }
 
-    public static Iterable<AtmosphericGas> getAll() {
-        return AddonRegistry.ATMOSPHERIC_GASES;
+    public static MutableRegistry<AtmosphericGas> getAll(DynamicRegistryManager registryManager) {
+        return registryManager.get(AddonRegistry.ATMOSPHERIC_GAS_KEY);
     }
 
-    public static AtmosphericGas getById(Identifier id) {
-        return AddonRegistry.ATMOSPHERIC_GASES.get(id);
+    public static AtmosphericGas getById(DynamicRegistryManager registryManager, Identifier id) {
+        return registryManager.get(AddonRegistry.ATMOSPHERIC_GAS_KEY).get(id);
     }
 
-    public static Identifier getId(AtmosphericGas gas) {
-        return AddonRegistry.ATMOSPHERIC_GASES.getId(gas);
+    public static Identifier getId(DynamicRegistryManager registryManager, AtmosphericGas gas) {
+        return registryManager.get(AddonRegistry.ATMOSPHERIC_GAS_KEY).getId(gas);
     }
 
-    public static boolean containsSymbol(String symbol) {
-        for(AtmosphericGas g : AddonRegistry.ATMOSPHERIC_GASES) {
+    public static boolean containsSymbol(DynamicRegistryManager registryManager, String symbol) {
+        for(AtmosphericGas g : getAll(registryManager)) {
             if(g.symbol.equals(symbol)) return true;
         }
         return false;
     }
 
-    public static AtmosphericGas getBySymbol(String symbol) {
-        for(AtmosphericGas g : AddonRegistry.ATMOSPHERIC_GASES) {
+    public static AtmosphericGas getBySymbol(DynamicRegistryManager registryManager, String symbol) {
+        for(AtmosphericGas g : getAll(registryManager)) {
             if(g.symbol.equals(symbol)) return g;
         }
         return null;
@@ -198,6 +200,6 @@ public class AtmosphericGas {
 
     @Override
     public String toString() {
-        return getId(this).toString();
+        return this.getSymbolForDisplay();
     }
 }

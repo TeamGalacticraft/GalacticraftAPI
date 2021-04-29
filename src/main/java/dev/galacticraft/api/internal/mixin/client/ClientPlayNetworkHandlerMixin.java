@@ -22,7 +22,7 @@
 
 package dev.galacticraft.api.internal.mixin.client;
 
-import dev.galacticraft.api.celestialbodies.satellite.Satellite;
+import dev.galacticraft.api.celestialbody.satellite.Satellite;
 import dev.galacticraft.api.internal.accessor.ClientSatelliteAccessor;
 import dev.galacticraft.api.internal.data.ClientWorldTeamsGetter;
 import dev.galacticraft.api.teams.packet.TeamDeleteS2CPacket;

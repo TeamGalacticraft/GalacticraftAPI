@@ -20,7 +20,7 @@
  * SOFTWARE.
  */
 
-package dev.galacticraft.api.celestialbodies.satellite;
+package dev.galacticraft.api.celestialbody.satellite;
 
 import com.google.common.collect.ImmutableList;
 import net.minecraft.entity.player.PlayerEntity;

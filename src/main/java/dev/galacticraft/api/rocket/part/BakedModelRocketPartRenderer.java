@@ -23,6 +23,8 @@
 package dev.galacticraft.api.rocket.part;
 
 import dev.galacticraft.api.entity.RocketEntity;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.render.*;
 import net.minecraft.client.render.model.BakedModel;
 import net.minecraft.client.render.model.BakedQuad;
@@ -34,6 +36,7 @@ import org.lwjgl.opengl.GL11;
 
 import java.util.List;
 
+@Environment(EnvType.CLIENT)
 public class BakedModelRocketPartRenderer implements RocketPartRendererRegistry.RocketPartRenderer {
     private final Lazy<BakedModel> model;
     private final Lazy<RenderLayer> layer;

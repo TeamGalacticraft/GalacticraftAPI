@@ -22,7 +22,7 @@
 
 package dev.galacticraft.api.internal.mixin;
 
-import dev.galacticraft.api.celestialbodies.CelestialBodyType;
+import dev.galacticraft.api.celestialbody.CelestialBodyType;
 import net.minecraft.entity.ItemEntity;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.Constant;

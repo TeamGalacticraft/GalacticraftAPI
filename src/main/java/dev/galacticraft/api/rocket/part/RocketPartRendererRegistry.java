@@ -48,6 +48,7 @@ public class RocketPartRendererRegistry {
     }
 
     @FunctionalInterface
+    @Environment(EnvType.CLIENT)
     public interface RocketPartRenderer {
         default void renderGUI(ClientWorld world, MatrixStack matrices, int mouseX, int mouseY, float delta) {
         }

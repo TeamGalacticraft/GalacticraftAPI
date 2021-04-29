@@ -20,26 +20,28 @@
  * SOFTWARE.
  */
 
-package dev.galacticraft.api.celestialbodies;
+package dev.galacticraft.api.celestialbody;
 
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.Dynamic;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import dev.galacticraft.api.internal.fabric.GalacticraftAPI;
 import dev.galacticraft.api.registry.AddonRegistry;
-import com.mojang.serialization.Codec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.dynamic.RegistryElementCodec;
 import net.minecraft.util.registry.DynamicRegistryManager;
+import net.minecraft.util.registry.MutableRegistry;
 
 import java.util.Objects;
 import java.util.function.Supplier;
 
 public class SolarSystemType {
     public static final Codec<SolarSystemType> CODEC = RecordCodecBuilder.create(solarSystemTypeInstance -> solarSystemTypeInstance
-            .group(Identifier.CODEC.fieldOf("id").forGetter(i -> i.id),
-                    Codec.FLOAT.fieldOf("x").forGetter(i -> i.x),
-                    Codec.FLOAT.fieldOf("y").forGetter(i -> i.y),
-                    Codec.STRING.fieldOf("translation_key").forGetter(i -> i.translationKey),
-                    Codec.STRING.fieldOf("galaxy_translation_key").forGetter(i -> i.galaxyTranslationKey)
+            .group(Identifier.CODEC.fieldOf("id").forGetter(SolarSystemType::getId),
+                    Codec.FLOAT.fieldOf("x").forGetter(SolarSystemType::getX),
+                    Codec.FLOAT.fieldOf("y").forGetter(SolarSystemType::getY),
+                    Codec.STRING.fieldOf("translation_key").forGetter(SolarSystemType::getTranslationKey),
+                    Codec.STRING.fieldOf("galaxy_translation_key").forGetter(SolarSystemType::getGalaxyTranslationKey)
             ).apply(solarSystemTypeInstance, SolarSystemType::new));
 
     public static final Codec<Supplier<SolarSystemType>> REGISTRY_CODEC = RegistryElementCodec.of(AddonRegistry.SOLAR_SYSTEM_TYPE_KEY, SolarSystemType.CODEC);
@@ -109,8 +111,27 @@ public class SolarSystemType {
         return this.id;
     }
 
+    public static SolarSystemType deserialize(DynamicRegistryManager registryManager, Dynamic<?> dynamic) {
+        return registryManager.get(AddonRegistry.SOLAR_SYSTEM_TYPE_KEY).get(new Identifier(dynamic.asString("")));
+    }
+
+    /**
+     * @return all registered Celestial Bodies
+     */
+    public static MutableRegistry<SolarSystemType> getAll(DynamicRegistryManager registryManager) {
+        return registryManager.get(AddonRegistry.SOLAR_SYSTEM_TYPE_KEY);
+    }
+
+    /**
+     * @param id The identifier of the body
+     * @return the celestial body or null
+     */
     public static SolarSystemType getById(DynamicRegistryManager registryManager, Identifier id) {
         return registryManager.get(AddonRegistry.SOLAR_SYSTEM_TYPE_KEY).get(id);
+    }
+
+    public static Identifier getId(DynamicRegistryManager registryManager, SolarSystemType type) {
+        return registryManager.get(AddonRegistry.SOLAR_SYSTEM_TYPE_KEY).getId(type);
     }
 
     public static class Builder {

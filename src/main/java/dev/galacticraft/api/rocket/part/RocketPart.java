@@ -22,12 +22,17 @@
 
 package dev.galacticraft.api.rocket.part;
 
-import dev.galacticraft.api.internal.accessor.ResearchAccessor;
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.Dynamic;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import dev.galacticraft.api.internal.accessor.ResearchAccessor;
+import dev.galacticraft.api.internal.fabric.GalacticraftAPI;
+import dev.galacticraft.api.registry.AddonRegistry;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.registry.DynamicRegistryManager;
+import net.minecraft.util.registry.MutableRegistry;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
@@ -41,6 +46,13 @@ public class RocketPart {
             Codec.BOOL.fieldOf("recipe").forGetter(RocketPart::hasRecipe),
             Identifier.CODEC.optionalFieldOf("research").forGetter(part -> Optional.ofNullable(part.getResearch()))
     ).apply(i, RocketPart::new));
+    public static final RocketPart INVALID = Builder.create(new Identifier(GalacticraftAPI.MOD_ID, "invalid"))
+            .name(new TranslatableText("tooltip.galacticraft-api.something_went_wrong"))
+            .type(RocketPartType.UPGRADE)
+            .tier(-1)
+            .research(new Identifier(GalacticraftAPI.MOD_ID, "unobtainable"))
+            .recipe(false)
+            .build();
 
     private final Identifier id;
     private final TranslatableText name;
@@ -90,7 +102,23 @@ public class RocketPart {
     public boolean hasRecipe() {
         return hasRecipe;
     }
+    
+    public static RocketPart deserialize(DynamicRegistryManager registryManager, Dynamic<?> dynamic) {
+        return registryManager.get(AddonRegistry.ROCKET_PART_KEY).get(new Identifier(dynamic.asString("")));
+    }
 
+    public static MutableRegistry<RocketPart> getAll(DynamicRegistryManager registryManager) {
+        return registryManager.get(AddonRegistry.ROCKET_PART_KEY);
+    }
+
+    public static RocketPart getById(DynamicRegistryManager registryManager, Identifier id) {
+        return registryManager.get(AddonRegistry.ROCKET_PART_KEY).get(id);
+    }
+
+    public static Identifier getId(DynamicRegistryManager registryManager, RocketPart type) {
+        return registryManager.get(AddonRegistry.ROCKET_PART_KEY).getId(type);
+    }
+    
     public static class Builder {
         private Identifier id;
         private TranslatableText name;

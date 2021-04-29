@@ -22,7 +22,7 @@
 
 package dev.galacticraft.api.internal.mixin.client;
 
-import dev.galacticraft.api.celestialbodies.CelestialBodyType;
+import dev.galacticraft.api.celestialbody.CelestialBodyType;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.particle.Particle;

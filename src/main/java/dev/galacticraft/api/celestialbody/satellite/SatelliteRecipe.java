@@ -20,13 +20,15 @@
  * SOFTWARE.
  */
 
-package dev.galacticraft.api.celestialbodies.satellite;
+package dev.galacticraft.api.celestialbody.satellite;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.PacketByteBuf;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Predicate;
@@ -45,8 +47,25 @@ public class SatelliteRecipe implements Predicate<Inventory> {
         this.ingredients = list;
     }
 
+    public static SatelliteRecipe deserialize(PacketByteBuf buf) {
+        int length = buf.readInt();
+        List<ItemStack> list = new ArrayList<>(length);
+        for (int i = 0; i < length; i++) {
+            list.add(buf.readItemStack());
+        }
+        return new SatelliteRecipe(list);
+    }
+
     public List<ItemStack> getIngredients() {
         return ingredients;
+    }
+
+    public PacketByteBuf serialize(PacketByteBuf buf) {
+        buf.writeInt(this.getIngredients().size());
+        for (ItemStack stack : this.getIngredients()) {
+            buf.writeItemStack(stack);
+        }
+        return buf;
     }
 
     @Override

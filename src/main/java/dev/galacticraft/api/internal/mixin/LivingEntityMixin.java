@@ -22,7 +22,7 @@
 
 package dev.galacticraft.api.internal.mixin;
 
-import dev.galacticraft.api.celestialbodies.CelestialBodyType;
+import dev.galacticraft.api.celestialbody.CelestialBodyType;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;

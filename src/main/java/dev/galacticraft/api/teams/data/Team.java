@@ -33,7 +33,6 @@ import net.minecraft.util.Identifier;
 import java.util.*;
 
 public class Team {
-
     public Identifier id;
     public Formatting color;
     public String name;
@@ -71,7 +70,7 @@ public class Team {
             ListTag permissionsTag = rolesTag.getCompound(roleKey).getList("permissions", 8);
             List<Permission> permissions = new ArrayList<>();
             for(Tag s : permissionsTag) {
-                permissions.add(AddonRegistry.PERMISSIONS.get(Identifier.tryParse(s.toString()))); //TODO: make this not die if anything goes wrong.
+                permissions.add(AddonRegistry.PERMISSION.get(Identifier.tryParse(s.toString()))); //TODO: make this not die if anything goes wrong.
             }
             roles.put(Identifier.tryParse(roleKey), new Role(roleName, permissions));
         }

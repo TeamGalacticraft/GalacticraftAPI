@@ -20,18 +20,28 @@
  * SOFTWARE.
  */
 
-package dev.galacticraft.api.rocket.part;
+package dev.galacticraft.api.celestialbody;
 
-import dev.galacticraft.api.internal.fabric.GalacticraftAPI;
-import net.minecraft.text.TranslatableText;
-import net.minecraft.util.Identifier;
+import com.mojang.datafixers.util.Pair;
+import com.mojang.serialization.*;
 
-public class RocketParts {
-    public static final RocketPart INVALID = RocketPart.Builder.create(new Identifier(GalacticraftAPI.MOD_ID, "invalid"))
-            .name(new TranslatableText("tooltip.galacticraft-api.something_went_wrong"))
-            .type(RocketPartType.UPGRADE)
-            .tier(-1)
-            .research(new Identifier(GalacticraftAPI.MOD_ID, "unobtainable"))
-            .recipe(false)
-            .build();
+import java.util.Locale;
+
+public enum CelestialObjectType {
+    STAR,
+    PLANET,
+    MOON,
+    SATELLITE;
+
+    public static final Codec<CelestialObjectType> CODEC = Codec.of(new Encoder<CelestialObjectType>() {
+        @Override
+        public <T> DataResult<T> encode(CelestialObjectType input, DynamicOps<T> ops, T prefix) {
+            return DataResult.success(ops.createString(input.name().toLowerCase(Locale.ROOT)));
+        }
+    }, new Decoder<CelestialObjectType>() {
+        @Override
+        public <T> DataResult<Pair<CelestialObjectType, T>> decode(DynamicOps<T> ops, T input) {
+            return DataResult.success(new Pair<>(valueOf(ops.getStringValue(input).get().orThrow().toUpperCase(Locale.ROOT)), input));
+        }
+    });
 }

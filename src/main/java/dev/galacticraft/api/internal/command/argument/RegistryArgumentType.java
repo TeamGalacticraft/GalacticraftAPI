@@ -72,7 +72,7 @@ public class RegistryArgumentType<T> implements ArgumentType<Registry<T>> {
                 AddonRegistry.CELESTIAL_BODY_TYPE_KEY.getValue().toString(),
                 AddonRegistry.SOLAR_SYSTEM_TYPE_KEY.getValue().toString(),
                 AddonRegistry.ATMOSPHERIC_GAS_KEY.getValue().toString(),
-                AddonRegistry.PERMISSIONS_KEY.getValue().toString()
+                AddonRegistry.PERMISSION_KEY.getValue().toString()
         );
     }
 }

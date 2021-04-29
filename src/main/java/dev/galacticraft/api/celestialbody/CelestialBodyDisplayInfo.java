@@ -20,7 +20,7 @@
  * SOFTWARE.
  */
 
-package dev.galacticraft.api.celestialbodies;
+package dev.galacticraft.api.celestialbody;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -29,18 +29,18 @@ import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.Identifier;
 
 public class CelestialBodyDisplayInfo {
-    public static final Codec<CelestialBodyDisplayInfo> CODEC = RecordCodecBuilder.create(celestialBodyDisplayInfoInstance ->
-        celestialBodyDisplayInfoInstance.group(
-                Codec.DOUBLE.fieldOf("orbit_time").forGetter(i -> i.orbitTime),
-                Codec.DOUBLE.fieldOf("day_length").forGetter(i -> i.dayLength),
-                Codec.FLOAT.fieldOf("distance").forGetter(i -> i.relativeDistance),
-                Codec.FLOAT.fieldOf("scale").forGetter(i -> i.scale),
-                Identifier.CODEC.fieldOf("icon_texture").forGetter(i -> i.iconTexture),
-                Codec.INT.fieldOf("icon_x").forGetter(i -> i.iconX),
-                Codec.INT.fieldOf("icon_y").forGetter(i -> i.iconY),
-                Codec.INT.fieldOf("icon_w").forGetter(i -> i.iconW),
-                Codec.INT.fieldOf("icon_h").forGetter(i -> i.iconH)
-        ).apply(celestialBodyDisplayInfoInstance, CelestialBodyDisplayInfo::new)
+    public static final Codec<CelestialBodyDisplayInfo> CODEC = RecordCodecBuilder.create(instance ->
+        instance.group(
+                Codec.DOUBLE.fieldOf("orbit_time").forGetter(CelestialBodyDisplayInfo::getOrbitTime),
+                Codec.DOUBLE.fieldOf("day_length").forGetter(CelestialBodyDisplayInfo::getDayLength),
+                Codec.FLOAT.fieldOf("distance").forGetter(CelestialBodyDisplayInfo::getRelativeDistance),
+                Codec.FLOAT.fieldOf("scale").forGetter(CelestialBodyDisplayInfo::getScale),
+                Identifier.CODEC.fieldOf("icon_texture").forGetter(CelestialBodyDisplayInfo::getIconTexture),
+                Codec.INT.fieldOf("icon_x").forGetter(CelestialBodyDisplayInfo::getIconX),
+                Codec.INT.fieldOf("icon_y").forGetter(CelestialBodyDisplayInfo::getIconY),
+                Codec.INT.fieldOf("icon_w").forGetter(CelestialBodyDisplayInfo::getIconW),
+                Codec.INT.fieldOf("icon_h").forGetter(CelestialBodyDisplayInfo::getIconH)
+        ).apply(instance, CelestialBodyDisplayInfo::new)
     );
 
     private final double orbitTime;

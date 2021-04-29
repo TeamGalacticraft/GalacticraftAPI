@@ -24,10 +24,13 @@ package dev.galacticraft.api.rocket.part;
 
 import dev.galacticraft.api.entity.RocketEntity;
 import dev.galacticraft.api.internal.fabric.GalacticraftAPI;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.client.world.ClientWorld;
 
+@Environment(EnvType.CLIENT)
 public enum EmptyRocketPartRenderer implements RocketPartRendererRegistry.RocketPartRenderer {
     INSTANCE;
     private static boolean hasWarned = false;

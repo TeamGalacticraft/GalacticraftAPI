@@ -22,23 +22,24 @@
 
 package dev.galacticraft.api.teams.data;
 
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.Dynamic;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import dev.galacticraft.api.internal.fabric.GalacticraftAPI;
 import dev.galacticraft.api.registry.AddonRegistry;
-import com.mojang.serialization.Codec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.util.registry.DynamicRegistryManager;
+import net.minecraft.util.registry.MutableRegistry;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 public class Permission {
     public static final Codec<Permission> CODEC = RecordCodecBuilder.create(permissionInstance ->
             permissionInstance.group(
-                    Identifier.CODEC.fieldOf("id").forGetter(permission -> permission.identifier),
-                    Codec.STRING.optionalFieldOf("translation_key").forGetter(permission -> Optional.of(permission.translationKey))
-            ).apply(permissionInstance, (identifier1, s) -> s.map(value -> new Permission(identifier1, value)).orElseGet(() -> new Builder(identifier1).build()))
+                    Identifier.CODEC.fieldOf("id").forGetter(Permission::getId),
+                    Codec.STRING.fieldOf("translation_key").forGetter(Permission::getTranslationKey)
+            ).apply(permissionInstance, Permission::new)
     );
 
     public static final Permission INVITE_PLAYER = new Permission.Builder(
@@ -60,14 +61,22 @@ public class Permission {
             new Identifier(GalacticraftAPI.MOD_ID, "access_space_station")
     ).build();
 
-    private static Permission register(Permission permission) {
-        return Registry.register(AddonRegistry.PERMISSIONS, permission.identifier, permission);
+    public static Permission deserialize(DynamicRegistryManager registryManager, Dynamic<?> dynamic) {
+        return registryManager.get(AddonRegistry.PERMISSION_KEY).get(new Identifier(dynamic.asString("")));
     }
 
-    public static Permission getById(Identifier id) {
-        return AddonRegistry.PERMISSIONS.get(id);
+    public static MutableRegistry<Permission> getAll(DynamicRegistryManager registryManager) {
+        return registryManager.get(AddonRegistry.PERMISSION_KEY);
+    }
+    
+    public static Permission getById(DynamicRegistryManager registryManager, Identifier id) {
+        return registryManager.get(AddonRegistry.PERMISSION_KEY).get(id);
     }
 
+    public static Identifier getId(DynamicRegistryManager registryManager, Permission type) {
+        return registryManager.get(AddonRegistry.PERMISSION_KEY).getId(type);
+    }
+    
     private final Identifier identifier;
     private final String translationKey;
 

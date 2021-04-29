@@ -22,7 +22,7 @@
 
 package dev.galacticraft.api.internal.accessor;
 
-import dev.galacticraft.api.celestialbodies.satellite.Satellite;
+import dev.galacticraft.api.celestialbody.satellite.Satellite;
 
 public interface ClientSatelliteAccessor extends SatelliteAccessor {
     void addListener(SatelliteListener listener);
