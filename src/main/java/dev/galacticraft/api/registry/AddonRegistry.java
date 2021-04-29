@@ -191,6 +191,7 @@ public class AddonRegistry {
 
         RegistrationEvent.CONFIGURED_TRAVEL_PREDICATE.register(registry -> {
             Registry.register(registry, new Identifier(GalacticraftAPI.MOD_ID, "always"), ConfiguredTravelPredicate.ALWAYS);
+            Registry.register(registry, new Identifier(GalacticraftAPI.MOD_ID, "pass"), ConfiguredTravelPredicate.PASS);
             Registry.register(registry, new Identifier(GalacticraftAPI.MOD_ID, "never"), ConfiguredTravelPredicate.NEVER);
         });
 

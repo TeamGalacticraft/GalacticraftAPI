@@ -126,7 +126,7 @@ public class RocketPart {
         private Identifier id;
         private TranslatableText name;
         private RocketPartType partType;
-        private ConfiguredTravelPredicate<?> travelPredicate = ConfiguredTravelPredicate.NEVER;
+        private ConfiguredTravelPredicate<?> travelPredicate = ConfiguredTravelPredicate.PASS;
         private boolean hasRecipe = true;
         private Identifier research = null;
 

@@ -26,7 +26,7 @@ import com.mojang.serialization.Codec;
 import dev.galacticraft.api.celestialbody.CelestialBodyType;
 import dev.galacticraft.api.registry.AddonRegistry;
 import dev.galacticraft.api.rocket.part.RocketPart;
-import dev.galacticraft.api.rocket.part.travel.config.BooleanTravelPredicateConfig;
+import dev.galacticraft.api.rocket.part.travel.config.AccessTypeTravelPredicateConfig;
 import net.fabricmc.fabric.api.util.BooleanFunction;
 import net.minecraft.util.dynamic.RegistryElementCodec;
 
@@ -38,8 +38,9 @@ public class ConfiguredTravelPredicate<C extends TravelPredicateConfig> {
     public static final Codec<Supplier<ConfiguredTravelPredicate<?>>> REGISTRY_CODEC = RegistryElementCodec.of(AddonRegistry.CONFIGURED_TRAVEL_PREDICATE_KEY, CODEC);
     public static final Codec<List<Supplier<ConfiguredTravelPredicate<?>>>> REGISTRY_LIST_CODEC = RegistryElementCodec.method_31194(AddonRegistry.CONFIGURED_TRAVEL_PREDICATE_KEY, CODEC);
 
-    public static final ConfiguredTravelPredicate<BooleanTravelPredicateConfig> ALWAYS = ConstantTravelPredicateType.INSTANCE.configure(new BooleanTravelPredicateConfig(true));
-    public static final ConfiguredTravelPredicate<BooleanTravelPredicateConfig> NEVER = ConstantTravelPredicateType.INSTANCE.configure(new BooleanTravelPredicateConfig(false));
+    public static final ConfiguredTravelPredicate<AccessTypeTravelPredicateConfig> ALWAYS = ConstantTravelPredicateType.INSTANCE.configure(new AccessTypeTravelPredicateConfig(AccessType.ALLOW));
+    public static final ConfiguredTravelPredicate<AccessTypeTravelPredicateConfig> PASS = ConstantTravelPredicateType.INSTANCE.configure(new AccessTypeTravelPredicateConfig(AccessType.PASS));
+    public static final ConfiguredTravelPredicate<AccessTypeTravelPredicateConfig> NEVER = ConstantTravelPredicateType.INSTANCE.configure(new AccessTypeTravelPredicateConfig(AccessType.BLOCK));
 
     private final C config;
     private final TravelPredicateType<C> type;
@@ -49,7 +50,7 @@ public class ConfiguredTravelPredicate<C extends TravelPredicateConfig> {
         this.type = type;
     }
 
-    public boolean canTravelTo(CelestialBodyType type, BooleanFunction<RocketPart> parts) {
+    public AccessType canTravelTo(CelestialBodyType type, BooleanFunction<RocketPart> parts) {
         return this.type.canTravelTo(type, parts, this.config);
     }
 

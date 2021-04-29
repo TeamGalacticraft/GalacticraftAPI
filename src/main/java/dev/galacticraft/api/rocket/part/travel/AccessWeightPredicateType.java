@@ -25,18 +25,22 @@ package dev.galacticraft.api.rocket.part.travel;
 import com.mojang.serialization.Codec;
 import dev.galacticraft.api.celestialbody.CelestialBodyType;
 import dev.galacticraft.api.rocket.part.RocketPart;
-import dev.galacticraft.api.rocket.part.travel.config.IntTravelPredicateConfig;
+import dev.galacticraft.api.rocket.part.travel.config.AccessWeightTravelPredicateConfig;
 import net.fabricmc.fabric.api.util.BooleanFunction;
 
-public class AccessWeightPredicateType extends TravelPredicateType<IntTravelPredicateConfig> {
-    public static final AccessWeightPredicateType INSTANCE = new AccessWeightPredicateType(IntTravelPredicateConfig.CODEC);
+public class AccessWeightPredicateType extends TravelPredicateType<AccessWeightTravelPredicateConfig> {
+    public static final AccessWeightPredicateType INSTANCE = new AccessWeightPredicateType(AccessWeightTravelPredicateConfig.CODEC);
 
-    protected AccessWeightPredicateType(Codec<IntTravelPredicateConfig> configCodec) {
+    protected AccessWeightPredicateType(Codec<AccessWeightTravelPredicateConfig> configCodec) {
         super(configCodec);
     }
 
     @Override
-    public boolean canTravelTo(CelestialBodyType type, BooleanFunction<RocketPart> parts, IntTravelPredicateConfig config) {
-        return type.getAccessWeight() <= config.getWeight();
+    public AccessType canTravelTo(CelestialBodyType type, BooleanFunction<RocketPart> parts, AccessWeightTravelPredicateConfig config) {
+        if (type.getAccessWeight() <= config.getWeight()) {
+            return AccessType.ALLOW;
+        } else {
+            return config.getDefault();
+        }
     }
 }

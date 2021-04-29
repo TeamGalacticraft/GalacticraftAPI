@@ -38,7 +38,7 @@ public abstract class TravelPredicateType<C extends TravelPredicateConfig> {
         return new ConfiguredTravelPredicate<>(config, this);
     }
 
-    public abstract boolean canTravelTo(CelestialBodyType type, BooleanFunction<RocketPart> parts, C config);
+    public abstract AccessType canTravelTo(CelestialBodyType type, BooleanFunction<RocketPart> parts, C config);
 
     public Codec<ConfiguredTravelPredicate<C>> getCodec() {
         return this.codec;

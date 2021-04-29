@@ -23,18 +23,19 @@
 package dev.galacticraft.api.rocket.part.travel.config;
 
 import com.mojang.serialization.Codec;
+import dev.galacticraft.api.rocket.part.travel.AccessType;
 import dev.galacticraft.api.rocket.part.travel.TravelPredicateConfig;
 
-public class BooleanTravelPredicateConfig implements TravelPredicateConfig {
-    public static final Codec<BooleanTravelPredicateConfig> CODEC = Codec.BOOL.xmap(BooleanTravelPredicateConfig::new, BooleanTravelPredicateConfig::isAllowed);
+public class AccessTypeTravelPredicateConfig implements TravelPredicateConfig {
+    public static final Codec<AccessTypeTravelPredicateConfig> CODEC = AccessType.CODEC.xmap(AccessTypeTravelPredicateConfig::new, AccessTypeTravelPredicateConfig::getType);
 
-    private final boolean allowed;
+    private final AccessType type;
 
-    public BooleanTravelPredicateConfig(boolean allowed) {
-        this.allowed = allowed;
+    public AccessTypeTravelPredicateConfig(AccessType type) {
+        this.type = type;
     }
 
-    public boolean isAllowed() {
-        return this.allowed;
+    public AccessType getType() {
+        return this.type;
     }
 }

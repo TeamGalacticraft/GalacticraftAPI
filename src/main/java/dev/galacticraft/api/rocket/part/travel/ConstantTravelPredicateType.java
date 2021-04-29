@@ -24,18 +24,18 @@ package dev.galacticraft.api.rocket.part.travel;
 
 import dev.galacticraft.api.celestialbody.CelestialBodyType;
 import dev.galacticraft.api.rocket.part.RocketPart;
-import dev.galacticraft.api.rocket.part.travel.config.BooleanTravelPredicateConfig;
+import dev.galacticraft.api.rocket.part.travel.config.AccessTypeTravelPredicateConfig;
 import net.fabricmc.fabric.api.util.BooleanFunction;
 
-public class ConstantTravelPredicateType extends TravelPredicateType<BooleanTravelPredicateConfig> {
+public class ConstantTravelPredicateType extends TravelPredicateType<AccessTypeTravelPredicateConfig> {
     public static final ConstantTravelPredicateType INSTANCE = new ConstantTravelPredicateType();
 
     private ConstantTravelPredicateType() {
-        super(BooleanTravelPredicateConfig.CODEC);
+        super(AccessTypeTravelPredicateConfig.CODEC);
     }
 
     @Override
-    public boolean canTravelTo(CelestialBodyType type, BooleanFunction<RocketPart> parts, BooleanTravelPredicateConfig config) {
-        return config.isAllowed();
+    public AccessType canTravelTo(CelestialBodyType type, BooleanFunction<RocketPart> parts, AccessTypeTravelPredicateConfig config) {
+        return config.getType();
     }
 }
