@@ -26,6 +26,7 @@ import dev.galacticraft.api.celestialbody.satellite.Satellite;
 import dev.galacticraft.api.internal.accessor.ClientResearchAccessor;
 import dev.galacticraft.api.internal.accessor.SatelliteAccessor;
 import dev.galacticraft.api.internal.fabric.GalacticraftAPI;
+import dev.galacticraft.api.registry.AddonRegistry;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -52,5 +53,9 @@ public class ClientGalacticraftAPI implements ClientModInitializer {
             PacketByteBuf buf = new PacketByteBuf(buffer.copy());
             /*client.execute(() -> */((SatelliteAccessor) networkHandler).removeSatellite(buf.readIdentifier())/*)*/;
         });
+        long startInitTime = System.currentTimeMillis();
+        GalacticraftAPI.LOGGER.info("Registering entries...");
+        AddonRegistry.invokeEvents();
+        GalacticraftAPI.LOGGER.info("All registered. (Took {}ms)", System.currentTimeMillis() - startInitTime);
     }
 }

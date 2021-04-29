@@ -65,9 +65,5 @@ public class GalacticraftAPI implements ModInitializer {
         Registry.register(Registry.CHUNK_GENERATOR, new Identifier(MOD_ID, "empty"), FlatChunkGenerator.CODEC);
         BuiltinBiomes.register(284, RegistryKey.of(Registry.BIOME_KEY, new Identifier(MOD_ID, "space")), SPACE);
         LOGGER.info("Initialization Complete. (Took {}ms).", System.currentTimeMillis() - startInitTime);
-        startInitTime = System.currentTimeMillis();
-        LOGGER.info("Registering entries...");
-        AddonRegistry.invokeEvents();
-        LOGGER.info("All registered. (Took {}ms)", System.currentTimeMillis() - startInitTime);
     }
 }

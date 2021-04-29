@@ -28,6 +28,9 @@
     ],
     "client": [
       "dev.galacticraft.api.internal.client.fabric.ClientGalacticraftAPI"
+    ],
+    "server": [
+      "dev.galacticraft.api.internal.server.fabric.DedicatedServerGalacticraftAPI"
     ]
   },
   "mixins": [
@@ -52,9 +55,6 @@
     "modmenu": {
       "badges": [ "library" ],
       "parent": "galacticraft"
-    },
-    "cardinal-components": [
-      "galacticraft-api:research"
-    ]
+    }
   }
 }
