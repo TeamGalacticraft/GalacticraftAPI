@@ -56,22 +56,22 @@ public class AtmosphericGas {
     public static final AtmosphericGas OXYGEN = new AtmosphericGas(
             new Identifier(GalacticraftAPI.MOD_ID, "oxygen"),
             "ui.galacticraft-api.gases.oxygen",
-            "O\u2082"
+            "O2"
     );
     public static final AtmosphericGas CARBON_DIOXIDE = new AtmosphericGas(
             new Identifier(GalacticraftAPI.MOD_ID, "carbon_dioxide"),
             "ui.galacticraft-api.gases.carbon_dioxide",
-            "CO\u2082"
+            "CO2"
     );
     public static final AtmosphericGas WATER_VAPOR = new AtmosphericGas(
             new Identifier(GalacticraftAPI.MOD_ID, "water_vapor"),
             "ui.galacticraft-api.gases.water_vapor",
-            "H\u2082O"
+            "H2O"
     );
     public static final AtmosphericGas METHANE = new AtmosphericGas(
             new Identifier(GalacticraftAPI.MOD_ID, "methane"),
             "ui.galacticraft-api.gases.methane",
-            "CH\u2084"
+            "CH4"
     );
     public static final AtmosphericGas HELIUM = new AtmosphericGas(
             new Identifier(GalacticraftAPI.MOD_ID, "helium"),
@@ -111,17 +111,17 @@ public class AtmosphericGas {
     public static final AtmosphericGas OZONE = new AtmosphericGas(
             new Identifier(GalacticraftAPI.MOD_ID, "ozone"),
             "ui.galacticraft-api.gases.ozone",
-            "O\u2083"
+            "O3"
     );
     public static final AtmosphericGas NITROUS_DIOXIDE = new AtmosphericGas(
             new Identifier(GalacticraftAPI.MOD_ID, "nitrous_dioxide"),
             "ui.galacticraft-api.gases.nitrous_dioxide",
-            "NO\u2082"
+            "NO2"
     );
     public static final AtmosphericGas IODINE = new AtmosphericGas(
             new Identifier(GalacticraftAPI.MOD_ID, "iodine"),
             "ui.galacticraft-api.gases.iodine",
-            "I\u2082"
+            "I2"
     );
 
     private final Identifier id;
@@ -159,10 +159,11 @@ public class AtmosphericGas {
                 .replaceAll("2", "\u2082")
                 .replaceAll("3", "\u2083")
                 .replaceAll("4", "\u2084")
-                .replaceAll("6", "\u2085")
-                .replaceAll("7", "\u2086")
-                .replaceAll("8", "\u2087")
-                .replaceAll("9", "\u2088");
+                .replaceAll("5", "\u2085")
+                .replaceAll("6", "\u2086")
+                .replaceAll("7", "\u2087")
+                .replaceAll("8", "\u2088")
+                .replaceAll("9", "\u2089");
     }
 
     public static AtmosphericGas deserialize(Dynamic<?> dynamic) {
