@@ -27,6 +27,7 @@ import dev.galacticraft.api.celestialbody.CelestialBodyType;
 import dev.galacticraft.api.celestialbody.SolarSystemType;
 import dev.galacticraft.api.registry.AddonRegistry;
 import dev.galacticraft.api.rocket.part.RocketPart;
+import dev.galacticraft.api.rocket.part.travel.ConfiguredTravelPredicate;
 import dev.galacticraft.api.teams.data.Permission;
 import com.mojang.serialization.Lifecycle;
 import net.minecraft.util.registry.BuiltinRegistries;
@@ -55,6 +56,7 @@ public abstract class BuiltinRegistriesMixin {
         addRegistry(AddonRegistry.SOLAR_SYSTEM_TYPE_KEY, AddonRegistry.SOLAR_SYSTEM_TYPE, () -> SolarSystemType.SOL, Lifecycle.experimental());
         addRegistry(AddonRegistry.CELESTIAL_BODY_TYPE_KEY, AddonRegistry.CELESTIAL_BODY_TYPE, () -> CelestialBodyType.THE_SUN, Lifecycle.experimental());
         addRegistry(AddonRegistry.PERMISSION_KEY, AddonRegistry.PERMISSION, () -> Permission.INVITE_PLAYER, Lifecycle.experimental());
+        addRegistry(AddonRegistry.CONFIGURED_TRAVEL_PREDICATE_KEY, AddonRegistry.CONFIGURED_TRAVEL_PREDICATE, () -> ConfiguredTravelPredicate.NEVER, Lifecycle.experimental());
         addRegistry(AddonRegistry.ROCKET_PART_KEY, AddonRegistry.ROCKET_PART, () -> RocketPart.INVALID, Lifecycle.experimental());
     }
 }

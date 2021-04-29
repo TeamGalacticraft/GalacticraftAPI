@@ -28,6 +28,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import dev.galacticraft.api.internal.accessor.ResearchAccessor;
 import dev.galacticraft.api.internal.fabric.GalacticraftAPI;
 import dev.galacticraft.api.registry.AddonRegistry;
+import dev.galacticraft.api.rocket.part.travel.ConfiguredTravelPredicate;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
@@ -36,42 +37,44 @@ import net.minecraft.util.registry.MutableRegistry;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
+import java.util.function.Supplier;
 
 public class RocketPart {
     public static final Codec<RocketPart> CODEC = RecordCodecBuilder.create(i -> i.group(
             Identifier.CODEC.fieldOf("id").forGetter(RocketPart::getId),
             Codec.STRING.fieldOf("name").forGetter(part -> part.getName().getKey()),
-            Codec.INT.fieldOf("tier").forGetter(RocketPart::getTier),
+            ConfiguredTravelPredicate.REGISTRY_CODEC.fieldOf("travel_predicate").xmap(Supplier::get, predicate -> () -> predicate).forGetter(rocketPart -> (ConfiguredTravelPredicate)rocketPart.getTravelPredicate()),
             RocketPartType.CODEC.fieldOf("type").forGetter(RocketPart::getType),
             Codec.BOOL.fieldOf("recipe").forGetter(RocketPart::hasRecipe),
             Identifier.CODEC.optionalFieldOf("research").forGetter(part -> Optional.ofNullable(part.getResearch()))
     ).apply(i, RocketPart::new));
+
     public static final RocketPart INVALID = Builder.create(new Identifier(GalacticraftAPI.MOD_ID, "invalid"))
             .name(new TranslatableText("tooltip.galacticraft-api.something_went_wrong"))
             .type(RocketPartType.UPGRADE)
-            .tier(-1)
+            .travelPredicate(ConfiguredTravelPredicate.NEVER)
             .research(new Identifier(GalacticraftAPI.MOD_ID, "unobtainable"))
             .recipe(false)
             .build();
 
     private final Identifier id;
     private final TranslatableText name;
-    private final int tier;
+    private final ConfiguredTravelPredicate<?> travelPredicate;
     private final RocketPartType type;
     private final boolean hasRecipe;
     private final Identifier research;
 
-    private RocketPart(@NotNull Identifier id, @NotNull TranslatableText name, @NotNull RocketPartType type, int tier, boolean hasRecipe, Identifier research) {
+    private RocketPart(@NotNull Identifier id, @NotNull TranslatableText name, @NotNull RocketPartType type, ConfiguredTravelPredicate<?> travelPredicate, boolean hasRecipe, Identifier research) {
         this.id = id;
         this.type = type;
         this.name = name;
-        this.tier = tier;
+        this.travelPredicate = travelPredicate;
         this.hasRecipe = hasRecipe;
         this.research = research;
     }
 
-    private RocketPart(@NotNull Identifier id, @NotNull String name, int tier, @NotNull RocketPartType type, boolean hasRecipe, Optional<Identifier> research) {
-        this(id, new TranslatableText(name), type, tier, hasRecipe, research.orElse(null));
+    private RocketPart(@NotNull Identifier id, @NotNull String name, ConfiguredTravelPredicate<?> travelPredicate, @NotNull RocketPartType type, boolean hasRecipe, Optional<Identifier> research) {
+        this(id, new TranslatableText(name), type, travelPredicate, hasRecipe, research.orElse(null));
     }
 
     public Identifier getId() {
@@ -82,8 +85,8 @@ public class RocketPart {
         return name;
     }
 
-    public int getTier() {
-        return tier;
+    public ConfiguredTravelPredicate<?> getTravelPredicate() {
+        return travelPredicate;
     }
 
     public RocketPartType getType() {
@@ -123,7 +126,7 @@ public class RocketPart {
         private Identifier id;
         private TranslatableText name;
         private RocketPartType partType;
-        private int tier = 0;
+        private ConfiguredTravelPredicate<?> travelPredicate = ConfiguredTravelPredicate.NEVER;
         private boolean hasRecipe = true;
         private Identifier research = null;
 
@@ -155,8 +158,8 @@ public class RocketPart {
             return this;
         }
 
-        public Builder tier(int tier) {
-            this.tier = tier;
+        public Builder travelPredicate(ConfiguredTravelPredicate<?> travelPredicate) {
+            this.travelPredicate = travelPredicate;
             return this;
         }
 
@@ -169,7 +172,7 @@ public class RocketPart {
             if (id == null || name == null || partType == null) {
                 throw new RuntimeException("Tried to build incomplete RocketPart!");
             }
-            return new RocketPart(id, name, partType, tier, hasRecipe, research);
+            return new RocketPart(id, name, partType, travelPredicate, hasRecipe, research);
         }
     }
 }

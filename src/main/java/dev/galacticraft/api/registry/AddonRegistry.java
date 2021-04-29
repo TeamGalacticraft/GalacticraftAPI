@@ -27,7 +27,11 @@ import dev.galacticraft.api.celestialbody.CelestialBodyType;
 import dev.galacticraft.api.celestialbody.SolarSystemType;
 import dev.galacticraft.api.event.RegistrationEvent;
 import dev.galacticraft.api.internal.fabric.GalacticraftAPI;
+import dev.galacticraft.api.rocket.part.travel.AccessWeightPredicateType;
+import dev.galacticraft.api.rocket.part.travel.ConfiguredTravelPredicate;
 import dev.galacticraft.api.rocket.part.RocketPart;
+import dev.galacticraft.api.rocket.part.travel.ConstantTravelPredicateType;
+import dev.galacticraft.api.rocket.part.travel.TravelPredicateType;
 import dev.galacticraft.api.teams.data.Permission;
 import com.mojang.serialization.Lifecycle;
 import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder;
@@ -99,6 +103,36 @@ public class AddonRegistry {
             new DefaultedRegistry<>(Permission.INVITE_PLAYER.getId().toString(),
                     PERMISSION_KEY, Lifecycle.experimental())).buildAndRegister();
 
+    public static final RegistryKey<Registry<TravelPredicateType<?>>> TRAVEL_PREDICATE_KEY = RegistryKey.ofRegistry(new Identifier(GalacticraftAPI.MOD_ID, "rocket_parts"));
+
+    /**
+     * You should use the dynamic registry manager to get an instance of the registry
+     * To register entries use the proper {@link RegistrationEvent event}
+     *
+     * @see net.minecraft.util.registry.DynamicRegistryManager
+     * @see net.minecraft.world.World#getRegistryManager()
+     * @see RegistrationEvent#TRAVEL_PREDICATE
+     */
+    @ApiStatus.Internal
+    public static final MutableRegistry<TravelPredicateType<?>> TRAVEL_PREDICATE = FabricRegistryBuilder.from(
+            new DefaultedRegistry<>(new Identifier(GalacticraftAPI.MOD_ID, "constant").toString(),
+                    TRAVEL_PREDICATE_KEY, Lifecycle.experimental())).buildAndRegister();
+
+    public static final RegistryKey<Registry<ConfiguredTravelPredicate<?>>> CONFIGURED_TRAVEL_PREDICATE_KEY = RegistryKey.ofRegistry(new Identifier(GalacticraftAPI.MOD_ID, "rocket_parts"));
+
+    /**
+     * You should use the dynamic registry manager to get an instance of the registry
+     * To register entries use the proper {@link RegistrationEvent event}
+     *
+     * @see net.minecraft.util.registry.DynamicRegistryManager
+     * @see net.minecraft.world.World#getRegistryManager()
+     * @see RegistrationEvent#CONFIGURED_TRAVEL_PREDICATE
+     */
+    @ApiStatus.Internal
+    public static final MutableRegistry<ConfiguredTravelPredicate<?>> CONFIGURED_TRAVEL_PREDICATE = FabricRegistryBuilder.from(
+            new DefaultedRegistry<>(new Identifier(GalacticraftAPI.MOD_ID, "never").toString(),
+                    CONFIGURED_TRAVEL_PREDICATE_KEY, Lifecycle.experimental())).buildAndRegister();
+
     public static final RegistryKey<Registry<RocketPart>> ROCKET_PART_KEY = RegistryKey.ofRegistry(new Identifier(GalacticraftAPI.MOD_ID, "rocket_parts"));
 
     /**
@@ -148,6 +182,16 @@ public class AddonRegistry {
             Registry.register(registry, Permission.MODIFY_NAME.getId(), Permission.MODIFY_NAME);
             Registry.register(registry, Permission.MODIFY_ROLES.getId(), Permission.MODIFY_ROLES);
             Registry.register(registry, Permission.ACCESS_SPACE_STATION.getId(), Permission.ACCESS_SPACE_STATION);
+        });
+
+        RegistrationEvent.TRAVEL_PREDICATE.register(registry -> {
+            Registry.register(registry, new Identifier(GalacticraftAPI.MOD_ID, "access_weight"), AccessWeightPredicateType.INSTANCE);
+            Registry.register(registry, new Identifier(GalacticraftAPI.MOD_ID, "constant"), ConstantTravelPredicateType.INSTANCE);
+        });
+
+        RegistrationEvent.CONFIGURED_TRAVEL_PREDICATE.register(registry -> {
+            Registry.register(registry, new Identifier(GalacticraftAPI.MOD_ID, "always"), ConfiguredTravelPredicate.ALWAYS);
+            Registry.register(registry, new Identifier(GalacticraftAPI.MOD_ID, "never"), ConfiguredTravelPredicate.NEVER);
         });
 
         RegistrationEvent.ROCKET_PART.register(registry -> Registry.register(registry, RocketPart.INVALID.getId(), RocketPart.INVALID));

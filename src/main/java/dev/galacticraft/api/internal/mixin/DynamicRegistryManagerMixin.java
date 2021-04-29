@@ -27,6 +27,7 @@ import dev.galacticraft.api.atmosphere.AtmosphericGas;
 import dev.galacticraft.api.celestialbody.CelestialBodyType;
 import dev.galacticraft.api.celestialbody.SolarSystemType;
 import dev.galacticraft.api.registry.AddonRegistry;
+import dev.galacticraft.api.rocket.part.travel.ConfiguredTravelPredicate;
 import dev.galacticraft.api.rocket.part.RocketPart;
 import dev.galacticraft.api.teams.data.Permission;
 import net.minecraft.util.dynamic.RegistryOps;
@@ -65,6 +66,7 @@ public abstract class DynamicRegistryManagerMixin {
 		builder.put(AddonRegistry.SOLAR_SYSTEM_TYPE_KEY, new DynamicRegistryManager.Info<>(AddonRegistry.SOLAR_SYSTEM_TYPE_KEY, SolarSystemType.CODEC, SolarSystemType.CODEC));
 		builder.put(AddonRegistry.CELESTIAL_BODY_TYPE_KEY, new DynamicRegistryManager.Info<>(AddonRegistry.CELESTIAL_BODY_TYPE_KEY, CelestialBodyType.CODEC, CelestialBodyType.CODEC));
 		builder.put(AddonRegistry.PERMISSION_KEY, new DynamicRegistryManager.Info<>(AddonRegistry.PERMISSION_KEY, Permission.CODEC, Permission.CODEC));
+		builder.put(AddonRegistry.CONFIGURED_TRAVEL_PREDICATE_KEY, new DynamicRegistryManager.Info<>(AddonRegistry.CONFIGURED_TRAVEL_PREDICATE_KEY, ConfiguredTravelPredicate.CODEC, ConfiguredTravelPredicate.CODEC));
 		builder.put(AddonRegistry.ROCKET_PART_KEY, new DynamicRegistryManager.Info<>(AddonRegistry.ROCKET_PART_KEY, RocketPart.CODEC, RocketPart.CODEC));
 	}
 }
