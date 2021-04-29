@@ -22,79 +22,75 @@
 
 package dev.galacticraft.api.rocket;
 
-import com.google.common.collect.Lists;
-import dev.galacticraft.api.registry.AddonRegistry;
 import dev.galacticraft.api.rocket.part.RocketPart;
 import dev.galacticraft.api.rocket.part.RocketPartType;
-import net.minecraft.item.ItemStack;
+import net.fabricmc.fabric.api.util.NbtType;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.StringTag;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.DynamicRegistryManager;
 
-import java.util.List;
+import java.util.Arrays;
 import java.util.Objects;
 
 public class RocketData {
-    public static final RocketData EMPTY = new RocketData(-1, -1, null, null, null, null, null, null);
+    public static final RocketData EMPTY = new RocketData(-1, -1, RocketPart.INVALID, RocketPart.INVALID, RocketPart.INVALID, RocketPart.INVALID, RocketPart.INVALID, RocketPart.INVALID);
 
     private final int tier;
     private final int color; //ARGB
-    private final RocketPart cone;
-    private final RocketPart body;
-    private final RocketPart fin;
-    private final RocketPart booster;
-    private final RocketPart bottom;
-    private final RocketPart upgrade;
+    private final RocketPart[] parts;
 
     public RocketData(int tier, int color, RocketPart cone, RocketPart body, RocketPart fin, RocketPart booster, RocketPart bottom, RocketPart upgrade) {
         this.tier = tier;
         this.color = color;
-        this.cone = cone;
-        this.body = body;
-        this.fin = fin;
-        this.booster = booster;
-        this.bottom = bottom;
-        this.upgrade = upgrade;
-    }
-    
-    public static RocketData fromTag(CompoundTag tag, DynamicRegistryManager registryManager) {
-        if (tag.contains("tier")
-                && tag.contains("color")
-                && tag.contains("cone")
-                && tag.contains("body") && tag.contains("fin")
-                && tag.contains("booster") && tag.contains("bottom")
-                && tag.contains("upgrade")) {
-            return new RocketData(tag.getInt("tier"), tag.getInt("color"),
-                    RocketPart.getById(registryManager, new Identifier(tag.getString("cone"))), RocketPart.getById(registryManager, new Identifier(tag.getString("body"))),
-                    RocketPart.getById(registryManager, new Identifier(tag.getString("fin"))), RocketPart.getById(registryManager, new Identifier(tag.getString("booster"))),
-                    RocketPart.getById(registryManager, new Identifier(tag.getString("bottom"))), RocketPart.getById(registryManager, new Identifier(tag.getString("upgrade"))));
-        } else {
-            return EMPTY;
-        }
+        this.parts = new RocketPart[6];
+
+        this.parts[0] = cone;
+        this.parts[1] = body;
+        this.parts[2] = fin;
+        this.parts[3] = booster;
+        this.parts[4] = bottom;
+        this.parts[5] = upgrade;
     }
 
-    public CompoundTag toTag(DynamicRegistryManager registryManager) {
-        CompoundTag tag = new CompoundTag();
-        tag.putBoolean("empty", isEmpty());
-        if (!isEmpty()) {
-            tag.putInt("tier", tier);
-            tag.putInt("color", color);
-            tag.putString("cone", Objects.requireNonNull(RocketPart.getId(registryManager, cone)).toString());
-            tag.putString("body", Objects.requireNonNull(RocketPart.getId(registryManager, body)).toString());
-            tag.putString("fin", Objects.requireNonNull(RocketPart.getId(registryManager, fin)).toString());
-            tag.putString("booster", Objects.requireNonNull(RocketPart.getId(registryManager, booster)).toString());
-            tag.putString("bottom", Objects.requireNonNull(RocketPart.getId(registryManager, bottom)).toString());
-            tag.putString("upgrade", Objects.requireNonNull(RocketPart.getId(registryManager, upgrade)).toString());
+    private RocketData(int tier, int color, RocketPart[] parts) {
+        this.tier = tier;
+        this.color = color;
+        this.parts = parts;
+    }
+
+    public static RocketData fromTag(CompoundTag tag, DynamicRegistryManager registryManager) {
+        if (tag.getBoolean("Empty")) return EMPTY;
+        RocketPart[] parts = new RocketPart[6];
+        ListTag list = tag.getList("Parts", NbtType.STRING);
+        for (int i = 0; i < 6; i++) {
+            parts[i] = RocketPart.getById(registryManager, new Identifier(list.get(i).asString()));
         }
+        return new RocketData(tag.getInt("Tier"), tag.getInt("Color"), parts);
+    }
+
+    public CompoundTag toTag(DynamicRegistryManager registryManager, CompoundTag tag) {
+        if (this.isEmpty()) {
+            tag.putBoolean("Empty", true);
+            return tag;
+        }
+        tag.putInt("Tier", this.getTier());
+        tag.putInt("Color", this.getColor());
+        ListTag tag1 = new ListTag();
+        for (RocketPart part : this.getParts()) {
+            tag1.add(StringTag.of(RocketPart.getId(registryManager, part).toString()));
+        }
+        tag.put("Parts", tag1);
         return tag;
     }
 
     public int getTier() {
-        return tier;
+        return this.tier;
     }
 
     public int getColor() {
-        return color;
+        return this.color;
     }
 
     public int getRed() {
@@ -114,27 +110,27 @@ public class RocketData {
     }
 
     public RocketPart getCone() {
-        return cone;
+        return this.parts[0];
     }
 
     public RocketPart getBody() {
-        return body;
+        return this.parts[1];
     }
 
     public RocketPart getFin() {
-        return fin;
+        return this.parts[2];
     }
 
     public RocketPart getBooster() {
-        return booster;
+        return this.parts[3];
     }
 
     public RocketPart getBottom() {
-        return bottom;
+        return this.parts[4];
     }
 
     public RocketPart getUpgrade() {
-        return upgrade;
+        return this.parts[5];
     }
 
     public boolean isEmpty() {
@@ -146,55 +142,21 @@ public class RocketData {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         RocketData that = (RocketData) o;
-        return tier == that.tier &&
-                color == that.color &&
-                cone == that.cone &&
-                body == that.body &&
-                fin == that.fin &&
-                booster == that.booster &&
-                bottom == that.bottom &&
-                upgrade == that.upgrade;
+        return getTier() == that.getTier() && getColor() == that.getColor() && Arrays.equals(getParts(), that.getParts());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(tier, color, cone, body, fin, booster, bottom, upgrade);
+        int result = Objects.hash(getTier(), getColor());
+        result = 31 * result + Arrays.hashCode(getParts());
+        return result;
     }
 
-    @Override
-    public String toString() {
-        return "RocketData{" +
-                "tier=" + tier +
-                ", color=" + color +
-                ", cone=" + cone +
-                ", body=" + body +
-                ", fin=" + fin +
-                ", booster=" + booster +
-                ", bottom=" + bottom +
-                ", upgrade=" + upgrade +
-                '}';
+    public RocketPart getPartForType(RocketPartType type) {
+        return this.parts[type.ordinal()];
     }
 
-    public RocketPart getPartForType(RocketPartType value) {
-        switch (value) {
-            case UPGRADE:
-                return getUpgrade();
-            case FIN:
-                return getFin();
-            case BODY:
-                return getBody();
-            case CONE:
-                return getCone();
-            case BOTTOM:
-                return getBottom();
-            case BOOSTER:
-                return getBooster();
-            default:
-                throw new IllegalArgumentException();
-        }
-    }
-
-    public List<RocketPart> getParts() {
-        return Lists.newArrayList(cone, body, fin, booster, bottom, upgrade);
+    public RocketPart[] getParts() {
+        return Arrays.copyOf(this.parts, this.parts.length);
     }
 }
