@@ -25,7 +25,6 @@ package dev.galacticraft.api.rocket.part.travel.config;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import dev.galacticraft.api.rocket.part.travel.AccessType;
-import dev.galacticraft.api.rocket.part.travel.TravelPredicateConfig;
 
 public class AccessWeightTravelPredicateConfig implements TravelPredicateConfig {
     public static final Codec<AccessWeightTravelPredicateConfig> CODEC = RecordCodecBuilder.create(instance -> instance.group(

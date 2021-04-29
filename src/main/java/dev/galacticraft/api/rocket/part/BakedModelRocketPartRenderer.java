@@ -22,7 +22,7 @@
 
 package dev.galacticraft.api.rocket.part;
 
-import dev.galacticraft.api.entity.RocketEntity;
+import dev.galacticraft.api.entity.Rocket;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.render.*;
@@ -84,7 +84,7 @@ public class BakedModelRocketPartRenderer implements RocketPartRendererRegistry.
     }
 
     @Override
-    public void render(ClientWorld world, MatrixStack matrices, RocketEntity rocket, VertexConsumerProvider vertices, float delta, int light) {
+    public void render(ClientWorld world, MatrixStack matrices, Rocket rocket, VertexConsumerProvider vertices, float delta, int light) {
         matrices.translate(-0.5D, -0.5D, -0.5D);
         MatrixStack.Entry entry = matrices.peek();
         VertexConsumer vertexConsumer = vertices.getBuffer(layer.get());
@@ -92,9 +92,9 @@ public class BakedModelRocketPartRenderer implements RocketPartRendererRegistry.
             vertexConsumer.quad(
                     entry,
                     quad,
-                    rocket.getColor()[0] * rocket.getColor()[3],
-                    rocket.getColor()[1] * rocket.getColor()[3],
-                    rocket.getColor()[2] * rocket.getColor()[3],
+                    (((rocket.getColor() << 16) & 0xFF) / 255f) * (((rocket.getColor() << 24) & 0xFF) / 255f),
+                    (((rocket.getColor() << 8) & 0xFF) / 255f) * (((rocket.getColor() << 24) & 0xFF) / 255f),
+                    ((rocket.getColor() & 0xFF) / 255f) * (((rocket.getColor() << 24) & 0xFF) / 255f),
                     light,
                     //15728880,
                     OverlayTexture.DEFAULT_UV

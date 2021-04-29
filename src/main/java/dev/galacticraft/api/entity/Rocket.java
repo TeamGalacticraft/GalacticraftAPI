@@ -20,7 +20,45 @@
  * SOFTWARE.
  */
 
-package dev.galacticraft.api.rocket.part.travel;
+package dev.galacticraft.api.entity;
 
-public interface TravelPredicateConfig {
+import dev.galacticraft.api.celestialbody.CelestialBodyType;
+import dev.galacticraft.api.rocket.LaunchStage;
+import dev.galacticraft.api.rocket.part.RocketPart;
+import dev.galacticraft.api.rocket.part.RocketPartType;
+import net.minecraft.entity.damage.DamageSource;
+import net.minecraft.util.math.BlockPos;
+
+public interface Rocket {
+    int getColor();
+
+    LaunchStage getStage();
+
+    void setStage(LaunchStage stage);
+
+    RocketPart[] getParts();
+
+    BlockPos getLinkedPad();
+
+    boolean canTravelTo(CelestialBodyType type);
+
+    void setLinkedPad(BlockPos linkedPad);
+
+    double getSpeed();
+
+    void setSpeed(double speed);
+
+    void onJump();
+
+    void setColor(int color);
+
+    void onBaseDestroyed();
+
+    void dropItems(DamageSource source, boolean exploded);
+
+    void setPart(RocketPart part);
+
+    void setParts(RocketPart[] parts);
+
+    RocketPart getPartForType(RocketPartType type);
 }

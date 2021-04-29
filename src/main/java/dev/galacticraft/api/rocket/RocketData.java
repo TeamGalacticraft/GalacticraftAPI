@@ -22,8 +22,12 @@
 
 package dev.galacticraft.api.rocket;
 
+import dev.galacticraft.api.celestialbody.CelestialBodyType;
 import dev.galacticraft.api.rocket.part.RocketPart;
 import dev.galacticraft.api.rocket.part.RocketPartType;
+import dev.galacticraft.api.rocket.part.travel.AccessType;
+import it.unimi.dsi.fastutil.objects.Object2BooleanArrayMap;
+import it.unimi.dsi.fastutil.objects.Object2BooleanMap;
 import net.fabricmc.fabric.api.util.NbtType;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -35,14 +39,12 @@ import java.util.Arrays;
 import java.util.Objects;
 
 public class RocketData {
-    public static final RocketData EMPTY = new RocketData(-1, -1, RocketPart.INVALID, RocketPart.INVALID, RocketPart.INVALID, RocketPart.INVALID, RocketPart.INVALID, RocketPart.INVALID);
+    public static final RocketData EMPTY = new RocketData(-1, RocketPart.INVALID, RocketPart.INVALID, RocketPart.INVALID, RocketPart.INVALID, RocketPart.INVALID, RocketPart.INVALID);
 
-    private final int tier;
     private final int color; //ARGB
     private final RocketPart[] parts;
 
-    public RocketData(int tier, int color, RocketPart cone, RocketPart body, RocketPart fin, RocketPart booster, RocketPart bottom, RocketPart upgrade) {
-        this.tier = tier;
+    public RocketData(int color, RocketPart cone, RocketPart body, RocketPart fin, RocketPart booster, RocketPart bottom, RocketPart upgrade) {
         this.color = color;
         this.parts = new RocketPart[6];
 
@@ -54,8 +56,7 @@ public class RocketData {
         this.parts[5] = upgrade;
     }
 
-    private RocketData(int tier, int color, RocketPart[] parts) {
-        this.tier = tier;
+    public RocketData(int color, RocketPart[] parts) {
         this.color = color;
         this.parts = parts;
     }
@@ -67,7 +68,7 @@ public class RocketData {
         for (int i = 0; i < 6; i++) {
             parts[i] = RocketPart.getById(registryManager, new Identifier(list.get(i).asString()));
         }
-        return new RocketData(tag.getInt("Tier"), tag.getInt("Color"), parts);
+        return new RocketData(tag.getInt("Color"), parts);
     }
 
     public CompoundTag toTag(DynamicRegistryManager registryManager, CompoundTag tag) {
@@ -75,7 +76,6 @@ public class RocketData {
             tag.putBoolean("Empty", true);
             return tag;
         }
-        tag.putInt("Tier", this.getTier());
         tag.putInt("Color", this.getColor());
         ListTag tag1 = new ListTag();
         for (RocketPart part : this.getParts()) {
@@ -83,10 +83,6 @@ public class RocketData {
         }
         tag.put("Parts", tag1);
         return tag;
-    }
-
-    public int getTier() {
-        return this.tier;
     }
 
     public int getColor() {
@@ -137,17 +133,38 @@ public class RocketData {
         return this == EMPTY;
     }
 
+    public boolean canTravelTo(CelestialBodyType celestialBodyType) {
+        Object2BooleanMap<RocketPart> map = new Object2BooleanArrayMap<>();
+        AccessType type = AccessType.PASS;
+        for (RocketPart part : this.parts) {
+            map.put(part, true);
+            type = type.merge(this.travel(part, celestialBodyType, map));
+        }
+        return type == AccessType.ALLOW;
+    }
+
+    private AccessType travel(RocketPart part, CelestialBodyType type, Object2BooleanMap<RocketPart> map) {
+        return part.getTravelPredicate().canTravelTo(type, p -> map.computeBooleanIfAbsent((RocketPart) p, p1 -> {
+            if (Arrays.stream(this.parts).anyMatch(p2 -> p2.getId() == p1.getId())) {
+                map.put((RocketPart) p, false);
+                return travel(p1, type, map) != AccessType.BLOCK;
+            } else {
+                return false;
+            }
+        }));
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         RocketData that = (RocketData) o;
-        return getTier() == that.getTier() && getColor() == that.getColor() && Arrays.equals(getParts(), that.getParts());
+        return getColor() == that.getColor() && Arrays.equals(getParts(), that.getParts());
     }
 
     @Override
     public int hashCode() {
-        int result = Objects.hash(getTier(), getColor());
+        int result = Objects.hash(getColor());
         result = 31 * result + Arrays.hashCode(getParts());
         return result;
     }

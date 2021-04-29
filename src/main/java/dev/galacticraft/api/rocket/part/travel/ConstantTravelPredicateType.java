@@ -25,7 +25,7 @@ package dev.galacticraft.api.rocket.part.travel;
 import dev.galacticraft.api.celestialbody.CelestialBodyType;
 import dev.galacticraft.api.rocket.part.RocketPart;
 import dev.galacticraft.api.rocket.part.travel.config.AccessTypeTravelPredicateConfig;
-import net.fabricmc.fabric.api.util.BooleanFunction;
+import it.unimi.dsi.fastutil.objects.Object2BooleanFunction;
 
 public class ConstantTravelPredicateType extends TravelPredicateType<AccessTypeTravelPredicateConfig> {
     public static final ConstantTravelPredicateType INSTANCE = new ConstantTravelPredicateType();
@@ -35,7 +35,7 @@ public class ConstantTravelPredicateType extends TravelPredicateType<AccessTypeT
     }
 
     @Override
-    public AccessType canTravelTo(CelestialBodyType type, BooleanFunction<RocketPart> parts, AccessTypeTravelPredicateConfig config) {
+    public AccessType canTravelTo(CelestialBodyType type, Object2BooleanFunction<RocketPart> parts, AccessTypeTravelPredicateConfig config) {
         return config.getType();
     }
 }

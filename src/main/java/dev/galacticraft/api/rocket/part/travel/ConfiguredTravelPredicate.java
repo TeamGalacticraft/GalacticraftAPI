@@ -27,7 +27,8 @@ import dev.galacticraft.api.celestialbody.CelestialBodyType;
 import dev.galacticraft.api.registry.AddonRegistry;
 import dev.galacticraft.api.rocket.part.RocketPart;
 import dev.galacticraft.api.rocket.part.travel.config.AccessTypeTravelPredicateConfig;
-import net.fabricmc.fabric.api.util.BooleanFunction;
+import dev.galacticraft.api.rocket.part.travel.config.TravelPredicateConfig;
+import it.unimi.dsi.fastutil.objects.Object2BooleanFunction;
 import net.minecraft.util.dynamic.RegistryElementCodec;
 
 import java.util.List;
@@ -50,7 +51,7 @@ public class ConfiguredTravelPredicate<C extends TravelPredicateConfig> {
         this.type = type;
     }
 
-    public AccessType canTravelTo(CelestialBodyType type, BooleanFunction<RocketPart> parts) {
+    public AccessType canTravelTo(CelestialBodyType type, Object2BooleanFunction<RocketPart> parts) {
         return this.type.canTravelTo(type, parts, this.config);
     }
 

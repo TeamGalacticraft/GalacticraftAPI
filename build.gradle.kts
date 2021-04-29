@@ -75,12 +75,13 @@ dependencies {
     modImplementation("net.fabricmc:fabric-loader:$loader")
 
     listOf(
-            "fabric-api-base",
-            "fabric-command-api-v1",
-            "fabric-lifecycle-events-v1",
-            "fabric-networking-api-v1",
-            "fabric-registry-sync-v0",
-            "fabric-resource-loader-v0",
+        "fabric-api-base",
+        "fabric-command-api-v1",
+        "fabric-lifecycle-events-v1",
+        "fabric-networking-api-v1",
+        "fabric-registry-sync-v0",
+        "fabric-renderer-api-v1",
+        "fabric-resource-loader-v0",
     ).forEach {
         modImplementation(fabricApi.module(it, fabric))
     }

@@ -51,7 +51,7 @@ public abstract class DynamicRegistryManagerMixin {
 	@Inject(method = "method_31141", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/registry/DynamicRegistryManager$Impl;get(Lnet/minecraft/util/registry/RegistryKey;)Lnet/minecraft/util/registry/MutableRegistry;", shift = At.Shift.BEFORE, ordinal = 0))
 	private static <E> void testGC(DynamicRegistryManager.Impl impl, RegistryOps.EntryLoader.Impl impl2, DynamicRegistryManager.Info<E> info, CallbackInfo ci) {
 		RegistryKey<? extends Registry<E>> registryKey = info.getRegistry();
-		override = (registryKey.equals(AddonRegistry.CELESTIAL_BODY_TYPE_KEY) || registryKey.equals(AddonRegistry.ATMOSPHERIC_GAS_KEY) || registryKey.equals(AddonRegistry.SOLAR_SYSTEM_TYPE_KEY) || registryKey.equals(AddonRegistry.PERMISSION_KEY));
+		override = (registryKey.equals(AddonRegistry.CELESTIAL_BODY_TYPE_KEY) || registryKey.equals(AddonRegistry.ATMOSPHERIC_GAS_KEY) || registryKey.equals(AddonRegistry.SOLAR_SYSTEM_TYPE_KEY) || registryKey.equals(AddonRegistry.PERMISSION_KEY) || registryKey.equals(AddonRegistry.CONFIGURED_TRAVEL_PREDICATE_KEY));
 	}
 
 	@ModifyVariable(method = "method_31141", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/registry/DynamicRegistryManager$Impl;get(Lnet/minecraft/util/registry/RegistryKey;)Lnet/minecraft/util/registry/MutableRegistry;", ordinal = 0), name = "b", ordinal = 0, index = 4)

@@ -26,7 +26,7 @@ import com.mojang.serialization.Codec;
 import dev.galacticraft.api.celestialbody.CelestialBodyType;
 import dev.galacticraft.api.rocket.part.RocketPart;
 import dev.galacticraft.api.rocket.part.travel.config.AccessWeightTravelPredicateConfig;
-import net.fabricmc.fabric.api.util.BooleanFunction;
+import it.unimi.dsi.fastutil.objects.Object2BooleanFunction;
 
 public class AccessWeightPredicateType extends TravelPredicateType<AccessWeightTravelPredicateConfig> {
     public static final AccessWeightPredicateType INSTANCE = new AccessWeightPredicateType(AccessWeightTravelPredicateConfig.CODEC);
@@ -36,7 +36,7 @@ public class AccessWeightPredicateType extends TravelPredicateType<AccessWeightT
     }
 
     @Override
-    public AccessType canTravelTo(CelestialBodyType type, BooleanFunction<RocketPart> parts, AccessWeightTravelPredicateConfig config) {
+    public AccessType canTravelTo(CelestialBodyType type, Object2BooleanFunction<RocketPart> parts, AccessWeightTravelPredicateConfig config) {
         if (type.getAccessWeight() <= config.getWeight()) {
             return AccessType.ALLOW;
         } else {

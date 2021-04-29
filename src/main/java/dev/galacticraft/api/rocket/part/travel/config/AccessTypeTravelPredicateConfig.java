@@ -24,7 +24,6 @@ package dev.galacticraft.api.rocket.part.travel.config;
 
 import com.mojang.serialization.Codec;
 import dev.galacticraft.api.rocket.part.travel.AccessType;
-import dev.galacticraft.api.rocket.part.travel.TravelPredicateConfig;
 
 public class AccessTypeTravelPredicateConfig implements TravelPredicateConfig {
     public static final Codec<AccessTypeTravelPredicateConfig> CODEC = AccessType.CODEC.xmap(AccessTypeTravelPredicateConfig::new, AccessTypeTravelPredicateConfig::getType);

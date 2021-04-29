@@ -22,7 +22,7 @@
 
 package dev.galacticraft.api.rocket.part;
 
-import dev.galacticraft.api.entity.RocketEntity;
+import dev.galacticraft.api.entity.Rocket;
 import dev.galacticraft.api.internal.fabric.GalacticraftAPI;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -44,7 +44,7 @@ public enum EmptyRocketPartRenderer implements RocketPartRendererRegistry.Rocket
     }
 
     @Override
-    public void render(ClientWorld world, MatrixStack matrices, RocketEntity rocket, VertexConsumerProvider vertices, float delta, int light) {
+    public void render(ClientWorld world, MatrixStack matrices, Rocket rocket, VertexConsumerProvider vertices, float delta, int light) {
         if (!hasWarned) {
             hasWarned = true;
             GalacticraftAPI.LOGGER.warn("EmptyRocketPartRenderer renderer is in use! RocketPartRenderer wasn't registered?");

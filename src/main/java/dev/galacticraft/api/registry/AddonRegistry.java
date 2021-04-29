@@ -103,7 +103,7 @@ public class AddonRegistry {
             new DefaultedRegistry<>(Permission.INVITE_PLAYER.getId().toString(),
                     PERMISSION_KEY, Lifecycle.experimental())).buildAndRegister();
 
-    public static final RegistryKey<Registry<TravelPredicateType<?>>> TRAVEL_PREDICATE_KEY = RegistryKey.ofRegistry(new Identifier(GalacticraftAPI.MOD_ID, "rocket_parts"));
+    public static final RegistryKey<Registry<TravelPredicateType<?>>> TRAVEL_PREDICATE_KEY = RegistryKey.ofRegistry(new Identifier(GalacticraftAPI.MOD_ID, "travel_predicate"));
 
     /**
      * You should use the dynamic registry manager to get an instance of the registry
@@ -118,7 +118,7 @@ public class AddonRegistry {
             new DefaultedRegistry<>(new Identifier(GalacticraftAPI.MOD_ID, "constant").toString(),
                     TRAVEL_PREDICATE_KEY, Lifecycle.experimental())).buildAndRegister();
 
-    public static final RegistryKey<Registry<ConfiguredTravelPredicate<?>>> CONFIGURED_TRAVEL_PREDICATE_KEY = RegistryKey.ofRegistry(new Identifier(GalacticraftAPI.MOD_ID, "rocket_parts"));
+    public static final RegistryKey<Registry<ConfiguredTravelPredicate<?>>> CONFIGURED_TRAVEL_PREDICATE_KEY = RegistryKey.ofRegistry(new Identifier(GalacticraftAPI.MOD_ID, "configured_travel_predicate"));
 
     /**
      * You should use the dynamic registry manager to get an instance of the registry

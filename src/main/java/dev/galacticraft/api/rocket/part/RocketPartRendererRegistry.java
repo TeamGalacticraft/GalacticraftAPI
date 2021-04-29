@@ -22,7 +22,7 @@
 
 package dev.galacticraft.api.rocket.part;
 
-import dev.galacticraft.api.entity.RocketEntity;
+import dev.galacticraft.api.entity.Rocket;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.render.VertexConsumerProvider;
@@ -53,7 +53,7 @@ public class RocketPartRendererRegistry {
         default void renderGUI(ClientWorld world, MatrixStack matrices, int mouseX, int mouseY, float delta) {
         }
 
-        void render(ClientWorld world, MatrixStack matrices, RocketEntity rocket, VertexConsumerProvider vertices, float delta, int light);
+        void render(ClientWorld world, MatrixStack matrices, Rocket rocket, VertexConsumerProvider vertices, float delta, int light);
     }
 
 }
