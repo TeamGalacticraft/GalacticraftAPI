@@ -79,7 +79,7 @@ public class BakedModelRocketPartRenderer implements RocketPartRendererRegistry.
                         OverlayTexture.DEFAULT_UV
                 );
             }
-            BufferRenderer.draw(Tessellator.getInstance().getBuffer());
+            Tessellator.getInstance().draw();
         }
     }
 
