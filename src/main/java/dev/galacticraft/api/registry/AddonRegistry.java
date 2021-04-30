@@ -39,7 +39,6 @@ import net.minecraft.util.registry.DefaultedRegistry;
 import net.minecraft.util.registry.MutableRegistry;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryKey;
-import org.jetbrains.annotations.ApiStatus;
 
 public class AddonRegistry {
     public static final RegistryKey<Registry<AtmosphericGas>> ATMOSPHERIC_GAS_KEY = RegistryKey.ofRegistry(new Identifier(GalacticraftAPI.MOD_ID, "atmospheric_gas"));
@@ -50,7 +49,6 @@ public class AddonRegistry {
      * @see net.minecraft.util.registry.DynamicRegistryManager
      * @see net.minecraft.world.World#getRegistryManager()
      */
-    @ApiStatus.Internal
     public static final MutableRegistry<AtmosphericGas> ATMOSPHERIC_GAS = FabricRegistryBuilder.from(
             new DefaultedRegistry<>(AtmosphericGas.OXYGEN.getId().toString(),
                     ATMOSPHERIC_GAS_KEY, Lifecycle.experimental())).buildAndRegister();
@@ -63,7 +61,6 @@ public class AddonRegistry {
      * @see net.minecraft.util.registry.DynamicRegistryManager
      * @see net.minecraft.world.World#getRegistryManager()
      */
-    @ApiStatus.Internal
     public static final MutableRegistry<SolarSystemType> SOLAR_SYSTEM_TYPE = FabricRegistryBuilder.from(
             new DefaultedRegistry<>(SolarSystemType.SOL.getId().toString(),
                     SOLAR_SYSTEM_TYPE_KEY, Lifecycle.experimental())).buildAndRegister();
@@ -76,7 +73,6 @@ public class AddonRegistry {
      * @see net.minecraft.util.registry.DynamicRegistryManager
      * @see net.minecraft.world.World#getRegistryManager()
      */
-    @ApiStatus.Internal
     public static final MutableRegistry<CelestialBodyType> CELESTIAL_BODY_TYPE = FabricRegistryBuilder.from(
             new DefaultedRegistry<>(CelestialBodyType.THE_SUN.getId().toString(),
                     CELESTIAL_BODY_TYPE_KEY, Lifecycle.experimental())).buildAndRegister();
