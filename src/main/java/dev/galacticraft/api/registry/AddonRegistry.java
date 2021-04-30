@@ -25,7 +25,6 @@ package dev.galacticraft.api.registry;
 import dev.galacticraft.api.atmosphere.AtmosphericGas;
 import dev.galacticraft.api.celestialbody.CelestialBodyType;
 import dev.galacticraft.api.celestialbody.SolarSystemType;
-import dev.galacticraft.api.event.RegistrationEvent;
 import dev.galacticraft.api.internal.fabric.GalacticraftAPI;
 import dev.galacticraft.api.rocket.part.travel.AccessWeightPredicateType;
 import dev.galacticraft.api.rocket.part.travel.ConfiguredTravelPredicate;
@@ -43,62 +42,53 @@ import net.minecraft.util.registry.RegistryKey;
 import org.jetbrains.annotations.ApiStatus;
 
 public class AddonRegistry {
-    public static final RegistryKey<Registry<AtmosphericGas>> ATMOSPHERIC_GAS_KEY = RegistryKey.ofRegistry(new Identifier(GalacticraftAPI.MOD_ID, "atmospheric_gases"));
+    public static final RegistryKey<Registry<AtmosphericGas>> ATMOSPHERIC_GAS_KEY = RegistryKey.ofRegistry(new Identifier(GalacticraftAPI.MOD_ID, "atmospheric_gas"));
 
     /**
-     * You should use the dynamic registry manager to get an instance of the registry
-     * To register entries use the proper {@link RegistrationEvent event}
+     * When accessing values of the registry in-world use the {@link net.minecraft.util.registry.DynamicRegistryManager dynamic registry manager}.
      *
      * @see net.minecraft.util.registry.DynamicRegistryManager
      * @see net.minecraft.world.World#getRegistryManager()
-     * @see RegistrationEvent#ATMOSPHERIC_GAS
      */
     @ApiStatus.Internal
     public static final MutableRegistry<AtmosphericGas> ATMOSPHERIC_GAS = FabricRegistryBuilder.from(
             new DefaultedRegistry<>(AtmosphericGas.OXYGEN.getId().toString(),
                     ATMOSPHERIC_GAS_KEY, Lifecycle.experimental())).buildAndRegister();
 
-    public static final RegistryKey<Registry<SolarSystemType>> SOLAR_SYSTEM_TYPE_KEY = RegistryKey.ofRegistry(new Identifier(GalacticraftAPI.MOD_ID, "solar_systems"));
+    public static final RegistryKey<Registry<SolarSystemType>> SOLAR_SYSTEM_TYPE_KEY = RegistryKey.ofRegistry(new Identifier(GalacticraftAPI.MOD_ID, "solar_system"));
 
     /**
-     * You should use the dynamic registry manager to get an instance of the registry
-     * To register entries use the proper {@link RegistrationEvent event}
+     * When accessing values of the registry in-world use the {@link net.minecraft.util.registry.DynamicRegistryManager dynamic registry manager}.
      *
      * @see net.minecraft.util.registry.DynamicRegistryManager
      * @see net.minecraft.world.World#getRegistryManager()
-     * @see RegistrationEvent#SOLAR_SYSTEM_TYPE
      */
     @ApiStatus.Internal
     public static final MutableRegistry<SolarSystemType> SOLAR_SYSTEM_TYPE = FabricRegistryBuilder.from(
             new DefaultedRegistry<>(SolarSystemType.SOL.getId().toString(),
                     SOLAR_SYSTEM_TYPE_KEY, Lifecycle.experimental())).buildAndRegister();
 
-    public static final RegistryKey<Registry<CelestialBodyType>> CELESTIAL_BODY_TYPE_KEY = RegistryKey.ofRegistry(new Identifier(GalacticraftAPI.MOD_ID, "celestial_bodies"));
+    public static final RegistryKey<Registry<CelestialBodyType>> CELESTIAL_BODY_TYPE_KEY = RegistryKey.ofRegistry(new Identifier(GalacticraftAPI.MOD_ID, "celestial_body"));
 
     /**
-     * You should use the dynamic registry manager to get an instance of the registry
-     * To register entries use the proper {@link RegistrationEvent event}
+     * When accessing values of the registry in-world use the {@link net.minecraft.util.registry.DynamicRegistryManager dynamic registry manager}.
      *
      * @see net.minecraft.util.registry.DynamicRegistryManager
      * @see net.minecraft.world.World#getRegistryManager()
-     * @see RegistrationEvent#CELESTIAL_BODY_TYPE
      */
     @ApiStatus.Internal
     public static final MutableRegistry<CelestialBodyType> CELESTIAL_BODY_TYPE = FabricRegistryBuilder.from(
             new DefaultedRegistry<>(CelestialBodyType.THE_SUN.getId().toString(),
                     CELESTIAL_BODY_TYPE_KEY, Lifecycle.experimental())).buildAndRegister();
 
-    public static final RegistryKey<Registry<Permission>> PERMISSION_KEY = RegistryKey.ofRegistry(new Identifier(GalacticraftAPI.MOD_ID, "permissions"));
+    public static final RegistryKey<Registry<Permission>> PERMISSION_KEY = RegistryKey.ofRegistry(new Identifier(GalacticraftAPI.MOD_ID, "permission"));
 
     /**
-     * You should use the dynamic registry manager to get an instance of the registry
-     * To register entries use the proper {@link RegistrationEvent event}
+     * When accessing values of the registry in-world use the {@link net.minecraft.util.registry.DynamicRegistryManager dynamic registry manager}.
      *
      * @see net.minecraft.util.registry.DynamicRegistryManager
      * @see net.minecraft.world.World#getRegistryManager()
-     * @see RegistrationEvent#PERMISSION
      */
-    @ApiStatus.Internal
     public static final MutableRegistry<Permission> PERMISSION = FabricRegistryBuilder.from(
             new DefaultedRegistry<>(Permission.INVITE_PLAYER.getId().toString(),
                     PERMISSION_KEY, Lifecycle.experimental())).buildAndRegister();
@@ -106,14 +96,11 @@ public class AddonRegistry {
     public static final RegistryKey<Registry<TravelPredicateType<?>>> TRAVEL_PREDICATE_KEY = RegistryKey.ofRegistry(new Identifier(GalacticraftAPI.MOD_ID, "travel_predicate"));
 
     /**
-     * You should use the dynamic registry manager to get an instance of the registry
-     * To register entries use the proper {@link RegistrationEvent event}
+     * When accessing values of the registry in-world use the {@link net.minecraft.util.registry.DynamicRegistryManager dynamic registry manager}.
      *
      * @see net.minecraft.util.registry.DynamicRegistryManager
      * @see net.minecraft.world.World#getRegistryManager()
-     * @see RegistrationEvent#TRAVEL_PREDICATE
      */
-    @ApiStatus.Internal
     public static final MutableRegistry<TravelPredicateType<?>> TRAVEL_PREDICATE = FabricRegistryBuilder.from(
             new DefaultedRegistry<>(new Identifier(GalacticraftAPI.MOD_ID, "constant").toString(),
                     TRAVEL_PREDICATE_KEY, Lifecycle.experimental())).buildAndRegister();
@@ -121,88 +108,64 @@ public class AddonRegistry {
     public static final RegistryKey<Registry<ConfiguredTravelPredicate<?>>> CONFIGURED_TRAVEL_PREDICATE_KEY = RegistryKey.ofRegistry(new Identifier(GalacticraftAPI.MOD_ID, "configured_travel_predicate"));
 
     /**
-     * You should use the dynamic registry manager to get an instance of the registry
-     * To register entries use the proper {@link RegistrationEvent event}
+     * When accessing values of the registry in-world use the {@link net.minecraft.util.registry.DynamicRegistryManager dynamic registry manager}.
      *
      * @see net.minecraft.util.registry.DynamicRegistryManager
      * @see net.minecraft.world.World#getRegistryManager()
-     * @see RegistrationEvent#CONFIGURED_TRAVEL_PREDICATE
      */
-    @ApiStatus.Internal
     public static final MutableRegistry<ConfiguredTravelPredicate<?>> CONFIGURED_TRAVEL_PREDICATE = FabricRegistryBuilder.from(
             new DefaultedRegistry<>(new Identifier(GalacticraftAPI.MOD_ID, "never").toString(),
                     CONFIGURED_TRAVEL_PREDICATE_KEY, Lifecycle.experimental())).buildAndRegister();
 
-    public static final RegistryKey<Registry<RocketPart>> ROCKET_PART_KEY = RegistryKey.ofRegistry(new Identifier(GalacticraftAPI.MOD_ID, "rocket_parts"));
+    public static final RegistryKey<Registry<RocketPart>> ROCKET_PART_KEY = RegistryKey.ofRegistry(new Identifier(GalacticraftAPI.MOD_ID, "rocket_part"));
 
     /**
-     * You should use the dynamic registry manager to get an instance of the registry
-     * To register entries use the proper {@link RegistrationEvent event}
+     * When accessing values of the registry in-world use the {@link net.minecraft.util.registry.DynamicRegistryManager dynamic registry manager}.
      *
      * @see net.minecraft.util.registry.DynamicRegistryManager
      * @see net.minecraft.world.World#getRegistryManager()
-     * @see RegistrationEvent#ROCKET_PART
      */
-    @ApiStatus.Internal
     public static final MutableRegistry<RocketPart> ROCKET_PART = FabricRegistryBuilder.from(
             new DefaultedRegistry<>(new Identifier(GalacticraftAPI.MOD_ID, "invalid").toString(),
                     ROCKET_PART_KEY, Lifecycle.experimental())).buildAndRegister();
 
     static {
-        RegistrationEvent.ATMOSPHERIC_GAS.register(registry -> {
-            Registry.register(registry, AtmosphericGas.HYDROGEN.getId(), AtmosphericGas.HYDROGEN);
-            Registry.register(registry, AtmosphericGas.NITROGEN.getId(), AtmosphericGas.NITROGEN);
-            Registry.register(registry, AtmosphericGas.OXYGEN.getId(), AtmosphericGas.OXYGEN);
-            Registry.register(registry, AtmosphericGas.CARBON_DIOXIDE.getId(), AtmosphericGas.CARBON_DIOXIDE);
-            Registry.register(registry, AtmosphericGas.WATER_VAPOR.getId(), AtmosphericGas.WATER_VAPOR);
-            Registry.register(registry, AtmosphericGas.METHANE.getId(), AtmosphericGas.METHANE);
-            Registry.register(registry, AtmosphericGas.HELIUM.getId(), AtmosphericGas.HELIUM);
-            Registry.register(registry, AtmosphericGas.ARGON.getId(), AtmosphericGas.ARGON);
-            Registry.register(registry, AtmosphericGas.NEON.getId(), AtmosphericGas.NEON);
-            Registry.register(registry, AtmosphericGas.KRYPTON.getId(), AtmosphericGas.KRYPTON);
-            Registry.register(registry, AtmosphericGas.NITROUS_OXIDE.getId(), AtmosphericGas.NITROUS_OXIDE);
-            Registry.register(registry, AtmosphericGas.CARBON_MONOXIDE.getId(), AtmosphericGas.CARBON_MONOXIDE);
-            Registry.register(registry, AtmosphericGas.XENON.getId(), AtmosphericGas.XENON);
-            Registry.register(registry, AtmosphericGas.OZONE.getId(), AtmosphericGas.OZONE);
-            Registry.register(registry, AtmosphericGas.NITROUS_DIOXIDE.getId(), AtmosphericGas.NITROUS_DIOXIDE);
-            Registry.register(registry, AtmosphericGas.IODINE.getId(), AtmosphericGas.IODINE);
-        });
+        Registry.register(ATMOSPHERIC_GAS, AtmosphericGas.HYDROGEN.getId(), AtmosphericGas.HYDROGEN);
+        Registry.register(ATMOSPHERIC_GAS, AtmosphericGas.NITROGEN.getId(), AtmosphericGas.NITROGEN);
+        Registry.register(ATMOSPHERIC_GAS, AtmosphericGas.OXYGEN.getId(), AtmosphericGas.OXYGEN);
+        Registry.register(ATMOSPHERIC_GAS, AtmosphericGas.CARBON_DIOXIDE.getId(), AtmosphericGas.CARBON_DIOXIDE);
+        Registry.register(ATMOSPHERIC_GAS, AtmosphericGas.WATER_VAPOR.getId(), AtmosphericGas.WATER_VAPOR);
+        Registry.register(ATMOSPHERIC_GAS, AtmosphericGas.METHANE.getId(), AtmosphericGas.METHANE);
+        Registry.register(ATMOSPHERIC_GAS, AtmosphericGas.HELIUM.getId(), AtmosphericGas.HELIUM);
+        Registry.register(ATMOSPHERIC_GAS, AtmosphericGas.ARGON.getId(), AtmosphericGas.ARGON);
+        Registry.register(ATMOSPHERIC_GAS, AtmosphericGas.NEON.getId(), AtmosphericGas.NEON);
+        Registry.register(ATMOSPHERIC_GAS, AtmosphericGas.KRYPTON.getId(), AtmosphericGas.KRYPTON);
+        Registry.register(ATMOSPHERIC_GAS, AtmosphericGas.NITROUS_OXIDE.getId(), AtmosphericGas.NITROUS_OXIDE);
+        Registry.register(ATMOSPHERIC_GAS, AtmosphericGas.CARBON_MONOXIDE.getId(), AtmosphericGas.CARBON_MONOXIDE);
+        Registry.register(ATMOSPHERIC_GAS, AtmosphericGas.XENON.getId(), AtmosphericGas.XENON);
+        Registry.register(ATMOSPHERIC_GAS, AtmosphericGas.OZONE.getId(), AtmosphericGas.OZONE);
+        Registry.register(ATMOSPHERIC_GAS, AtmosphericGas.NITROUS_DIOXIDE.getId(), AtmosphericGas.NITROUS_DIOXIDE);
+        Registry.register(ATMOSPHERIC_GAS, AtmosphericGas.IODINE.getId(), AtmosphericGas.IODINE);
 
-        RegistrationEvent.SOLAR_SYSTEM_TYPE.register(registry -> Registry.register(registry, SolarSystemType.SOL.getId(), SolarSystemType.SOL));
+        Registry.register(SOLAR_SYSTEM_TYPE, SolarSystemType.SOL.getId(), SolarSystemType.SOL);
 
-        RegistrationEvent.CELESTIAL_BODY_TYPE.register(registry -> {
-            Registry.register(registry, CelestialBodyType.THE_SUN.getId(), CelestialBodyType.THE_SUN);
-            Registry.register(registry, CelestialBodyType.EARTH.getId(), CelestialBodyType.EARTH);
-        });
+        Registry.register(CELESTIAL_BODY_TYPE, CelestialBodyType.THE_SUN.getId(), CelestialBodyType.THE_SUN);
+        Registry.register(CELESTIAL_BODY_TYPE, CelestialBodyType.EARTH.getId(), CelestialBodyType.EARTH);
 
-        RegistrationEvent.PERMISSION.register(registry -> {
-            Registry.register(registry, Permission.INVITE_PLAYER.getId(), Permission.INVITE_PLAYER);
-            Registry.register(registry, Permission.MODIFY_COLOR.getId(), Permission.MODIFY_COLOR);
-            Registry.register(registry, Permission.MODIFY_FLAG.getId(), Permission.MODIFY_FLAG);
-            Registry.register(registry, Permission.MODIFY_NAME.getId(), Permission.MODIFY_NAME);
-            Registry.register(registry, Permission.MODIFY_ROLES.getId(), Permission.MODIFY_ROLES);
-            Registry.register(registry, Permission.ACCESS_SPACE_STATION.getId(), Permission.ACCESS_SPACE_STATION);
-        });
+        Registry.register(PERMISSION, Permission.INVITE_PLAYER.getId(), Permission.INVITE_PLAYER);
+        Registry.register(PERMISSION, Permission.MODIFY_COLOR.getId(), Permission.MODIFY_COLOR);
+        Registry.register(PERMISSION, Permission.MODIFY_FLAG.getId(), Permission.MODIFY_FLAG);
+        Registry.register(PERMISSION, Permission.MODIFY_NAME.getId(), Permission.MODIFY_NAME);
+        Registry.register(PERMISSION, Permission.MODIFY_ROLES.getId(), Permission.MODIFY_ROLES);
+        Registry.register(PERMISSION, Permission.ACCESS_SPACE_STATION.getId(), Permission.ACCESS_SPACE_STATION);
 
-        RegistrationEvent.TRAVEL_PREDICATE.register(registry -> {
-            Registry.register(registry, new Identifier(GalacticraftAPI.MOD_ID, "access_weight"), AccessWeightPredicateType.INSTANCE);
-            Registry.register(registry, new Identifier(GalacticraftAPI.MOD_ID, "constant"), ConstantTravelPredicateType.INSTANCE);
-        });
+        Registry.register(TRAVEL_PREDICATE, new Identifier(GalacticraftAPI.MOD_ID, "access_weight"), AccessWeightPredicateType.INSTANCE);
+        Registry.register(TRAVEL_PREDICATE, new Identifier(GalacticraftAPI.MOD_ID, "constant"), ConstantTravelPredicateType.INSTANCE);
 
-        RegistrationEvent.CONFIGURED_TRAVEL_PREDICATE.register(registry -> {
-            Registry.register(registry, new Identifier(GalacticraftAPI.MOD_ID, "always"), ConfiguredTravelPredicate.ALWAYS);
-            Registry.register(registry, new Identifier(GalacticraftAPI.MOD_ID, "pass"), ConfiguredTravelPredicate.PASS);
-            Registry.register(registry, new Identifier(GalacticraftAPI.MOD_ID, "never"), ConfiguredTravelPredicate.NEVER);
-        });
+        Registry.register(CONFIGURED_TRAVEL_PREDICATE, new Identifier(GalacticraftAPI.MOD_ID, "always"), ConfiguredTravelPredicate.ALWAYS);
+        Registry.register(CONFIGURED_TRAVEL_PREDICATE, new Identifier(GalacticraftAPI.MOD_ID, "pass"), ConfiguredTravelPredicate.PASS);
+        Registry.register(CONFIGURED_TRAVEL_PREDICATE, new Identifier(GalacticraftAPI.MOD_ID, "never"), ConfiguredTravelPredicate.NEVER);
 
-        RegistrationEvent.ROCKET_PART.register(registry -> Registry.register(registry, RocketPart.INVALID.getId(), RocketPart.INVALID));
-    }
-
-    public static void invokeEvents() {
-        RegistrationEvent.ATMOSPHERIC_GAS.invoker().register(ATMOSPHERIC_GAS);
-        RegistrationEvent.SOLAR_SYSTEM_TYPE.invoker().register(SOLAR_SYSTEM_TYPE);
-        RegistrationEvent.CELESTIAL_BODY_TYPE.invoker().register(CELESTIAL_BODY_TYPE);
-        RegistrationEvent.PERMISSION.invoker().register(PERMISSION);
-        RegistrationEvent.ROCKET_PART.invoker().register(ROCKET_PART);
+        Registry.register(ROCKET_PART, RocketPart.INVALID.getId(), RocketPart.INVALID);
     }
 }

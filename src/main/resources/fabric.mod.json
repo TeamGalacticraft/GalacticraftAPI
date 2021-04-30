@@ -28,9 +28,6 @@
     ],
     "client": [
       "dev.galacticraft.api.internal.client.fabric.ClientGalacticraftAPI"
-    ],
-    "server": [
-      "dev.galacticraft.api.internal.server.fabric.DedicatedServerGalacticraftAPI"
     ]
   },
   "mixins": [

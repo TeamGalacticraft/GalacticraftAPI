@@ -22,12 +22,10 @@
 
 package dev.galacticraft.api.internal.fabric;
 
-import dev.galacticraft.api.event.RegistrationEvent;
 import dev.galacticraft.api.internal.accessor.ServerResearchAccessor;
 import dev.galacticraft.api.internal.command.GCApiCommands;
 import dev.galacticraft.api.internal.log.GCAPILogPrepender;
 import dev.galacticraft.api.internal.world.gen.FlatChunkGenerator;
-import dev.galacticraft.api.registry.AddonRegistry;
 import io.netty.buffer.Unpooled;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
