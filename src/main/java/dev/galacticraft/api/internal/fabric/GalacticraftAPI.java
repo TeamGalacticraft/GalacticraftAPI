@@ -24,7 +24,6 @@ package dev.galacticraft.api.internal.fabric;
 
 import dev.galacticraft.api.internal.accessor.ServerResearchAccessor;
 import dev.galacticraft.api.internal.command.GCApiCommands;
-import dev.galacticraft.api.internal.log.GCAPILogPrepender;
 import dev.galacticraft.api.internal.world.gen.FlatChunkGenerator;
 import io.netty.buffer.Unpooled;
 import net.fabricmc.api.ModInitializer;
@@ -42,7 +41,7 @@ import org.apache.logging.log4j.Logger;
 
 public class GalacticraftAPI implements ModInitializer {
     public static final String MOD_ID = "galacticraft-api";
-    public static final Logger LOGGER = LogManager.getLogger("GalacticraftAPI", GCAPILogPrepender.INSTANCE);
+    public static final Logger LOGGER = LogManager.getLogger("GalacticraftAPI");
 
     @Deprecated
     //todo look into why accessing this constant rather than getting it from a registry breaks everything - its not the same object somehow?!?
