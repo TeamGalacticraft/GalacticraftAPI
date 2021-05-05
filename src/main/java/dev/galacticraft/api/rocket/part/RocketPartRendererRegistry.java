@@ -28,6 +28,7 @@ import net.fabricmc.api.Environment;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.client.world.ClientWorld;
+import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.HashMap;
@@ -35,15 +36,15 @@ import java.util.Map;
 
 @Environment(EnvType.CLIENT)
 public class RocketPartRendererRegistry {
-    @ApiStatus.Internal private static final Map<RocketPart, RocketPartRenderer> RENDERERS = new HashMap<>();
+    private static final Map<Identifier, RocketPartRenderer> RENDERERS = new HashMap<>();
 
     private RocketPartRendererRegistry() {}
 
-    public static void register(RocketPart part, RocketPartRenderer renderer) {
+    public static void register(Identifier part, RocketPartRenderer renderer) {
         RENDERERS.put(part, renderer);
     }
 
-    public static RocketPartRenderer getRenderer(RocketPart part) {
+    public static RocketPartRenderer getRenderer(Identifier part) {
         return RENDERERS.getOrDefault(part, EmptyRocketPartRenderer.INSTANCE);
     }
 

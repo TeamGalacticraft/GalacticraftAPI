@@ -22,6 +22,8 @@
 
 package dev.galacticraft.api.rocket.part;
 
+import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
 import dev.galacticraft.api.entity.Rocket;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -66,9 +68,18 @@ public class BakedModelRocketPartRenderer implements RocketPartRendererRegistry.
         MatrixStack.Entry entry = matrices.peek();
         VertexConsumer vertexConsumer = Tessellator.getInstance().getBuffer();
         List<BakedQuad> quads = this.model.get().getQuads(null, null, world.random);
+        RenderSystem.enableRescaleNormal();
+        RenderSystem.enableAlphaTest();
+        RenderSystem.defaultAlphaFunc();
+        RenderSystem.enableBlend();
+        RenderSystem.blendFunc(GlStateManager.SrcFactor.SRC_ALPHA, GlStateManager.DstFactor.ONE_MINUS_SRC_ALPHA);
+        RenderSystem.enableDepthTest();
+        RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
+        DiffuseLighting.enableGuiDepthLighting();
+
         if (!quads.isEmpty()) {
-            Tessellator.getInstance().getBuffer().begin(GL11.GL_QUADS, VertexFormats.POSITION_COLOR_TEXTURE_LIGHT_NORMAL);
             for (BakedQuad quad : quads) {
+                Tessellator.getInstance().getBuffer().begin(GL11.GL_QUADS, VertexFormats.POSITION_COLOR_TEXTURE_OVERLAY_LIGHT_NORMAL);
                 vertexConsumer.quad(
                         entry,
                         quad,
@@ -78,9 +89,11 @@ public class BakedModelRocketPartRenderer implements RocketPartRendererRegistry.
                         15728880,
                         OverlayTexture.DEFAULT_UV
                 );
+                Tessellator.getInstance().draw();
             }
-            Tessellator.getInstance().draw();
         }
+        RenderSystem.disableAlphaTest();
+        RenderSystem.disableRescaleNormal();
     }
 
     @Override
