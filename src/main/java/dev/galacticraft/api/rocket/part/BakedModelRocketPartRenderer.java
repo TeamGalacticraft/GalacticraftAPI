@@ -32,6 +32,7 @@ import net.minecraft.client.render.model.BakedModel;
 import net.minecraft.client.render.model.BakedQuad;
 import net.minecraft.client.render.model.json.ModelTransformation;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.client.util.math.Vector3f;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.util.Lazy;
 import org.lwjgl.opengl.GL11;
@@ -63,11 +64,17 @@ public class BakedModelRocketPartRenderer implements RocketPartRendererRegistry.
     @Override
     public void renderGUI(ClientWorld world, MatrixStack matrices, int mouseX, int mouseY, float delta) {
         model.get().getTransformation().getTransformation(ModelTransformation.Mode.GUI).apply(false, matrices);
-        matrices.translate(-0.5D, -0.5D, -0.5D);
+        matrices.translate(0, 0, 250);
+        matrices.translate(8, 8, 8);
+        matrices.multiply(Vector3f.POSITIVE_X.getDegreesQuaternion(35));
+        matrices.multiply(Vector3f.POSITIVE_Y.getDegreesQuaternion(45));
+        matrices.multiply(Vector3f.POSITIVE_Z.getDegreesQuaternion(180));
+        matrices.scale(10, 10, 10);
 
         MatrixStack.Entry entry = matrices.peek();
-        VertexConsumer vertexConsumer = Tessellator.getInstance().getBuffer();
+        VertexConsumer vertexConsumer = new SpriteTexturedVertexConsumer(Tessellator.getInstance().getBuffer(), this.model.get().getSprite());
         List<BakedQuad> quads = this.model.get().getQuads(null, null, world.random);
+        this.model.get().getSprite().getAtlas().bindTexture();
         RenderSystem.enableRescaleNormal();
         RenderSystem.enableAlphaTest();
         RenderSystem.defaultAlphaFunc();
@@ -98,7 +105,7 @@ public class BakedModelRocketPartRenderer implements RocketPartRendererRegistry.
 
     @Override
     public void render(ClientWorld world, MatrixStack matrices, Rocket rocket, VertexConsumerProvider vertices, float delta, int light) {
-        matrices.translate(-0.5D, -0.5D, -0.5D);
+        matrices.translate(0.5D, 0.5D, 0.5D);
         MatrixStack.Entry entry = matrices.peek();
         VertexConsumer vertexConsumer = vertices.getBuffer(layer.get());
         for (BakedQuad quad : this.model.get().getQuads(null, null, world.random)) {
