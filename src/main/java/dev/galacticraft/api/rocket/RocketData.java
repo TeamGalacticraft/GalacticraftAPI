@@ -29,9 +29,9 @@ import dev.galacticraft.api.rocket.part.travel.AccessType;
 import it.unimi.dsi.fastutil.objects.Object2BooleanArrayMap;
 import it.unimi.dsi.fastutil.objects.Object2BooleanMap;
 import net.fabricmc.fabric.api.util.NbtType;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.StringTag;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtList;
+import net.minecraft.nbt.NbtString;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.DynamicRegistryManager;
 
@@ -61,25 +61,25 @@ public class RocketData {
         this.parts = parts;
     }
 
-    public static RocketData fromTag(CompoundTag tag, DynamicRegistryManager registryManager) {
+    public static RocketData fromTag(NbtCompound tag, DynamicRegistryManager registryManager) {
         if (tag.getBoolean("Empty")) return EMPTY;
         RocketPart[] parts = new RocketPart[6];
-        ListTag list = tag.getList("Parts", NbtType.STRING);
+        NbtList list = tag.getList("Parts", NbtType.STRING);
         for (int i = 0; i < 6; i++) {
             parts[i] = RocketPart.getById(registryManager, new Identifier(list.get(i).asString()));
         }
         return new RocketData(tag.getInt("Color"), parts);
     }
 
-    public CompoundTag toTag(DynamicRegistryManager registryManager, CompoundTag tag) {
+    public NbtCompound toTag(DynamicRegistryManager registryManager, NbtCompound tag) {
         if (this.isEmpty()) {
             tag.putBoolean("Empty", true);
             return tag;
         }
         tag.putInt("Color", this.getColor());
-        ListTag tag1 = new ListTag();
+        NbtList tag1 = new NbtList();
         for (RocketPart part : this.getParts()) {
-            tag1.add(StringTag.of(RocketPart.getId(registryManager, part).toString()));
+            tag1.add(NbtString.of(RocketPart.getId(registryManager, part).toString()));
         }
         tag.put("Parts", tag1);
         return tag;

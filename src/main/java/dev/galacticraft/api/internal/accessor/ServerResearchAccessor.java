@@ -22,7 +22,7 @@
 
 package dev.galacticraft.api.internal.accessor;
 
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.Identifier;
 
@@ -33,7 +33,7 @@ public interface ServerResearchAccessor extends ResearchAccessor {
 
     PacketByteBuf writeResearchChanges_gcr(PacketByteBuf buf);
 
-    CompoundTag writeResearch_gcr(CompoundTag tag);
+    NbtCompound writeResearch_gcr(NbtCompound tag);
 
-    void readFromTag_gcr(CompoundTag tag);
+    void readFromTag_gcr(NbtCompound tag);
 }

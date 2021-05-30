@@ -29,6 +29,7 @@ import dev.galacticraft.api.registry.AddonRegistry;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.registry.DynamicRegistryManager;
 import net.minecraft.util.registry.MutableRegistry;
+import net.minecraft.util.registry.Registry;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -81,7 +82,7 @@ public class AtmosphericInfo {
     }
 
     public static AtmosphericInfo readPacket(DynamicRegistryManager dynamicRegistryManager, PacketByteBuf buf) {
-        MutableRegistry<AtmosphericGas> reg = dynamicRegistryManager.get(AddonRegistry.ATMOSPHERIC_GAS_KEY);
+        Registry<AtmosphericGas> reg = dynamicRegistryManager.get(AddonRegistry.ATMOSPHERIC_GAS_KEY);
         int size = buf.readInt();
         Builder builder = new Builder();
         builder.pressure(buf.readFloat());

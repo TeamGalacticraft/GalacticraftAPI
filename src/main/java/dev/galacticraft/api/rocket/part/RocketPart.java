@@ -34,6 +34,7 @@ import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.DynamicRegistryManager;
 import net.minecraft.util.registry.MutableRegistry;
+import net.minecraft.util.registry.Registry;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
@@ -43,7 +44,7 @@ public class RocketPart {
     public static final Codec<RocketPart> CODEC = RecordCodecBuilder.create(i -> i.group(
             Identifier.CODEC.fieldOf("id").forGetter(RocketPart::getId),
             Codec.STRING.fieldOf("name").forGetter(part -> part.getName().getKey()),
-            ConfiguredTravelPredicate.REGISTRY_CODEC.fieldOf("travel_predicate").xmap(Supplier::get, predicate -> () -> predicate).forGetter(rocketPart -> (ConfiguredTravelPredicate)rocketPart.getTravelPredicate()),
+            ConfiguredTravelPredicate.CODEC.fieldOf("travel_predicate").forGetter(RocketPart::getTravelPredicate),
             RocketPartType.CODEC.fieldOf("type").forGetter(RocketPart::getType),
             Codec.BOOL.fieldOf("recipe").forGetter(RocketPart::hasRecipe),
             Identifier.CODEC.optionalFieldOf("research").forGetter(part -> Optional.ofNullable(part.getResearch()))
@@ -110,7 +111,7 @@ public class RocketPart {
         return registryManager.get(AddonRegistry.ROCKET_PART_KEY).get(new Identifier(dynamic.asString("")));
     }
 
-    public static MutableRegistry<RocketPart> getAll(DynamicRegistryManager registryManager) {
+    public static Registry<RocketPart> getAll(DynamicRegistryManager registryManager) {
         return registryManager.get(AddonRegistry.ROCKET_PART_KEY);
     }
 

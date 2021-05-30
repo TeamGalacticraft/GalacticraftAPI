@@ -25,7 +25,7 @@ package dev.galacticraft.api.internal.mixin;
 import dev.galacticraft.api.internal.accessor.ServerResearchAccessor;
 import it.unimi.dsi.fastutil.objects.Object2BooleanArrayMap;
 import it.unimi.dsi.fastutil.objects.Object2BooleanMap;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
@@ -82,7 +82,7 @@ public abstract class ServerPlayerEntityMixin implements ServerResearchAccessor 
     }
 
     @Override
-    public CompoundTag writeResearch_gcr(CompoundTag tag) {
+    public NbtCompound writeResearch_gcr(NbtCompound tag) {
         tag.putInt("size", this.unlockedResearch.size());
         int i = 0;
         for (Identifier id : this.unlockedResearch) {
@@ -93,7 +93,7 @@ public abstract class ServerPlayerEntityMixin implements ServerResearchAccessor 
     }
 
     @Override
-    public void readFromTag_gcr(CompoundTag tag) {
+    public void readFromTag_gcr(NbtCompound tag) {
         this.unlockedResearch.clear();
         int size = tag.getInt("size");
         for (int i = 0; i < size; i++) {
@@ -101,13 +101,13 @@ public abstract class ServerPlayerEntityMixin implements ServerResearchAccessor 
         }
     }
 
-    @Inject(method = "readCustomDataFromTag", at = @At("RETURN"))
-    private void readTag_gcr(CompoundTag tag, CallbackInfo ci) {
+    @Inject(method = "readCustomDataFromNbt", at = @At("RETURN"))
+    private void readTag_gcr(NbtCompound tag, CallbackInfo ci) {
         this.readFromTag_gcr(tag);
     }
 
-    @Inject(method = "writeCustomDataToTag", at = @At("RETURN"))
-    private void writeTag_gcr(CompoundTag tag, CallbackInfo ci) {
+    @Inject(method = "writeCustomDataToNbt", at = @At("RETURN"))
+    private void writeTag_gcr(NbtCompound tag, CallbackInfo ci) {
         this.writeResearch_gcr(tag);
     }
 }

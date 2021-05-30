@@ -57,7 +57,7 @@ public class RegistryArgumentType<T> implements ArgumentType<Registry<T>> {
 
     public static <T> Registry<T> getRegistry(CommandContext<ServerCommandSource> context, String id) {
         Registry<T> registry = context.getArgument(id, Registry.class);
-        Optional<MutableRegistry<T>> dynamic = context.getSource().getRegistryManager().getOptional(registry.getKey());
+        Optional<MutableRegistry<T>> dynamic = context.getSource().getRegistryManager().getOptionalMutable(registry.getKey());
         return dynamic.isPresent() ? dynamic.get() : registry;
     }
 
@@ -71,8 +71,7 @@ public class RegistryArgumentType<T> implements ArgumentType<Registry<T>> {
         return ImmutableList.of(
                 AddonRegistry.CELESTIAL_BODY_TYPE_KEY.getValue().toString(),
                 AddonRegistry.SOLAR_SYSTEM_TYPE_KEY.getValue().toString(),
-                AddonRegistry.ATMOSPHERIC_GAS_KEY.getValue().toString(),
-                AddonRegistry.PERMISSION_KEY.getValue().toString()
+                AddonRegistry.ATMOSPHERIC_GAS_KEY.getValue().toString()
         );
     }
 }

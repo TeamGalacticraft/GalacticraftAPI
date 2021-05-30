@@ -30,20 +30,16 @@ import dev.galacticraft.api.celestialbody.CelestialBodyType;
 import dev.galacticraft.api.celestialbody.CelestialObjectType;
 import dev.galacticraft.api.celestialbody.SolarSystemType;
 import dev.galacticraft.api.internal.accessor.SatelliteAccessor;
-import dev.galacticraft.api.internal.data.MinecraftServerTeamsGetter;
 import dev.galacticraft.api.internal.fabric.GalacticraftAPI;
 import dev.galacticraft.api.internal.util.NetworkUtil;
-import dev.galacticraft.api.internal.world.gen.FlatChunkGenerator;
-import dev.galacticraft.api.teams.ServerTeams;
-import dev.galacticraft.api.teams.data.Permission;
-import dev.galacticraft.api.teams.data.Team;
+import dev.galacticraft.api.internal.world.gen.VoidChunkGenerator;
 import io.netty.buffer.Unpooled;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtOps;
-import net.minecraft.nbt.Tag;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.WorldGenerationProgressListener;
@@ -56,9 +52,7 @@ import net.minecraft.util.registry.DynamicRegistryManager;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.World;
-import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.source.BiomeAccess;
-import net.minecraft.world.biome.source.BiomeAccessType;
 import net.minecraft.world.border.WorldBorderListener;
 import net.minecraft.world.chunk.ChunkStatus;
 import net.minecraft.world.dimension.DimensionOptions;
@@ -81,6 +75,10 @@ public class Satellite extends CelestialBodyType {
 
         @Override
         public void setChunkStatus(ChunkPos pos, @Nullable ChunkStatus status) {
+        }
+
+        @Override
+        public void start() {
         }
 
         @Override
@@ -133,29 +131,24 @@ public class Satellite extends CelestialBodyType {
 
     public static Satellite create(MinecraftServer server, ServerPlayerEntity player, CelestialBodyType parent) {
         Identifier id = new Identifier(parent.getId() + "_" + player.getEntityName().toLowerCase(Locale.ROOT));
-        DimensionType type = new DimensionType(OptionalLong.empty(), true, false, false, true, 1, false, false, false, false, false, 256, new BiomeAccessType() {
-            @Override
-            public Biome getBiome(long seed, int x, int y, int z, BiomeAccess.Storage storage) {
-                return server.getRegistryManager().get(Registry.BIOME_KEY).get(new Identifier(GalacticraftAPI.MOD_ID, "space"));
-            }
-        }, new Identifier(GalacticraftAPI.MOD_ID, "infiniburn_space"), new Identifier(GalacticraftAPI.MOD_ID, "space_sky"), 0);
-        DimensionOptions options = new DimensionOptions(() -> type, new FlatChunkGenerator(new FlatChunkGeneratorConfig(server.getRegistryManager().get(Registry.BIOME_KEY), new StructuresConfig(false), Collections.emptyList(), false, false, Optional.of(() -> server.getRegistryManager().get(Registry.BIOME_KEY).get(new Identifier(GalacticraftAPI.MOD_ID, "space"))))));
+        DimensionType type = DimensionType.create(OptionalLong.empty(), true, false, false, true, 1, false, false, false, false, false, 0, 256, 256, (seed, x, y, z, storage) -> server.getRegistryManager().get(Registry.BIOME_KEY).get(new Identifier(GalacticraftAPI.MOD_ID, "space")), new Identifier(GalacticraftAPI.MOD_ID, "infiniburn_space"), new Identifier(GalacticraftAPI.MOD_ID, "space_sky"), 0);
+        DimensionOptions options = new DimensionOptions(() -> type, VoidChunkGenerator.INSTANCE);
         CelestialBodyDisplayInfo info = new CelestialBodyDisplayInfo.Builder().time(24000 * 2).distance(5.0f).scale(0.5f).texture(new Identifier(GalacticraftAPI.MOD_ID, "satellite")).build();
         SatelliteOwnershipData ownershipData = new SatelliteOwnershipData(player.getUuid(), player.getEntityName());
-        ServerTeams teams = ((MinecraftServerTeamsGetter) server).getSpaceRaceTeams();
-        if (teams.getTeam(player.getUuid()) != null) {
-            Team team = teams.getTeam(player.getUuid());
-            for (Map.Entry<UUID, Identifier> entry : team.players.entrySet()) {
-                if (team.roles.get(entry.getValue()).permissions.contains(Permission.ACCESS_SPACE_STATION)) {
-                    ownershipData.addTrusted(entry.getKey());
-                }
-            }
-        }
+//        ServerTeams teams = ((MinecraftServerTeamsGetter) server).getSpaceRaceTeams();
+//        if (teams.getTeam(player.getUuid()) != null) {
+//            Team team = teams.getTeam(player.getUuid());
+//            for (Map.Entry<UUID, Identifier> entry : team.players.entrySet()) {
+//                if (team.roles.get(entry.getValue()).permissions.contains(Permission.ACCESS_SPACE_STATION)) {
+//                    ownershipData.addTrusted(entry.getKey());
+//                }
+//            }
+//        }
         return create(id, server, parent, info, type, options, ownershipData, player.getEntityName() + "'s Space Station");
     }
 
     public static Satellite create(Identifier id, MinecraftServer server, CelestialBodyType parent, CelestialBodyDisplayInfo info, DimensionType type, DimensionOptions options, SatelliteOwnershipData ownershipData, String name) {
-        RegistryKey<World> key = RegistryKey.of(Registry.DIMENSION, id);
+        RegistryKey<World> key = RegistryKey.of(Registry.WORLD_KEY, id);
         RegistryKey<DimensionType> key2 = RegistryKey.of(Registry.DIMENSION_TYPE_KEY, id);
         assert server.getWorld(key) == null : "World already registered";
         assert server.getRegistryManager().get(Registry.DIMENSION_TYPE_KEY).get(key2) == null : "Dimension Type already registered";
@@ -198,7 +191,7 @@ public class Satellite extends CelestialBodyType {
         assert !NetworkUtil.unpackBoolean(buf.readByte(), 0);
         return new Satellite(id,
                 buf.readString(),
-                RegistryKey.of(Registry.DIMENSION, buf.readIdentifier()),
+                RegistryKey.of(Registry.WORLD_KEY, buf.readIdentifier()),
                 SolarSystemType.getById(registryManager, buf.readIdentifier()),
                 CelestialBodyType.getById(registryManager, buf.readIdentifier()),
                 CelestialBodyDisplayInfo.fromPacket(buf),
@@ -211,26 +204,26 @@ public class Satellite extends CelestialBodyType {
         );
     }
 
-    public CompoundTag toTag(CompoundTag tag) {
+    public NbtCompound toTag(NbtCompound tag) {
         tag.putString("id", this.getId().toString());
         tag.putString("key", this.getTranslationKey());
         tag.putString("world", this.getWorld().getValue().toString());
         tag.putString("parent", this.getParent().getId().toString());
         tag.putString("system", this.getParentSystem().getId().toString());
-        tag.put("display", this.getDisplayInfo().toTag(new CompoundTag()));
-        tag.put("ownership", this.getOwnershipData().toTag(new CompoundTag()));
+        tag.put("display", this.getDisplayInfo().toTag(new NbtCompound()));
+        tag.put("ownership", this.getOwnershipData().toTag(new NbtCompound()));
         tag.putFloat("gravity", this.getGravity());
         tag.putString("name", this.getName());
-        tag.put("dim_type", DimensionType.CODEC.encode(dimensionType, NbtOps.INSTANCE, new CompoundTag()).get().orThrow());
-        tag.put("chunk_generator", ChunkGenerator.CODEC.encode(this.chunkGenerator, NbtOps.INSTANCE, new CompoundTag()).get().orThrow());
+        tag.put("dim_type", DimensionType.CODEC.encode(dimensionType, NbtOps.INSTANCE, new NbtCompound()).get().orThrow());
+        tag.put("chunk_generator", ChunkGenerator.CODEC.encode(this.chunkGenerator, NbtOps.INSTANCE, new NbtCompound()).get().orThrow());
         return tag;
     }
 
-    public static Satellite fromTag(MinecraftServer server, CompoundTag tag) {
-        RegistryOps<Tag> ops = new RegistryOps<>(NbtOps.INSTANCE, new RegistryOps.EntryLoader.Impl(), (DynamicRegistryManager.Impl) server.getRegistryManager(), Maps.newIdentityHashMap());
+    public static Satellite fromTag(MinecraftServer server, NbtCompound tag) {
+        RegistryOps<NbtElement> ops = RegistryOps.of(NbtOps.INSTANCE, new RegistryOps.EntryLoader.Impl(), server.getRegistryManager());
 
         return new Satellite(new Identifier(tag.getString("id")), tag.getString("key"),
-                RegistryKey.of(Registry.DIMENSION, new Identifier(tag.getString("world"))),
+                RegistryKey.of(Registry.WORLD_KEY, new Identifier(tag.getString("world"))),
                 SolarSystemType.getById(server.getRegistryManager(), new Identifier(tag.getString("system"))),
                 CelestialBodyType.getById(server.getRegistryManager(), new Identifier(tag.getString("parent"))),
                 CelestialBodyDisplayInfo.fromTag(tag.getCompound("display")),

@@ -31,7 +31,6 @@ import dev.galacticraft.api.rocket.part.travel.ConfiguredTravelPredicate;
 import dev.galacticraft.api.rocket.part.RocketPart;
 import dev.galacticraft.api.rocket.part.travel.ConstantTravelPredicateType;
 import dev.galacticraft.api.rocket.part.travel.TravelPredicateType;
-import dev.galacticraft.api.teams.data.Permission;
 import com.mojang.serialization.Lifecycle;
 import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder;
 import net.minecraft.util.Identifier;
@@ -76,18 +75,6 @@ public class AddonRegistry {
     public static final MutableRegistry<CelestialBodyType> CELESTIAL_BODY_TYPE = FabricRegistryBuilder.from(
             new DefaultedRegistry<>(CelestialBodyType.THE_SUN.getId().toString(),
                     CELESTIAL_BODY_TYPE_KEY, Lifecycle.experimental())).buildAndRegister();
-
-    public static final RegistryKey<Registry<Permission>> PERMISSION_KEY = RegistryKey.ofRegistry(new Identifier(GalacticraftAPI.MOD_ID, "permission"));
-
-    /**
-     * When accessing values of the registry in-world use the {@link net.minecraft.util.registry.DynamicRegistryManager dynamic registry manager}.
-     *
-     * @see net.minecraft.util.registry.DynamicRegistryManager
-     * @see net.minecraft.world.World#getRegistryManager()
-     */
-    public static final MutableRegistry<Permission> PERMISSION = FabricRegistryBuilder.from(
-            new DefaultedRegistry<>(Permission.INVITE_PLAYER.getId().toString(),
-                    PERMISSION_KEY, Lifecycle.experimental())).buildAndRegister();
 
     public static final RegistryKey<Registry<TravelPredicateType<?>>> TRAVEL_PREDICATE_KEY = RegistryKey.ofRegistry(new Identifier(GalacticraftAPI.MOD_ID, "travel_predicate"));
 
@@ -147,14 +134,7 @@ public class AddonRegistry {
 
         Registry.register(CELESTIAL_BODY_TYPE, CelestialBodyType.THE_SUN.getId(), CelestialBodyType.THE_SUN);
         Registry.register(CELESTIAL_BODY_TYPE, CelestialBodyType.EARTH.getId(), CelestialBodyType.EARTH);
-
-        Registry.register(PERMISSION, Permission.INVITE_PLAYER.getId(), Permission.INVITE_PLAYER);
-        Registry.register(PERMISSION, Permission.MODIFY_COLOR.getId(), Permission.MODIFY_COLOR);
-        Registry.register(PERMISSION, Permission.MODIFY_FLAG.getId(), Permission.MODIFY_FLAG);
-        Registry.register(PERMISSION, Permission.MODIFY_NAME.getId(), Permission.MODIFY_NAME);
-        Registry.register(PERMISSION, Permission.MODIFY_ROLES.getId(), Permission.MODIFY_ROLES);
-        Registry.register(PERMISSION, Permission.ACCESS_SPACE_STATION.getId(), Permission.ACCESS_SPACE_STATION);
-
+        
         Registry.register(TRAVEL_PREDICATE, new Identifier(GalacticraftAPI.MOD_ID, "access_weight"), AccessWeightPredicateType.INSTANCE);
         Registry.register(TRAVEL_PREDICATE, new Identifier(GalacticraftAPI.MOD_ID, "constant"), ConstantTravelPredicateType.INSTANCE);
 

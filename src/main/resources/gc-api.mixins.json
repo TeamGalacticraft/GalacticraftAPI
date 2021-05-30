@@ -1,7 +1,7 @@
 {
   "required": true,
   "package": "dev.galacticraft.api.internal.mixin",
-  "compatibilityLevel": "JAVA_8",
+  "compatibilityLevel": "JAVA_16",
   "mixins": [
     "AdvancementRewardsMixin",
     "BuiltinRegistriesMixin",
@@ -9,14 +9,12 @@
     "ItemEntityMixin",
     "LivingEntityMixin",
     "MinecraftServerMixin",
-    "ServerPlayerEntityMixin",
-    "ServerPlayNetworkHandlerMixin",
-    "client.ClientPlayerEntityMixin"
+    "ServerPlayerEntityMixin"
   ],
   "client": [
     "client.BlockDustParticleMixin",
+    "client.ClientPlayerEntityMixin",
     "client.ClientPlayNetworkHandlerMixin",
-    "client.ClientWorldMixin",
     "client.ParticleMixin"
   ],
   "minVersion": "0.8.0",

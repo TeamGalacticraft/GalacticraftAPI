@@ -24,7 +24,7 @@ package dev.galacticraft.api.celestialbody.satellite;
 
 import com.google.common.collect.ImmutableList;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.PacketByteBuf;
 import org.jetbrains.annotations.NotNull;
 
@@ -89,7 +89,7 @@ public class SatelliteOwnershipData {
         }
     }
 
-    public CompoundTag toTag(CompoundTag tag) {
+    public NbtCompound toTag(NbtCompound tag) {
         tag.putUuid("owner", getOwner());
         tag.putString("username", getUsername());
         long[] trusted = new long[this.trusted.size() * 2];
@@ -103,7 +103,7 @@ public class SatelliteOwnershipData {
         return tag;
     }
 
-    public static SatelliteOwnershipData fromTag(CompoundTag tag) {
+    public static SatelliteOwnershipData fromTag(NbtCompound tag) {
         SatelliteOwnershipData data = new SatelliteOwnershipData(tag.getUuid("owner"), tag.getString("username"));
         long[] trusted = tag.getLongArray("trusted");
         for (int i = 0; i < trusted.length; i += 2) {

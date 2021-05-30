@@ -30,7 +30,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.dynamic.RegistryElementCodec;
 import net.minecraft.util.registry.DynamicRegistryManager;
-import net.minecraft.util.registry.MutableRegistry;
+import net.minecraft.util.registry.Registry;
 
 import java.util.function.Supplier;
 
@@ -172,7 +172,7 @@ public class AtmosphericGas {
         return registryManager.get(AddonRegistry.ATMOSPHERIC_GAS_KEY).get(new Identifier(dynamic.asString("")));
     }
 
-    public static MutableRegistry<AtmosphericGas> getAll(DynamicRegistryManager registryManager) {
+    public static Registry<AtmosphericGas> get(DynamicRegistryManager registryManager) {
         return registryManager.get(AddonRegistry.ATMOSPHERIC_GAS_KEY);
     }
 
@@ -185,14 +185,14 @@ public class AtmosphericGas {
     }
 
     public static boolean containsSymbol(DynamicRegistryManager registryManager, String symbol) {
-        for(AtmosphericGas g : getAll(registryManager)) {
+        for(AtmosphericGas g : get(registryManager)) {
             if(g.symbol.equals(symbol)) return true;
         }
         return false;
     }
 
     public static AtmosphericGas getBySymbol(DynamicRegistryManager registryManager, String symbol) {
-        for(AtmosphericGas g : getAll(registryManager)) {
+        for(AtmosphericGas g : get(registryManager)) {
             if(g.symbol.equals(symbol)) return g;
         }
         return null;

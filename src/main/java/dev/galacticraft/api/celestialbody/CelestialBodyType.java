@@ -194,7 +194,7 @@ public class CelestialBodyType {
     /**
      * @return all registered Celestial Bodies
      */
-    public static MutableRegistry<CelestialBodyType> getAll(DynamicRegistryManager registryManager) {
+    public static Registry<CelestialBodyType> getAll(DynamicRegistryManager registryManager) {
         return registryManager.get(AddonRegistry.CELESTIAL_BODY_TYPE_KEY);
     }
 
@@ -241,7 +241,7 @@ public class CelestialBodyType {
             return new CelestialBodyType(id,
                     buf.readString(),
                     CelestialObjectType.values()[buf.readByte()],
-                    NetworkUtil.unpackBoolean(packed, 1) ? RegistryKey.of(Registry.DIMENSION, buf.readIdentifier()) : null,
+                    NetworkUtil.unpackBoolean(packed, 1) ? RegistryKey.of(Registry.WORLD_KEY, buf.readIdentifier()) : null,
                     SolarSystemType.getById(registryManager, buf.readIdentifier()),
                     buf.readInt(),
                     NetworkUtil.unpackBoolean(packed, 2) ? CelestialBodyType.getById(registryManager, buf.readIdentifier()) : null,

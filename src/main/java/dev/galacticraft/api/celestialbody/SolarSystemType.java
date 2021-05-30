@@ -31,6 +31,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.dynamic.RegistryElementCodec;
 import net.minecraft.util.registry.DynamicRegistryManager;
 import net.minecraft.util.registry.MutableRegistry;
+import net.minecraft.util.registry.Registry;
 
 import java.util.Objects;
 import java.util.function.Supplier;
@@ -118,7 +119,7 @@ public class SolarSystemType {
     /**
      * @return all registered Celestial Bodies
      */
-    public static MutableRegistry<SolarSystemType> getAll(DynamicRegistryManager registryManager) {
+    public static Registry<SolarSystemType> getAll(DynamicRegistryManager registryManager) {
         return registryManager.get(AddonRegistry.SOLAR_SYSTEM_TYPE_KEY);
     }
 

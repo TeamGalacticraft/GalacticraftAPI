@@ -25,16 +25,12 @@ package dev.galacticraft.api.internal.mixin;
 import com.google.common.collect.ImmutableList;
 import dev.galacticraft.api.celestialbody.satellite.Satellite;
 import dev.galacticraft.api.internal.accessor.SatelliteAccessor;
-import dev.galacticraft.api.internal.data.MinecraftServerTeamsGetter;
 import dev.galacticraft.api.internal.fabric.GalacticraftAPI;
-import dev.galacticraft.api.teams.ServerTeams;
-import dev.galacticraft.api.teams.TeamsState;
-import dev.galacticraft.api.teams.TeamsSync;
 import net.fabricmc.fabric.api.util.NbtType;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtIo;
-import net.minecraft.nbt.Tag;
+import net.minecraft.nbt.NbtList;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Identifier;
@@ -51,7 +47,10 @@ import net.minecraft.world.level.UnmodifiableLevelProperties;
 import net.minecraft.world.level.storage.LevelStorage;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
-import org.spongepowered.asm.mixin.*;
+import org.spongepowered.asm.mixin.Final;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -65,7 +64,6 @@ import java.util.Map;
 import java.util.concurrent.Executor;
 
 @Mixin(MinecraftServer.class)
-@Implements(@Interface(iface = MinecraftServerTeamsGetter.class, prefix = "gcr$", remap = Interface.Remap.NONE))
 public abstract class MinecraftServerMixin implements SatelliteAccessor {
     @Shadow @Final public LevelStorage.Session session;
 
@@ -77,26 +75,8 @@ public abstract class MinecraftServerMixin implements SatelliteAccessor {
 
     @Shadow @Final public Map<RegistryKey<World>, ServerWorld> worlds;
 
-    @Shadow public abstract boolean save(boolean suppressLogs, boolean bl, boolean bl2);
-
-    @Unique
-    private final ServerTeams teams = new ServerTeams((MinecraftServer)(Object)this);
     @Unique
     private final List<Satellite> satellites = new ArrayList<>();
-
-    @Inject(
-            method = "initScoreboard(Lnet/minecraft/world/PersistentStateManager;)V",
-            at = @At("INVOKE")
-    )
-    private void initScoreboard(PersistentStateManager manager, CallbackInfo info) {
-        TeamsState state = manager.getOrCreate(TeamsState::new, "gcr-teams");
-        state.setTeams(this.teams);
-        this.teams.addListener(new TeamsSync(state));
-    }
-
-    public ServerTeams gcr$getSpaceRaceTeams() {
-        return this.teams;
-    }
 
     @Override
     public @Unmodifiable List<Satellite> getSatellites() {
@@ -124,11 +104,11 @@ public abstract class MinecraftServerMixin implements SatelliteAccessor {
     @Inject(method = "save", at = @At("RETURN"))
     private void save_gcr(boolean suppressLogs, boolean bl, boolean bl2, CallbackInfoReturnable<Boolean> cir) {
         Path path = this.session.getDirectory(WorldSavePath.ROOT);
-        ListTag tag = new ListTag();
+        NbtList tag = new NbtList();
         for (Satellite satellite : this.satellites) {
-            tag.add(satellite.toTag(new CompoundTag()));
+            tag.add(satellite.toTag(new NbtCompound()));
         }
-        CompoundTag compound = new CompoundTag();
+        NbtCompound compound = new NbtCompound();
         compound.put("satellites", tag);
         try {
             NbtIo.writeCompressed(compound, new File(path.toFile(), "satellites.dat"));
@@ -142,11 +122,11 @@ public abstract class MinecraftServerMixin implements SatelliteAccessor {
         Path path = this.session.getDirectory(WorldSavePath.ROOT);
         if (new File(path.toFile(), "satellites.dat").exists()) {
             try {
-                ListTag tag = NbtIo.readCompressed(new File(path.toFile(), "satellites.dat")).getList("satellites", NbtType.COMPOUND);
+                NbtList tag = NbtIo.readCompressed(new File(path.toFile(), "satellites.dat")).getList("satellites", NbtType.COMPOUND);
                 assert tag != null : "Listtag was null";
-                for (Tag compound : tag) {
+                for (NbtElement compound : tag) {
                     assert compound != null : "Compound in list was null?!";
-                    this.satellites.add(Satellite.fromTag(((MinecraftServer) (Object) this), ((CompoundTag) compound)));
+                    this.satellites.add(Satellite.fromTag(((MinecraftServer) (Object) this), ((NbtCompound) compound)));
                 }
 
                 for (Satellite satellite : this.satellites) {

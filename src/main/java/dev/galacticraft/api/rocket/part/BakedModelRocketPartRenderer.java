@@ -32,9 +32,9 @@ import net.minecraft.client.render.model.BakedModel;
 import net.minecraft.client.render.model.BakedQuad;
 import net.minecraft.client.render.model.json.ModelTransformation;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.client.util.math.Vector3f;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.util.Lazy;
+import net.minecraft.util.math.Vec3f;
 import org.lwjgl.opengl.GL11;
 
 import java.util.List;
@@ -66,27 +66,24 @@ public class BakedModelRocketPartRenderer implements RocketPartRendererRegistry.
         model.get().getTransformation().getTransformation(ModelTransformation.Mode.GUI).apply(false, matrices);
         matrices.translate(0, 0, 250);
         matrices.translate(8, 8, 8);
-        matrices.multiply(Vector3f.POSITIVE_X.getDegreesQuaternion(35));
-        matrices.multiply(Vector3f.POSITIVE_Y.getDegreesQuaternion(45));
-        matrices.multiply(Vector3f.POSITIVE_Z.getDegreesQuaternion(180));
+        matrices.multiply(Vec3f.POSITIVE_X.getDegreesQuaternion(35));
+        matrices.multiply(Vec3f.POSITIVE_Y.getDegreesQuaternion(45));
+        matrices.multiply(Vec3f.POSITIVE_Z.getDegreesQuaternion(180));
         matrices.scale(10, 10, 10);
 
         MatrixStack.Entry entry = matrices.peek();
         VertexConsumer vertexConsumer = new SpriteTexturedVertexConsumer(Tessellator.getInstance().getBuffer(), this.model.get().getSprite());
         List<BakedQuad> quads = this.model.get().getQuads(null, null, world.random);
         this.model.get().getSprite().getAtlas().bindTexture();
-        RenderSystem.enableRescaleNormal();
-        RenderSystem.enableAlphaTest();
-        RenderSystem.defaultAlphaFunc();
         RenderSystem.enableBlend();
         RenderSystem.blendFunc(GlStateManager.SrcFactor.SRC_ALPHA, GlStateManager.DstFactor.ONE_MINUS_SRC_ALPHA);
         RenderSystem.enableDepthTest();
-        RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
+        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         DiffuseLighting.enableGuiDepthLighting();
 
         if (!quads.isEmpty()) {
             for (BakedQuad quad : quads) {
-                Tessellator.getInstance().getBuffer().begin(GL11.GL_QUADS, VertexFormats.POSITION_COLOR_TEXTURE_OVERLAY_LIGHT_NORMAL);
+                Tessellator.getInstance().getBuffer().begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR_TEXTURE_OVERLAY_LIGHT_NORMAL);
                 vertexConsumer.quad(
                         entry,
                         quad,
@@ -99,8 +96,6 @@ public class BakedModelRocketPartRenderer implements RocketPartRendererRegistry.
                 Tessellator.getInstance().draw();
             }
         }
-        RenderSystem.disableAlphaTest();
-        RenderSystem.disableRescaleNormal();
     }
 
     @Override

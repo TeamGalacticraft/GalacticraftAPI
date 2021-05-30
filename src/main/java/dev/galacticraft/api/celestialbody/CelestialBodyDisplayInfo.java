@@ -24,7 +24,7 @@ package dev.galacticraft.api.celestialbody;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.Identifier;
 
@@ -78,7 +78,7 @@ public class CelestialBodyDisplayInfo {
         this.iconH = iconH;
     }
 
-    public static CelestialBodyDisplayInfo fromTag(CompoundTag tag) {
+    public static CelestialBodyDisplayInfo fromTag(NbtCompound tag) {
         return new CelestialBodyDisplayInfo(tag.getDouble("orbitTime"),
                 tag.getDouble("dayLength"),
                 tag.getFloat("distance"),
@@ -131,7 +131,7 @@ public class CelestialBodyDisplayInfo {
         return iconH;
     }
 
-    public CompoundTag toTag(CompoundTag tag) {
+    public NbtCompound toTag(NbtCompound tag) {
         tag.putDouble("orbitTime", orbitTime);
         tag.putDouble("dayLength", dayLength);
         tag.putFloat("distance", relativeDistance);

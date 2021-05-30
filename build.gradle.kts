@@ -6,15 +6,15 @@ import java.time.format.DateTimeFormatter
 plugins {
     java
     `maven-publish`
-    id("fabric-loom") version "0.7-SNAPSHOT"
+    id("fabric-loom") version "0.8-SNAPSHOT"
     id("org.cadixdev.licenser") version "0.5.1"
 }
 
-val mc = "1.16.5"
-val yarn = "6"
+val mc = "1.17-pre1"
+val yarn = "9"
 val loader = "0.11.3"
-val fabric = "0.32.5+1.16"
-val lba = "0.8.8"
+val fabric = "0.34.8+1.17"
+val lba = "0.8.17003"
 
 group = "dev.galacticraft"
 version ="0.4.0-prealpha+$mc"
@@ -39,20 +39,14 @@ loom {
         register("TestModClient") {
             client()
             source(testmodSourceSet)
-            vmArgs(
-                    "-ea",
-                    "-XX:+ShowCodeDetailsInExceptionMessages"
-            )
+            vmArgs("-ea")
             property("fabric.log.level", "debug")
             name("TestMod Client")
         }
         register("TestModServer") {
             server()
             source(testmodSourceSet)
-            vmArgs(
-                    "-ea",
-                    "-XX:+ShowCodeDetailsInExceptionMessages"
-            )
+            vmArgs("-ea",)
             property("fabric.log.level", "debug")
             name("TestMod Server")
         }
@@ -114,12 +108,13 @@ java {
     withSourcesJar()
     withJavadocJar()
 
-    targetCompatibility = JavaVersion.VERSION_1_8
-    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_16
+    sourceCompatibility = JavaVersion.VERSION_16
 }
 
 tasks.withType<JavaCompile> {
     options.encoding = "UTF-8"
+    options.release.set(16)
 }
 
 val sourcesJar = tasks.create<Jar>("sourcesJarGC") {

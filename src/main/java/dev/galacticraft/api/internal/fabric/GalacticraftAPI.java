@@ -24,7 +24,7 @@ package dev.galacticraft.api.internal.fabric;
 
 import dev.galacticraft.api.internal.accessor.ServerResearchAccessor;
 import dev.galacticraft.api.internal.command.GCApiCommands;
-import dev.galacticraft.api.internal.world.gen.FlatChunkGenerator;
+import dev.galacticraft.api.internal.world.gen.VoidChunkGenerator;
 import io.netty.buffer.Unpooled;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
@@ -59,7 +59,7 @@ public class GalacticraftAPI implements ModInitializer {
                 }
             }
         });
-        Registry.register(Registry.CHUNK_GENERATOR, new Identifier(MOD_ID, "empty"), FlatChunkGenerator.CODEC);
+        Registry.register(Registry.CHUNK_GENERATOR, new Identifier(MOD_ID, "empty"), VoidChunkGenerator.CODEC);
         BuiltinBiomes.register(284, RegistryKey.of(Registry.BIOME_KEY, new Identifier(MOD_ID, "space")), SPACE);
         LOGGER.info("Initialization Complete. (Took {}ms).", System.currentTimeMillis() - startInitTime);
     }
