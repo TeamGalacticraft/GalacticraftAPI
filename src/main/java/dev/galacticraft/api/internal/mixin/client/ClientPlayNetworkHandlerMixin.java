@@ -22,7 +22,7 @@
 
 package dev.galacticraft.api.internal.mixin.client;
 
-import dev.galacticraft.api.celestialbody.satellite.Satellite;
+import dev.galacticraft.api.satellite.Satellite;
 import dev.galacticraft.api.internal.accessor.ClientSatelliteAccessor;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;

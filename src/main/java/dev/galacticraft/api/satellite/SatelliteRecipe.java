@@ -20,7 +20,7 @@
  * SOFTWARE.
  */
 
-package dev.galacticraft.api.celestialbody.satellite;
+package dev.galacticraft.api.satellite;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;

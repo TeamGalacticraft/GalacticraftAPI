@@ -26,58 +26,30 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import dev.galacticraft.api.internal.codec.MapCodec;
 import dev.galacticraft.api.registry.AddonRegistry;
+import it.unimi.dsi.fastutil.objects.Object2DoubleArrayMap;
+import it.unimi.dsi.fastutil.objects.Object2DoubleMap;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.registry.DynamicRegistryManager;
-import net.minecraft.util.registry.MutableRegistry;
 import net.minecraft.util.registry.Registry;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.function.Supplier;
 
-public class AtmosphericInfo {
-    private static final MapCodec<AtmosphericGas, Double, Map<AtmosphericGas, Double>> MAP_CODEC = MapCodec.create(HashMap::new, AtmosphericGas.REGISTRY_CODEC.xmap(Supplier::get, gas -> () -> gas), Codec.DOUBLE);
+public record AtmosphericInfo(Object2DoubleMap<AtmosphericGas> composition, double temperature, float pressure) {
+    private static final MapCodec<AtmosphericGas, Double, Object2DoubleMap<AtmosphericGas>> MAP_CODEC = MapCodec.create(Object2DoubleArrayMap::new, AtmosphericGas.REGISTRY_CODEC.xmap(Supplier::get, gas -> () -> gas), Codec.DOUBLE);
     public static final Codec<AtmosphericInfo> CODEC = RecordCodecBuilder.create(atmosphericInfoInstance -> atmosphericInfoInstance.group(
-            MAP_CODEC.fieldOf("composition").forGetter(AtmosphericInfo::getComposition),
-            Codec.DOUBLE.fieldOf("temperature").forGetter(AtmosphericInfo::getTemperature),
-            Codec.FLOAT.fieldOf("pressure").forGetter(AtmosphericInfo::getPressure)
+            MAP_CODEC.fieldOf("composition").forGetter(AtmosphericInfo::composition),
+            Codec.DOUBLE.fieldOf("temperature").forGetter(AtmosphericInfo::temperature),
+            Codec.FLOAT.fieldOf("pressure").forGetter(AtmosphericInfo::pressure)
     ).apply(atmosphericInfoInstance, AtmosphericInfo::new));
-
-    private final Map<AtmosphericGas, Double> composition;
-    private final double temperature;
-    private final float pressure;
-
-    /**
-     *
-     * @param composition make up of the atmosphere (gas, ppm)
-     * @param temperature in celsius, used to determine tier of thermal protection
-     * @param pressure affects how sounds are heard (1.0f is overworld/earth)
-     */
-    public AtmosphericInfo(Map<AtmosphericGas, Double> composition, double temperature, float pressure) {
-        this.composition = composition;
-        this.temperature = temperature;
-        this.pressure = pressure;
-    }
-
-    public Map<AtmosphericGas, Double> getComposition() {
-        return composition;
-    }
-
-    public double getTemperature() {
-        return temperature;
-    }
-
-    public float getPressure() {
-        return pressure;
-    }
 
     public void writePacket(PacketByteBuf buf) {
         buf.writeInt(this.composition.size());
         buf.writeFloat(this.pressure);
         buf.writeDouble(this.temperature);
-        for (Map.Entry<AtmosphericGas, Double> entry : this.composition.entrySet()) {;
+        for (Object2DoubleMap.Entry<AtmosphericGas> entry : this.composition.object2DoubleEntrySet()) {
+            ;
             buf.writeIdentifier(entry.getKey().getId());
-            buf.writeDouble(entry.getValue());
+            buf.writeDouble(entry.getDoubleValue());
         }
     }
 
@@ -94,7 +66,7 @@ public class AtmosphericInfo {
     }
 
     public static class Builder {
-        private final Map<AtmosphericGas, Double> composition = new HashMap<>();
+        private final Object2DoubleMap<AtmosphericGas> composition = new Object2DoubleArrayMap<>();
         private double temperature = 15.0;
         private float pressure = 1.0f;
 

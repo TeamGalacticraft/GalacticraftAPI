@@ -70,7 +70,7 @@ public class RegistryArgumentType<T> implements ArgumentType<Registry<T>> {
     public Collection<String> getExamples() {
         return ImmutableList.of(
                 AddonRegistry.CELESTIAL_BODY_TYPE_KEY.getValue().toString(),
-                AddonRegistry.SOLAR_SYSTEM_TYPE_KEY.getValue().toString(),
+                AddonRegistry.CELESTIAL_POSITION_TYPE_KEY.getValue().toString(),
                 AddonRegistry.ATMOSPHERIC_GAS_KEY.getValue().toString()
         );
     }

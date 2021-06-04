@@ -22,16 +22,19 @@
 
 package dev.galacticraft.api.registry;
 
+import com.mojang.serialization.Lifecycle;
 import dev.galacticraft.api.atmosphere.AtmosphericGas;
-import dev.galacticraft.api.celestialbody.CelestialBodyType;
-import dev.galacticraft.api.celestialbody.SolarSystemType;
 import dev.galacticraft.api.internal.fabric.GalacticraftAPI;
+import dev.galacticraft.api.rocket.part.RocketPart;
 import dev.galacticraft.api.rocket.part.travel.AccessWeightPredicateType;
 import dev.galacticraft.api.rocket.part.travel.ConfiguredTravelPredicate;
-import dev.galacticraft.api.rocket.part.RocketPart;
 import dev.galacticraft.api.rocket.part.travel.ConstantTravelPredicateType;
 import dev.galacticraft.api.rocket.part.travel.TravelPredicateType;
-import com.mojang.serialization.Lifecycle;
+import dev.galacticraft.api.universe.celestialbody.CelestialBody;
+import dev.galacticraft.api.universe.celestialbody.CelestialBodyType;
+import dev.galacticraft.api.universe.display.CelestialDisplayType;
+import dev.galacticraft.api.universe.galaxy.Galaxy;
+import dev.galacticraft.api.universe.position.CelestialPositionType;
 import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.DefaultedRegistry;
@@ -41,73 +44,46 @@ import net.minecraft.util.registry.RegistryKey;
 
 public class AddonRegistry {
     public static final RegistryKey<Registry<AtmosphericGas>> ATMOSPHERIC_GAS_KEY = RegistryKey.ofRegistry(new Identifier(GalacticraftAPI.MOD_ID, "atmospheric_gas"));
-
-    /**
-     * When accessing values of the registry in-world use the {@link net.minecraft.util.registry.DynamicRegistryManager dynamic registry manager}.
-     *
-     * @see net.minecraft.util.registry.DynamicRegistryManager
-     * @see net.minecraft.world.World#getRegistryManager()
-     */
     public static final MutableRegistry<AtmosphericGas> ATMOSPHERIC_GAS = FabricRegistryBuilder.from(
             new DefaultedRegistry<>(AtmosphericGas.OXYGEN.getId().toString(),
                     ATMOSPHERIC_GAS_KEY, Lifecycle.experimental())).buildAndRegister();
 
-    public static final RegistryKey<Registry<SolarSystemType>> SOLAR_SYSTEM_TYPE_KEY = RegistryKey.ofRegistry(new Identifier(GalacticraftAPI.MOD_ID, "solar_system"));
-
-    /**
-     * When accessing values of the registry in-world use the {@link net.minecraft.util.registry.DynamicRegistryManager dynamic registry manager}.
-     *
-     * @see net.minecraft.util.registry.DynamicRegistryManager
-     * @see net.minecraft.world.World#getRegistryManager()
-     */
-    public static final MutableRegistry<SolarSystemType> SOLAR_SYSTEM_TYPE = FabricRegistryBuilder.from(
-            new DefaultedRegistry<>(SolarSystemType.SOL.getId().toString(),
-                    SOLAR_SYSTEM_TYPE_KEY, Lifecycle.experimental())).buildAndRegister();
-
-    public static final RegistryKey<Registry<CelestialBodyType>> CELESTIAL_BODY_TYPE_KEY = RegistryKey.ofRegistry(new Identifier(GalacticraftAPI.MOD_ID, "celestial_body"));
-
-    /**
-     * When accessing values of the registry in-world use the {@link net.minecraft.util.registry.DynamicRegistryManager dynamic registry manager}.
-     *
-     * @see net.minecraft.util.registry.DynamicRegistryManager
-     * @see net.minecraft.world.World#getRegistryManager()
-     */
-    public static final MutableRegistry<CelestialBodyType> CELESTIAL_BODY_TYPE = FabricRegistryBuilder.from(
-            new DefaultedRegistry<>(CelestialBodyType.THE_SUN.getId().toString(),
-                    CELESTIAL_BODY_TYPE_KEY, Lifecycle.experimental())).buildAndRegister();
-
     public static final RegistryKey<Registry<TravelPredicateType<?>>> TRAVEL_PREDICATE_KEY = RegistryKey.ofRegistry(new Identifier(GalacticraftAPI.MOD_ID, "travel_predicate"));
-
-    /**
-     * When accessing values of the registry in-world use the {@link net.minecraft.util.registry.DynamicRegistryManager dynamic registry manager}.
-     *
-     * @see net.minecraft.util.registry.DynamicRegistryManager
-     * @see net.minecraft.world.World#getRegistryManager()
-     */
     public static final MutableRegistry<TravelPredicateType<?>> TRAVEL_PREDICATE = FabricRegistryBuilder.from(
             new DefaultedRegistry<>(new Identifier(GalacticraftAPI.MOD_ID, "constant").toString(),
                     TRAVEL_PREDICATE_KEY, Lifecycle.experimental())).buildAndRegister();
 
     public static final RegistryKey<Registry<ConfiguredTravelPredicate<?>>> CONFIGURED_TRAVEL_PREDICATE_KEY = RegistryKey.ofRegistry(new Identifier(GalacticraftAPI.MOD_ID, "configured_travel_predicate"));
-
-    /**
-     * When accessing values of the registry in-world use the {@link net.minecraft.util.registry.DynamicRegistryManager dynamic registry manager}.
-     *
-     * @see net.minecraft.util.registry.DynamicRegistryManager
-     * @see net.minecraft.world.World#getRegistryManager()
-     */
     public static final MutableRegistry<ConfiguredTravelPredicate<?>> CONFIGURED_TRAVEL_PREDICATE = FabricRegistryBuilder.from(
             new DefaultedRegistry<>(new Identifier(GalacticraftAPI.MOD_ID, "never").toString(),
                     CONFIGURED_TRAVEL_PREDICATE_KEY, Lifecycle.experimental())).buildAndRegister();
 
-    public static final RegistryKey<Registry<RocketPart>> ROCKET_PART_KEY = RegistryKey.ofRegistry(new Identifier(GalacticraftAPI.MOD_ID, "rocket_part"));
+    public static final RegistryKey<Registry<CelestialPositionType<?>>> CELESTIAL_POSITION_TYPE_KEY = RegistryKey.ofRegistry(new Identifier(GalacticraftAPI.MOD_ID, "celestial_position_type"));
+    public static final MutableRegistry<CelestialPositionType<?>> CELESTIAL_POSITION_TYPE = FabricRegistryBuilder.from(
+            new DefaultedRegistry<>(new Identifier(GalacticraftAPI.MOD_ID, "static").toString(),
+                    CELESTIAL_POSITION_TYPE_KEY, Lifecycle.experimental())).buildAndRegister();
 
-    /**
-     * When accessing values of the registry in-world use the {@link net.minecraft.util.registry.DynamicRegistryManager dynamic registry manager}.
-     *
-     * @see net.minecraft.util.registry.DynamicRegistryManager
-     * @see net.minecraft.world.World#getRegistryManager()
-     */
+    public static final RegistryKey<Registry<CelestialDisplayType<?>>> CELESTIAL_DISPLAY_TYPE_KEY = RegistryKey.ofRegistry(new Identifier(GalacticraftAPI.MOD_ID, "celestial_display_type"));
+    public static final MutableRegistry<CelestialDisplayType<?>> CELESTIAL_DISPLAY_TYPE = FabricRegistryBuilder.from(
+            new DefaultedRegistry<>(new Identifier(GalacticraftAPI.MOD_ID, "empty").toString(),
+                    CELESTIAL_DISPLAY_TYPE_KEY, Lifecycle.experimental())).buildAndRegister();
+
+    public static final RegistryKey<Registry<Galaxy>> GALAXY_KEY = RegistryKey.ofRegistry(new Identifier(GalacticraftAPI.MOD_ID, "galaxy"));
+    public static final MutableRegistry<Galaxy> GALAXY = FabricRegistryBuilder.from(
+            new DefaultedRegistry<>(new Identifier(GalacticraftAPI.MOD_ID, "milky_way").toString(),
+                    GALAXY_KEY, Lifecycle.experimental())).buildAndRegister();
+
+    public static final RegistryKey<Registry<CelestialBodyType<?>>> CELESTIAL_BODY_TYPE_KEY = RegistryKey.ofRegistry(new Identifier(GalacticraftAPI.MOD_ID, "celestial_body_type"));
+    public static final MutableRegistry<CelestialBodyType<?>> CELESTIAL_BODY_TYPE = FabricRegistryBuilder.from(
+            new DefaultedRegistry<>(new Identifier(GalacticraftAPI.MOD_ID, "star").toString(),
+                    CELESTIAL_BODY_TYPE_KEY, Lifecycle.experimental())).buildAndRegister();
+
+    public static final RegistryKey<Registry<CelestialBody<?, ?>>> CELESTIAL_BODY_KEY = RegistryKey.ofRegistry(new Identifier(GalacticraftAPI.MOD_ID, "celestial_body"));
+    public static final MutableRegistry<CelestialBody<?, ?>> CELESTIAL_BODY = FabricRegistryBuilder.from(
+            new DefaultedRegistry<>(new Identifier(GalacticraftAPI.MOD_ID, "sol").toString(),
+                    CELESTIAL_BODY_KEY, Lifecycle.experimental())).buildAndRegister();
+
+    public static final RegistryKey<Registry<RocketPart>> ROCKET_PART_KEY = RegistryKey.ofRegistry(new Identifier(GalacticraftAPI.MOD_ID, "rocket_part"));
     public static final MutableRegistry<RocketPart> ROCKET_PART = FabricRegistryBuilder.from(
             new DefaultedRegistry<>(new Identifier(GalacticraftAPI.MOD_ID, "invalid").toString(),
                     ROCKET_PART_KEY, Lifecycle.experimental())).buildAndRegister();
@@ -130,11 +106,6 @@ public class AddonRegistry {
         Registry.register(ATMOSPHERIC_GAS, AtmosphericGas.NITROUS_DIOXIDE.getId(), AtmosphericGas.NITROUS_DIOXIDE);
         Registry.register(ATMOSPHERIC_GAS, AtmosphericGas.IODINE.getId(), AtmosphericGas.IODINE);
 
-        Registry.register(SOLAR_SYSTEM_TYPE, SolarSystemType.SOL.getId(), SolarSystemType.SOL);
-
-        Registry.register(CELESTIAL_BODY_TYPE, CelestialBodyType.THE_SUN.getId(), CelestialBodyType.THE_SUN);
-        Registry.register(CELESTIAL_BODY_TYPE, CelestialBodyType.EARTH.getId(), CelestialBodyType.EARTH);
-        
         Registry.register(TRAVEL_PREDICATE, new Identifier(GalacticraftAPI.MOD_ID, "access_weight"), AccessWeightPredicateType.INSTANCE);
         Registry.register(TRAVEL_PREDICATE, new Identifier(GalacticraftAPI.MOD_ID, "constant"), ConstantTravelPredicateType.INSTANCE);
 

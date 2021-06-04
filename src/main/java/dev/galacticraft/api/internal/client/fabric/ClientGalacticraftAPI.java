@@ -22,7 +22,7 @@
 
 package dev.galacticraft.api.internal.client.fabric;
 
-import dev.galacticraft.api.celestialbody.satellite.Satellite;
+import dev.galacticraft.api.satellite.Satellite;
 import dev.galacticraft.api.internal.accessor.ClientResearchAccessor;
 import dev.galacticraft.api.internal.accessor.SatelliteAccessor;
 import dev.galacticraft.api.internal.fabric.GalacticraftAPI;

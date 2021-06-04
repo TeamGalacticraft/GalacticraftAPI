@@ -20,10 +20,9 @@
  * SOFTWARE.
  */
 
-package dev.galacticraft.api.celestialbody.satellite;
+package dev.galacticraft.api.satellite;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Maps;
 import dev.galacticraft.api.atmosphere.AtmosphericInfo;
 import dev.galacticraft.api.celestialbody.CelestialBodyDisplayInfo;
 import dev.galacticraft.api.celestialbody.CelestialBodyType;
@@ -58,8 +57,6 @@ import net.minecraft.world.chunk.ChunkStatus;
 import net.minecraft.world.dimension.DimensionOptions;
 import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.world.gen.chunk.ChunkGenerator;
-import net.minecraft.world.gen.chunk.FlatChunkGeneratorConfig;
-import net.minecraft.world.gen.chunk.StructuresConfig;
 import net.minecraft.world.level.UnmodifiableLevelProperties;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

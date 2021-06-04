@@ -23,7 +23,7 @@
 package dev.galacticraft.api.internal.mixin;
 
 import com.google.common.collect.ImmutableList;
-import dev.galacticraft.api.celestialbody.satellite.Satellite;
+import dev.galacticraft.api.satellite.Satellite;
 import dev.galacticraft.api.internal.accessor.SatelliteAccessor;
 import dev.galacticraft.api.internal.fabric.GalacticraftAPI;
 import net.fabricmc.fabric.api.util.NbtType;
@@ -36,7 +36,6 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.WorldSavePath;
 import net.minecraft.util.registry.RegistryKey;
-import net.minecraft.world.PersistentStateManager;
 import net.minecraft.world.SaveProperties;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.source.BiomeAccess;
