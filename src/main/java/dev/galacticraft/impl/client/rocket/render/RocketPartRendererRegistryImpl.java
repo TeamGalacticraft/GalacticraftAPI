@@ -20,25 +20,31 @@
  * SOFTWARE.
  */
 
-package dev.galacticraft.api.rocket.part;
+package dev.galacticraft.impl.client.rocket.render;
 
-import com.mojang.serialization.Codec;
-import net.minecraft.util.StringIdentifiable;
+import dev.galacticraft.api.client.rocket.render.RocketPartRenderer;
+import dev.galacticraft.api.client.rocket.render.RocketPartRendererRegistry;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+import net.minecraft.util.Identifier;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.Locale;
+import java.util.HashMap;
+import java.util.Map;
 
-public enum RocketPartType implements StringIdentifiable {
-    CONE,
-    BODY,
-    FIN,
-    BOOSTER,
-    BOTTOM,
-    UPGRADE;
+@Environment(EnvType.CLIENT)
+public class RocketPartRendererRegistryImpl implements RocketPartRendererRegistry {
+    private final Map<Identifier, RocketPartRenderer> renderers = new HashMap<>();
 
-    public static final Codec<RocketPartType> CODEC = Codec.STRING.xmap(s -> RocketPartType.valueOf(s.toUpperCase(Locale.ROOT)), RocketPartType::asString);
+    public RocketPartRendererRegistryImpl() {}
 
     @Override
-    public String asString() {
-        return this.toString().toLowerCase(Locale.ROOT);
+    public void register(@NotNull Identifier id, @NotNull RocketPartRenderer renderer) {
+        this.renderers.put(id, renderer);
+    }
+
+    @Override
+    public @NotNull RocketPartRenderer getRenderer(Identifier part) {
+        return this.renderers.getOrDefault(part, EmptyRocketPartRenderer.INSTANCE);
     }
 }

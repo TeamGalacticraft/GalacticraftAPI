@@ -24,10 +24,10 @@
   "environment": "*",
   "entrypoints": {
     "main": [
-      "dev.galacticraft.api.internal.fabric.GalacticraftAPI"
+      "dev.galacticraft.impl.internal.fabric.GalacticraftAPI"
     ],
     "client": [
-      "dev.galacticraft.api.internal.client.fabric.ClientGalacticraftAPI"
+      "dev.galacticraft.impl.internal.client.fabric.ClientGalacticraftAPI"
     ]
   },
   "mixins": [

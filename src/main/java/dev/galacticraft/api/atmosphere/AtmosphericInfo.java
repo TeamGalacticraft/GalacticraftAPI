@@ -24,13 +24,11 @@ package dev.galacticraft.api.atmosphere;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import dev.galacticraft.api.internal.codec.MapCodec;
-import dev.galacticraft.api.registry.AddonRegistry;
+import dev.galacticraft.impl.internal.codec.MapCodec;
 import it.unimi.dsi.fastutil.objects.Object2DoubleArrayMap;
 import it.unimi.dsi.fastutil.objects.Object2DoubleMap;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.registry.DynamicRegistryManager;
-import net.minecraft.util.registry.Registry;
 
 import java.util.function.Supplier;
 
@@ -42,25 +40,23 @@ public record AtmosphericInfo(Object2DoubleMap<AtmosphericGas> composition, doub
             Codec.FLOAT.fieldOf("pressure").forGetter(AtmosphericInfo::pressure)
     ).apply(atmosphericInfoInstance, AtmosphericInfo::new));
 
-    public void writePacket(PacketByteBuf buf) {
+    public void writePacket(DynamicRegistryManager manager, PacketByteBuf buf) {
         buf.writeInt(this.composition.size());
         buf.writeFloat(this.pressure);
         buf.writeDouble(this.temperature);
         for (Object2DoubleMap.Entry<AtmosphericGas> entry : this.composition.object2DoubleEntrySet()) {
-            ;
-            buf.writeIdentifier(entry.getKey().getId());
+            buf.writeIdentifier(AtmosphericGas.getId(manager, entry.getKey()));
             buf.writeDouble(entry.getDoubleValue());
         }
     }
 
-    public static AtmosphericInfo readPacket(DynamicRegistryManager dynamicRegistryManager, PacketByteBuf buf) {
-        Registry<AtmosphericGas> reg = dynamicRegistryManager.get(AddonRegistry.ATMOSPHERIC_GAS_KEY);
+    public static AtmosphericInfo readPacket(DynamicRegistryManager manager, PacketByteBuf buf) {
         int size = buf.readInt();
         Builder builder = new Builder();
         builder.pressure(buf.readFloat());
         builder.temperature(buf.readDouble());
         for (int i = 0; i < size; i++) {
-            builder.gas(reg.get(buf.readIdentifier()), buf.readDouble());
+            builder.gas(AtmosphericGas.getById(manager, buf.readIdentifier()), buf.readDouble());
         }
         return builder.build();
     }

@@ -1,5 +1,3 @@
-import net.fabricmc.loom.task.RunClientTask
-import net.fabricmc.loom.task.RunServerTask
 import java.time.Year
 import java.time.format.DateTimeFormatter
 
@@ -10,11 +8,11 @@ plugins {
     id("org.cadixdev.licenser") version "0.5.1"
 }
 
-val mc = "1.17-pre1"
-val yarn = "9"
+val mc = "1.17-rc1"
+val yarn = "1"
 val loader = "0.11.3"
 val fabric = "0.34.8+1.17"
-val lba = "0.8.17003"
+val lba = "0.9.0-pre.2"
 
 group = "dev.galacticraft"
 version ="0.4.0-prealpha+$mc"

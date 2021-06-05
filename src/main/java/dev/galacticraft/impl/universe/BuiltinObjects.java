@@ -2,11 +2,11 @@ package dev.galacticraft.impl.universe;
 
 import dev.galacticraft.api.atmosphere.AtmosphericGas;
 import dev.galacticraft.api.atmosphere.AtmosphericInfo;
-import dev.galacticraft.api.internal.fabric.GalacticraftAPI;
 import dev.galacticraft.api.registry.AddonRegistry;
 import dev.galacticraft.api.universe.celestialbody.CelestialBody;
 import dev.galacticraft.api.universe.celestialbody.CelestialBodyType;
 import dev.galacticraft.api.universe.galaxy.Galaxy;
+import dev.galacticraft.impl.internal.fabric.GalacticraftAPI;
 import dev.galacticraft.impl.universe.celestialbody.config.PlanetConfig;
 import dev.galacticraft.impl.universe.celestialbody.config.StarConfig;
 import dev.galacticraft.impl.universe.celestialbody.type.DecorativePlanet;

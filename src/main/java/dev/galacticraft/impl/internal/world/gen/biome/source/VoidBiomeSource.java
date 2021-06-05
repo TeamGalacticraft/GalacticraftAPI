@@ -20,25 +20,40 @@
  * SOFTWARE.
  */
 
-package dev.galacticraft.api.rocket.part;
+package dev.galacticraft.impl.internal.world.gen.biome.source;
 
+import com.google.common.collect.ImmutableList;
 import com.mojang.serialization.Codec;
-import net.minecraft.util.StringIdentifiable;
+import net.minecraft.util.math.ChunkPos;
+import net.minecraft.world.biome.Biome;
+import net.minecraft.world.biome.BuiltinBiomes;
+import net.minecraft.world.biome.source.BiomeSource;
 
-import java.util.Locale;
+public class VoidBiomeSource extends BiomeSource {
+    public static final VoidBiomeSource INSTANCE = new VoidBiomeSource();
+    private static final Codec<VoidBiomeSource> CODEC = Codec.unit(INSTANCE);
 
-public enum RocketPartType implements StringIdentifiable {
-    CONE,
-    BODY,
-    FIN,
-    BOOSTER,
-    BOTTOM,
-    UPGRADE;
-
-    public static final Codec<RocketPartType> CODEC = Codec.STRING.xmap(s -> RocketPartType.valueOf(s.toUpperCase(Locale.ROOT)), RocketPartType::asString);
+    private VoidBiomeSource() {
+        super(ImmutableList.of(BuiltinBiomes.THE_VOID));
+    }
 
     @Override
-    public String asString() {
-        return this.toString().toLowerCase(Locale.ROOT);
+    protected Codec<? extends BiomeSource> getCodec() {
+        return CODEC;
+    }
+
+    @Override
+    public BiomeSource withSeed(long seed) {
+        return INSTANCE;
+    }
+
+    @Override
+    public Biome getBiomeForNoiseGen(int biomeX, int biomeY, int biomeZ) {
+        return BuiltinBiomes.THE_VOID;
+    }
+
+    @Override
+    public Biome getBiomeForNoiseGen(ChunkPos chunkPos) {
+        return BuiltinBiomes.THE_VOID;
     }
 }

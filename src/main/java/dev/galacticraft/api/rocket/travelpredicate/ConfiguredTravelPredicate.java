@@ -20,53 +20,18 @@
  * SOFTWARE.
  */
 
-package dev.galacticraft.api.rocket;
+package dev.galacticraft.api.rocket.travelpredicate;
 
+import com.mojang.serialization.Codec;
+import dev.galacticraft.api.registry.AddonRegistry;
 import dev.galacticraft.api.rocket.part.RocketPart;
-import dev.galacticraft.api.rocket.part.RocketPartType;
 import dev.galacticraft.api.universe.celestialbody.CelestialBody;
-import dev.galacticraft.impl.rocket.RocketDataImpl;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.util.registry.DynamicRegistryManager;
+import it.unimi.dsi.fastutil.objects.Object2BooleanFunction;
 
-public interface RocketData {
-    static RocketData create(int color, RocketPart cone, RocketPart body, RocketPart fin, RocketPart booster, RocketPart bottom, RocketPart upgrade) {
-        return new RocketDataImpl(color, cone, body, fin, booster, bottom, upgrade);
+public record ConfiguredTravelPredicate<C extends TravelPredicateConfig>(C config, TravelPredicateType<C> type) {
+    public static final Codec<ConfiguredTravelPredicate<?>> CODEC = AddonRegistry.TRAVEL_PREDICATE.dispatch(ConfiguredTravelPredicate::type, TravelPredicateType::getCodec);
+
+    public TravelPredicateType.AccessType canTravelTo(CelestialBody<?, ?> type, Object2BooleanFunction<RocketPart> parts) {
+        return this.type.canTravelTo(type, parts, this.config);
     }
-
-    static RocketData fromTag(NbtCompound tag, DynamicRegistryManager manager) {
-        return RocketDataImpl.fromTag(tag, manager);
-    }
-
-    NbtCompound toTag(DynamicRegistryManager manager, NbtCompound tag);
-
-    int color();
-
-    int getRed();
-
-    int getGreen();
-
-    int getBlue();
-
-    int getAlpha();
-
-    RocketPart cone();
-
-    RocketPart body();
-
-    RocketPart fin();
-
-    RocketPart booster();
-
-    RocketPart bottom();
-
-    RocketPart upgrade();
-
-    boolean isEmpty();
-
-    boolean canTravelTo(DynamicRegistryManager manager, CelestialBody<?, ?> celestialBodyType);
-
-    RocketPart getPartForType(RocketPartType type);
-
-    RocketPart[] getParts();
 }

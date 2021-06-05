@@ -20,25 +20,38 @@
  * SOFTWARE.
  */
 
-package dev.galacticraft.api.rocket.part;
+package dev.galacticraft.impl.internal.mixin.client;
 
-import com.mojang.serialization.Codec;
-import net.minecraft.util.StringIdentifiable;
+import dev.galacticraft.api.accessor.ClientResearchAccessor;
+import net.minecraft.client.network.ClientPlayerEntity;
+import net.minecraft.network.PacketByteBuf;
+import net.minecraft.util.Identifier;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 
-import java.util.Locale;
+import java.util.ArrayList;
+import java.util.List;
 
-public enum RocketPartType implements StringIdentifiable {
-    CONE,
-    BODY,
-    FIN,
-    BOOSTER,
-    BOTTOM,
-    UPGRADE;
-
-    public static final Codec<RocketPartType> CODEC = Codec.STRING.xmap(s -> RocketPartType.valueOf(s.toUpperCase(Locale.ROOT)), RocketPartType::asString);
+@Mixin(ClientPlayerEntity.class)
+public abstract class ClientPlayerEntityMixin implements ClientResearchAccessor {
+    @Unique
+    private final List<Identifier> unlockedResearch = new ArrayList<>();
 
     @Override
-    public String asString() {
-        return this.toString().toLowerCase(Locale.ROOT);
+    public void readChanges(PacketByteBuf buf) {
+        byte size = buf.readByte();
+
+        for (byte i = 0; i < size; i++) {
+            if (buf.readBoolean()) {
+                this.unlockedResearch.add(new Identifier(buf.readString()));
+            } else {
+                this.unlockedResearch.remove(new Identifier(buf.readString()));
+            }
+        }
+    }
+
+    @Override
+    public boolean hasUnlocked_gcr(Identifier id) {
+        return this.unlockedResearch.contains(id);
     }
 }

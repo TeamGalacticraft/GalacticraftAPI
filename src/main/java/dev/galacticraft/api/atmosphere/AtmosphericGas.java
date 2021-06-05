@@ -25,7 +25,6 @@ package dev.galacticraft.api.atmosphere;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.Dynamic;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import dev.galacticraft.api.internal.fabric.GalacticraftAPI;
 import dev.galacticraft.api.registry.AddonRegistry;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
@@ -35,112 +34,83 @@ import net.minecraft.util.registry.Registry;
 
 import java.util.function.Supplier;
 
-public record AtmosphericGas(Identifier id, TranslatableText name, String symbol) {
-    public static final Codec<AtmosphericGas> CODEC = RecordCodecBuilder.create(atmosphericGasInstance ->
-            atmosphericGasInstance.group(
-                    Identifier.CODEC.fieldOf("id").forGetter(i -> i.id),
+public record AtmosphericGas(TranslatableText name, String symbol) {
+    public static final Codec<AtmosphericGas> CODEC = RecordCodecBuilder.create(instance ->
+            instance.group(
                     Codec.STRING.fieldOf("name").xmap(TranslatableText::new, TranslatableText::getKey).forGetter(i -> i.name),
                     Codec.STRING.fieldOf("symbol").forGetter(i -> i.symbol)
-            ).apply(atmosphericGasInstance, AtmosphericGas::new)
+            ).apply(instance, AtmosphericGas::new)
     );
 
     public static final Codec<Supplier<AtmosphericGas>> REGISTRY_CODEC = RegistryElementCodec.of(AddonRegistry.ATMOSPHERIC_GAS_KEY, CODEC);
 
     public static final AtmosphericGas HYDROGEN = new AtmosphericGas(
-            new Identifier(GalacticraftAPI.MOD_ID, "hydrogen"),
             new TranslatableText("ui.galacticraft-api.gases.hydrogen"),
             "H"
     );
     public static final AtmosphericGas NITROGEN = new AtmosphericGas(
-            new Identifier(GalacticraftAPI.MOD_ID, "nitrogen"),
             new TranslatableText("ui.galacticraft-api.gases.nitrogen"),
             "N"
     );
     public static final AtmosphericGas OXYGEN = new AtmosphericGas(
-            new Identifier(GalacticraftAPI.MOD_ID, "oxygen"),
             new TranslatableText("ui.galacticraft-api.gases.oxygen"),
             "O2"
     );
     public static final AtmosphericGas CARBON_DIOXIDE = new AtmosphericGas(
-            new Identifier(GalacticraftAPI.MOD_ID, "carbon_dioxide"),
             new TranslatableText("ui.galacticraft-api.gases.carbon_dioxide"),
             "CO2"
     );
     public static final AtmosphericGas WATER_VAPOR = new AtmosphericGas(
-            new Identifier(GalacticraftAPI.MOD_ID, "water_vapor"),
             new TranslatableText("ui.galacticraft-api.gases.water_vapor"),
             "H2O"
     );
     public static final AtmosphericGas METHANE = new AtmosphericGas(
-            new Identifier(GalacticraftAPI.MOD_ID, "methane"),
             new TranslatableText("ui.galacticraft-api.gases.methane"),
             "CH4"
     );
     public static final AtmosphericGas HELIUM = new AtmosphericGas(
-            new Identifier(GalacticraftAPI.MOD_ID, "helium"),
             new TranslatableText("ui.galacticraft-api.gases.helium"),
             "He"
     );
     public static final AtmosphericGas ARGON = new AtmosphericGas(
-            new Identifier(GalacticraftAPI.MOD_ID, "argon"),
             new TranslatableText("ui.galacticraft-api.gases.argon"),
             "Ar"
     );
     public static final AtmosphericGas NEON = new AtmosphericGas(
-            new Identifier(GalacticraftAPI.MOD_ID, "neon"),
             new TranslatableText("ui.galacticraft-api.gases.neon"),
             "Ne"
     );
     public static final AtmosphericGas KRYPTON = new AtmosphericGas(
-            new Identifier(GalacticraftAPI.MOD_ID, "krypton"),
             new TranslatableText("ui.galacticraft-api.gases.krypton"),
             "Kr"
     );
     public static final AtmosphericGas NITROUS_OXIDE = new AtmosphericGas(
-            new Identifier(GalacticraftAPI.MOD_ID, "nitrous_oxide"),
             new TranslatableText("ui.galacticraft-api.gases.nitrous_oxide"),
             "N2O"
     );
     public static final AtmosphericGas CARBON_MONOXIDE = new AtmosphericGas(
-            new Identifier(GalacticraftAPI.MOD_ID, "carbon_monoxide"),
             new TranslatableText("ui.galacticraft-api.gases.carbon_monoxide"),
             "CO"
     );
     public static final AtmosphericGas XENON = new AtmosphericGas(
-            new Identifier(GalacticraftAPI.MOD_ID, "xenon"),
             new TranslatableText("ui.galacticraft-api.gases.xenon"),
             "Xe"
     );
     public static final AtmosphericGas OZONE = new AtmosphericGas(
-            new Identifier(GalacticraftAPI.MOD_ID, "ozone"),
             new TranslatableText("ui.galacticraft-api.gases.ozone"),
             "O3"
     );
     public static final AtmosphericGas NITROUS_DIOXIDE = new AtmosphericGas(
-            new Identifier(GalacticraftAPI.MOD_ID, "nitrous_dioxide"),
             new TranslatableText("ui.galacticraft-api.gases.nitrous_dioxide"),
             "NO2"
     );
     public static final AtmosphericGas IODINE = new AtmosphericGas(
-            new Identifier(GalacticraftAPI.MOD_ID, "iodine"),
             new TranslatableText("ui.galacticraft-api.gases.iodine"),
             "I2"
     );
-
-    public Identifier getId() {
-        return id;
-    }
-
-    public TranslatableText getName() {
-        return name;
-    }
-
-    public String getSymbol() {
-        return symbol;
-    }
-
+    
     public String getSymbolForDisplay() {
-        return this.symbol
+        return this.symbol()
                 .replaceAll("0", "\u2080")
                 .replaceAll("1", "\u2081")
                 .replaceAll("2", "\u2082")
@@ -153,31 +123,31 @@ public record AtmosphericGas(Identifier id, TranslatableText name, String symbol
                 .replaceAll("9", "\u2089");
     }
 
-    public static AtmosphericGas deserialize(DynamicRegistryManager registryManager, Dynamic<?> dynamic) {
-        return registryManager.get(AddonRegistry.ATMOSPHERIC_GAS_KEY).get(new Identifier(dynamic.asString("")));
+    public static AtmosphericGas deserialize(DynamicRegistryManager manager, Dynamic<?> dynamic) {
+        return manager.get(AddonRegistry.ATMOSPHERIC_GAS_KEY).get(new Identifier(dynamic.asString("")));
     }
 
-    public static Registry<AtmosphericGas> get(DynamicRegistryManager registryManager) {
-        return registryManager.get(AddonRegistry.ATMOSPHERIC_GAS_KEY);
+    public static Registry<AtmosphericGas> get(DynamicRegistryManager manager) {
+        return manager.get(AddonRegistry.ATMOSPHERIC_GAS_KEY);
     }
 
-    public static AtmosphericGas getById(DynamicRegistryManager registryManager, Identifier id) {
-        return registryManager.get(AddonRegistry.ATMOSPHERIC_GAS_KEY).get(id);
+    public static AtmosphericGas getById(DynamicRegistryManager manager, Identifier id) {
+        return manager.get(AddonRegistry.ATMOSPHERIC_GAS_KEY).get(id);
     }
 
-    public static Identifier getId(DynamicRegistryManager registryManager, AtmosphericGas gas) {
-        return registryManager.get(AddonRegistry.ATMOSPHERIC_GAS_KEY).getId(gas);
+    public static Identifier getId(DynamicRegistryManager manager, AtmosphericGas gas) {
+        return manager.get(AddonRegistry.ATMOSPHERIC_GAS_KEY).getId(gas);
     }
 
-    public static boolean containsSymbol(DynamicRegistryManager registryManager, String symbol) {
-        for (AtmosphericGas g : get(registryManager)) {
+    public static boolean containsSymbol(DynamicRegistryManager manager, String symbol) {
+        for (AtmosphericGas g : get(manager)) {
             if (g.symbol.equals(symbol)) return true;
         }
         return false;
     }
 
-    public static AtmosphericGas getBySymbol(DynamicRegistryManager registryManager, String symbol) {
-        for (AtmosphericGas g : get(registryManager)) {
+    public static AtmosphericGas getBySymbol(DynamicRegistryManager manager, String symbol) {
+        for (AtmosphericGas g : get(manager)) {
             if (g.symbol.equals(symbol)) return g;
         }
         return null;

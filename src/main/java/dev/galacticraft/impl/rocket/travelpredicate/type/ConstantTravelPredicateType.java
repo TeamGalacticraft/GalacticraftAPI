@@ -20,53 +20,23 @@
  * SOFTWARE.
  */
 
-package dev.galacticraft.api.rocket;
+package dev.galacticraft.impl.rocket.travelpredicate.type;
 
 import dev.galacticraft.api.rocket.part.RocketPart;
-import dev.galacticraft.api.rocket.part.RocketPartType;
+import dev.galacticraft.api.rocket.travelpredicate.TravelPredicateType;
 import dev.galacticraft.api.universe.celestialbody.CelestialBody;
-import dev.galacticraft.impl.rocket.RocketDataImpl;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.util.registry.DynamicRegistryManager;
+import dev.galacticraft.impl.rocket.travelpredicate.config.AccessTypeTravelPredicateConfig;
+import it.unimi.dsi.fastutil.objects.Object2BooleanFunction;
 
-public interface RocketData {
-    static RocketData create(int color, RocketPart cone, RocketPart body, RocketPart fin, RocketPart booster, RocketPart bottom, RocketPart upgrade) {
-        return new RocketDataImpl(color, cone, body, fin, booster, bottom, upgrade);
+public class ConstantTravelPredicateType extends TravelPredicateType<AccessTypeTravelPredicateConfig> {
+    public static final ConstantTravelPredicateType INSTANCE = new ConstantTravelPredicateType();
+
+    private ConstantTravelPredicateType() {
+        super(AccessTypeTravelPredicateConfig.CODEC);
     }
 
-    static RocketData fromTag(NbtCompound tag, DynamicRegistryManager manager) {
-        return RocketDataImpl.fromTag(tag, manager);
+    @Override
+    public AccessType canTravelTo(CelestialBody<?, ?> type, Object2BooleanFunction<RocketPart> parts, AccessTypeTravelPredicateConfig config) {
+        return config.type();
     }
-
-    NbtCompound toTag(DynamicRegistryManager manager, NbtCompound tag);
-
-    int color();
-
-    int getRed();
-
-    int getGreen();
-
-    int getBlue();
-
-    int getAlpha();
-
-    RocketPart cone();
-
-    RocketPart body();
-
-    RocketPart fin();
-
-    RocketPart booster();
-
-    RocketPart bottom();
-
-    RocketPart upgrade();
-
-    boolean isEmpty();
-
-    boolean canTravelTo(DynamicRegistryManager manager, CelestialBody<?, ?> celestialBodyType);
-
-    RocketPart getPartForType(RocketPartType type);
-
-    RocketPart[] getParts();
 }

@@ -20,25 +20,20 @@
  * SOFTWARE.
  */
 
-package dev.galacticraft.api.rocket.part;
+package dev.galacticraft.api.accessor;
 
-import com.mojang.serialization.Codec;
-import net.minecraft.util.StringIdentifiable;
+import dev.galacticraft.api.universe.celestialbody.CelestialBody;
+import dev.galacticraft.impl.universe.celestialbody.type.SatelliteType;
+import dev.galacticraft.impl.universe.position.config.SatelliteConfig;
+import net.minecraft.util.Identifier;
+import org.jetbrains.annotations.Unmodifiable;
 
-import java.util.Locale;
+import java.util.Map;
 
-public enum RocketPartType implements StringIdentifiable {
-    CONE,
-    BODY,
-    FIN,
-    BOOSTER,
-    BOTTOM,
-    UPGRADE;
+public interface SatelliteAccessor {
+    @Unmodifiable Map<Identifier, CelestialBody<SatelliteConfig, SatelliteType>> getSatellites();
 
-    public static final Codec<RocketPartType> CODEC = Codec.STRING.xmap(s -> RocketPartType.valueOf(s.toUpperCase(Locale.ROOT)), RocketPartType::asString);
+    void addSatellite(Identifier id, CelestialBody<SatelliteConfig, SatelliteType> satellite);
 
-    @Override
-    public String asString() {
-        return this.toString().toLowerCase(Locale.ROOT);
-    }
+    void removeSatellite(Identifier id);
 }

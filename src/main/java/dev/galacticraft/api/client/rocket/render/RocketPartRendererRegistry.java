@@ -20,25 +20,19 @@
  * SOFTWARE.
  */
 
-package dev.galacticraft.api.rocket.part;
+package dev.galacticraft.api.client.rocket.render;
 
-import com.mojang.serialization.Codec;
-import net.minecraft.util.StringIdentifiable;
+import dev.galacticraft.impl.client.rocket.render.RocketPartRendererRegistryImpl;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+import net.minecraft.util.Identifier;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.Locale;
+@Environment(EnvType.CLIENT)
+public interface RocketPartRendererRegistry {
+    RocketPartRendererRegistry INSTANCE = new RocketPartRendererRegistryImpl();
 
-public enum RocketPartType implements StringIdentifiable {
-    CONE,
-    BODY,
-    FIN,
-    BOOSTER,
-    BOTTOM,
-    UPGRADE;
+    void register(@NotNull Identifier id, @NotNull RocketPartRenderer renderer);
 
-    public static final Codec<RocketPartType> CODEC = Codec.STRING.xmap(s -> RocketPartType.valueOf(s.toUpperCase(Locale.ROOT)), RocketPartType::asString);
-
-    @Override
-    public String asString() {
-        return this.toString().toLowerCase(Locale.ROOT);
-    }
+    @NotNull RocketPartRenderer getRenderer(Identifier id);
 }

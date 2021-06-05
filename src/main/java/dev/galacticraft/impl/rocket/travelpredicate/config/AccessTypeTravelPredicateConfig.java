@@ -20,25 +20,12 @@
  * SOFTWARE.
  */
 
-package dev.galacticraft.api.rocket.part;
+package dev.galacticraft.impl.rocket.travelpredicate.config;
 
 import com.mojang.serialization.Codec;
-import net.minecraft.util.StringIdentifiable;
+import dev.galacticraft.api.rocket.travelpredicate.TravelPredicateConfig;
+import dev.galacticraft.api.rocket.travelpredicate.TravelPredicateType;
 
-import java.util.Locale;
-
-public enum RocketPartType implements StringIdentifiable {
-    CONE,
-    BODY,
-    FIN,
-    BOOSTER,
-    BOTTOM,
-    UPGRADE;
-
-    public static final Codec<RocketPartType> CODEC = Codec.STRING.xmap(s -> RocketPartType.valueOf(s.toUpperCase(Locale.ROOT)), RocketPartType::asString);
-
-    @Override
-    public String asString() {
-        return this.toString().toLowerCase(Locale.ROOT);
-    }
+public record AccessTypeTravelPredicateConfig(TravelPredicateType.AccessType type) implements TravelPredicateConfig {
+    public static final Codec<AccessTypeTravelPredicateConfig> CODEC = TravelPredicateType.AccessType.CODEC.xmap(AccessTypeTravelPredicateConfig::new, AccessTypeTravelPredicateConfig::type);
 }

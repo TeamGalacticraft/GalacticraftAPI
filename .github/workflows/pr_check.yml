@@ -5,6 +5,7 @@ on:
 
 jobs:
   build:
+    if: ${{ github.repository != 'TeamGalacticraft/GalacticraftAPI' }}
     strategy:
       matrix:
         java: [16]
@@ -13,8 +14,6 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
       - name: Validate Gradle wrapper
         uses: gradle/wrapper-validation-action@v1
       - name: Initialize CodeQL

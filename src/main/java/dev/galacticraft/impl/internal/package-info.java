@@ -20,25 +20,11 @@
  * SOFTWARE.
  */
 
-package dev.galacticraft.api.rocket.part;
+/**
+ * Classes to make the Addon API run as an independent mod.
+ * Includes ModInitializers and Mixins for the API.
+ */
+@ApiStatus.Internal
+package dev.galacticraft.impl.internal;
 
-import com.mojang.serialization.Codec;
-import net.minecraft.util.StringIdentifiable;
-
-import java.util.Locale;
-
-public enum RocketPartType implements StringIdentifiable {
-    CONE,
-    BODY,
-    FIN,
-    BOOSTER,
-    BOTTOM,
-    UPGRADE;
-
-    public static final Codec<RocketPartType> CODEC = Codec.STRING.xmap(s -> RocketPartType.valueOf(s.toUpperCase(Locale.ROOT)), RocketPartType::asString);
-
-    @Override
-    public String asString() {
-        return this.toString().toLowerCase(Locale.ROOT);
-    }
-}
+import org.jetbrains.annotations.ApiStatus;

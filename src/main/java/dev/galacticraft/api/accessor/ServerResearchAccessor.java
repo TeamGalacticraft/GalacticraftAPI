@@ -20,25 +20,20 @@
  * SOFTWARE.
  */
 
-package dev.galacticraft.api.rocket.part;
+package dev.galacticraft.api.accessor;
 
-import com.mojang.serialization.Codec;
-import net.minecraft.util.StringIdentifiable;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.network.PacketByteBuf;
+import net.minecraft.util.Identifier;
 
-import java.util.Locale;
+public interface ServerResearchAccessor extends ResearchAccessor {
+    void setUnlocked_gcr(Identifier id, boolean unlocked);
 
-public enum RocketPartType implements StringIdentifiable {
-    CONE,
-    BODY,
-    FIN,
-    BOOSTER,
-    BOTTOM,
-    UPGRADE;
+    boolean changed_gcr();
 
-    public static final Codec<RocketPartType> CODEC = Codec.STRING.xmap(s -> RocketPartType.valueOf(s.toUpperCase(Locale.ROOT)), RocketPartType::asString);
+    PacketByteBuf writeResearchChanges_gcr(PacketByteBuf buf);
 
-    @Override
-    public String asString() {
-        return this.toString().toLowerCase(Locale.ROOT);
-    }
+    NbtCompound writeResearch_gcr(NbtCompound tag);
+
+    void readFromTag_gcr(NbtCompound tag);
 }

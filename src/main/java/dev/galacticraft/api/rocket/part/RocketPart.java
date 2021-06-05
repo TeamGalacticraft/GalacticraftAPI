@@ -25,10 +25,13 @@ package dev.galacticraft.api.rocket.part;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.Dynamic;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import dev.galacticraft.api.internal.accessor.ResearchAccessor;
-import dev.galacticraft.api.internal.fabric.GalacticraftAPI;
+import dev.galacticraft.api.accessor.ResearchAccessor;
 import dev.galacticraft.api.registry.AddonRegistry;
-import dev.galacticraft.api.rocket.part.travel.ConfiguredTravelPredicate;
+import dev.galacticraft.api.rocket.travelpredicate.ConfiguredTravelPredicate;
+import dev.galacticraft.api.rocket.travelpredicate.TravelPredicateType;
+import dev.galacticraft.impl.internal.fabric.GalacticraftAPI;
+import dev.galacticraft.impl.rocket.travelpredicate.config.AccessTypeTravelPredicateConfig;
+import dev.galacticraft.impl.rocket.travelpredicate.type.ConstantTravelPredicateType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
@@ -38,33 +41,24 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 
-public class RocketPart {
-    public static final Codec<RocketPart> CODEC = RecordCodecBuilder.create(i -> i.group(
-            Identifier.CODEC.fieldOf("id").forGetter(RocketPart::getId),
-            Codec.STRING.fieldOf("name").forGetter(part -> part.getName().getKey()),
-            ConfiguredTravelPredicate.CODEC.fieldOf("travel_predicate").forGetter(RocketPart::getTravelPredicate),
-            RocketPartType.CODEC.fieldOf("type").forGetter(RocketPart::getType),
+public record RocketPart(TranslatableText name, RocketPartType type, ConfiguredTravelPredicate<?> travelPredicate, boolean hasRecipe, Identifier research) {
+    public static final Codec<RocketPart> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+            Codec.STRING.fieldOf("name").xmap(TranslatableText::new, TranslatableText::getKey).forGetter(RocketPart::name),
+            RocketPartType.CODEC.fieldOf("type").forGetter(RocketPart::type),
+            ConfiguredTravelPredicate.CODEC.fieldOf("travel_predicate").forGetter(RocketPart::travelPredicate),
             Codec.BOOL.fieldOf("recipe").forGetter(RocketPart::hasRecipe),
-            Identifier.CODEC.optionalFieldOf("research").forGetter(part -> Optional.ofNullable(part.getResearch()))
-    ).apply(i, RocketPart::new));
+            Identifier.CODEC.optionalFieldOf("research").xmap(o -> o.orElse(null), Optional::ofNullable).forGetter(RocketPart::research)
+    ).apply(instance, RocketPart::new));
 
-    public static final RocketPart INVALID = Builder.create(new Identifier(GalacticraftAPI.MOD_ID, "invalid"))
+    public static final RocketPart INVALID = Builder.create()
             .name(new TranslatableText("tooltip.galacticraft-api.something_went_wrong"))
             .type(RocketPartType.UPGRADE)
-            .travelPredicate(ConfiguredTravelPredicate.NEVER)
+            .travelPredicate(ConstantTravelPredicateType.INSTANCE.configure(new AccessTypeTravelPredicateConfig(TravelPredicateType.AccessType.BLOCK)))
             .research(new Identifier(GalacticraftAPI.MOD_ID, "unobtainable"))
             .recipe(false)
             .build();
 
-    private final Identifier id;
-    private final TranslatableText name;
-    private final ConfiguredTravelPredicate<?> travelPredicate;
-    private final RocketPartType type;
-    private final boolean hasRecipe;
-    private final Identifier research;
-
-    private RocketPart(@NotNull Identifier id, @NotNull TranslatableText name, @NotNull RocketPartType type, ConfiguredTravelPredicate<?> travelPredicate, boolean hasRecipe, Identifier research) {
-        this.id = id;
+    public RocketPart(@NotNull TranslatableText name, @NotNull RocketPartType type, ConfiguredTravelPredicate<?> travelPredicate, boolean hasRecipe, Identifier research) {
         this.type = type;
         this.name = name;
         this.travelPredicate = travelPredicate;
@@ -72,75 +66,40 @@ public class RocketPart {
         this.research = research;
     }
 
-    private RocketPart(@NotNull Identifier id, @NotNull String name, ConfiguredTravelPredicate<?> travelPredicate, @NotNull RocketPartType type, boolean hasRecipe, Optional<Identifier> research) {
-        this(id, new TranslatableText(name), type, travelPredicate, hasRecipe, research.orElse(null));
-    }
-
-    public Identifier getId() {
-        return id;
-    }
-
-    public TranslatableText getName() {
-        return name;
-    }
-
-    public ConfiguredTravelPredicate<?> getTravelPredicate() {
-        return travelPredicate;
-    }
-
-    public RocketPartType getType() {
-        return type;
-    }
-
-    public Identifier getResearch() {
-        return this.research;
-    }
-
     public boolean isUnlocked(PlayerEntity player) {
-        if (this.getResearch() == null) return true;
-        return ((ResearchAccessor) player).hasUnlocked_gcr(this.getResearch());
+        if (this.research() == null) return true;
+        return ((ResearchAccessor) player).hasUnlocked_gcr(this.research());
     }
 
-    public boolean hasRecipe() {
-        return hasRecipe;
-    }
-    
-    public static RocketPart deserialize(DynamicRegistryManager registryManager, Dynamic<?> dynamic) {
-        return registryManager.get(AddonRegistry.ROCKET_PART_KEY).get(new Identifier(dynamic.asString("")));
+    public static RocketPart deserialize(DynamicRegistryManager manager, Dynamic<?> dynamic) {
+        return manager.get(AddonRegistry.ROCKET_PART_KEY).get(new Identifier(dynamic.asString("")));
     }
 
-    public static Registry<RocketPart> getAll(DynamicRegistryManager registryManager) {
-        return registryManager.get(AddonRegistry.ROCKET_PART_KEY);
+    public static Registry<RocketPart> getAll(DynamicRegistryManager manager) {
+        return manager.get(AddonRegistry.ROCKET_PART_KEY);
     }
 
-    public static RocketPart getById(DynamicRegistryManager registryManager, Identifier id) {
-        return registryManager.get(AddonRegistry.ROCKET_PART_KEY).get(id);
+    public static RocketPart getById(DynamicRegistryManager manager, Identifier id) {
+        return manager.get(AddonRegistry.ROCKET_PART_KEY).get(id);
     }
 
-    public static Identifier getId(DynamicRegistryManager registryManager, RocketPart type) {
-        return registryManager.get(AddonRegistry.ROCKET_PART_KEY).getId(type);
+    public static Identifier getId(DynamicRegistryManager manager, RocketPart type) {
+        return manager.get(AddonRegistry.ROCKET_PART_KEY).getId(type);
     }
-    
+
     public static class Builder {
-        private Identifier id;
         private TranslatableText name;
         private RocketPartType partType;
-        private ConfiguredTravelPredicate<?> travelPredicate = ConfiguredTravelPredicate.PASS;
+        private ConfiguredTravelPredicate<?> travelPredicate = ConstantTravelPredicateType.INSTANCE.configure(new AccessTypeTravelPredicateConfig(TravelPredicateType.AccessType.PASS));
         private boolean hasRecipe = true;
         private Identifier research = null;
 
-        public Builder(Identifier id) {
-            this.id = id;
+        private Builder() {}
+
+        public static Builder create() {
+            return new Builder();
         }
 
-        public static Builder create(Identifier id) {
-            return new Builder(id);
-        }
-
-        public Builder id(Identifier id) {
-            this.id = id;
-            return this;
-        }
 
         public Builder name(TranslatableText name) {
             this.name = name;
@@ -168,10 +127,10 @@ public class RocketPart {
         }
 
         public RocketPart build() {
-            if (id == null || name == null || partType == null) {
+            if (name == null || partType == null) {
                 throw new RuntimeException("Tried to build incomplete RocketPart!");
             }
-            return new RocketPart(id, name, partType, travelPredicate, hasRecipe, research);
+            return new RocketPart(name, partType, travelPredicate, hasRecipe, research);
         }
     }
 }
