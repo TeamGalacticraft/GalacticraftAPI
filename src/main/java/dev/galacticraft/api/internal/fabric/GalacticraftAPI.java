@@ -43,8 +43,6 @@ public class GalacticraftAPI implements ModInitializer {
     public static final String MOD_ID = "galacticraft-api";
     public static final Logger LOGGER = LogManager.getLogger("GalacticraftAPI");
 
-    @Deprecated
-    //todo look into why accessing this constant rather than getting it from a registry breaks everything - its not the same object somehow?!?
     public static final Biome SPACE = new Biome.Builder().generationSettings(new GenerationSettings.Builder().surfaceBuilder(ConfiguredSurfaceBuilders.NOPE).build()).precipitation(Biome.Precipitation.NONE).category(Biome.Category.NONE).depth(0).downfall(0).spawnSettings(SpawnSettings.INSTANCE).effects(new BiomeEffects.Builder().fogColor(0).waterFogColor(0).waterColor(0).skyColor(0).build()).temperature(0).scale(0).build();
 
     @Override
@@ -59,8 +57,8 @@ public class GalacticraftAPI implements ModInitializer {
                 }
             }
         });
-        Registry.register(Registry.CHUNK_GENERATOR, new Identifier(MOD_ID, "empty"), VoidChunkGenerator.CODEC);
-        BuiltinBiomes.register(284, RegistryKey.of(Registry.BIOME_KEY, new Identifier(MOD_ID, "space")), SPACE);
+        Registry.register(Registry.CHUNK_GENERATOR, new Identifier(GalacticraftAPI.MOD_ID, "empty"), VoidChunkGenerator.CODEC);
+        BuiltinBiomes.register(284, RegistryKey.of(Registry.BIOME_KEY, new Identifier(GalacticraftAPI.MOD_ID, "space")), SPACE);
         LOGGER.info("Initialization Complete. (Took {}ms).", System.currentTimeMillis() - startInitTime);
     }
 }

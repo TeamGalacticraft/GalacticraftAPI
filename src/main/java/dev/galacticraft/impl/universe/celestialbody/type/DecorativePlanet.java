@@ -16,7 +16,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class DecorativePlanet extends CelestialBodyType<DecorativePlanetConfig> implements Orbitable<DecorativePlanetConfig> {
-    public DecorativePlanet() {
+    public static final DecorativePlanet INSTANCE = new DecorativePlanet();
+
+    private DecorativePlanet() {
         super(DecorativePlanetConfig.CODEC);
     }
 

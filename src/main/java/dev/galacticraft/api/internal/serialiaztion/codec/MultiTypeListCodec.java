@@ -23,10 +23,10 @@
 package dev.galacticraft.api.internal.serialiaztion.codec;
 
 import com.google.common.collect.ImmutableList;
-import dev.galacticraft.api.internal.serialiaztion.CodecProvider;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.datafixers.util.Unit;
 import com.mojang.serialization.*;
+import dev.galacticraft.api.internal.serialiaztion.CodecProvider;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 import org.apache.commons.lang3.mutable.MutableObject;

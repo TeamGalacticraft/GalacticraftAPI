@@ -22,10 +22,10 @@
 
 package dev.galacticraft.api.rocket;
 
-import dev.galacticraft.api.celestialbody.CelestialBodyType;
 import dev.galacticraft.api.rocket.part.RocketPart;
 import dev.galacticraft.api.rocket.part.RocketPartType;
 import dev.galacticraft.api.rocket.part.travel.AccessType;
+import dev.galacticraft.api.universe.celestialbody.CelestialBody;
 import it.unimi.dsi.fastutil.objects.Object2BooleanArrayMap;
 import it.unimi.dsi.fastutil.objects.Object2BooleanMap;
 import net.fabricmc.fabric.api.util.NbtType;
@@ -133,7 +133,7 @@ public class RocketData {
         return this == EMPTY;
     }
 
-    public boolean canTravelTo(CelestialBodyType celestialBodyType) {
+    public boolean canTravelTo(CelestialBody<?, ?> celestialBodyType) {
         Object2BooleanMap<RocketPart> map = new Object2BooleanArrayMap<>();
         AccessType type = AccessType.PASS;
         for (RocketPart part : this.parts) {
@@ -143,7 +143,7 @@ public class RocketData {
         return type == AccessType.ALLOW;
     }
 
-    private AccessType travel(RocketPart part, CelestialBodyType type, Object2BooleanMap<RocketPart> map) {
+    private AccessType travel(RocketPart part, CelestialBody<?, ?> type, Object2BooleanMap<RocketPart> map) {
         return part.getTravelPredicate().canTravelTo(type, p -> map.computeBooleanIfAbsent((RocketPart) p, p1 -> {
             if (Arrays.stream(this.parts).anyMatch(p2 -> p2.getId() == p1.getId())) {
                 map.put((RocketPart) p, false);

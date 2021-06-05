@@ -22,9 +22,9 @@
 
 package dev.galacticraft.api.rocket.part.travel;
 
-import dev.galacticraft.api.celestialbody.CelestialBodyType;
 import dev.galacticraft.api.rocket.part.RocketPart;
 import dev.galacticraft.api.rocket.part.travel.config.AccessTypeTravelPredicateConfig;
+import dev.galacticraft.api.universe.celestialbody.CelestialBody;
 import it.unimi.dsi.fastutil.objects.Object2BooleanFunction;
 
 public class ConstantTravelPredicateType extends TravelPredicateType<AccessTypeTravelPredicateConfig> {
@@ -35,7 +35,7 @@ public class ConstantTravelPredicateType extends TravelPredicateType<AccessTypeT
     }
 
     @Override
-    public AccessType canTravelTo(CelestialBodyType type, Object2BooleanFunction<RocketPart> parts, AccessTypeTravelPredicateConfig config) {
-        return config.getType();
+    public AccessType canTravelTo(CelestialBody<?, ?> type, Object2BooleanFunction<RocketPart> parts, AccessTypeTravelPredicateConfig config) {
+        return config.type();
     }
 }

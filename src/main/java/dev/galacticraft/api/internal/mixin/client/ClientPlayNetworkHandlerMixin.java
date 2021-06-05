@@ -22,8 +22,10 @@
 
 package dev.galacticraft.api.internal.mixin.client;
 
-import dev.galacticraft.api.satellite.Satellite;
 import dev.galacticraft.api.internal.accessor.ClientSatelliteAccessor;
+import dev.galacticraft.api.universe.celestialbody.CelestialBody;
+import dev.galacticraft.impl.universe.celestialbody.type.SatelliteType;
+import dev.galacticraft.impl.universe.position.config.SatelliteConfig;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
@@ -35,23 +37,25 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Environment(EnvType.CLIENT)
 @Mixin({ClientPlayNetworkHandler.class})
 public abstract class ClientPlayNetworkHandlerMixin implements ClientSatelliteAccessor {
-    private final @Unique List<Satellite> satellites_gcr = new ArrayList<>();
+    private final @Unique Map<Identifier, CelestialBody<SatelliteConfig, SatelliteType>> satellites_gcr = new HashMap<>();
     private final @Unique List<SatelliteListener> listeners_gcr = new ArrayList<>();
     @Shadow private ClientWorld world;
 
     @Override
-    public @Unmodifiable List<Satellite> getSatellites() {
+    public @Unmodifiable Map<Identifier, CelestialBody<SatelliteConfig, SatelliteType>> getSatellites() {
         return this.satellites_gcr;
     }
 
     @Override
-    public void addSatellite(Satellite satellite) {
-        this.satellites_gcr.add(satellite);
+    public void addSatellite(Identifier id, CelestialBody<SatelliteConfig, SatelliteType> satellite) {
+        this.satellites_gcr.put(id, satellite);
         for (SatelliteListener listener : this.listeners_gcr) {
             listener.onSatelliteUpdated(satellite, true);
         }
@@ -59,15 +63,7 @@ public abstract class ClientPlayNetworkHandlerMixin implements ClientSatelliteAc
 
     @Override
     public void removeSatellite(Identifier id) {
-        int index = -1;
-        for (int i = 0; i < this.satellites_gcr.size(); i++) {
-            if (this.satellites_gcr.get(i).getId() ==id) {
-                index = i;
-                break;
-            }
-        }
-
-        Satellite removed = this.satellites_gcr.remove(index);;
+        CelestialBody<SatelliteConfig, SatelliteType> removed = this.satellites_gcr.remove(id);
         for (SatelliteListener listener : this.listeners_gcr) {
             listener.onSatelliteUpdated(removed, false);
         }

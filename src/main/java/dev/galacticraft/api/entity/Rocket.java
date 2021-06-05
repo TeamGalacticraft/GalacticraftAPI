@@ -22,10 +22,10 @@
 
 package dev.galacticraft.api.entity;
 
-import dev.galacticraft.api.celestialbody.CelestialBodyType;
 import dev.galacticraft.api.rocket.LaunchStage;
 import dev.galacticraft.api.rocket.part.RocketPart;
 import dev.galacticraft.api.rocket.part.RocketPartType;
+import dev.galacticraft.api.universe.celestialbody.CelestialBody;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.util.math.BlockPos;
 
@@ -40,7 +40,7 @@ public interface Rocket {
 
     BlockPos getLinkedPad();
 
-    boolean canTravelTo(CelestialBodyType type);
+    boolean canTravelTo(CelestialBody<?, ?> type);
 
     void setLinkedPad(BlockPos linkedPad);
 

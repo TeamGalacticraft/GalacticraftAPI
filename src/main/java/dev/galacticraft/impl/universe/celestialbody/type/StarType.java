@@ -1,8 +1,8 @@
 package dev.galacticraft.impl.universe.celestialbody.type;
 
-import com.mojang.serialization.Codec;
 import dev.galacticraft.api.universe.celestialbody.CelestialBody;
 import dev.galacticraft.api.universe.celestialbody.CelestialBodyType;
+import dev.galacticraft.api.universe.celestialbody.star.Star;
 import dev.galacticraft.api.universe.display.CelestialDisplay;
 import dev.galacticraft.api.universe.galaxy.Galaxy;
 import dev.galacticraft.api.universe.position.CelestialPosition;
@@ -13,9 +13,9 @@ import net.minecraft.util.registry.RegistryKey;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class Star extends CelestialBodyType<StarConfig> implements dev.galacticraft.api.universe.celestialbody.star.Star<StarConfig> {
-    public static final Star INSTANCE = new Star();
-    protected Star() {
+public class StarType extends CelestialBodyType<StarConfig> implements Star<StarConfig> {
+    public static final StarType INSTANCE = new StarType();
+    protected StarType() {
         super(StarConfig.CODEC);
     }
 

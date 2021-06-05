@@ -22,14 +22,17 @@
 
 package dev.galacticraft.api.internal.client.fabric;
 
-import dev.galacticraft.api.satellite.Satellite;
 import dev.galacticraft.api.internal.accessor.ClientResearchAccessor;
 import dev.galacticraft.api.internal.accessor.SatelliteAccessor;
 import dev.galacticraft.api.internal.fabric.GalacticraftAPI;
+import dev.galacticraft.api.universe.celestialbody.CelestialBody;
+import dev.galacticraft.impl.universe.celestialbody.type.SatelliteType;
+import dev.galacticraft.impl.universe.position.config.SatelliteConfig;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.minecraft.nbt.NbtOps;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.Identifier;
 
@@ -45,12 +48,11 @@ public class ClientGalacticraftAPI implements ClientModInitializer {
             client.execute(() -> ((ClientResearchAccessor) Objects.requireNonNull(client.player)).readChanges(buf));
         });
         ClientPlayNetworking.registerGlobalReceiver(new Identifier(GalacticraftAPI.MOD_ID, "add_satellite"), (client, networkHandler, buffer, sender) -> {
-            PacketByteBuf buf = new PacketByteBuf(buffer.copy());
-            /*client.execute(() -> */((SatelliteAccessor) networkHandler).addSatellite(Satellite.deserializeSatellite(client.getNetworkHandler().getRegistryManager(), buf))/*)*/;
+            ((SatelliteAccessor) networkHandler).addSatellite(buffer.readIdentifier(), new CelestialBody<>(SatelliteType.INSTANCE, SatelliteConfig.CODEC.decode(NbtOps.INSTANCE, buffer.readNbt()).get().orThrow().getFirst()));
         });
         ClientPlayNetworking.registerGlobalReceiver(new Identifier(GalacticraftAPI.MOD_ID, "remove_satellite"), (client, networkHandler, buffer, sender) -> {
             PacketByteBuf buf = new PacketByteBuf(buffer.copy());
-            /*client.execute(() -> */((SatelliteAccessor) networkHandler).removeSatellite(buf.readIdentifier())/*)*/;
+            ((SatelliteAccessor) networkHandler).removeSatellite(buf.readIdentifier());
         });
     }
 }

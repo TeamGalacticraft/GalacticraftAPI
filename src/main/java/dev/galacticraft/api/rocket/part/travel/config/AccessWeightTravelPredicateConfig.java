@@ -26,25 +26,9 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import dev.galacticraft.api.rocket.part.travel.AccessType;
 
-public class AccessWeightTravelPredicateConfig implements TravelPredicateConfig {
+public record AccessWeightTravelPredicateConfig(int weight, AccessType defaultType) implements TravelPredicateConfig {
     public static final Codec<AccessWeightTravelPredicateConfig> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-            Codec.INT.fieldOf("weight").forGetter(AccessWeightTravelPredicateConfig::getWeight),
-            AccessType.CODEC.optionalFieldOf("default", AccessType.PASS).forGetter(AccessWeightTravelPredicateConfig::getDefault)
+            Codec.INT.fieldOf("weight").forGetter(AccessWeightTravelPredicateConfig::weight),
+            AccessType.CODEC.optionalFieldOf("default", AccessType.PASS).forGetter(AccessWeightTravelPredicateConfig::defaultType)
     ).apply(instance, AccessWeightTravelPredicateConfig::new));
-
-    private final int weight;
-    private final AccessType defaultType;
-
-    public AccessWeightTravelPredicateConfig(int weight, AccessType defaultType) {
-        this.weight = weight;
-        this.defaultType = defaultType;
-    }
-
-    public int getWeight() {
-        return this.weight;
-    }
-
-    public AccessType getDefault() {
-        return this.defaultType;
-    }
 }

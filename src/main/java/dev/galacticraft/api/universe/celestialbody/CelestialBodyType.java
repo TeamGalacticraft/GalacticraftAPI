@@ -33,7 +33,7 @@ public abstract class CelestialBodyType<C extends CelestialBodyConfig> {
         return this.codec;
     }
 
-    public CelestialBody<C, CelestialBodyType<C>> configure(C config) {
+    public CelestialBody<C, ? extends CelestialBodyType<C>> configure(C config) {
         return new CelestialBody<>(this, config);
     }
 }

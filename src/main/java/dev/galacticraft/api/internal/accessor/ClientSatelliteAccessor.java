@@ -22,7 +22,9 @@
 
 package dev.galacticraft.api.internal.accessor;
 
-import dev.galacticraft.api.satellite.Satellite;
+import dev.galacticraft.api.universe.celestialbody.CelestialBody;
+import dev.galacticraft.impl.universe.celestialbody.type.SatelliteType;
+import dev.galacticraft.impl.universe.position.config.SatelliteConfig;
 
 public interface ClientSatelliteAccessor extends SatelliteAccessor {
     void addListener(SatelliteListener listener);
@@ -31,6 +33,6 @@ public interface ClientSatelliteAccessor extends SatelliteAccessor {
 
     @FunctionalInterface
     interface SatelliteListener {
-        void onSatelliteUpdated(Satellite satellite, boolean added);
+        void onSatelliteUpdated(CelestialBody<SatelliteConfig, SatelliteType> satellite, boolean added);
     }
 }

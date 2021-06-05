@@ -23,19 +23,20 @@
 package dev.galacticraft.api.rocket.part.travel;
 
 import com.mojang.serialization.Codec;
-import dev.galacticraft.api.celestialbody.CelestialBodyType;
 import dev.galacticraft.api.registry.AddonRegistry;
 import dev.galacticraft.api.rocket.part.RocketPart;
 import dev.galacticraft.api.rocket.part.travel.config.AccessTypeTravelPredicateConfig;
 import dev.galacticraft.api.rocket.part.travel.config.TravelPredicateConfig;
+import dev.galacticraft.api.universe.celestialbody.CelestialBody;
 import it.unimi.dsi.fastutil.objects.Object2BooleanFunction;
 import net.minecraft.util.dynamic.RegistryElementCodec;
 
 import java.util.List;
 import java.util.function.Supplier;
 
-public class ConfiguredTravelPredicate<C extends TravelPredicateConfig> {
-    public static final Codec<ConfiguredTravelPredicate<?>> CODEC = AddonRegistry.TRAVEL_PREDICATE.dispatch(ConfiguredTravelPredicate::getType, TravelPredicateType::getCodec);
+public record ConfiguredTravelPredicate<C extends TravelPredicateConfig>(C config,
+                                                                         TravelPredicateType<C> type) {
+    public static final Codec<ConfiguredTravelPredicate<?>> CODEC = AddonRegistry.TRAVEL_PREDICATE.dispatch(ConfiguredTravelPredicate::type, TravelPredicateType::getCodec);
     public static final Codec<Supplier<ConfiguredTravelPredicate<?>>> REGISTRY_CODEC = RegistryElementCodec.of(AddonRegistry.CONFIGURED_TRAVEL_PREDICATE_KEY, CODEC);
     public static final Codec<List<Supplier<ConfiguredTravelPredicate<?>>>> REGISTRY_LIST_CODEC = RegistryElementCodec.method_31194(AddonRegistry.CONFIGURED_TRAVEL_PREDICATE_KEY, CODEC);
 
@@ -43,23 +44,7 @@ public class ConfiguredTravelPredicate<C extends TravelPredicateConfig> {
     public static final ConfiguredTravelPredicate<AccessTypeTravelPredicateConfig> PASS = ConstantTravelPredicateType.INSTANCE.configure(new AccessTypeTravelPredicateConfig(AccessType.PASS));
     public static final ConfiguredTravelPredicate<AccessTypeTravelPredicateConfig> NEVER = ConstantTravelPredicateType.INSTANCE.configure(new AccessTypeTravelPredicateConfig(AccessType.BLOCK));
 
-    private final C config;
-    private final TravelPredicateType<C> type;
-
-    public ConfiguredTravelPredicate(C config, TravelPredicateType<C> type) {
-        this.config = config;
-        this.type = type;
-    }
-
-    public AccessType canTravelTo(CelestialBodyType type, Object2BooleanFunction<RocketPart> parts) {
+    public AccessType canTravelTo(CelestialBody<?, ?> type, Object2BooleanFunction<RocketPart> parts) {
         return this.type.canTravelTo(type, parts, this.config);
-    }
-
-    public C getConfig() {
-        return config;
-    }
-
-    public TravelPredicateType<C> getType() {
-        return type;
     }
 }

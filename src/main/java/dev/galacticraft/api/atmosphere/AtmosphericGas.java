@@ -22,11 +22,11 @@
 
 package dev.galacticraft.api.atmosphere;
 
-import dev.galacticraft.api.internal.fabric.GalacticraftAPI;
-import dev.galacticraft.api.registry.AddonRegistry;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.Dynamic;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import dev.galacticraft.api.internal.fabric.GalacticraftAPI;
+import dev.galacticraft.api.registry.AddonRegistry;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.dynamic.RegistryElementCodec;

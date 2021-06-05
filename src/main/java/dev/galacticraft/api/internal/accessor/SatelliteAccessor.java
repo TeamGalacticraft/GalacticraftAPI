@@ -22,16 +22,18 @@
 
 package dev.galacticraft.api.internal.accessor;
 
-import dev.galacticraft.api.satellite.Satellite;
+import dev.galacticraft.api.universe.celestialbody.CelestialBody;
+import dev.galacticraft.impl.universe.celestialbody.type.SatelliteType;
+import dev.galacticraft.impl.universe.position.config.SatelliteConfig;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Unmodifiable;
 
-import java.util.List;
+import java.util.Map;
 
 public interface SatelliteAccessor {
-    @Unmodifiable List<Satellite> getSatellites();
+    @Unmodifiable Map<Identifier, CelestialBody<SatelliteConfig, SatelliteType>> getSatellites();
 
-    void addSatellite(Satellite satellite);
+    void addSatellite(Identifier id, CelestialBody<SatelliteConfig, SatelliteType> satellite);
 
     void removeSatellite(Identifier id);
 }

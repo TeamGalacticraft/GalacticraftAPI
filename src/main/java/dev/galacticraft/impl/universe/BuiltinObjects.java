@@ -9,8 +9,9 @@ import dev.galacticraft.api.universe.celestialbody.CelestialBodyType;
 import dev.galacticraft.api.universe.galaxy.Galaxy;
 import dev.galacticraft.impl.universe.celestialbody.config.PlanetConfig;
 import dev.galacticraft.impl.universe.celestialbody.config.StarConfig;
-import dev.galacticraft.impl.universe.celestialbody.type.Planet;
-import dev.galacticraft.impl.universe.celestialbody.type.Star;
+import dev.galacticraft.impl.universe.celestialbody.type.DecorativePlanet;
+import dev.galacticraft.impl.universe.celestialbody.type.PlanetType;
+import dev.galacticraft.impl.universe.celestialbody.type.StarType;
 import dev.galacticraft.impl.universe.display.config.EmptyCelestialDisplayConfig;
 import dev.galacticraft.impl.universe.display.config.IconCelestialDisplayConfig;
 import dev.galacticraft.impl.universe.display.type.EmptyCelestialDisplayType;
@@ -37,7 +38,7 @@ public class BuiltinObjects {
     );
 
     public static final RegistryKey<CelestialBody<?, ?>> SOL_KEY = RegistryKey.of(AddonRegistry.CELESTIAL_BODY_KEY, new Identifier(GalacticraftAPI.MOD_ID, "sol"));
-    public static final CelestialBody<StarConfig, CelestialBodyType<StarConfig>> SOL = Star.INSTANCE.configure(
+    public static final CelestialBody<StarConfig, ? extends CelestialBodyType<StarConfig>> SOL = StarType.INSTANCE.configure(
             new StarConfig(
                     new TranslatableText("star.galacticraft-api.sol.name"),
                     new TranslatableText("star.galacticraft-api.sol.description"),
@@ -50,7 +51,7 @@ public class BuiltinObjects {
     );
 
     public static final RegistryKey<CelestialBody<?, ?>> EARTH_KEY = RegistryKey.of(AddonRegistry.CELESTIAL_BODY_KEY, new Identifier(GalacticraftAPI.MOD_ID, "earth"));
-    public static final CelestialBody<PlanetConfig, CelestialBodyType<PlanetConfig>> EARTH = Planet.INSTANCE.configure(
+    public static final CelestialBody<PlanetConfig, ? extends CelestialBodyType<PlanetConfig>> EARTH = PlanetType.INSTANCE.configure(
             new PlanetConfig(
                     new TranslatableText("planet.galacticraft-api.earth.name"),
                     new TranslatableText("planet.galacticraft-api.earth.description"),
@@ -93,6 +94,11 @@ public class BuiltinObjects {
         Registry.register(AddonRegistry.CELESTIAL_DISPLAY_TYPE, new Identifier(GalacticraftAPI.MOD_ID, "icon"), IconCelestialDisplayType.INSTANCE);
 
         Registry.register(AddonRegistry.GALAXY, MILKY_WAY_KEY.getValue(), MILKY_WAY);
+
+        Registry.register(AddonRegistry.CELESTIAL_BODY_TYPE, new Identifier(GalacticraftAPI.MOD_ID, "star"), StarType.INSTANCE);
+        Registry.register(AddonRegistry.CELESTIAL_BODY_TYPE, new Identifier(GalacticraftAPI.MOD_ID, "planet"), PlanetType.INSTANCE);
+        Registry.register(AddonRegistry.CELESTIAL_BODY_TYPE, new Identifier(GalacticraftAPI.MOD_ID, "decorative_planet"), DecorativePlanet.INSTANCE);
+
         Registry.register(AddonRegistry.CELESTIAL_BODY, SOL_KEY.getValue(), SOL);
         Registry.register(AddonRegistry.CELESTIAL_BODY, EARTH_KEY.getValue(), EARTH);
     }

@@ -22,13 +22,15 @@
 
 package dev.galacticraft.api.internal.mixin.client;
 
-import dev.galacticraft.api.celestialbody.CelestialBodyType;
+import dev.galacticraft.api.registry.RegistryUtil;
+import dev.galacticraft.api.universe.celestialbody.landable.Landable;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.particle.BlockDustParticle;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.client.world.ClientWorld;
+import net.minecraft.util.math.BlockPos;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -39,9 +41,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public abstract class BlockDustParticleMixin extends Particle {
     public BlockDustParticleMixin(ClientWorld world, double x, double y, double z, double velocityX, double velocityY, double velocityZ) {super(world, x, y, z, velocityX, velocityY, velocityZ);}
 
-    @Inject(method = "<init>", at = @At("RETURN"))
-    protected void BlockDustParticle(ClientWorld world, double x, double y, double z, double velocityX, double velocityY, double velocityZ, BlockState blockState, CallbackInfo ci) {
+    @Inject(method = "<init>(Lnet/minecraft/client/world/ClientWorld;DDDDDDLnet/minecraft/block/BlockState;Lnet/minecraft/util/math/BlockPos;)V", at = @At("RETURN"))
+    protected void BlockDustParticle(ClientWorld world, double x, double y, double z, double velocityX, double velocityY, double velocityZ, BlockState state, BlockPos blockPos, CallbackInfo ci) {
         this.gravityStrength = 1.0f;
-        CelestialBodyType.getByDimType(world.getRegistryManager(), world.getRegistryKey()).ifPresent(celestialBodyType -> this.gravityStrength = celestialBodyType.getGravity());
+        RegistryUtil.getCelestialBodyByDimension(world.getRegistryManager(), world.getRegistryKey()).ifPresent(celestialBodyType -> this.gravityStrength = ((Landable) celestialBodyType.type()).gravity(celestialBodyType.config()));
     }
 }

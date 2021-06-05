@@ -23,13 +23,13 @@
 package dev.galacticraft.api.internal.command.argument;
 
 import com.google.common.collect.ImmutableList;
-import dev.galacticraft.api.registry.AddonRegistry;
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.arguments.ArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
+import dev.galacticraft.api.registry.AddonRegistry;
 import net.minecraft.command.CommandSource;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.util.Identifier;

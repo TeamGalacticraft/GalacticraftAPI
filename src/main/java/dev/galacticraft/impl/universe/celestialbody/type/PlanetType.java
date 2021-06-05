@@ -1,6 +1,5 @@
 package dev.galacticraft.impl.universe.celestialbody.type;
 
-import com.mojang.serialization.Codec;
 import dev.galacticraft.api.atmosphere.AtmosphericInfo;
 import dev.galacticraft.api.registry.AddonRegistry;
 import dev.galacticraft.api.satellite.SatelliteRecipe;
@@ -19,9 +18,9 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class Planet extends CelestialBodyType<PlanetConfig> implements Landable<PlanetConfig>, Orbitable<PlanetConfig> {
-    public static final Planet INSTANCE = new Planet();
-    protected Planet() {
+public class PlanetType extends CelestialBodyType<PlanetConfig> implements Landable<PlanetConfig>, Orbitable<PlanetConfig> {
+    public static final PlanetType INSTANCE = new PlanetType();
+    protected PlanetType() {
         super(PlanetConfig.CODEC);
     }
 

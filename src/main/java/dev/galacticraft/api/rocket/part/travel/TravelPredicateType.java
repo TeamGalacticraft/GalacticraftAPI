@@ -23,23 +23,23 @@
 package dev.galacticraft.api.rocket.part.travel;
 
 import com.mojang.serialization.Codec;
-import dev.galacticraft.api.celestialbody.CelestialBodyType;
 import dev.galacticraft.api.rocket.part.RocketPart;
 import dev.galacticraft.api.rocket.part.travel.config.TravelPredicateConfig;
+import dev.galacticraft.api.universe.celestialbody.CelestialBody;
 import it.unimi.dsi.fastutil.objects.Object2BooleanFunction;
 
 public abstract class TravelPredicateType<C extends TravelPredicateConfig> {
     private final Codec<ConfiguredTravelPredicate<C>> codec;
 
     public TravelPredicateType(Codec<C> configCodec) {
-        this.codec = configCodec.fieldOf("config").xmap(this::configure, ConfiguredTravelPredicate::getConfig).codec();
+        this.codec = configCodec.fieldOf("config").xmap(this::configure, ConfiguredTravelPredicate::config).codec();
     }
 
     public ConfiguredTravelPredicate<C> configure(C config) {
         return new ConfiguredTravelPredicate<>(config, this);
     }
 
-    public abstract AccessType canTravelTo(CelestialBodyType type, Object2BooleanFunction<RocketPart> parts, C config);
+    public abstract AccessType canTravelTo(CelestialBody<?, ?> type, Object2BooleanFunction<RocketPart> parts, C config);
 
     public Codec<ConfiguredTravelPredicate<C>> getCodec() {
         return this.codec;

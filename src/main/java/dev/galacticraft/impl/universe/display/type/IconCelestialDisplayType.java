@@ -1,7 +1,6 @@
 package dev.galacticraft.impl.universe.display.type;
 
 import com.mojang.serialization.Codec;
-import dev.galacticraft.api.rocket.part.travel.TravelPredicateType;
 import dev.galacticraft.api.universe.display.CelestialDisplayType;
 import dev.galacticraft.impl.universe.display.config.IconCelestialDisplayConfig;
 import net.minecraft.client.render.BufferBuilder;

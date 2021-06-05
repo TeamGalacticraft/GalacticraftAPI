@@ -22,11 +22,11 @@
 
 package dev.galacticraft.api.internal.mixin;
 
+import com.mojang.serialization.Lifecycle;
 import dev.galacticraft.api.atmosphere.AtmosphericGas;
 import dev.galacticraft.api.registry.AddonRegistry;
 import dev.galacticraft.api.rocket.part.RocketPart;
 import dev.galacticraft.api.rocket.part.travel.ConfiguredTravelPredicate;
-import com.mojang.serialization.Lifecycle;
 import dev.galacticraft.impl.universe.BuiltinObjects;
 import net.minecraft.util.registry.BuiltinRegistries;
 import net.minecraft.util.registry.MutableRegistry;
@@ -50,6 +50,7 @@ public abstract class BuiltinRegistriesMixin {
     @SuppressWarnings("UnresolvedMixinReference")
     @Inject(method = "<clinit>", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/registry/BuiltinRegistries;addRegistry(Lnet/minecraft/util/registry/RegistryKey;Ljava/util/function/Supplier;)Lnet/minecraft/util/registry/Registry;", ordinal = 0))
     private static void addGCRegistries(CallbackInfo ci) {
+        BuiltinObjects.register();
         addRegistry(AddonRegistry.ATMOSPHERIC_GAS_KEY, AddonRegistry.ATMOSPHERIC_GAS, () -> AtmosphericGas.OXYGEN, Lifecycle.experimental());
         addRegistry(AddonRegistry.CONFIGURED_TRAVEL_PREDICATE_KEY, AddonRegistry.CONFIGURED_TRAVEL_PREDICATE, () -> ConfiguredTravelPredicate.NEVER, Lifecycle.experimental());
         addRegistry(AddonRegistry.GALAXY_KEY, AddonRegistry.GALAXY, () -> BuiltinObjects.MILKY_WAY, Lifecycle.experimental());
