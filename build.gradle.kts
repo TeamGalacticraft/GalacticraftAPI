@@ -15,7 +15,7 @@ val fabric = "0.34.8+1.17"
 val lba = "0.9.0-pre.2"
 
 group = "dev.galacticraft"
-version ="0.4.0-prealpha+$mc"
+version ="0.4.0-prealpha1+$mc"
 
 base {
     archivesBaseName = "GalacticraftAPI"
