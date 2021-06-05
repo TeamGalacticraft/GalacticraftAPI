@@ -26,13 +26,11 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.Dynamic;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import dev.galacticraft.api.registry.AddonRegistry;
+import dev.galacticraft.impl.internal.fabric.GalacticraftAPI;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.dynamic.RegistryElementCodec;
 import net.minecraft.util.registry.DynamicRegistryManager;
 import net.minecraft.util.registry.Registry;
-
-import java.util.function.Supplier;
 
 public record AtmosphericGas(TranslatableText name, String symbol) {
     public static final Codec<AtmosphericGas> CODEC = RecordCodecBuilder.create(instance ->
@@ -42,68 +40,82 @@ public record AtmosphericGas(TranslatableText name, String symbol) {
             ).apply(instance, AtmosphericGas::new)
     );
 
-    public static final Codec<Supplier<AtmosphericGas>> REGISTRY_CODEC = RegistryElementCodec.of(AddonRegistry.ATMOSPHERIC_GAS_KEY, CODEC);
-
+    public static final Identifier HYDROGEN_ID = new Identifier(GalacticraftAPI.MOD_ID, "hydrogen");
     public static final AtmosphericGas HYDROGEN = new AtmosphericGas(
             new TranslatableText("ui.galacticraft-api.gases.hydrogen"),
             "H"
     );
+    public static final Identifier NITROGEN_ID = new Identifier(GalacticraftAPI.MOD_ID, "nitrogen");
     public static final AtmosphericGas NITROGEN = new AtmosphericGas(
             new TranslatableText("ui.galacticraft-api.gases.nitrogen"),
             "N"
     );
+    public static final Identifier OXYGEN_ID = new Identifier(GalacticraftAPI.MOD_ID, "oxygen");
     public static final AtmosphericGas OXYGEN = new AtmosphericGas(
             new TranslatableText("ui.galacticraft-api.gases.oxygen"),
             "O2"
     );
+    public static final Identifier CARBON_DIOXIDE_ID = new Identifier(GalacticraftAPI.MOD_ID, "carbon_dioxide");
     public static final AtmosphericGas CARBON_DIOXIDE = new AtmosphericGas(
             new TranslatableText("ui.galacticraft-api.gases.carbon_dioxide"),
             "CO2"
     );
+    public static final Identifier WATER_VAPOR_ID = new Identifier(GalacticraftAPI.MOD_ID, "water_vapor");
     public static final AtmosphericGas WATER_VAPOR = new AtmosphericGas(
             new TranslatableText("ui.galacticraft-api.gases.water_vapor"),
             "H2O"
     );
+    public static final Identifier METHANE_ID = new Identifier(GalacticraftAPI.MOD_ID, "methane");
     public static final AtmosphericGas METHANE = new AtmosphericGas(
             new TranslatableText("ui.galacticraft-api.gases.methane"),
             "CH4"
     );
+    public static final Identifier HELIUM_ID = new Identifier(GalacticraftAPI.MOD_ID, "helium");
     public static final AtmosphericGas HELIUM = new AtmosphericGas(
             new TranslatableText("ui.galacticraft-api.gases.helium"),
             "He"
     );
+    public static final Identifier ARGON_ID = new Identifier(GalacticraftAPI.MOD_ID, "argon");
     public static final AtmosphericGas ARGON = new AtmosphericGas(
             new TranslatableText("ui.galacticraft-api.gases.argon"),
             "Ar"
     );
+    public static final Identifier NEON_ID = new Identifier(GalacticraftAPI.MOD_ID, "neon");
     public static final AtmosphericGas NEON = new AtmosphericGas(
             new TranslatableText("ui.galacticraft-api.gases.neon"),
             "Ne"
     );
+    public static final Identifier KRYPTON_ID = new Identifier(GalacticraftAPI.MOD_ID, "krypton");
     public static final AtmosphericGas KRYPTON = new AtmosphericGas(
             new TranslatableText("ui.galacticraft-api.gases.krypton"),
             "Kr"
     );
+    public static final Identifier NITROUS_OXIDE_ID = new Identifier(GalacticraftAPI.MOD_ID, "nitrous_oxide");
     public static final AtmosphericGas NITROUS_OXIDE = new AtmosphericGas(
             new TranslatableText("ui.galacticraft-api.gases.nitrous_oxide"),
             "N2O"
     );
+    public static final Identifier CARBON_MONOXIDE_ID = new Identifier(GalacticraftAPI.MOD_ID, "carbon_monoxide");
     public static final AtmosphericGas CARBON_MONOXIDE = new AtmosphericGas(
             new TranslatableText("ui.galacticraft-api.gases.carbon_monoxide"),
             "CO"
     );
+    public static final Identifier XENON_ID = new Identifier(GalacticraftAPI.MOD_ID, "xenon");
     public static final AtmosphericGas XENON = new AtmosphericGas(
             new TranslatableText("ui.galacticraft-api.gases.xenon"),
             "Xe"
     );
+    public static final Identifier OZONE_ID = new Identifier(GalacticraftAPI.MOD_ID, "ozone");
     public static final AtmosphericGas OZONE = new AtmosphericGas(
             new TranslatableText("ui.galacticraft-api.gases.ozone"),
             "O3"
     );
+    public static final Identifier NITROUS_DIOXIDE_ID = new Identifier(GalacticraftAPI.MOD_ID, "nitrous_dioxide");
     public static final AtmosphericGas NITROUS_DIOXIDE = new AtmosphericGas(
             new TranslatableText("ui.galacticraft-api.gases.nitrous_dioxide"),
             "NO2"
     );
+    public static final Identifier IODINE_ID = new Identifier(GalacticraftAPI.MOD_ID, "iodine");
     public static final AtmosphericGas IODINE = new AtmosphericGas(
             new TranslatableText("ui.galacticraft-api.gases.iodine"),
             "I2"

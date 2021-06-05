@@ -24,45 +24,45 @@ package dev.galacticraft.api.atmosphere;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import dev.galacticraft.api.registry.AddonRegistry;
 import dev.galacticraft.impl.internal.codec.MapCodec;
 import it.unimi.dsi.fastutil.objects.Object2DoubleArrayMap;
 import it.unimi.dsi.fastutil.objects.Object2DoubleMap;
 import net.minecraft.network.PacketByteBuf;
-import net.minecraft.util.registry.DynamicRegistryManager;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.registry.RegistryKey;
 
-import java.util.function.Supplier;
-
-public record AtmosphericInfo(Object2DoubleMap<AtmosphericGas> composition, double temperature, float pressure) {
-    private static final MapCodec<AtmosphericGas, Double, Object2DoubleMap<AtmosphericGas>> MAP_CODEC = MapCodec.create(Object2DoubleArrayMap::new, AtmosphericGas.REGISTRY_CODEC.xmap(Supplier::get, gas -> () -> gas), Codec.DOUBLE);
+public record AtmosphericInfo(Object2DoubleMap<RegistryKey<AtmosphericGas>> composition, double temperature, float pressure) {
+    private static final MapCodec<RegistryKey<AtmosphericGas>, Double, Object2DoubleMap<RegistryKey<AtmosphericGas>>> MAP_CODEC = MapCodec.create(Object2DoubleArrayMap::new, Identifier.CODEC.xmap(id -> RegistryKey.of(AddonRegistry.ATMOSPHERIC_GAS_KEY, id), RegistryKey::getValue), Codec.DOUBLE);
     public static final Codec<AtmosphericInfo> CODEC = RecordCodecBuilder.create(atmosphericInfoInstance -> atmosphericInfoInstance.group(
             MAP_CODEC.fieldOf("composition").forGetter(AtmosphericInfo::composition),
             Codec.DOUBLE.fieldOf("temperature").forGetter(AtmosphericInfo::temperature),
             Codec.FLOAT.fieldOf("pressure").forGetter(AtmosphericInfo::pressure)
     ).apply(atmosphericInfoInstance, AtmosphericInfo::new));
 
-    public void writePacket(DynamicRegistryManager manager, PacketByteBuf buf) {
+    public void writePacket(PacketByteBuf buf) {
         buf.writeInt(this.composition.size());
         buf.writeFloat(this.pressure);
         buf.writeDouble(this.temperature);
-        for (Object2DoubleMap.Entry<AtmosphericGas> entry : this.composition.object2DoubleEntrySet()) {
-            buf.writeIdentifier(AtmosphericGas.getId(manager, entry.getKey()));
+        for (Object2DoubleMap.Entry<RegistryKey<AtmosphericGas>> entry : this.composition.object2DoubleEntrySet()) {
+            buf.writeIdentifier(entry.getKey().getValue());
             buf.writeDouble(entry.getDoubleValue());
         }
     }
 
-    public static AtmosphericInfo readPacket(DynamicRegistryManager manager, PacketByteBuf buf) {
+    public static AtmosphericInfo readPacket(PacketByteBuf buf) {
         int size = buf.readInt();
         Builder builder = new Builder();
         builder.pressure(buf.readFloat());
         builder.temperature(buf.readDouble());
         for (int i = 0; i < size; i++) {
-            builder.gas(AtmosphericGas.getById(manager, buf.readIdentifier()), buf.readDouble());
+            builder.gas(RegistryKey.of(AddonRegistry.ATMOSPHERIC_GAS_KEY, buf.readIdentifier()), buf.readDouble());
         }
         return builder.build();
     }
 
     public static class Builder {
-        private final Object2DoubleMap<AtmosphericGas> composition = new Object2DoubleArrayMap<>();
+        private final Object2DoubleMap<RegistryKey<AtmosphericGas>> composition = new Object2DoubleArrayMap<>();
         private double temperature = 15.0;
         private float pressure = 1.0f;
 
@@ -76,9 +76,13 @@ public record AtmosphericInfo(Object2DoubleMap<AtmosphericGas> composition, doub
             return this;
         }
 
-        public Builder gas(AtmosphericGas gas, double ppm) {
+        public Builder gas(RegistryKey<AtmosphericGas> gas, double ppm) {
             this.composition.put(gas, ppm);
             return this;
+        }
+
+        public Builder gas(Identifier gas, double ppm) {
+            return this.gas(RegistryKey.of(AddonRegistry.ATMOSPHERIC_GAS_KEY, gas), ppm);
         }
 
         public AtmosphericInfo build() {

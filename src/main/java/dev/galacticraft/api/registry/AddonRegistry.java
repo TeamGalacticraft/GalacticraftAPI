@@ -83,22 +83,22 @@ public class AddonRegistry {
                     ROCKET_PART_KEY, Lifecycle.experimental())).buildAndRegister();
 
     static {
-        Registry.register(ATMOSPHERIC_GAS, new Identifier(GalacticraftAPI.MOD_ID, "hydrogen"), AtmosphericGas.HYDROGEN);
-        Registry.register(ATMOSPHERIC_GAS, new Identifier(GalacticraftAPI.MOD_ID, "nitrogen"), AtmosphericGas.NITROGEN);
-        Registry.register(ATMOSPHERIC_GAS, new Identifier(GalacticraftAPI.MOD_ID, "oxygen"), AtmosphericGas.OXYGEN);
-        Registry.register(ATMOSPHERIC_GAS, new Identifier(GalacticraftAPI.MOD_ID, "carbon_dioxide"), AtmosphericGas.CARBON_DIOXIDE);
-        Registry.register(ATMOSPHERIC_GAS, new Identifier(GalacticraftAPI.MOD_ID, "water_vapor"), AtmosphericGas.WATER_VAPOR);
-        Registry.register(ATMOSPHERIC_GAS, new Identifier(GalacticraftAPI.MOD_ID, "methane"), AtmosphericGas.METHANE);
-        Registry.register(ATMOSPHERIC_GAS, new Identifier(GalacticraftAPI.MOD_ID, "helium"), AtmosphericGas.HELIUM);
-        Registry.register(ATMOSPHERIC_GAS, new Identifier(GalacticraftAPI.MOD_ID, "argon"), AtmosphericGas.ARGON);
-        Registry.register(ATMOSPHERIC_GAS, new Identifier(GalacticraftAPI.MOD_ID, "neon"), AtmosphericGas.NEON);
-        Registry.register(ATMOSPHERIC_GAS, new Identifier(GalacticraftAPI.MOD_ID, "krypton"), AtmosphericGas.KRYPTON);
-        Registry.register(ATMOSPHERIC_GAS, new Identifier(GalacticraftAPI.MOD_ID, "nitrous_oxide"), AtmosphericGas.NITROUS_OXIDE);
-        Registry.register(ATMOSPHERIC_GAS, new Identifier(GalacticraftAPI.MOD_ID, "carbon_monoxide"), AtmosphericGas.CARBON_MONOXIDE);
-        Registry.register(ATMOSPHERIC_GAS, new Identifier(GalacticraftAPI.MOD_ID, "xenon"), AtmosphericGas.XENON);
-        Registry.register(ATMOSPHERIC_GAS, new Identifier(GalacticraftAPI.MOD_ID, "ozone"), AtmosphericGas.OZONE);
-        Registry.register(ATMOSPHERIC_GAS, new Identifier(GalacticraftAPI.MOD_ID, "nitrous_dioxide"), AtmosphericGas.NITROUS_DIOXIDE);
-        Registry.register(ATMOSPHERIC_GAS, new Identifier(GalacticraftAPI.MOD_ID, "iodine"), AtmosphericGas.IODINE);
+        Registry.register(ATMOSPHERIC_GAS, AtmosphericGas.HYDROGEN_ID, AtmosphericGas.HYDROGEN);
+        Registry.register(ATMOSPHERIC_GAS, AtmosphericGas.NITROGEN_ID, AtmosphericGas.NITROGEN);
+        Registry.register(ATMOSPHERIC_GAS, AtmosphericGas.OXYGEN_ID, AtmosphericGas.OXYGEN);
+        Registry.register(ATMOSPHERIC_GAS, AtmosphericGas.CARBON_DIOXIDE_ID, AtmosphericGas.CARBON_DIOXIDE);
+        Registry.register(ATMOSPHERIC_GAS, AtmosphericGas.WATER_VAPOR_ID, AtmosphericGas.WATER_VAPOR);
+        Registry.register(ATMOSPHERIC_GAS, AtmosphericGas.METHANE_ID, AtmosphericGas.METHANE);
+        Registry.register(ATMOSPHERIC_GAS, AtmosphericGas.HELIUM_ID, AtmosphericGas.HELIUM);
+        Registry.register(ATMOSPHERIC_GAS, AtmosphericGas.ARGON_ID, AtmosphericGas.ARGON);
+        Registry.register(ATMOSPHERIC_GAS, AtmosphericGas.NEON_ID, AtmosphericGas.NEON);
+        Registry.register(ATMOSPHERIC_GAS, AtmosphericGas.KRYPTON_ID, AtmosphericGas.KRYPTON);
+        Registry.register(ATMOSPHERIC_GAS, AtmosphericGas.NITROUS_OXIDE_ID, AtmosphericGas.NITROUS_OXIDE);
+        Registry.register(ATMOSPHERIC_GAS, AtmosphericGas.CARBON_MONOXIDE_ID, AtmosphericGas.CARBON_MONOXIDE);
+        Registry.register(ATMOSPHERIC_GAS, AtmosphericGas.XENON_ID, AtmosphericGas.XENON);
+        Registry.register(ATMOSPHERIC_GAS, AtmosphericGas.OZONE_ID, AtmosphericGas.OZONE);
+        Registry.register(ATMOSPHERIC_GAS, AtmosphericGas.NITROUS_DIOXIDE_ID, AtmosphericGas.NITROUS_DIOXIDE);
+        Registry.register(ATMOSPHERIC_GAS, AtmosphericGas.IODINE_ID, AtmosphericGas.IODINE);
 
         Registry.register(TRAVEL_PREDICATE, new Identifier(GalacticraftAPI.MOD_ID, "access_weight"), AccessWeightPredicateType.INSTANCE);
         Registry.register(TRAVEL_PREDICATE, new Identifier(GalacticraftAPI.MOD_ID, "constant"), ConstantTravelPredicateType.INSTANCE);
