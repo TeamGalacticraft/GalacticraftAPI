@@ -23,7 +23,6 @@
 package dev.galacticraft.impl.internal.mixin.client;
 
 import dev.galacticraft.api.registry.RegistryUtil;
-import dev.galacticraft.api.universe.celestialbody.landable.Landable;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.block.BlockState;
@@ -44,6 +43,6 @@ public abstract class BlockDustParticleMixin extends Particle {
     @Inject(method = "<init>(Lnet/minecraft/client/world/ClientWorld;DDDDDDLnet/minecraft/block/BlockState;Lnet/minecraft/util/math/BlockPos;)V", at = @At("RETURN"))
     protected void BlockDustParticle(ClientWorld world, double x, double y, double z, double velocityX, double velocityY, double velocityZ, BlockState state, BlockPos blockPos, CallbackInfo ci) {
         this.gravityStrength = 1.0f;
-        RegistryUtil.getCelestialBodyByDimension(world.getRegistryManager(), world.getRegistryKey()).ifPresent(celestialBodyType -> this.gravityStrength = ((Landable) celestialBodyType.type()).gravity(celestialBodyType.config()));
+        RegistryUtil.getCelestialBodyByDimension(world).ifPresent(celestialBodyType -> this.gravityStrength = celestialBodyType.type().gravity(celestialBodyType.config()));
     }
 }

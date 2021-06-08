@@ -46,7 +46,7 @@ public abstract class ClientPlayNetworkHandlerMixin implements ClientSatelliteAc
     private final @Unique List<SatelliteListener> listeners_gcr = new ArrayList<>();
 
     @Override
-    public @Unmodifiable Map<Identifier, CelestialBody<SatelliteConfig, SatelliteType>> getSatellites() {
+    public @Unmodifiable Map<Identifier, CelestialBody<SatelliteConfig, SatelliteType>> satellites() {
         return this.satellites_gcr;
     }
 

@@ -35,7 +35,7 @@ import java.util.function.Predicate;
 
 public class SatelliteRecipe implements Predicate<Inventory> {
     public static final Codec<SatelliteRecipe> CODEC = RecordCodecBuilder.create(i -> i.group(
-            ItemStack.CODEC.listOf().fieldOf("items").forGetter(SatelliteRecipe::getIngredients)
+            ItemStack.CODEC.listOf().fieldOf("items").forGetter(SatelliteRecipe::ingredients)
     ).apply(i, SatelliteRecipe::new));
     private final List<ItemStack> ingredients;
 
@@ -56,13 +56,13 @@ public class SatelliteRecipe implements Predicate<Inventory> {
         return new SatelliteRecipe(list);
     }
 
-    public List<ItemStack> getIngredients() {
+    public List<ItemStack> ingredients() {
         return ingredients;
     }
 
     public PacketByteBuf serialize(PacketByteBuf buf) {
-        buf.writeInt(this.getIngredients().size());
-        for (ItemStack stack : this.getIngredients()) {
+        buf.writeInt(this.ingredients().size());
+        for (ItemStack stack : this.ingredients()) {
             buf.writeItemStack(stack);
         }
         return buf;

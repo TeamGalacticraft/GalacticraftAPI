@@ -43,7 +43,7 @@ public abstract class TravelPredicateType<C extends TravelPredicateConfig> {
 
     public abstract AccessType canTravelTo(CelestialBody<?, ?> type, Object2BooleanFunction<RocketPart> parts, C config);
 
-    public Codec<ConfiguredTravelPredicate<C>> getCodec() {
+    public Codec<ConfiguredTravelPredicate<C>> codec() {
         return this.codec;
     }
 

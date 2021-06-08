@@ -34,7 +34,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public record CelestialBody<C extends CelestialBodyConfig, T extends CelestialBodyType<C>>(T type, C config) {
-    public static final Codec<CelestialBody<?, ?>> CODEC = AddonRegistry.CELESTIAL_BODY_TYPE.dispatch(CelestialBody::type, CelestialBodyType::getCodec);
+    public static final Codec<CelestialBody<?, ?>> CODEC = AddonRegistry.CELESTIAL_BODY_TYPE.dispatch(CelestialBody::type, CelestialBodyType::codec);
 
     public @NotNull TranslatableText name() {
         return this.type().name(this.config());

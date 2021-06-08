@@ -8,14 +8,14 @@ plugins {
     id("org.cadixdev.licenser") version "0.5.1"
 }
 
-val mc = "1.17-rc1"
+val mc = "1.17"
 val yarn = "1"
 val loader = "0.11.3"
-val fabric = "0.34.8+1.17"
-val lba = "0.9.0-pre.2"
+val fabric = "0.34.9+1.17"
+val lba = "0.9.0"
 
 group = "dev.galacticraft"
-version ="0.4.0-prealpha1+$mc"
+version ="0.4.0-prealpha2+$mc"
 
 base {
     archivesBaseName = "GalacticraftAPI"
@@ -30,9 +30,8 @@ val testmodSourceSet = sourceSets.create("testmod") {
 
 loom {
     refmapName = "galacticraft-api.refmap.json"
-    accessWidener("src/main/resources/galacticraft-api.accesswidener")
+    accessWidener(project.file("src/main/resources/galacticraft-api.accesswidener"))
 
-    @Suppress("UnstableApiUsage")
     runs {
         register("TestModClient") {
             client()
@@ -111,6 +110,7 @@ java {
 }
 
 tasks.withType<JavaCompile> {
+    dependsOn(tasks.checkLicenses)
     options.encoding = "UTF-8"
     options.release.set(16)
 }

@@ -51,7 +51,7 @@ public abstract class CelestialBodyType<C extends CelestialBodyConfig> {
 
     public abstract @NotNull CelestialDisplay<?, ?> display(C config);
 
-    public Codec<CelestialBody<C, CelestialBodyType<C>>> getCodec() {
+    public Codec<CelestialBody<C, CelestialBodyType<C>>> codec() {
         return this.codec;
     }
 

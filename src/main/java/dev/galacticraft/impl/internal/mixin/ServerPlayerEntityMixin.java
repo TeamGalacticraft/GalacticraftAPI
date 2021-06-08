@@ -82,32 +82,32 @@ public abstract class ServerPlayerEntityMixin implements ServerResearchAccessor 
     }
 
     @Override
-    public NbtCompound writeResearch_gcr(NbtCompound tag) {
-        tag.putInt("size", this.unlockedResearch.size());
+    public NbtCompound writeToNbt_gcr(NbtCompound nbt) {
+        nbt.putInt("size", this.unlockedResearch.size());
         int i = 0;
         for (Identifier id : this.unlockedResearch) {
-            tag.putString("id_" + i, id.toString());
+            nbt.putString("id_" + i, id.toString());
             i++;
         }
-        return tag;
+        return nbt;
     }
 
     @Override
-    public void readFromTag_gcr(NbtCompound tag) {
+    public void readFromNbt_gcr(NbtCompound nbt) {
         this.unlockedResearch.clear();
-        int size = tag.getInt("size");
+        int size = nbt.getInt("size");
         for (int i = 0; i < size; i++) {
-            this.unlockedResearch.add(new Identifier(tag.getString("id_" + i)));
+            this.unlockedResearch.add(new Identifier(nbt.getString("id_" + i)));
         }
     }
 
     @Inject(method = "readCustomDataFromNbt", at = @At("RETURN"))
-    private void readTag_gcr(NbtCompound tag, CallbackInfo ci) {
-        this.readFromTag_gcr(tag);
+    private void readCustomDataFromNbt_gcr(NbtCompound nbt, CallbackInfo ci) {
+        this.readFromNbt_gcr(nbt);
     }
 
     @Inject(method = "writeCustomDataToNbt", at = @At("RETURN"))
-    private void writeTag_gcr(NbtCompound tag, CallbackInfo ci) {
-        this.writeResearch_gcr(tag);
+    private void writeCustomDataToNbt_gcr(NbtCompound nbt, CallbackInfo ci) {
+        this.writeToNbt_gcr(nbt);
     }
 }

@@ -31,24 +31,34 @@ import net.minecraft.util.registry.DynamicRegistryManager;
 
 public interface RocketData {
     static RocketData create(int color, RocketPart cone, RocketPart body, RocketPart fin, RocketPart booster, RocketPart bottom, RocketPart upgrade) {
+        if (cone == RocketPart.INVALID
+                || body == RocketPart.INVALID
+                || fin == RocketPart.INVALID
+                || booster == RocketPart.INVALID
+                || bottom == RocketPart.INVALID
+                || upgrade == RocketPart.INVALID) return empty();
         return new RocketDataImpl(color, cone, body, fin, booster, bottom, upgrade);
     }
 
-    static RocketData fromTag(NbtCompound tag, DynamicRegistryManager manager) {
-        return RocketDataImpl.fromTag(tag, manager);
+    static RocketData fromNbt(NbtCompound nbt, DynamicRegistryManager manager) {
+        return RocketDataImpl.fromNbt(nbt, manager);
     }
 
-    NbtCompound toTag(DynamicRegistryManager manager, NbtCompound tag);
+    static RocketData empty() {
+        return RocketDataImpl.empty();
+    };
+
+    NbtCompound toNbt(DynamicRegistryManager manager, NbtCompound nbt);
 
     int color();
 
-    int getRed();
+    int red();
 
-    int getGreen();
+    int green();
 
-    int getBlue();
+    int blue();
 
-    int getAlpha();
+    int alpha();
 
     RocketPart cone();
 
@@ -68,5 +78,5 @@ public interface RocketData {
 
     RocketPart getPartForType(RocketPartType type);
 
-    RocketPart[] getParts();
+    RocketPart[] parts();
 }

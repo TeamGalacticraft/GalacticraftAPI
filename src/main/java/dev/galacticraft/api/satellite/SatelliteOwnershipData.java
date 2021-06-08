@@ -29,6 +29,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.PacketByteBuf;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Unmodifiable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,8 +42,8 @@ public class SatelliteOwnershipData {
             Codec.LONG_STREAM.fieldOf("owner").xmap(stream -> {
                 PrimitiveIterator.OfLong iterator = stream.iterator();
                 return new UUID(iterator.nextLong(), iterator.nextLong());
-            }, uuid -> LongStream.of(uuid.getMostSignificantBits(), uuid.getLeastSignificantBits())).forGetter(SatelliteOwnershipData::getOwner),
-            Codec.STRING.fieldOf("username").forGetter(SatelliteOwnershipData::getUsername),
+            }, uuid -> LongStream.of(uuid.getMostSignificantBits(), uuid.getLeastSignificantBits())).forGetter(SatelliteOwnershipData::owner),
+            Codec.STRING.fieldOf("username").forGetter(SatelliteOwnershipData::username),
             Codec.LONG_STREAM.listOf().fieldOf("owner").xmap(list -> {
                 List<UUID> uuids = new ArrayList<>(list.size());
                 for (LongStream longStream : list) {
@@ -56,13 +57,13 @@ public class SatelliteOwnershipData {
                     longs.add(LongStream.of(uuid.getMostSignificantBits(), uuid.getLeastSignificantBits()));
                 }
                 return longs;
-            }).forGetter(SatelliteOwnershipData::getTrusted),
-            Codec.BOOL.fieldOf("open").forGetter(SatelliteOwnershipData::isOpen)
+            }).forGetter(SatelliteOwnershipData::trusted),
+            Codec.BOOL.fieldOf("open").forGetter(SatelliteOwnershipData::open)
             ).apply(instance, SatelliteOwnershipData::new));
 
     private final UUID owner;
-    private String username;
     private final List<UUID> trusted;
+    private String username;
     private boolean open;
 
     public SatelliteOwnershipData(@NotNull UUID owner, String username, List<UUID> trusted, boolean open) {
@@ -72,61 +73,52 @@ public class SatelliteOwnershipData {
         this.trusted = trusted;
     }
 
-    public static SatelliteOwnershipData fromPacket(PacketByteBuf buf) {
-        int size = buf.readInt();
-        SatelliteOwnershipData data = new SatelliteOwnershipData(buf.readUuid(), buf.readString(), new ArrayList<>(size), buf.readBoolean());
-        for (int i = 0; i < size; i++) {
-            data.trusted.add(buf.readUuid());
-        }
-        return data;
-    }
-
-    public void setUsername(String username) {
+    public void username(String username) {
         this.username = username;
     }
 
-    public @NotNull String getUsername() {
+    public @NotNull String username() {
         return username;
     }
 
-    public @NotNull UUID getOwner() {
+    public @NotNull UUID owner() {
         return owner;
     }
 
-    public boolean isOpen() {
+    public boolean open() {
         return this.open;
     }
 
-    public @NotNull List<UUID> getTrusted() {
+    public @NotNull @Unmodifiable List<UUID> trusted() {
         return ImmutableList.copyOf(trusted);
     }
 
-    public void addTrusted(UUID uuid) {
+    public void trust(UUID uuid) {
         this.trusted.add(uuid);
     }
 
-    public void removeTrusted(UUID uuid) {
+    public void distrust(UUID uuid) {
         this.trusted.remove(uuid);
     }
 
     public boolean canAccess(PlayerEntity player) {
-        return player.getUuid().equals(getOwner()) || trusted.contains(player.getUuid());
+        return player.getUuid().equals(this.owner()) || trusted.contains(player.getUuid());
     }
 
     public void writePacket(PacketByteBuf buf) {
-        buf.writeUuid(getOwner());
-        buf.writeString(getUsername());
-        buf.writeBoolean(isOpen());
-        buf.writeInt(trusted.size());
-        for (UUID uuid : trusted) {
+        buf.writeUuid(this.owner());
+        buf.writeString(this.username());
+        buf.writeBoolean(this.open());
+        buf.writeInt(this.trusted.size());
+        for (UUID uuid : this.trusted) {
             buf.writeUuid(uuid);
         }
     }
 
-    public NbtCompound toTag(NbtCompound tag) {
-        tag.putUuid("owner", getOwner());
-        tag.putString("username", getUsername());
-        tag.putBoolean("open", isOpen());
+    public NbtCompound toNbt(NbtCompound nbt) {
+        nbt.putUuid("owner", owner());
+        nbt.putString("username", username());
+        nbt.putBoolean("open", open());
         long[] trusted = new long[this.trusted.size() * 2];
         List<UUID> uuids = this.trusted;
         for (int i = 0, uuidsSize = uuids.size(); i < uuidsSize; i++) {
@@ -134,15 +126,24 @@ public class SatelliteOwnershipData {
             trusted[i * 2] = uuid.getMostSignificantBits();
             trusted[(i * 2) + 1] = uuid.getLeastSignificantBits();
         }
-        tag.putLongArray("trusted", trusted);
-        return tag;
+        nbt.putLongArray("trusted", trusted);
+        return nbt;
     }
 
-    public static SatelliteOwnershipData fromTag(NbtCompound tag) {
-        long[] trusted = tag.getLongArray("trusted");
-        SatelliteOwnershipData data = new SatelliteOwnershipData(tag.getUuid("owner"), tag.getString("username"), new ArrayList<>(trusted.length / 2), tag.getBoolean("open"));
+    public static SatelliteOwnershipData fromNbt(NbtCompound nbt) {
+        long[] trusted = nbt.getLongArray("trusted");
+        SatelliteOwnershipData data = new SatelliteOwnershipData(nbt.getUuid("owner"), nbt.getString("username"), new ArrayList<>(trusted.length / 2), nbt.getBoolean("open"));
         for (int i = 0; i < trusted.length; i += 2) {
             data.trusted.add(new UUID(trusted[i], trusted[i + 1]));
+        }
+        return data;
+    }
+
+    public static SatelliteOwnershipData fromPacket(PacketByteBuf buf) {
+        int size = buf.readInt();
+        SatelliteOwnershipData data = new SatelliteOwnershipData(buf.readUuid(), buf.readString(), new ArrayList<>(size), buf.readBoolean());
+        for (int i = 0; i < size; i++) {
+            data.trusted.add(buf.readUuid());
         }
         return data;
     }

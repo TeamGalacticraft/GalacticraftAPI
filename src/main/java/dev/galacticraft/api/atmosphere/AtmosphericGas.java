@@ -31,6 +31,7 @@ import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.DynamicRegistryManager;
 import net.minecraft.util.registry.Registry;
+import net.minecraft.util.registry.RegistryKey;
 
 public record AtmosphericGas(TranslatableText name, String symbol) {
     public static final Codec<AtmosphericGas> CODEC = RecordCodecBuilder.create(instance ->
@@ -51,6 +52,7 @@ public record AtmosphericGas(TranslatableText name, String symbol) {
             "N"
     );
     public static final Identifier OXYGEN_ID = new Identifier(GalacticraftAPI.MOD_ID, "oxygen");
+    public static final RegistryKey<AtmosphericGas> OXYGEN_KEY = RegistryKey.of(AddonRegistry.ATMOSPHERIC_GAS_KEY, OXYGEN_ID);
     public static final AtmosphericGas OXYGEN = new AtmosphericGas(
             new TranslatableText("ui.galacticraft-api.gases.oxygen"),
             "O2"
@@ -121,7 +123,7 @@ public record AtmosphericGas(TranslatableText name, String symbol) {
             "I2"
     );
     
-    public String getSymbolForDisplay() {
+    public String symbolForDisplay() {
         return this.symbol()
                 .replaceAll("0", "\u2080")
                 .replaceAll("1", "\u2081")
@@ -167,6 +169,6 @@ public record AtmosphericGas(TranslatableText name, String symbol) {
 
     @Override
     public String toString() {
-        return this.getSymbolForDisplay();
+        return this.symbolForDisplay();
     }
 }

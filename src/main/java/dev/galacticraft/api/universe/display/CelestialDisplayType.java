@@ -37,7 +37,7 @@ public abstract class CelestialDisplayType<C extends CelestialDisplayConfig> {
     @Environment(EnvType.CLIENT)
     public abstract void render(MatrixStack matrices, BufferBuilder buffer, int mouseX, int mouseY, float delta, C config); //todo
 
-    public Codec<CelestialDisplay<C, CelestialDisplayType<C>>> getCodec() {
+    public Codec<CelestialDisplay<C, CelestialDisplayType<C>>> codec() {
         return this.codec;
     }
 

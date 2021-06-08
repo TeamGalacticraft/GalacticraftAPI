@@ -33,7 +33,7 @@ public interface ServerResearchAccessor extends ResearchAccessor {
 
     PacketByteBuf writeResearchChanges_gcr(PacketByteBuf buf);
 
-    NbtCompound writeResearch_gcr(NbtCompound tag);
+    NbtCompound writeToNbt_gcr(NbtCompound nbt);
 
-    void readFromTag_gcr(NbtCompound tag);
+    void readFromNbt_gcr(NbtCompound nbt);
 }

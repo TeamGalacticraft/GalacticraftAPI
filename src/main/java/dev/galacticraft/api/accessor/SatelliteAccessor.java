@@ -31,7 +31,7 @@ import org.jetbrains.annotations.Unmodifiable;
 import java.util.Map;
 
 public interface SatelliteAccessor {
-    @Unmodifiable Map<Identifier, CelestialBody<SatelliteConfig, SatelliteType>> getSatellites();
+    @Unmodifiable Map<Identifier, CelestialBody<SatelliteConfig, SatelliteType>> satellites();
 
     void addSatellite(Identifier id, CelestialBody<SatelliteConfig, SatelliteType> satellite);
 

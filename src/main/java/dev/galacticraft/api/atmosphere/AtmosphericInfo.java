@@ -40,6 +40,10 @@ public record AtmosphericInfo(Object2DoubleMap<RegistryKey<AtmosphericGas>> comp
             Codec.FLOAT.fieldOf("pressure").forGetter(AtmosphericInfo::pressure)
     ).apply(atmosphericInfoInstance, AtmosphericInfo::new));
 
+    public boolean breathable() {
+        return this.composition().getOrDefault(AtmosphericGas.OXYGEN_KEY, 0.0) > 1000.0; //todo: get joe to do actual numbers?
+    }
+
     public void writePacket(PacketByteBuf buf) {
         buf.writeInt(this.composition.size());
         buf.writeFloat(this.pressure);

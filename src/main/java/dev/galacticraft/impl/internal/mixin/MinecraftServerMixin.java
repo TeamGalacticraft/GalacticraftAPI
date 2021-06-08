@@ -78,7 +78,7 @@ public abstract class MinecraftServerMixin implements SatelliteAccessor {
     private final Map<Identifier, CelestialBody<SatelliteConfig, SatelliteType>> satellites = new HashMap<>();
 
     @Override
-    public @Unmodifiable Map<Identifier, CelestialBody<SatelliteConfig, SatelliteType>> getSatellites() {
+    public @Unmodifiable Map<Identifier, CelestialBody<SatelliteConfig, SatelliteType>> satellites() {
         return ImmutableMap.copyOf(this.satellites);
     }
 
@@ -95,14 +95,14 @@ public abstract class MinecraftServerMixin implements SatelliteAccessor {
     @Inject(method = "save", at = @At("RETURN"))
     private void save_gcr(boolean suppressLogs, boolean bl, boolean bl2, CallbackInfoReturnable<Boolean> cir) {
         Path path = this.session.getDirectory(WorldSavePath.ROOT);
-        NbtList tag = new NbtList();
+        NbtList nbt = new NbtList();
         for (Map.Entry<Identifier, CelestialBody<SatelliteConfig, SatelliteType>> entry : this.satellites.entrySet()) {
             NbtCompound compound = (NbtCompound) SatelliteConfig.CODEC.encode(entry.getValue().config(), NbtOps.INSTANCE, new NbtCompound()).get().orThrow();
             compound.putString("id", entry.getKey().toString());
-            tag.add(compound);
+            nbt.add(compound);
         }
         NbtCompound compound = new NbtCompound();
-        compound.put("satellites", tag);
+        compound.put("satellites", nbt);
         try {
             NbtIo.writeCompressed(compound, new File(path.toFile(), "satellites.dat"));
         } catch (Throwable exception) {
@@ -115,9 +115,9 @@ public abstract class MinecraftServerMixin implements SatelliteAccessor {
         Path path = this.session.getDirectory(WorldSavePath.ROOT);
         if (new File(path.toFile(), "satellites.dat").exists()) {
             try {
-                NbtList tag = NbtIo.readCompressed(new File(path.toFile(), "satellites.dat")).getList("satellites", NbtType.COMPOUND);
-                assert tag != null : "tag was null";
-                for (NbtElement compound : tag) {
+                NbtList nbt = NbtIo.readCompressed(new File(path.toFile(), "satellites.dat")).getList("satellites", NbtType.COMPOUND);
+                assert nbt != null : "NBT list was null";
+                for (NbtElement compound : nbt) {
                     assert compound instanceof NbtCompound : "Not a compound?!";
                     this.satellites.put(new Identifier(((NbtCompound)compound).getString("id")), new CelestialBody<>(SatelliteType.INSTANCE, SatelliteConfig.CODEC.decode(NbtOps.INSTANCE, compound).get().orThrow().getFirst()));
                 }

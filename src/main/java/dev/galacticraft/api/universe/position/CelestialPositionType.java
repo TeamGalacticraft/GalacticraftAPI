@@ -34,7 +34,7 @@ public abstract class CelestialPositionType<C extends CelestialPositionConfig> {
 
     public abstract double y(C config, int worldTime, float delta);
 
-    public Codec<CelestialPosition<C, CelestialPositionType<C>>> getCodec() {
+    public Codec<CelestialPosition<C, CelestialPositionType<C>>> codec() {
         return this.codec;
     }
 
