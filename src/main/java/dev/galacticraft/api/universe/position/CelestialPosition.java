@@ -29,10 +29,14 @@ public record CelestialPosition<C extends CelestialPositionConfig, T extends Cel
     public static final Codec<CelestialPosition<?, ?>> CODEC = AddonRegistry.CELESTIAL_POSITION_TYPE.dispatch(CelestialPosition::type, CelestialPositionType::codec);
 
     public double x(int worldTime, float delta) {
-        return this.type.x(this.config, worldTime, delta);
+        return this.type().x(this.config(), worldTime, delta);
     }
 
     public double y(int worldTime, float delta) {
-        return this.type.x(this.config, worldTime, delta);
+        return this.type().y(this.config(), worldTime, delta);
+    }
+
+    public float lineScale() {
+        return this.type().lineScale(this.config());
     }
 }

@@ -35,7 +35,7 @@ public class EmptyCelestialDisplayType extends CelestialDisplayType<EmptyCelesti
     }
 
     @Override
-    public void render(MatrixStack matrices, BufferBuilder buffer, int mouseX, int mouseY, float delta, EmptyCelestialDisplayConfig config) {
+    public void render(MatrixStack matrices, BufferBuilder buffer, int scale, int mouseX, int mouseY, float delta, EmptyCelestialDisplayConfig config) {
 
     }
 }

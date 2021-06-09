@@ -39,7 +39,7 @@ public class IconCelestialDisplayType extends CelestialDisplayType<IconCelestial
     }
 
     @Override
-    public void render(MatrixStack matrices, BufferBuilder buffer, int mouseX, int mouseY, float delta, IconCelestialDisplayConfig config) {
+    public void render(MatrixStack matrices, BufferBuilder buffer, int scale, int mouseX, int mouseY, float delta, IconCelestialDisplayConfig config) {
         buffer.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_TEXTURE_COLOR);
         buffer.vertex(-8 * config.scale(), -8 * config.scale(), 0).texture(config.u(), config.v()).color(255, 255, 255, 255).next();
         buffer.vertex(-8 * config.scale(), 8 * config.scale(), 0).texture(config.u(), config.v() + config.height()).color(255, 255, 255, 255).next();

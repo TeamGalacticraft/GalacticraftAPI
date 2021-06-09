@@ -24,7 +24,16 @@ package dev.galacticraft.api.universe.display;
 
 import com.mojang.serialization.Codec;
 import dev.galacticraft.api.registry.AddonRegistry;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+import net.minecraft.client.render.BufferBuilder;
+import net.minecraft.client.util.math.MatrixStack;
 
 public record CelestialDisplay<C extends CelestialDisplayConfig, T extends CelestialDisplayType<C>>(T type, C config) {
     public static final Codec<CelestialDisplay<?, ?>> CODEC = AddonRegistry.CELESTIAL_DISPLAY_TYPE.dispatch(CelestialDisplay::type, CelestialDisplayType::codec);
+
+    @Environment(EnvType.CLIENT)
+    public void render(MatrixStack matrices, BufferBuilder buffer, int scale, int mouseX, int mouseY, float delta) {
+        this.type().render(matrices, buffer, scale, mouseX, mouseY, delta, this.config());
+    }
 }
