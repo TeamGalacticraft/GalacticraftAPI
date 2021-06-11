@@ -23,19 +23,28 @@
 package dev.galacticraft.impl.internal.mixin.client;
 
 import dev.galacticraft.api.accessor.ClientResearchAccessor;
+import dev.galacticraft.api.team.Team;
+import dev.galacticraft.api.team.network.ClientTeamsProvider;
+import dev.galacticraft.api.team.network.PacketType;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.network.PacketByteBuf;
+import net.minecraft.text.LiteralText;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Mixin(ClientPlayerEntity.class)
-public abstract class ClientPlayerEntityMixin implements ClientResearchAccessor {
+public abstract class ClientPlayerEntityMixin implements ClientResearchAccessor, ClientTeamsProvider {
+    @Shadow public abstract void sendMessage(Text message, boolean actionBar);
+
     @Unique
     private final List<Identifier> unlockedResearch = new ArrayList<>();
+    private @Unique Team galacticraftTeam;
 
     @Override
     public void readChanges(PacketByteBuf buf) {
@@ -53,5 +62,35 @@ public abstract class ClientPlayerEntityMixin implements ClientResearchAccessor 
     @Override
     public boolean hasUnlocked_gcr(Identifier id) {
         return this.unlockedResearch.contains(id);
+    }
+
+    @Override
+    public Team getGalacticraftTeam() {
+        return this.galacticraftTeam;
+    }
+
+    @Override
+    public void setGalacticraftTeam(Team team) {
+        this.galacticraftTeam = team;
+    }
+
+    @Override
+    public void handleGalacticraftTeamPacket(PacketType type, PacketByteBuf buf) {
+        switch (type) {
+            case DELETE -> {
+                this.sendMessage(new LiteralText("[Galacticraft]: %s has been disbanded.".formatted(this.galacticraftTeam.getName())), false);
+                this.galacticraftTeam = null;
+            }
+            case UPDATE -> this.galacticraftTeam = Team.readNbt(buf.readNbt()); // @todo: add more notifs to team update
+            case REMOVE -> {
+                this.sendMessage(new LiteralText("[Galacticraft]: You have been kicked from %s.".formatted(this.galacticraftTeam.getName())), false);
+                this.galacticraftTeam = null;
+            }
+            case INVITE -> {
+                this.sendMessage(new LiteralText("[Galacticraft]: You have received an invite to join %s".formatted(this.galacticraftTeam.getName())), false);
+                this.addGalacticraftInvite(buf.readUuid());
+            }
+            default -> throw new IllegalStateException("Unexpected value: " + type);
+        }
     }
 }

@@ -24,6 +24,8 @@ package dev.galacticraft.impl.internal.client.fabric;
 
 import dev.galacticraft.api.accessor.ClientResearchAccessor;
 import dev.galacticraft.api.accessor.SatelliteAccessor;
+import dev.galacticraft.api.team.network.ClientTeamsProvider;
+import dev.galacticraft.api.team.network.PacketType;
 import dev.galacticraft.api.universe.celestialbody.CelestialBody;
 import dev.galacticraft.impl.internal.fabric.GalacticraftAPI;
 import dev.galacticraft.impl.universe.celestialbody.type.SatelliteType;
@@ -53,6 +55,22 @@ public class ClientGalacticraftAPI implements ClientModInitializer {
         ClientPlayNetworking.registerGlobalReceiver(new Identifier(GalacticraftAPI.MOD_ID, "remove_satellite"), (client, networkHandler, buffer, sender) -> {
             PacketByteBuf buf = new PacketByteBuf(buffer.copy());
             ((SatelliteAccessor) networkHandler).removeSatellite(buf.readIdentifier());
+        });
+
+        ClientPlayNetworking.registerGlobalReceiver(new Identifier(GalacticraftAPI.MOD_ID, "team_update"), (client, handler, buf, responseSender) -> {
+            ((ClientTeamsProvider)client.player).handleGalacticraftTeamPacket(PacketType.UPDATE, new PacketByteBuf(buf.copy()));
+        });
+
+        ClientPlayNetworking.registerGlobalReceiver(new Identifier(GalacticraftAPI.MOD_ID, "team_invite"), (client, handler, buf, responseSender) -> {
+            ((ClientTeamsProvider)client.player).handleGalacticraftTeamPacket(PacketType.INVITE, new PacketByteBuf(buf.copy()));
+        });
+
+        ClientPlayNetworking.registerGlobalReceiver(new Identifier(GalacticraftAPI.MOD_ID, "team_delete"), (client, handler, buf, responseSender) -> {
+            ((ClientTeamsProvider)client.player).handleGalacticraftTeamPacket(PacketType.DELETE, new PacketByteBuf(buf.copy()));
+        });
+
+        ClientPlayNetworking.registerGlobalReceiver(new Identifier(GalacticraftAPI.MOD_ID, "team_remove"), (client, handler, buf, responseSender) -> {
+            ((ClientTeamsProvider)client.player).handleGalacticraftTeamPacket(PacketType.REMOVE, new PacketByteBuf(buf.copy()));
         });
     }
 }
