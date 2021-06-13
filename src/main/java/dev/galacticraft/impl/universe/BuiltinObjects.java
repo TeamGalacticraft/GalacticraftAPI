@@ -66,7 +66,7 @@ public class BuiltinObjects {
                     new TranslatableText("star.galacticraft-api.sol.description"),
                     MILKY_WAY_KEY,
                     StaticCelestialPositionType.INSTANCE.configure(new StaticCelestialPositionConfig(0, 0)),
-                    IconCelestialDisplayType.INSTANCE.configure(new IconCelestialDisplayConfig(new Identifier(GalacticraftAPI.MOD_ID, "textures/body_icons.png"), 0, 0, 16, 16, 64, 64, 1)),
+                    IconCelestialDisplayType.INSTANCE.configure(new IconCelestialDisplayConfig(new Identifier(GalacticraftAPI.MOD_ID, "textures/body_icons.png"), 0, 0, 16, 16, 1)),
                     1,
                     5500
             )
@@ -80,7 +80,7 @@ public class BuiltinObjects {
                     MILKY_WAY_KEY,
                     SOL_KEY,
                     OrbitalCelestialPositionType.INSTANCE.configure(new OrbitalCelestialPositionConfig(1536000.0, 1.0, true)),
-                    IconCelestialDisplayType.INSTANCE.configure(new IconCelestialDisplayConfig(new Identifier(GalacticraftAPI.MOD_ID, "textures/body_icons.png"), 0, 16, 16, 16, 64, 64, 1)),
+                    IconCelestialDisplayType.INSTANCE.configure(new IconCelestialDisplayConfig(new Identifier(GalacticraftAPI.MOD_ID, "textures/body_icons.png"), 0, 16, 16, 16, 1)),
                     World.OVERWORLD,
                     new AtmosphericInfo.Builder()
                             .pressure(1.0f)

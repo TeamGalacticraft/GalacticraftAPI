@@ -22,13 +22,17 @@
 
 package dev.galacticraft.impl.universe.display.type;
 
+import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.serialization.Codec;
 import dev.galacticraft.api.universe.display.CelestialDisplayType;
 import dev.galacticraft.impl.universe.display.config.IconCelestialDisplayConfig;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.*;
+import net.minecraft.client.texture.AbstractTexture;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.math.Matrix4f;
+import org.lwjgl.opengl.GL32C;
 
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -44,12 +48,16 @@ public class IconCelestialDisplayType extends CelestialDisplayType<IconCelestial
     public void render(MatrixStack matrices, BufferBuilder buffer, int size, double mouseX, double mouseY, float delta, Consumer<Supplier<Shader>> shaderSetter, IconCelestialDisplayConfig config) {
         shaderSetter.accept(GameRenderer::getPositionTexShader);
         Matrix4f model = matrices.peek().getModel();
-        RenderSystem.setShaderTexture(0, config.texture());
+        AbstractTexture texture = MinecraftClient.getInstance().getTextureManager().getTexture(config.texture());
+        RenderSystem.setShaderTexture(0, texture.getGlId());
+        texture.bindTexture();
+        float width = GlStateManager._getTexLevelParameter(GL32C.GL_TEXTURE_2D, 0, GL32C.GL_TEXTURE_WIDTH);
+        float height = GlStateManager._getTexLevelParameter(GL32C.GL_TEXTURE_2D, 0, GL32C.GL_TEXTURE_HEIGHT);
         buffer.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_TEXTURE);
-        buffer.vertex(model, config.scale() * -size, config.scale() * -size, 0).texture(config.u(), config.v()).next();
-        buffer.vertex(model, config.scale() * -size, config.scale() * size, 0).texture(config.u(), config.v() + (config.height() / (float)config.texHeight())).next();
-        buffer.vertex(model, config.scale() * size, config.scale() * size, 0).texture(config.u() + (config.width() / (float)config.texWidth()), config.v() + (config.height() / (float)config.texHeight())).next();
-        buffer.vertex(model, config.scale() * size, config.scale() * -size, 0).texture(config.u() + (config.width() / (float)config.texWidth()), config.v()).next();
+        buffer.vertex(model, config.scale() * -size, config.scale() * -size, 0).texture(config.u() / width, config.v() / height).next();
+        buffer.vertex(model, config.scale() * -size, config.scale() * size, 0).texture(config.u() / width, (config.v() + config.height()) / height).next();
+        buffer.vertex(model, config.scale() * size, config.scale() * size, 0).texture((config.u() + config.width()) / width, (config.v() + config.height()) / height).next();
+        buffer.vertex(model, config.scale() * size, config.scale() * -size, 0).texture((config.u() + config.width()) / width, config.v() / height).next();
         buffer.end();
         BufferRenderer.draw(buffer);
     }
