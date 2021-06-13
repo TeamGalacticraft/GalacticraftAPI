@@ -104,7 +104,7 @@ public class SatelliteType extends CelestialBodyType<SatelliteConfig> implements
         DimensionOptions options = new DimensionOptions(() -> type, VoidChunkGenerator.INSTANCE);
         SatelliteOwnershipData ownershipData = new SatelliteOwnershipData(player.getUuid(), player.getEntityName(), new LinkedList<>(), false);
         CelestialPosition<?, ?> position = new CelestialPosition<>(OrbitalCelestialPositionType.INSTANCE, new OrbitalCelestialPositionConfig(1550, 10.0f, false));
-        CelestialDisplay<?, ?> display = new CelestialDisplay<>(IconCelestialDisplayType.INSTANCE, new IconCelestialDisplayConfig(new Identifier(GalacticraftAPI.MOD_ID, "satellite"), 0, 0, 16, 16,1));
+        CelestialDisplay<?, ?> display = new CelestialDisplay<>(IconCelestialDisplayType.INSTANCE, new IconCelestialDisplayConfig(new Identifier(GalacticraftAPI.MOD_ID, "satellite"), 0, 0, 16, 16,16, 16, 1));
         RegistryKey<World> key = RegistryKey.of(Registry.WORLD_KEY, id);
         RegistryKey<DimensionType> key2 = RegistryKey.of(Registry.DIMENSION_TYPE_KEY, id);
         assert server.getWorld(key) == null : "World already registered";

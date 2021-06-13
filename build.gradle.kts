@@ -9,13 +9,13 @@ plugins {
 }
 
 val mc = "1.17"
-val yarn = "1"
+val yarn = "10"
 val loader = "0.11.3"
-val fabric = "0.34.9+1.17"
+val fabric = "0.35.1+1.17"
 val lba = "0.9.0"
 
 group = "dev.galacticraft"
-version ="0.4.0-prealpha3+$mc"
+version ="0.4.0-prealpha4+$mc"
 
 base {
     archivesBaseName = "GalacticraftAPI"

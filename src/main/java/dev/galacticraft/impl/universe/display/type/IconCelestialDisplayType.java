@@ -22,14 +22,16 @@
 
 package dev.galacticraft.impl.universe.display.type;
 
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.serialization.Codec;
 import dev.galacticraft.api.universe.display.CelestialDisplayType;
 import dev.galacticraft.impl.universe.display.config.IconCelestialDisplayConfig;
-import net.minecraft.client.render.BufferBuilder;
-import net.minecraft.client.render.BufferRenderer;
-import net.minecraft.client.render.VertexFormat;
-import net.minecraft.client.render.VertexFormats;
+import net.minecraft.client.render.*;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.util.math.Matrix4f;
+
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 public class IconCelestialDisplayType extends CelestialDisplayType<IconCelestialDisplayConfig> {
     public static final IconCelestialDisplayType INSTANCE = new IconCelestialDisplayType(IconCelestialDisplayConfig.CODEC);
@@ -39,12 +41,15 @@ public class IconCelestialDisplayType extends CelestialDisplayType<IconCelestial
     }
 
     @Override
-    public void render(MatrixStack matrices, BufferBuilder buffer, int scale, int mouseX, int mouseY, float delta, IconCelestialDisplayConfig config) {
-        buffer.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_TEXTURE_COLOR);
-        buffer.vertex(-8 * config.scale(), -8 * config.scale(), 0).texture(config.u(), config.v()).color(255, 255, 255, 255).next();
-        buffer.vertex(-8 * config.scale(), 8 * config.scale(), 0).texture(config.u(), config.v() + config.height()).color(255, 255, 255, 255).next();
-        buffer.vertex(8 * config.scale(), 8 * config.scale(), 0).texture(config.u() + config.width(), config.v() + config.height()).color(255, 255, 255, 255).next();
-        buffer.vertex(8 * config.scale(), -8 * config.scale(), 0).texture(config.u() + config.width(), config.v()).color(255, 255, 255, 255).next();
+    public void render(MatrixStack matrices, BufferBuilder buffer, int size, double mouseX, double mouseY, float delta, Consumer<Supplier<Shader>> shaderSetter, IconCelestialDisplayConfig config) {
+        shaderSetter.accept(GameRenderer::getPositionTexShader);
+        Matrix4f model = matrices.peek().getModel();
+        RenderSystem.setShaderTexture(0, config.texture());
+        buffer.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_TEXTURE);
+        buffer.vertex(model, config.scale() * -size, config.scale() * -size, 0).texture(config.u(), config.v()).next();
+        buffer.vertex(model, config.scale() * -size, config.scale() * size, 0).texture(config.u(), config.v() + (config.height() / (float)config.texHeight())).next();
+        buffer.vertex(model, config.scale() * size, config.scale() * size, 0).texture(config.u() + (config.width() / (float)config.texWidth()), config.v() + (config.height() / (float)config.texHeight())).next();
+        buffer.vertex(model, config.scale() * size, config.scale() * -size, 0).texture(config.u() + (config.width() / (float)config.texWidth()), config.v()).next();
         buffer.end();
         BufferRenderer.draw(buffer);
     }

@@ -25,7 +25,11 @@ package dev.galacticraft.impl.universe.display.type;
 import dev.galacticraft.api.universe.display.CelestialDisplayType;
 import dev.galacticraft.impl.universe.display.config.EmptyCelestialDisplayConfig;
 import net.minecraft.client.render.BufferBuilder;
+import net.minecraft.client.render.Shader;
 import net.minecraft.client.util.math.MatrixStack;
+
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 public class EmptyCelestialDisplayType extends CelestialDisplayType<EmptyCelestialDisplayConfig> {
     public static final EmptyCelestialDisplayType INSTANCE = new EmptyCelestialDisplayType();
@@ -35,7 +39,6 @@ public class EmptyCelestialDisplayType extends CelestialDisplayType<EmptyCelesti
     }
 
     @Override
-    public void render(MatrixStack matrices, BufferBuilder buffer, int scale, int mouseX, int mouseY, float delta, EmptyCelestialDisplayConfig config) {
-
+    public void render(MatrixStack matrices, BufferBuilder buffer, int size, double mouseX, double mouseY, float delta, Consumer<Supplier<Shader>> shaderSetter, EmptyCelestialDisplayConfig config) {
     }
 }

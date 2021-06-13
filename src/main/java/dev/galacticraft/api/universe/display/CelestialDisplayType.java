@@ -26,7 +26,11 @@ import com.mojang.serialization.Codec;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.render.BufferBuilder;
+import net.minecraft.client.render.Shader;
 import net.minecraft.client.util.math.MatrixStack;
+
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 public abstract class CelestialDisplayType<C extends CelestialDisplayConfig> {
     private final Codec<CelestialDisplay<C, CelestialDisplayType<C>>> codec;
@@ -35,7 +39,7 @@ public abstract class CelestialDisplayType<C extends CelestialDisplayConfig> {
     }
 
     @Environment(EnvType.CLIENT)
-    public abstract void render(MatrixStack matrices, BufferBuilder buffer, int scale, int mouseX, int mouseY, float delta, C config);
+    public abstract void render(MatrixStack matrices, BufferBuilder buffer, int size, double mouseX, double mouseY, float delta, Consumer<Supplier<Shader>> shaderSetter, C config);
 
     public Codec<CelestialDisplay<C, CelestialDisplayType<C>>> codec() {
         return this.codec;
