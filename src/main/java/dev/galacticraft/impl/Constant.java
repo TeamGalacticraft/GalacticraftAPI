@@ -20,10 +20,14 @@
  * SOFTWARE.
  */
 
-package dev.galacticraft.api.accessor;
+package dev.galacticraft.impl;
 
-import net.minecraft.network.PacketByteBuf;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.ApiStatus;
 
-public interface ClientResearchAccessor extends ResearchAccessor {
-    void readChanges(PacketByteBuf buf);
+@ApiStatus.Internal
+public interface Constant {
+    String MOD_ID = "galacticraft-api";
+    Logger LOGGER = LogManager.getLogger("GalacticraftAPI");
 }

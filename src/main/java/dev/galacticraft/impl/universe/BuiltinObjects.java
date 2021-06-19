@@ -28,7 +28,7 @@ import dev.galacticraft.api.registry.AddonRegistry;
 import dev.galacticraft.api.universe.celestialbody.CelestialBody;
 import dev.galacticraft.api.universe.celestialbody.CelestialBodyType;
 import dev.galacticraft.api.universe.galaxy.Galaxy;
-import dev.galacticraft.impl.internal.fabric.GalacticraftAPI;
+import dev.galacticraft.impl.Constant;
 import dev.galacticraft.impl.universe.celestialbody.config.PlanetConfig;
 import dev.galacticraft.impl.universe.celestialbody.config.StarConfig;
 import dev.galacticraft.impl.universe.celestialbody.type.DecorativePlanet;
@@ -51,7 +51,7 @@ import net.minecraft.world.World;
 import java.util.Optional;
 
 public class BuiltinObjects {
-    public static final RegistryKey<Galaxy> MILKY_WAY_KEY = RegistryKey.of(AddonRegistry.GALAXY_KEY, new Identifier(GalacticraftAPI.MOD_ID, "milky_way"));
+    public static final RegistryKey<Galaxy> MILKY_WAY_KEY = RegistryKey.of(AddonRegistry.GALAXY_KEY, new Identifier(Constant.MOD_ID, "milky_way"));
     public static final Galaxy MILKY_WAY = new Galaxy(
             new TranslatableText("galaxy.galacticraft-api.milky_way.name"),
             new TranslatableText("galaxy.galacticraft-api.milky_way.description"),
@@ -59,20 +59,20 @@ public class BuiltinObjects {
             EmptyCelestialDisplayType.INSTANCE.configure(EmptyCelestialDisplayConfig.INSTANCE)
     );
 
-    public static final RegistryKey<CelestialBody<?, ?>> SOL_KEY = RegistryKey.of(AddonRegistry.CELESTIAL_BODY_KEY, new Identifier(GalacticraftAPI.MOD_ID, "sol"));
+    public static final RegistryKey<CelestialBody<?, ?>> SOL_KEY = RegistryKey.of(AddonRegistry.CELESTIAL_BODY_KEY, new Identifier(Constant.MOD_ID, "sol"));
     public static final CelestialBody<StarConfig, ? extends CelestialBodyType<StarConfig>> SOL = StarType.INSTANCE.configure(
             new StarConfig(
                     new TranslatableText("star.galacticraft-api.sol.name"),
                     new TranslatableText("star.galacticraft-api.sol.description"),
                     MILKY_WAY_KEY,
                     StaticCelestialPositionType.INSTANCE.configure(new StaticCelestialPositionConfig(0, 0)),
-                    IconCelestialDisplayType.INSTANCE.configure(new IconCelestialDisplayConfig(new Identifier(GalacticraftAPI.MOD_ID, "textures/body_icons.png"), 0, 0, 16, 16, 1)),
+                    IconCelestialDisplayType.INSTANCE.configure(new IconCelestialDisplayConfig(new Identifier(Constant.MOD_ID, "textures/body_icons.png"), 0, 0, 16, 16, 1.5f)),
                     1,
                     5500
             )
     );
 
-    public static final RegistryKey<CelestialBody<?, ?>> EARTH_KEY = RegistryKey.of(AddonRegistry.CELESTIAL_BODY_KEY, new Identifier(GalacticraftAPI.MOD_ID, "earth"));
+    public static final RegistryKey<CelestialBody<?, ?>> EARTH_KEY = RegistryKey.of(AddonRegistry.CELESTIAL_BODY_KEY, new Identifier(Constant.MOD_ID, "earth"));
     public static final CelestialBody<PlanetConfig, ? extends CelestialBodyType<PlanetConfig>> EARTH = PlanetType.INSTANCE.configure(
             new PlanetConfig(
                     new TranslatableText("planet.galacticraft-api.earth.name"),
@@ -80,7 +80,7 @@ public class BuiltinObjects {
                     MILKY_WAY_KEY,
                     SOL_KEY,
                     OrbitalCelestialPositionType.INSTANCE.configure(new OrbitalCelestialPositionConfig(1536000.0, 1.0, true)),
-                    IconCelestialDisplayType.INSTANCE.configure(new IconCelestialDisplayConfig(new Identifier(GalacticraftAPI.MOD_ID, "textures/body_icons.png"), 0, 16, 16, 16, 1)),
+                    IconCelestialDisplayType.INSTANCE.configure(new IconCelestialDisplayConfig(new Identifier(Constant.MOD_ID, "textures/body_icons.png"), 0, 16, 16, 16, 1)),
                     World.OVERWORLD,
                     new AtmosphericInfo.Builder()
                             .pressure(1.0f)
@@ -109,17 +109,17 @@ public class BuiltinObjects {
     );
 
     public static void register() {
-        Registry.register(AddonRegistry.CELESTIAL_POSITION_TYPE, new Identifier(GalacticraftAPI.MOD_ID, "static"), StaticCelestialPositionType.INSTANCE);
-        Registry.register(AddonRegistry.CELESTIAL_POSITION_TYPE, new Identifier(GalacticraftAPI.MOD_ID, "orbital"), OrbitalCelestialPositionType.INSTANCE);
+        Registry.register(AddonRegistry.CELESTIAL_POSITION_TYPE, new Identifier(Constant.MOD_ID, "static"), StaticCelestialPositionType.INSTANCE);
+        Registry.register(AddonRegistry.CELESTIAL_POSITION_TYPE, new Identifier(Constant.MOD_ID, "orbital"), OrbitalCelestialPositionType.INSTANCE);
 
-        Registry.register(AddonRegistry.CELESTIAL_DISPLAY_TYPE, new Identifier(GalacticraftAPI.MOD_ID, "empty"), EmptyCelestialDisplayType.INSTANCE);
-        Registry.register(AddonRegistry.CELESTIAL_DISPLAY_TYPE, new Identifier(GalacticraftAPI.MOD_ID, "icon"), IconCelestialDisplayType.INSTANCE);
+        Registry.register(AddonRegistry.CELESTIAL_DISPLAY_TYPE, new Identifier(Constant.MOD_ID, "empty"), EmptyCelestialDisplayType.INSTANCE);
+        Registry.register(AddonRegistry.CELESTIAL_DISPLAY_TYPE, new Identifier(Constant.MOD_ID, "icon"), IconCelestialDisplayType.INSTANCE);
 
         Registry.register(AddonRegistry.GALAXY, MILKY_WAY_KEY.getValue(), MILKY_WAY);
 
-        Registry.register(AddonRegistry.CELESTIAL_BODY_TYPE, new Identifier(GalacticraftAPI.MOD_ID, "star"), StarType.INSTANCE);
-        Registry.register(AddonRegistry.CELESTIAL_BODY_TYPE, new Identifier(GalacticraftAPI.MOD_ID, "planet"), PlanetType.INSTANCE);
-        Registry.register(AddonRegistry.CELESTIAL_BODY_TYPE, new Identifier(GalacticraftAPI.MOD_ID, "decorative_planet"), DecorativePlanet.INSTANCE);
+        Registry.register(AddonRegistry.CELESTIAL_BODY_TYPE, new Identifier(Constant.MOD_ID, "star"), StarType.INSTANCE);
+        Registry.register(AddonRegistry.CELESTIAL_BODY_TYPE, new Identifier(Constant.MOD_ID, "planet"), PlanetType.INSTANCE);
+        Registry.register(AddonRegistry.CELESTIAL_BODY_TYPE, new Identifier(Constant.MOD_ID, "decorative_planet"), DecorativePlanet.INSTANCE);
 
         Registry.register(AddonRegistry.CELESTIAL_BODY, SOL_KEY.getValue(), SOL);
         Registry.register(AddonRegistry.CELESTIAL_BODY, EARTH_KEY.getValue(), EARTH);

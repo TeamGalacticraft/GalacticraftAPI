@@ -35,7 +35,7 @@ import dev.galacticraft.api.universe.celestialbody.landable.Landable;
 import dev.galacticraft.api.universe.display.CelestialDisplay;
 import dev.galacticraft.api.universe.galaxy.Galaxy;
 import dev.galacticraft.api.universe.position.CelestialPosition;
-import dev.galacticraft.impl.internal.fabric.GalacticraftAPI;
+import dev.galacticraft.impl.Constant;
 import dev.galacticraft.impl.internal.world.gen.VoidChunkGenerator;
 import dev.galacticraft.impl.universe.display.config.IconCelestialDisplayConfig;
 import dev.galacticraft.impl.universe.display.type.IconCelestialDisplayType;
@@ -100,11 +100,11 @@ public class SatelliteType extends CelestialBodyType<SatelliteConfig> implements
 
     public static CelestialBody<SatelliteConfig, SatelliteType> registerSatellite(@NotNull MinecraftServer server, @NotNull ServerPlayerEntity player, @NotNull CelestialBody<?, ?> parent) {
         Identifier id = new Identifier(server.getRegistryManager().get(AddonRegistry.CELESTIAL_BODY_KEY).getId(parent).toString() + "_" + player.getEntityName().toLowerCase(Locale.ROOT));
-        DimensionType type = DimensionType.create(OptionalLong.empty(), true, false, false, true, 1, false, false, false, false, false, 0, 256, 256, (seed, x, y, z, storage) -> server.getRegistryManager().get(Registry.BIOME_KEY).get(new Identifier(GalacticraftAPI.MOD_ID, "space")), new Identifier(GalacticraftAPI.MOD_ID, "infiniburn_space"), new Identifier(GalacticraftAPI.MOD_ID, "space_sky"), 0);
+        DimensionType type = DimensionType.create(OptionalLong.empty(), true, false, false, true, 1, false, false, false, false, false, 0, 256, 256, (seed, x, y, z, storage) -> server.getRegistryManager().get(Registry.BIOME_KEY).get(new Identifier(Constant.MOD_ID, "space")), new Identifier(Constant.MOD_ID, "infiniburn_space"), new Identifier(Constant.MOD_ID, "space_sky"), 0);
         DimensionOptions options = new DimensionOptions(() -> type, VoidChunkGenerator.INSTANCE);
         SatelliteOwnershipData ownershipData = new SatelliteOwnershipData(player.getUuid(), player.getEntityName(), new LinkedList<>(), false);
         CelestialPosition<?, ?> position = new CelestialPosition<>(OrbitalCelestialPositionType.INSTANCE, new OrbitalCelestialPositionConfig(1550, 10.0f, false));
-        CelestialDisplay<?, ?> display = new CelestialDisplay<>(IconCelestialDisplayType.INSTANCE, new IconCelestialDisplayConfig(new Identifier(GalacticraftAPI.MOD_ID, "satellite"), 0, 0, 16, 16, 1));
+        CelestialDisplay<?, ?> display = new CelestialDisplay<>(IconCelestialDisplayType.INSTANCE, new IconCelestialDisplayConfig(new Identifier(Constant.MOD_ID, "satellite"), 0, 0, 16, 16, 1));
         RegistryKey<World> key = RegistryKey.of(Registry.WORLD_KEY, id);
         RegistryKey<DimensionType> key2 = RegistryKey.of(Registry.DIMENSION_TYPE_KEY, id);
         assert server.getWorld(key) == null : "World already registered";
@@ -119,7 +119,7 @@ public class SatelliteType extends CelestialBodyType<SatelliteConfig> implements
         config.customName(new TranslatableText(name));
         CelestialBody<SatelliteConfig, SatelliteType> satellite = INSTANCE.configure(config);
         ((SatelliteAccessor) server).addSatellite(id, satellite);
-        GalacticraftAPI.LOGGER.debug("Attempting to create a world dynamically (" + id + ')');
+        Constant.LOGGER.debug("Attempting to create a world dynamically (" + id + ')');
 
         DimensionType dimensionType3 = options.getDimensionType();
         ChunkGenerator chunkGenerator3 = options.getChunkGenerator();
@@ -130,7 +130,7 @@ public class SatelliteType extends CelestialBodyType<SatelliteConfig> implements
 
         for (ServerPlayerEntity player : server.getPlayerManager().getPlayerList()) {
             NbtCompound compound = (NbtCompound) SatelliteConfig.CODEC.encode(satellite.config(), NbtOps.INSTANCE, new NbtCompound()).get().orThrow();
-            ServerPlayNetworking.send(player, new Identifier(GalacticraftAPI.MOD_ID, "add_satellite"), new PacketByteBuf(Unpooled.buffer()).writeIdentifier(id).writeNbt(compound));
+            ServerPlayNetworking.send(player, new Identifier(Constant.MOD_ID, "add_satellite"), new PacketByteBuf(Unpooled.buffer()).writeIdentifier(id).writeNbt(compound));
         }
         return satellite;
     }

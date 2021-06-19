@@ -26,7 +26,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import dev.galacticraft.api.accessor.SatelliteAccessor;
 import dev.galacticraft.api.universe.celestialbody.CelestialBody;
-import dev.galacticraft.impl.internal.fabric.GalacticraftAPI;
+import dev.galacticraft.impl.Constant;
 import dev.galacticraft.impl.universe.celestialbody.type.SatelliteType;
 import dev.galacticraft.impl.universe.position.config.SatelliteConfig;
 import net.fabricmc.fabric.api.util.NbtType;
@@ -106,7 +106,7 @@ public abstract class MinecraftServerMixin implements SatelliteAccessor {
         try {
             NbtIo.writeCompressed(compound, new File(path.toFile(), "satellites.dat"));
         } catch (Throwable exception) {
-            GalacticraftAPI.LOGGER.fatal("Failed to write satellite data!", exception);
+            Constant.LOGGER.fatal("Failed to write satellite data!", exception);
         }
     }
 
@@ -131,7 +131,7 @@ public abstract class MinecraftServerMixin implements SatelliteAccessor {
                     worlds.put(RegistryKey.of(Registry.WORLD_KEY, entry.getKey()), world);
                 }
             } catch (Throwable exception) {
-                GalacticraftAPI.LOGGER.fatal("Failed to read satellite data!", exception);
+                Constant.LOGGER.fatal("Failed to read satellite data!", exception);
             }
         }
     }

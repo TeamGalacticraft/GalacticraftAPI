@@ -29,7 +29,7 @@ import dev.galacticraft.api.accessor.ResearchAccessor;
 import dev.galacticraft.api.registry.AddonRegistry;
 import dev.galacticraft.api.rocket.travelpredicate.ConfiguredTravelPredicate;
 import dev.galacticraft.api.rocket.travelpredicate.TravelPredicateType;
-import dev.galacticraft.impl.internal.fabric.GalacticraftAPI;
+import dev.galacticraft.impl.Constant;
 import dev.galacticraft.impl.rocket.travelpredicate.config.AccessTypeTravelPredicateConfig;
 import dev.galacticraft.impl.rocket.travelpredicate.type.ConstantTravelPredicateType;
 import net.minecraft.entity.player.PlayerEntity;
@@ -54,7 +54,7 @@ public record RocketPart(TranslatableText name, RocketPartType type, ConfiguredT
             .name(new TranslatableText("tooltip.galacticraft-api.something_went_wrong"))
             .type(RocketPartType.UPGRADE)
             .travelPredicate(ConstantTravelPredicateType.INSTANCE.configure(new AccessTypeTravelPredicateConfig(TravelPredicateType.AccessType.BLOCK)))
-            .research(new Identifier(GalacticraftAPI.MOD_ID, "unobtainable"))
+            .research(new Identifier(Constant.MOD_ID, "unobtainable"))
             .recipe(false)
             .build();
 

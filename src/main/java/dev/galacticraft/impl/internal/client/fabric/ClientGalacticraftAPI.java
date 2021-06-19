@@ -22,10 +22,10 @@
 
 package dev.galacticraft.impl.internal.client.fabric;
 
-import dev.galacticraft.api.accessor.ClientResearchAccessor;
 import dev.galacticraft.api.accessor.SatelliteAccessor;
+import dev.galacticraft.api.client.accessor.ClientResearchAccessor;
 import dev.galacticraft.api.universe.celestialbody.CelestialBody;
-import dev.galacticraft.impl.internal.fabric.GalacticraftAPI;
+import dev.galacticraft.impl.Constant;
 import dev.galacticraft.impl.universe.celestialbody.type.SatelliteType;
 import dev.galacticraft.impl.universe.position.config.SatelliteConfig;
 import net.fabricmc.api.ClientModInitializer;
@@ -42,15 +42,15 @@ import java.util.Objects;
 public class ClientGalacticraftAPI implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
-        GalacticraftAPI.LOGGER.info("Loaded client module");
-        ClientPlayNetworking.registerGlobalReceiver(new Identifier(GalacticraftAPI.MOD_ID, "research_update"), (client, networkHandler, buffer, sender) -> {
+        Constant.LOGGER.info("Loaded client module");
+        ClientPlayNetworking.registerGlobalReceiver(new Identifier(Constant.MOD_ID, "research_update"), (client, networkHandler, buffer, sender) -> {
             PacketByteBuf buf = new PacketByteBuf(buffer.copy());
             client.execute(() -> ((ClientResearchAccessor) Objects.requireNonNull(client.player)).readChanges(buf));
         });
-        ClientPlayNetworking.registerGlobalReceiver(new Identifier(GalacticraftAPI.MOD_ID, "add_satellite"), (client, networkHandler, buffer, sender) -> {
+        ClientPlayNetworking.registerGlobalReceiver(new Identifier(Constant.MOD_ID, "add_satellite"), (client, networkHandler, buffer, sender) -> {
             ((SatelliteAccessor) networkHandler).addSatellite(buffer.readIdentifier(), new CelestialBody<>(SatelliteType.INSTANCE, SatelliteConfig.CODEC.decode(NbtOps.INSTANCE, buffer.readNbt()).get().orThrow().getFirst()));
         });
-        ClientPlayNetworking.registerGlobalReceiver(new Identifier(GalacticraftAPI.MOD_ID, "remove_satellite"), (client, networkHandler, buffer, sender) -> {
+        ClientPlayNetworking.registerGlobalReceiver(new Identifier(Constant.MOD_ID, "remove_satellite"), (client, networkHandler, buffer, sender) -> {
             PacketByteBuf buf = new PacketByteBuf(buffer.copy());
             ((SatelliteAccessor) networkHandler).removeSatellite(buf.readIdentifier());
         });

@@ -22,7 +22,7 @@
 
 package dev.galacticraft.impl.internal.mixin.client;
 
-import dev.galacticraft.api.accessor.ClientResearchAccessor;
+import dev.galacticraft.api.client.accessor.ClientResearchAccessor;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.Identifier;

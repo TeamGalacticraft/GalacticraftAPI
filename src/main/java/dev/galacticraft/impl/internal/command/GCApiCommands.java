@@ -24,8 +24,8 @@ package dev.galacticraft.impl.internal.command;
 
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+import dev.galacticraft.impl.Constant;
 import dev.galacticraft.impl.internal.command.argument.RegistryArgumentType;
-import dev.galacticraft.impl.internal.fabric.GalacticraftAPI;
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
 import net.minecraft.command.argument.IdentifierArgumentType;
 import net.minecraft.server.command.CommandManager;
@@ -38,7 +38,7 @@ import net.minecraft.util.registry.Registry;
 public class GCApiCommands {
     public static void register() {
         CommandRegistrationCallback.EVENT.register((commandDispatcher, server) -> {
-            LiteralArgumentBuilder<ServerCommandSource> builder = CommandManager.literal(GalacticraftAPI.MOD_ID + ":debug")
+            LiteralArgumentBuilder<ServerCommandSource> builder = CommandManager.literal(Constant.MOD_ID + ":debug")
                     .requires(serverCommandSource -> serverCommandSource.hasPermissionLevel(2))
                     .executes(context -> {
                         context.getSource().sendError(new TranslatableText("command.galacticraft-api.debug"));

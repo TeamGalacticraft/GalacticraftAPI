@@ -20,35 +20,23 @@
  * SOFTWARE.
  */
 
-package dev.galacticraft.impl.client.rocket.render;
+package dev.galacticraft.api.client.accessor;
 
-import dev.galacticraft.api.client.rocket.render.RocketPartRenderer;
-import dev.galacticraft.api.entity.Rocket;
-import dev.galacticraft.impl.Constant;
+import dev.galacticraft.api.accessor.SatelliteAccessor;
+import dev.galacticraft.api.universe.celestialbody.CelestialBody;
+import dev.galacticraft.impl.universe.celestialbody.type.SatelliteType;
+import dev.galacticraft.impl.universe.position.config.SatelliteConfig;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.render.VertexConsumerProvider;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.client.world.ClientWorld;
 
 @Environment(EnvType.CLIENT)
-public enum EmptyRocketPartRenderer implements RocketPartRenderer {
-    INSTANCE;
-    private static boolean hasWarned = false;
+public interface ClientSatelliteAccessor extends SatelliteAccessor {
+    void addListener(SatelliteListener listener);
 
-    @Override
-    public void renderGUI(ClientWorld world, MatrixStack matrices, int mouseX, int mouseY, float delta) {
-        if (!hasWarned) {
-            hasWarned = true;
-            Constant.LOGGER.warn("EmptyRocketPartRenderer renderer is in use! RocketPartRenderer wasn't registered?");
-        }
-    }
+    void removeListener(SatelliteListener listener);
 
-    @Override
-    public void render(ClientWorld world, MatrixStack matrices, Rocket rocket, VertexConsumerProvider vertices, float delta, int light) {
-        if (!hasWarned) {
-            hasWarned = true;
-            Constant.LOGGER.warn("EmptyRocketPartRenderer renderer is in use! RocketPartRenderer wasn't registered?");
-        }
+    @FunctionalInterface
+    interface SatelliteListener {
+        void onSatelliteUpdated(CelestialBody<SatelliteConfig, SatelliteType> satellite, boolean added);
     }
 }

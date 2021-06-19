@@ -22,56 +22,77 @@
 
 package dev.galacticraft.api.satellite;
 
-import com.mojang.serialization.Codec;
+import com.mojang.datafixers.util.Pair;
+import com.mojang.serialization.*;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import it.unimi.dsi.fastutil.ints.IntArrayList;
+import it.unimi.dsi.fastutil.ints.IntList;
+import it.unimi.dsi.fastutil.objects.Object2IntArrayMap;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.network.PacketByteBuf;
+import net.minecraft.recipe.Ingredient;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.function.Predicate;
 
 public class SatelliteRecipe implements Predicate<Inventory> {
+    private static final Codec<Ingredient> INGREDIENT_CODEC = new Codec<>() {
+        @Override
+        public <T> DataResult<T> encode(Ingredient input, DynamicOps<T> ops, T prefix) {
+            return DataResult.success(JsonOps.INSTANCE.convertTo(ops, input.toJson()));
+        }
+
+        @Override
+        public <T> DataResult<Pair<Ingredient, T>> decode(DynamicOps<T> ops, T input) {
+            return DataResult.success(new Pair<>(Ingredient.fromJson(ops.convertTo(JsonOps.INSTANCE, input)), input));
+        }
+    };
+
+    private static final Codec<Object2IntMap<Ingredient>> INGREDIENT_2_INT_MAP_CODEC = new Codec<>() {
+        @Override
+        public <T> DataResult<T> encode(Object2IntMap<Ingredient> input, DynamicOps<T> ops, T prefix) {
+            RecordBuilder<T> mapBuilder = ops.mapBuilder();
+            input.forEach((ingredient, amount) -> mapBuilder.add(INGREDIENT_CODEC.encode(ingredient, ops, null).get().orThrow(), ops.createInt(amount)));
+            return mapBuilder.build(prefix);
+        }
+
+        @Override
+        public <T> DataResult<Pair<Object2IntMap<Ingredient>, T>> decode(DynamicOps<T> ops, T input) {
+            MapLike<T> mapLike = ops.getMap(input).get().orThrow();
+            Object2IntMap<Ingredient> list = new Object2IntArrayMap<>();
+            mapLike.entries().forEachOrdered(ttPair -> list.put(INGREDIENT_CODEC.decode(ops, ttPair.getFirst()).get().orThrow().getFirst(), ops.getNumberValue(ttPair.getSecond()).get().orThrow().intValue()));
+            return DataResult.success(new Pair<>(list, input));
+        }
+    };
     public static final Codec<SatelliteRecipe> CODEC = RecordCodecBuilder.create(i -> i.group(
-            ItemStack.CODEC.listOf().fieldOf("items").forGetter(SatelliteRecipe::ingredients)
+            INGREDIENT_2_INT_MAP_CODEC.fieldOf("ingredients").forGetter(SatelliteRecipe::ingredients)
     ).apply(i, SatelliteRecipe::new));
-    private final List<ItemStack> ingredients;
 
-    public SatelliteRecipe(ItemStack... stacks) {
-        this(Arrays.asList(stacks));
-    }
+    private final Object2IntMap<Ingredient> ingredients;
 
-    public SatelliteRecipe(List<ItemStack> list) {
+    public SatelliteRecipe(Object2IntMap<Ingredient> list) {
         this.ingredients = list;
     }
 
-    public static SatelliteRecipe deserialize(PacketByteBuf buf) {
-        int length = buf.readInt();
-        List<ItemStack> list = new ArrayList<>(length);
-        for (int i = 0; i < length; i++) {
-            list.add(buf.readItemStack());
-        }
-        return new SatelliteRecipe(list);
-    }
-
-    public List<ItemStack> ingredients() {
+    public Object2IntMap<Ingredient> ingredients() {
         return ingredients;
-    }
-
-    public PacketByteBuf serialize(PacketByteBuf buf) {
-        buf.writeInt(this.ingredients().size());
-        for (ItemStack stack : this.ingredients()) {
-            buf.writeItemStack(stack);
-        }
-        return buf;
     }
 
     @Override
     public boolean test(Inventory inventory) {
-        for (ItemStack stack : this.ingredients) {
-            if (inventory.count(stack.getItem()) < stack.getCount()) return false;
+        IntList slotModifiers = new IntArrayList(inventory.size());
+
+        for (Object2IntMap.Entry<Ingredient> ingredient : this.ingredients.object2IntEntrySet()) {
+            int amount = ingredient.getIntValue();
+            for (int i = 0; i < inventory.size(); i++) {
+                ItemStack stack = inventory.getStack(i);
+                if (ingredient.getKey().test(stack)) {
+                    amount -= (stack.getCount() - slotModifiers.getInt(i));
+                    slotModifiers.set(i, slotModifiers.getInt(i) + (stack.getCount() - slotModifiers.getInt(i)) - Math.min(amount, 0));
+                    if (amount <= 0) break;
+                }
+            }
+            if (amount > 0) return false;
         }
         return true;
     }

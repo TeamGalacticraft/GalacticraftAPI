@@ -20,19 +20,14 @@
  * SOFTWARE.
  */
 
-package dev.galacticraft.api.accessor;
+package dev.galacticraft.api.client.accessor;
 
-import dev.galacticraft.api.universe.celestialbody.CelestialBody;
-import dev.galacticraft.impl.universe.celestialbody.type.SatelliteType;
-import dev.galacticraft.impl.universe.position.config.SatelliteConfig;
+import dev.galacticraft.api.accessor.ResearchAccessor;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+import net.minecraft.network.PacketByteBuf;
 
-public interface ClientSatelliteAccessor extends SatelliteAccessor {
-    void addListener(SatelliteListener listener);
-
-    void removeListener(SatelliteListener listener);
-
-    @FunctionalInterface
-    interface SatelliteListener {
-        void onSatelliteUpdated(CelestialBody<SatelliteConfig, SatelliteType> satellite, boolean added);
-    }
+@Environment(EnvType.CLIENT)
+public interface ClientResearchAccessor extends ResearchAccessor {
+    void readChanges(PacketByteBuf buf);
 }
