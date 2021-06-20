@@ -27,12 +27,12 @@ import com.mojang.serialization.Codec;
 public abstract class CelestialPositionType<C extends CelestialPositionConfig> {
     private final Codec<CelestialPosition<C, CelestialPositionType<C>>> codec;
     public CelestialPositionType(Codec<C> codec) {
-        this.codec = codec.fieldOf("config").xmap((config) -> new CelestialPosition<>(this, config), CelestialPosition::config).codec();
+        this.codec = codec.fieldOf("config").<CelestialPosition<C, CelestialPositionType<C>>>xmap((config) -> new CelestialPosition<>(this, config), CelestialPosition::config).codec();
     }
 
-    public abstract double x(C config, int worldTime, float delta);
+    public abstract double x(C config, long worldTime, float delta);
 
-    public abstract double y(C config, int worldTime, float delta);
+    public abstract double y(C config, long worldTime, float delta);
 
     public float lineScale(C config) {
         return Float.NaN;

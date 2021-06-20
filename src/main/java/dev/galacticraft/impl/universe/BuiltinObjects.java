@@ -79,7 +79,7 @@ public class BuiltinObjects {
                     new TranslatableText("planet.galacticraft-api.earth.description"),
                     MILKY_WAY_KEY,
                     SOL_KEY,
-                    OrbitalCelestialPositionType.INSTANCE.configure(new OrbitalCelestialPositionConfig(1536000.0, 1.0, true)),
+                    OrbitalCelestialPositionType.INSTANCE.configure(new OrbitalCelestialPositionConfig(1536000.0, 1.0, 0.0F, true)),
                     IconCelestialDisplayType.INSTANCE.configure(new IconCelestialDisplayConfig(new Identifier(Constant.MOD_ID, "textures/body_icons.png"), 0, 16, 16, 16, 1)),
                     World.OVERWORLD,
                     new AtmosphericInfo.Builder()
