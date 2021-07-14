@@ -5,21 +5,19 @@ plugins {
     java
     `maven-publish`
     id("fabric-loom") version "0.8-SNAPSHOT"
-    id("org.cadixdev.licenser") version "0.5.1"
+    id("org.cadixdev.licenser") version "0.6.1"
 }
 
-val mc = "1.17"
+val mc = "1.17.1"
 val yarn = "10"
-val loader = "0.11.3"
-val fabric = "0.35.1+1.17"
+val loader = "0.11.6"
+val fabric = "0.36.1+1.17"
 val lba = "0.9.0"
 
 group = "dev.galacticraft"
-version ="0.4.0-prealpha7+$mc"
+version ="0.4.0-prealpha8+$mc"
 
-base {
-    archivesBaseName = "GalacticraftAPI"
-}
+base.archivesName.set("GalacticraftAPI")
 
 val testmodSourceSet = sourceSets.create("testmod") {
     compileClasspath += sourceSets.main.get().compileClasspath
@@ -117,12 +115,12 @@ tasks.withType<JavaCompile> {
 
 val sourcesJar = tasks.create<Jar>("sourcesJarGC") {
     dependsOn(tasks.classes)
-    classifier = "sources"
+    archiveClassifier.set("sources")
     from(sourceSets.main.get().allSource)
 }
 
 val javadocJar = tasks.create<Jar>("javadocJarGC") {
-    classifier = "javadoc"
+    archiveClassifier.set("javadoc")
     from(tasks.javadoc)
 }
 
@@ -170,7 +168,7 @@ publishing {
 }
 
 license {
-    header = project.file("LICENSE_HEADER.txt")
+    setHeader(project.file("LICENSE_HEADER.txt"))
     include("**/dev/galacticraft/**/*.java")
     include("build.gradle.kts")
     ext {

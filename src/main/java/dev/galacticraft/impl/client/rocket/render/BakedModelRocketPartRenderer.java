@@ -63,6 +63,7 @@ public class BakedModelRocketPartRenderer implements RocketPartRenderer {
 
     @Override
     public void renderGUI(ClientWorld world, MatrixStack matrices, int mouseX, int mouseY, float delta) {
+        RenderSystem.setShader(GameRenderer::getPositionColorTexShader);
         model.get().getTransformation().getTransformation(ModelTransformation.Mode.GUI).apply(false, matrices);
         matrices.translate(0, 0, 250);
         matrices.translate(8, 8, 8);
@@ -72,9 +73,10 @@ public class BakedModelRocketPartRenderer implements RocketPartRenderer {
         matrices.scale(10, 10, 10);
 
         MatrixStack.Entry entry = matrices.peek();
-        VertexConsumer vertexConsumer = new SpriteTexturedVertexConsumer(Tessellator.getInstance().getBuffer(), this.model.get().getSprite());
         List<BakedQuad> quads = this.model.get().getQuads(null, null, world.random);
         this.model.get().getSprite().getAtlas().bindTexture();
+        RenderSystem.enableTexture();
+        RenderSystem.setShaderTexture(0, this.model.get().getSprite().getAtlas().getGlId());
         RenderSystem.enableBlend();
         RenderSystem.blendFunc(GlStateManager.SrcFactor.SRC_ALPHA, GlStateManager.DstFactor.ONE_MINUS_SRC_ALPHA);
         RenderSystem.enableDepthTest();
@@ -82,9 +84,10 @@ public class BakedModelRocketPartRenderer implements RocketPartRenderer {
         DiffuseLighting.enableGuiDepthLighting();
 
         if (!quads.isEmpty()) {
+            BufferBuilder buffer = Tessellator.getInstance().getBuffer();
+            buffer.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR_TEXTURE_OVERLAY_LIGHT_NORMAL);
             for (BakedQuad quad : quads) {
-                Tessellator.getInstance().getBuffer().begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR_TEXTURE_OVERLAY_LIGHT_NORMAL);
-                vertexConsumer.quad(
+                buffer.quad(
                         entry,
                         quad,
                         1,
@@ -93,8 +96,8 @@ public class BakedModelRocketPartRenderer implements RocketPartRenderer {
                         15728880,
                         OverlayTexture.DEFAULT_UV
                 );
-                Tessellator.getInstance().draw();
             }
+            Tessellator.getInstance().draw();
         }
     }
 
