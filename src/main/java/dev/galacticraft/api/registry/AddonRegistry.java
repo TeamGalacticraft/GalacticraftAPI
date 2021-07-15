@@ -41,6 +41,10 @@ import net.minecraft.util.registry.MutableRegistry;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryKey;
 
+/**
+ * <b>WARNING</b>: DO NOT USE THIS CLASS TO OBTAIN INSTANCES OR IDS OF OBJECTS WHEN IN-WORLD; USE THE {@link net.minecraft.util.registry.DynamicRegistryManager DYNAMIC REGISTRY MANAGER} INSTEAD.
+ * <i>THESE REGISTRIES WILL NOT CONTAIN ENTRIES OBTAINED VIA DATAPACK</i>.
+ */
 public class AddonRegistry {
     public static final RegistryKey<Registry<AtmosphericGas>> ATMOSPHERIC_GAS_KEY = RegistryKey.ofRegistry(new Identifier(Constant.MOD_ID, "atmospheric_gas"));
     public static final MutableRegistry<AtmosphericGas> ATMOSPHERIC_GAS = FabricRegistryBuilder.from(

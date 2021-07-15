@@ -52,13 +52,15 @@ public abstract class TravelPredicateType<C extends TravelPredicateConfig> {
          * Allow other rocket parts to decide whether or not the player may visit the celestial body
          */
         PASS,
+
         /**
-         * Forcefully block access to celestial body - overrides {@link AccessType#ALLOW}
+         * Forcefully block access to celestial body - overrides {@link AccessType#ALLOW ALLOW}
          */
         BLOCK,
+
         /**
          * Allow access to celestial body.
-         * Can be overridden by {@link AccessType#BLOCK}
+         * Can be overridden by {@link AccessType#BLOCK BLOCK}
          */
         ALLOW;
 

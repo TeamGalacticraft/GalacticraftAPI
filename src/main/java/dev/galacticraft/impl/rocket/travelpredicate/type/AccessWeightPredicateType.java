@@ -40,7 +40,8 @@ public class AccessWeightPredicateType extends TravelPredicateType<AccessWeightT
     @Override
     public AccessType canTravelTo(CelestialBody<?, ?> type, Object2BooleanFunction<RocketPart> parts, AccessWeightTravelPredicateConfig config) {
         if (type.type() instanceof Landable landable) {
-            if (landable.accessWeight(type.config()) <= config.weight()) {
+            int weight = landable.accessWeight(type.config());
+            if (weight >= 0 && weight <= config.weight()) {
                 return AccessType.ALLOW;
             } else {
                 return config.defaultType();

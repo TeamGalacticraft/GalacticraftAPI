@@ -75,16 +75,24 @@ public record RocketPart(TranslatableText name, RocketPartType type, ConfiguredT
         return manager.get(AddonRegistry.ROCKET_PART_KEY).get(new Identifier(dynamic.asString("")));
     }
 
-    public static Registry<RocketPart> getAll(DynamicRegistryManager manager) {
+    public static Registry<RocketPart> getRegistry(DynamicRegistryManager manager) {
         return manager.get(AddonRegistry.ROCKET_PART_KEY);
     }
 
     public static RocketPart getById(DynamicRegistryManager manager, Identifier id) {
-        return manager.get(AddonRegistry.ROCKET_PART_KEY).get(id);
+        return getById(getRegistry(manager), id);
     }
 
-    public static Identifier getId(DynamicRegistryManager manager, RocketPart type) {
-        return manager.get(AddonRegistry.ROCKET_PART_KEY).getId(type);
+    public static Identifier getId(DynamicRegistryManager manager, RocketPart rocketPart) {
+        return getId(getRegistry(manager), rocketPart);
+    }
+
+    public static RocketPart getById(Registry<RocketPart> registry, Identifier id) {
+        return registry.get(id);
+    }
+
+    public static Identifier getId(Registry<RocketPart> registry, RocketPart rocketPart) {
+        return registry.getId(rocketPart);
     }
 
     public static class Builder {

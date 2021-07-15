@@ -55,7 +55,6 @@ import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.ChunkPos;
-import net.minecraft.util.registry.DynamicRegistryManager;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.World;
@@ -66,6 +65,7 @@ import net.minecraft.world.dimension.DimensionOptions;
 import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.world.gen.chunk.ChunkGenerator;
 import net.minecraft.world.level.UnmodifiableLevelProperties;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -76,6 +76,8 @@ import java.util.OptionalLong;
 public class SatelliteType extends CelestialBodyType<SatelliteConfig> implements Satellite<SatelliteConfig>, Landable<SatelliteConfig> {
     public static final SatelliteType INSTANCE = new SatelliteType(SatelliteConfig.CODEC);
     private static final AtmosphericInfo DEFAULT_ATMOSPHERE = new AtmosphericInfo.Builder().build();
+    private static final TranslatableText NAME = new TranslatableText("ui.galacticraft-api.satellite.name");
+    private static final TranslatableText DESCRIPTION = new TranslatableText("ui.galacticraft-api.satellite.description");
     public static final WorldGenerationProgressListener EMPTY_PROGRESS_LISTENER = new WorldGenerationProgressListener() {
         @Override
         public void start(ChunkPos spawnPos) {
@@ -98,6 +100,7 @@ public class SatelliteType extends CelestialBodyType<SatelliteConfig> implements
         super(codec);
     }
 
+    @ApiStatus.Internal
     public static CelestialBody<SatelliteConfig, SatelliteType> registerSatellite(@NotNull MinecraftServer server, @NotNull ServerPlayerEntity player, @NotNull CelestialBody<?, ?> parent) {
         Identifier id = new Identifier(server.getRegistryManager().get(AddonRegistry.CELESTIAL_BODY_KEY).getId(parent).toString() + "_" + player.getEntityName().toLowerCase(Locale.ROOT));
         DimensionType type = DimensionType.create(OptionalLong.empty(), true, false, false, true, 1, false, false, false, false, false, 0, 256, 256, (seed, x, y, z, storage) -> server.getRegistryManager().get(Registry.BIOME_KEY).get(new Identifier(Constant.MOD_ID, "space")), new Identifier(Constant.MOD_ID, "infiniburn_space"), new Identifier(Constant.MOD_ID, "space_sky"), 0);
@@ -113,6 +116,7 @@ public class SatelliteType extends CelestialBodyType<SatelliteConfig> implements
         return create(id, server, parent, position, display, options, ownershipData, player.getEntityName() + "'s Space Station");
     }
 
+    @ApiStatus.Internal
     public static CelestialBody<SatelliteConfig, SatelliteType> create(Identifier id, MinecraftServer server, CelestialBody<?, ?> parent, CelestialPosition<?, ?> position, CelestialDisplay<?, ?> display,
                                                                        DimensionOptions options, SatelliteOwnershipData ownershipData, String name) {
         SatelliteConfig config = new SatelliteConfig(RegistryKey.of(AddonRegistry.CELESTIAL_BODY_KEY, server.getRegistryManager().get(AddonRegistry.CELESTIAL_BODY_KEY).getId(parent)), parent.galaxy(), position, display, ownershipData, RegistryKey.of(Registry.WORLD_KEY, id), DEFAULT_ATMOSPHERE, 0.0f, parent.type() instanceof Landable ? ((Landable) parent.type()).accessWeight(parent.config()) : 1, options);
@@ -137,12 +141,12 @@ public class SatelliteType extends CelestialBodyType<SatelliteConfig> implements
 
     @Override
     public @NotNull TranslatableText name(SatelliteConfig config) {
-        return new TranslatableText("ui.galacticraft-api.satellite");
+        return NAME;
     }
 
     @Override
-    public @Nullable CelestialBody<?, ?> parent(DynamicRegistryManager manager, SatelliteConfig config) {
-        return manager.get(AddonRegistry.CELESTIAL_BODY_KEY).get(config.parent());
+    public @Nullable CelestialBody<?, ?> parent(Registry<CelestialBody<?, ?>> registry, SatelliteConfig config) {
+        return registry.get(config.parent());
     }
 
     @Override
@@ -152,7 +156,7 @@ public class SatelliteType extends CelestialBodyType<SatelliteConfig> implements
 
     @Override
     public @NotNull TranslatableText description(SatelliteConfig config) {
-        return new TranslatableText("ui.galacticraft-api.satellite.description");
+        return DESCRIPTION;
     }
 
     @Override
@@ -171,12 +175,12 @@ public class SatelliteType extends CelestialBodyType<SatelliteConfig> implements
     }
 
     @Override
-    public void setCustomName(Text text, SatelliteConfig config) {
+    public void setCustomName(@NotNull Text text, SatelliteConfig config) {
         config.customName(text);
     }
 
     @Override
-    public Text getCustomName(SatelliteConfig config) {
+    public @NotNull Text getCustomName(SatelliteConfig config) {
         return config.customName();
     }
 

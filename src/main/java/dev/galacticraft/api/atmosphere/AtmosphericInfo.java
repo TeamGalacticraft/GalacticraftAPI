@@ -41,7 +41,8 @@ public record AtmosphericInfo(Object2DoubleMap<RegistryKey<AtmosphericGas>> comp
     ).apply(atmosphericInfoInstance, AtmosphericInfo::new));
 
     public boolean breathable() {
-        return this.composition().getOrDefault(AtmosphericGas.OXYGEN_KEY, 0.0) > 1000.0; //todo: get joe to do actual numbers?
+        double oxygen = this.composition().getOrDefault(AtmosphericGas.OXYGEN_KEY, 0.0);
+        return oxygen > 195000.0 && oxygen < 235000.0; //195000ppm to 235000ppm (19.5% to 23.5%)
     }
 
     public void writePacket(PacketByteBuf buf) {

@@ -30,7 +30,6 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.util.Identifier;
-import org.jetbrains.annotations.Unmodifiable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 
@@ -46,7 +45,7 @@ public abstract class ClientPlayNetworkHandlerMixin implements ClientSatelliteAc
     private final @Unique List<SatelliteListener> listeners_gcr = new ArrayList<>();
 
     @Override
-    public @Unmodifiable Map<Identifier, CelestialBody<SatelliteConfig, SatelliteType>> satellites() {
+    public Map<Identifier, CelestialBody<SatelliteConfig, SatelliteType>> satellites() {
         return this.satellites_gcr;
     }
 

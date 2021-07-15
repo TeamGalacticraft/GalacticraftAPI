@@ -28,37 +28,109 @@ import dev.galacticraft.api.rocket.part.RocketPartType;
 import dev.galacticraft.api.universe.celestialbody.CelestialBody;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.util.math.BlockPos;
+import org.jetbrains.annotations.NotNull;
 
 public interface Rocket {
+    /**
+     * Returns the colour of the rocket in ARGB format (8 bits per colour)
+     * @return the colour of the rocket
+     */
     int getColor();
 
-    LaunchStage getStage();
-
-    void setStage(LaunchStage stage);
-
-    RocketPart[] getParts();
-
-    BlockPos getLinkedPad();
-
-    boolean canTravelTo(CelestialBody<?, ?> type);
-
-    void setLinkedPad(BlockPos linkedPad);
-
-    double getSpeed();
-
-    void setSpeed(double speed);
-
-    void onJump();
-
+    /**
+     * Sets the colour of the rocket in ARGB format (8 bits per colour)
+     * @param color the colour of the rocket
+     */
     void setColor(int color);
 
+    /**
+     * Returns the launch stage of this rocket
+     * @return the launch stage of this rocket
+     */
+    LaunchStage getStage();
+
+    /**
+     * Sets the launch stage of this rocket
+     * @param stage the launch stage to set
+     */
+    void setStage(LaunchStage stage);
+
+    /**
+     * Returns all six rocket parts applied to this rocket
+     * @return all parts applied to this rocket
+     */
+    RocketPart[/*6*/] getParts();
+
+    /**
+     * Returns the rocket launch pad linked to this rocket or {@link BlockPos#ORIGIN} if it is not linked to one
+     * @return the rocket launch pad linked to this rocket
+     */
+    @NotNull BlockPos getLinkedPad();
+
+    /**
+     * Sets the rocket launch pad linked to this rocket
+     * If the rocket is not linked to a launchpad, use {@link BlockPos#ORIGIN}
+     * @param linkedPad the launchpad to link this rocket with
+     */
+    void setLinkedPad(@NotNull BlockPos linkedPad);
+
+    /**
+     * Returns whether this rocket is able to travel to the supplied celestial body
+     * @param body the celestial body to test against
+     * @return whether this rocket is able to travel to the supplied celestial body
+     */
+    boolean canTravelTo(CelestialBody<?, ?> body);
+
+    /**
+     * Returns the speed of the rocket
+     * This does equate to the vertical velocity of this rocket, as rockets may turn
+     * @return the speed of the rocket
+     */
+    double getSpeed();
+
+    /**
+     * Sets the speed of the rocket
+     * @param speed the speed to force the rocket to
+     */
+    void setSpeed(double speed);
+
+    /**
+     * Called when the player riding the rocket jumps
+     * Used to initiate the launch countdown in the rocket
+     */
+    void onJump();
+
+
+    /**
+     * Called when the rocket launch pad linked to this rocket is destroyed
+     */
     void onBaseDestroyed();
 
+    /**
+     * Called when the rocket is destroyed
+     * @param source the type of damage inflicted on this rocket
+     * @param exploded whether the damage is self-inflicted (the rocket failed)
+     */
     void dropItems(DamageSource source, boolean exploded);
 
+    /**
+     * Swaps out a part of this rocket with the provided one
+     * The type of part is automatically determined
+     * @param part the rocket part to swap in
+     */
     void setPart(RocketPart part);
 
-    void setParts(RocketPart[] parts);
+    /**
+     * Replaces all the current parts of this rocket with new ones.
+     * The part type of a rocket part at any given index should equal to
+     * @param parts the parts to put in
+     */
+    void setParts(RocketPart[/*6*/] parts);
 
+    /**
+     * Returns the rocket part applied to this rocket of this {@code type}
+     * @param type the type of part to return
+     * @return the rocket part applied to this rocket of this {@code type}
+     */
     RocketPart getPartForType(RocketPartType type);
 }

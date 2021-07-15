@@ -59,7 +59,7 @@ public class SatelliteOwnershipData {
                 return longs;
             }).forGetter(SatelliteOwnershipData::trusted),
             Codec.BOOL.fieldOf("open").forGetter(SatelliteOwnershipData::open)
-            ).apply(instance, SatelliteOwnershipData::new));
+            ).apply(instance, SatelliteOwnershipData::new)); //fixme this looks terrible.
 
     private final UUID owner;
     private final List<UUID> trusted;

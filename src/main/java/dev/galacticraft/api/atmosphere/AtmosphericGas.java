@@ -23,7 +23,6 @@
 package dev.galacticraft.api.atmosphere;
 
 import com.mojang.serialization.Codec;
-import com.mojang.serialization.Dynamic;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import dev.galacticraft.api.registry.AddonRegistry;
 import dev.galacticraft.impl.Constant;
@@ -137,32 +136,44 @@ public record AtmosphericGas(TranslatableText name, String symbol) {
                 .replaceAll("9", "\u2089");
     }
 
-    public static AtmosphericGas deserialize(DynamicRegistryManager manager, Dynamic<?> dynamic) {
-        return manager.get(AddonRegistry.ATMOSPHERIC_GAS_KEY).get(new Identifier(dynamic.asString("")));
-    }
-
-    public static Registry<AtmosphericGas> get(DynamicRegistryManager manager) {
+    public static Registry<AtmosphericGas> getRegistry(DynamicRegistryManager manager) {
         return manager.get(AddonRegistry.ATMOSPHERIC_GAS_KEY);
     }
 
     public static AtmosphericGas getById(DynamicRegistryManager manager, Identifier id) {
-        return manager.get(AddonRegistry.ATMOSPHERIC_GAS_KEY).get(id);
+        return getById(getRegistry(manager), id);
     }
 
     public static Identifier getId(DynamicRegistryManager manager, AtmosphericGas gas) {
-        return manager.get(AddonRegistry.ATMOSPHERIC_GAS_KEY).getId(gas);
+        return getId(getRegistry(manager), gas);
     }
 
     public static boolean containsSymbol(DynamicRegistryManager manager, String symbol) {
-        for (AtmosphericGas g : get(manager)) {
-            if (g.symbol.equals(symbol)) return true;
+        return containsSymbol(getRegistry(manager), symbol);
+    }
+
+    public static AtmosphericGas getBySymbol(DynamicRegistryManager manager, String symbol) {
+        return getBySymbol(getRegistry(manager), symbol);
+    }
+
+    public static AtmosphericGas getById(Registry<AtmosphericGas> registry, Identifier id) {
+        return registry.get(id);
+    }
+
+    public static Identifier getId(Registry<AtmosphericGas> registry, AtmosphericGas gas) {
+        return registry.getId(gas);
+    }
+
+    public static boolean containsSymbol(Registry<AtmosphericGas> registry, String symbol) {
+        for (AtmosphericGas g : registry) {
+            if (g.symbol().equals(symbol)) return true;
         }
         return false;
     }
 
-    public static AtmosphericGas getBySymbol(DynamicRegistryManager manager, String symbol) {
-        for (AtmosphericGas g : get(manager)) {
-            if (g.symbol.equals(symbol)) return g;
+    public static AtmosphericGas getBySymbol(Registry<AtmosphericGas> registry, String symbol) {
+        for (AtmosphericGas g : registry) {
+            if (g.symbol().equals(symbol)) return g;
         }
         return null;
     }

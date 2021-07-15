@@ -24,9 +24,13 @@ package dev.galacticraft.api.universe.galaxy;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import dev.galacticraft.api.registry.AddonRegistry;
 import dev.galacticraft.api.universe.display.CelestialDisplay;
 import dev.galacticraft.api.universe.position.CelestialPosition;
 import net.minecraft.text.TranslatableText;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.registry.DynamicRegistryManager;
+import net.minecraft.util.registry.Registry;
 import org.jetbrains.annotations.NotNull;
 
 public record Galaxy(@NotNull TranslatableText name, @NotNull TranslatableText description, CelestialPosition<?, ?> position, CelestialDisplay<?, ?> display) {
@@ -36,4 +40,24 @@ public record Galaxy(@NotNull TranslatableText name, @NotNull TranslatableText d
             CelestialPosition.CODEC.fieldOf("position").forGetter(Galaxy::position),
             CelestialDisplay.CODEC.fieldOf("display").forGetter(Galaxy::display)
     ).apply(instance, Galaxy::new));
+    
+    public static Registry<Galaxy> getRegistry(DynamicRegistryManager manager) {
+        return manager.get(AddonRegistry.GALAXY_KEY);
+    }
+
+    public static Galaxy getById(DynamicRegistryManager manager, Identifier id) {
+        return getById(getRegistry(manager), id);
+    }
+
+    public static Identifier getId(DynamicRegistryManager manager, Galaxy galaxy) {
+        return getId(getRegistry(manager), galaxy);
+    }
+
+    public static Galaxy getById(Registry<Galaxy> registry, Identifier id) {
+        return registry.get(id);
+    }
+
+    public static Identifier getId(Registry<Galaxy> registry, Galaxy galaxy) {
+        return registry.getId(galaxy);
+    }
 }

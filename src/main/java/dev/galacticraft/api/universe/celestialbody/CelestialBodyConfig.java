@@ -22,5 +22,8 @@
 
 package dev.galacticraft.api.universe.celestialbody;
 
+/**
+ * Base interface for creating configurations for celestial bodies
+ */
 public interface CelestialBodyConfig {
 }

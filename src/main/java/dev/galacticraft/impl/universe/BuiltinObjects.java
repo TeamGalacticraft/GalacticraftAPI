@@ -68,7 +68,7 @@ public class BuiltinObjects {
                     StaticCelestialPositionType.INSTANCE.configure(new StaticCelestialPositionConfig(0, 0)),
                     IconCelestialDisplayType.INSTANCE.configure(new IconCelestialDisplayConfig(new Identifier(Constant.MOD_ID, "textures/body_icons.png"), 0, 0, 16, 16, 1.5f)),
                     1,
-                    5500
+                    5772
             )
     );
 
@@ -85,22 +85,22 @@ public class BuiltinObjects {
                     new AtmosphericInfo.Builder()
                             .pressure(1.0f)
                             .temperature(15.0f)
-                            .gas(AtmosphericGas.NITROGEN_ID,       780840d     )
-                            .gas(AtmosphericGas.OXYGEN_ID,         209500d     )
-                            .gas(AtmosphericGas.WATER_VAPOR_ID,     25000d     )
-                            .gas(AtmosphericGas.ARGON_ID,            9300d     )
-                            .gas(AtmosphericGas.CARBON_DIOXIDE_ID,    399d     )
-                            .gas(AtmosphericGas.NEON_ID,               18d     )
-                            .gas(AtmosphericGas.HELIUM_ID,              5.42d  )
-                            .gas(AtmosphericGas.METHANE_ID,             1.79d  )
-                            .gas(AtmosphericGas.KRYPTON_ID,             1.14d  )
-                            .gas(AtmosphericGas.HYDROGEN_ID,            0.55d  )
-                            .gas(AtmosphericGas.NITROUS_OXIDE_ID,       0.325d )
-                            .gas(AtmosphericGas.CARBON_MONOXIDE_ID,     0.1d   )
-                            .gas(AtmosphericGas.XENON_ID,               0.09d  )
-                            .gas(AtmosphericGas.OZONE_ID,               0.07d  )
-                            .gas(AtmosphericGas.IODINE_ID,              0.01d  )
-                            .gas(AtmosphericGas.NITROUS_DIOXIDE_ID,     0.02d  )
+                            .gas(AtmosphericGas.NITROGEN_ID,       780840.000  )
+                            .gas(AtmosphericGas.OXYGEN_ID,         209500.000  )
+                            .gas(AtmosphericGas.WATER_VAPOR_ID,     25000.000  )
+                            .gas(AtmosphericGas.ARGON_ID,            9300.000  )
+                            .gas(AtmosphericGas.CARBON_DIOXIDE_ID,    399.000  )
+                            .gas(AtmosphericGas.NEON_ID,               18.000  )
+                            .gas(AtmosphericGas.HELIUM_ID,              5.420  )
+                            .gas(AtmosphericGas.METHANE_ID,             1.790  )
+                            .gas(AtmosphericGas.KRYPTON_ID,             1.140  )
+                            .gas(AtmosphericGas.HYDROGEN_ID,            0.550  )
+                            .gas(AtmosphericGas.NITROUS_OXIDE_ID,       0.325  )
+                            .gas(AtmosphericGas.CARBON_MONOXIDE_ID,     0.100  )
+                            .gas(AtmosphericGas.XENON_ID,               0.090  )
+                            .gas(AtmosphericGas.OZONE_ID,               0.070  )
+                            .gas(AtmosphericGas.NITROUS_DIOXIDE_ID,     0.020  )
+                            .gas(AtmosphericGas.IODINE_ID,              0.010  )
                             .build(),
                     1.0f,
                     0,

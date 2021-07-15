@@ -20,7 +20,7 @@
  * SOFTWARE.
  */
 
-package dev.galacticraft.api.accessor;
+package dev.galacticraft.impl.internal.accessor;
 
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
