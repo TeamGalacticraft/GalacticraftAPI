@@ -25,7 +25,8 @@ package dev.galacticraft.impl.internal.fabric;
 import dev.galacticraft.api.accessor.ServerResearchAccessor;
 import dev.galacticraft.impl.Constant;
 import dev.galacticraft.impl.internal.command.GCApiCommands;
-import dev.galacticraft.impl.internal.world.gen.VoidChunkGenerator;
+import dev.galacticraft.impl.internal.world.gen.SatelliteChunkGenerator;
+import dev.galacticraft.impl.internal.world.gen.biome.GcApiBiomes;
 import io.netty.buffer.Unpooled;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
@@ -34,13 +35,8 @@ import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
-import net.minecraft.util.registry.RegistryKey;
-import net.minecraft.world.biome.*;
-import net.minecraft.world.gen.surfacebuilder.ConfiguredSurfaceBuilders;
 
 public class GalacticraftAPI implements ModInitializer {
-    public static final Biome SPACE = new Biome.Builder().generationSettings(new GenerationSettings.Builder().surfaceBuilder(ConfiguredSurfaceBuilders.NOPE).build()).precipitation(Biome.Precipitation.NONE).category(Biome.Category.NONE).depth(0).downfall(0).spawnSettings(SpawnSettings.INSTANCE).effects(new BiomeEffects.Builder().fogColor(0).waterFogColor(0).waterColor(0).skyColor(0).build()).temperature(0).scale(0).build();
-
     @Override
     public void onInitialize() {
         long startInitTime = System.currentTimeMillis();
@@ -53,8 +49,8 @@ public class GalacticraftAPI implements ModInitializer {
                 }
             }
         });
-        Registry.register(Registry.CHUNK_GENERATOR, new Identifier(Constant.MOD_ID, "empty"), VoidChunkGenerator.CODEC);
-        BuiltinBiomes.register(284, RegistryKey.of(Registry.BIOME_KEY, new Identifier(Constant.MOD_ID, "space")), SPACE);
+        Registry.register(Registry.CHUNK_GENERATOR, new Identifier(Constant.MOD_ID, "satellite"), SatelliteChunkGenerator.CODEC);
+        GcApiBiomes.register();
         Constant.LOGGER.info("Initialization Complete. (Took {}ms).", System.currentTimeMillis() - startInitTime);
     }
 }

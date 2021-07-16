@@ -41,11 +41,11 @@ import net.minecraft.util.registry.MutableRegistry;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryKey;
 
-/**
- * <b>WARNING</b>: DO NOT USE THIS CLASS TO OBTAIN INSTANCES OR IDS OF OBJECTS WHEN IN-WORLD; USE THE {@link net.minecraft.util.registry.DynamicRegistryManager DYNAMIC REGISTRY MANAGER} INSTEAD.
- * <i>THESE REGISTRIES WILL NOT CONTAIN ENTRIES OBTAINED VIA DATAPACK</i>.
- */
 public class AddonRegistry {
+    /**
+     * <b>WARNING</b>: DO NOT USE THIS REGISTRY TO OBTAIN INSTANCES OR IDS OF OBJECTS WHEN IN-WORLD; USE THE {@link net.minecraft.util.registry.DynamicRegistryManager DYNAMIC REGISTRY MANAGER} INSTEAD.
+     * <i>THIS REGISTRY WILL NOT CONTAIN ENTRIES OBTAINED VIA DATAPACK</i>.
+     */
     public static final RegistryKey<Registry<AtmosphericGas>> ATMOSPHERIC_GAS_KEY = RegistryKey.ofRegistry(new Identifier(Constant.MOD_ID, "atmospheric_gas"));
     public static final MutableRegistry<AtmosphericGas> ATMOSPHERIC_GAS = FabricRegistryBuilder.from(
             new DefaultedRegistry<>(new Identifier(Constant.MOD_ID, "oxygen").toString(),
@@ -66,6 +66,10 @@ public class AddonRegistry {
             new DefaultedRegistry<>(new Identifier(Constant.MOD_ID, "empty").toString(),
                     CELESTIAL_DISPLAY_TYPE_KEY, Lifecycle.experimental())).buildAndRegister();
 
+    /**
+     * <b>WARNING</b>: DO NOT USE THIS REGISTRY TO OBTAIN INSTANCES OR IDS OF OBJECTS WHEN IN-WORLD; USE THE {@link net.minecraft.util.registry.DynamicRegistryManager DYNAMIC REGISTRY MANAGER} INSTEAD.
+     * <i>THIS REGISTRY WILL NOT CONTAIN ENTRIES OBTAINED VIA DATAPACK</i>.
+     */
     public static final RegistryKey<Registry<Galaxy>> GALAXY_KEY = RegistryKey.ofRegistry(new Identifier(Constant.MOD_ID, "galaxy"));
     public static final MutableRegistry<Galaxy> GALAXY = FabricRegistryBuilder.from(
             new DefaultedRegistry<>(new Identifier(Constant.MOD_ID, "milky_way").toString(),
@@ -76,11 +80,19 @@ public class AddonRegistry {
             new DefaultedRegistry<>(new Identifier(Constant.MOD_ID, "star").toString(),
                     CELESTIAL_BODY_TYPE_KEY, Lifecycle.experimental())).buildAndRegister();
 
+    /**
+     * <b>WARNING</b>: DO NOT USE THIS REGISTRY TO OBTAIN INSTANCES OR IDS OF OBJECTS WHEN IN-WORLD; USE THE {@link net.minecraft.util.registry.DynamicRegistryManager DYNAMIC REGISTRY MANAGER} INSTEAD.
+     * <i>THIS REGISTRY WILL NOT CONTAIN ENTRIES OBTAINED VIA DATAPACK</i>.
+     */
     public static final RegistryKey<Registry<CelestialBody<?, ?>>> CELESTIAL_BODY_KEY = RegistryKey.ofRegistry(new Identifier(Constant.MOD_ID, "celestial_body"));
     public static final MutableRegistry<CelestialBody<?, ?>> CELESTIAL_BODY = FabricRegistryBuilder.from(
             new DefaultedRegistry<>(new Identifier(Constant.MOD_ID, "sol").toString(),
                     CELESTIAL_BODY_KEY, Lifecycle.experimental())).buildAndRegister();
 
+    /**
+     * <b>WARNING</b>: DO NOT USE THIS REGISTRY TO OBTAIN INSTANCES OR IDS OF OBJECTS WHEN IN-WORLD; USE THE {@link net.minecraft.util.registry.DynamicRegistryManager DYNAMIC REGISTRY MANAGER} INSTEAD.
+     * <i>THIS REGISTRY WILL NOT CONTAIN ENTRIES OBTAINED VIA DATAPACK</i>.
+     */
     public static final RegistryKey<Registry<RocketPart>> ROCKET_PART_KEY = RegistryKey.ofRegistry(new Identifier(Constant.MOD_ID, "rocket_part"));
     public static final MutableRegistry<RocketPart> ROCKET_PART = FabricRegistryBuilder.from(
             new DefaultedRegistry<>(new Identifier(Constant.MOD_ID, "invalid").toString(),

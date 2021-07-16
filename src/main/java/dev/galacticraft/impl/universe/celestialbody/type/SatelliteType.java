@@ -36,7 +36,8 @@ import dev.galacticraft.api.universe.display.CelestialDisplay;
 import dev.galacticraft.api.universe.galaxy.Galaxy;
 import dev.galacticraft.api.universe.position.CelestialPosition;
 import dev.galacticraft.impl.Constant;
-import dev.galacticraft.impl.internal.world.gen.VoidChunkGenerator;
+import dev.galacticraft.impl.internal.world.gen.SatelliteChunkGenerator;
+import dev.galacticraft.impl.internal.world.gen.biome.GcApiBiomes;
 import dev.galacticraft.impl.universe.display.config.IconCelestialDisplayConfig;
 import dev.galacticraft.impl.universe.display.type.IconCelestialDisplayType;
 import dev.galacticraft.impl.universe.position.config.OrbitalCelestialPositionConfig;
@@ -51,6 +52,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.WorldGenerationProgressListener;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.structure.Structure;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
@@ -101,19 +103,19 @@ public class SatelliteType extends CelestialBodyType<SatelliteConfig> implements
     }
 
     @ApiStatus.Internal
-    public static CelestialBody<SatelliteConfig, SatelliteType> registerSatellite(@NotNull MinecraftServer server, @NotNull ServerPlayerEntity player, @NotNull CelestialBody<?, ?> parent) {
+    public static CelestialBody<SatelliteConfig, SatelliteType> registerSatellite(@NotNull MinecraftServer server, @NotNull ServerPlayerEntity player, @NotNull CelestialBody<?, ?> parent, Structure structure) {
         Identifier id = new Identifier(server.getRegistryManager().get(AddonRegistry.CELESTIAL_BODY_KEY).getId(parent).toString() + "_" + player.getEntityName().toLowerCase(Locale.ROOT));
         DimensionType type = DimensionType.create(OptionalLong.empty(), true, false, false, true, 1, false, false, false, false, false, 0, 256, 256, (seed, x, y, z, storage) -> server.getRegistryManager().get(Registry.BIOME_KEY).get(new Identifier(Constant.MOD_ID, "space")), new Identifier(Constant.MOD_ID, "infiniburn_space"), new Identifier(Constant.MOD_ID, "space_sky"), 0);
-        DimensionOptions options = new DimensionOptions(() -> type, VoidChunkGenerator.INSTANCE);
+        DimensionOptions options = new DimensionOptions(() -> type, new SatelliteChunkGenerator(GcApiBiomes.SPACE, structure));
         SatelliteOwnershipData ownershipData = new SatelliteOwnershipData(player.getUuid(), player.getEntityName(), new LinkedList<>(), false);
         CelestialPosition<?, ?> position = new CelestialPosition<>(OrbitalCelestialPositionType.INSTANCE, new OrbitalCelestialPositionConfig(1550, 10.0f, 0.0F, false));
         CelestialDisplay<?, ?> display = new CelestialDisplay<>(IconCelestialDisplayType.INSTANCE, new IconCelestialDisplayConfig(new Identifier(Constant.MOD_ID, "satellite"), 0, 0, 16, 16, 1));
         RegistryKey<World> key = RegistryKey.of(Registry.WORLD_KEY, id);
         RegistryKey<DimensionType> key2 = RegistryKey.of(Registry.DIMENSION_TYPE_KEY, id);
-        assert server.getWorld(key) == null : "World already registered";
+        assert server.getWorld(key) == null : "World already registered?!";
         assert server.getRegistryManager().get(Registry.DIMENSION_TYPE_KEY).get(key2) == null : "Dimension Type already registered?!";
         Registry.register(server.getRegistryManager().get(Registry.DIMENSION_TYPE_KEY), id, type);
-        return create(id, server, parent, position, display, options, ownershipData, player.getEntityName() + "'s Space Station");
+        return create(id, server, parent, position, display, options, ownershipData, player.getGameProfile().getName() + "'s Space Station");
     }
 
     @ApiStatus.Internal
@@ -123,7 +125,7 @@ public class SatelliteType extends CelestialBodyType<SatelliteConfig> implements
         config.customName(new TranslatableText(name));
         CelestialBody<SatelliteConfig, SatelliteType> satellite = INSTANCE.configure(config);
         ((SatelliteAccessor) server).addSatellite(id, satellite);
-        Constant.LOGGER.debug("Attempting to create a world dynamically (" + id + ')');
+        Constant.LOGGER.debug("Attempting to create a world dynamically ({})", id);
 
         DimensionType dimensionType3 = options.getDimensionType();
         ChunkGenerator chunkGenerator3 = options.getChunkGenerator();

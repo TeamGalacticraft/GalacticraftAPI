@@ -23,12 +23,14 @@
 package dev.galacticraft.impl.internal.world.gen;
 
 import com.mojang.serialization.Codec;
-import dev.galacticraft.impl.internal.world.gen.biome.source.VoidBiomeSource;
+import dev.galacticraft.impl.internal.world.gen.biome.GcApiBiomes;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.SpawnGroup;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.structure.Structure;
 import net.minecraft.structure.StructureManager;
+import net.minecraft.structure.StructurePlacementData;
 import net.minecraft.util.collection.Pool;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
@@ -37,13 +39,16 @@ import net.minecraft.util.registry.Registry;
 import net.minecraft.world.ChunkRegion;
 import net.minecraft.world.HeightLimitView;
 import net.minecraft.world.Heightmap.Type;
+import net.minecraft.world.SpawnHelper;
 import net.minecraft.world.StructureWorldAccess;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.SpawnSettings;
 import net.minecraft.world.biome.source.BiomeAccess;
-import net.minecraft.world.biome.source.BiomeSource;
+import net.minecraft.world.biome.source.FixedBiomeSource;
 import net.minecraft.world.chunk.Chunk;
+import net.minecraft.world.chunk.ChunkStatus;
 import net.minecraft.world.gen.BlockSource;
+import net.minecraft.world.gen.ChunkRandom;
 import net.minecraft.world.gen.GenerationStep;
 import net.minecraft.world.gen.StructureAccessor;
 import net.minecraft.world.gen.chunk.AquiferSampler;
@@ -55,21 +60,24 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.Optional;
+import java.util.Random;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 
-public class VoidChunkGenerator extends ChunkGenerator {
-    public static final VoidChunkGenerator INSTANCE = new VoidChunkGenerator(VoidBiomeSource.INSTANCE);
-    public static final Codec<VoidChunkGenerator> CODEC = Codec.unit(INSTANCE);
+public class SatelliteChunkGenerator extends ChunkGenerator {
+    public static final SatelliteChunkGenerator VOID_INSTANCE = new SatelliteChunkGenerator(GcApiBiomes.SPACE, new Structure());
+    public static final Codec<SatelliteChunkGenerator> CODEC = Codec.unit(VOID_INSTANCE);
     private static final BlockState AIR = Blocks.AIR.getDefaultState();
 
     private static final BlockSource EMPTY_SOURCE = (x, y, z) -> AIR;
     private static final VerticalBlockSample EMPTY_VIEW = new VerticalBlockSample(0, new BlockState[0]);
 
     public static final StructuresConfig STRUCTURES_CONFIG = new StructuresConfig(Optional.empty(), Collections.emptyMap());
+    private final Structure structure;
 
-    public VoidChunkGenerator(BiomeSource biomeSource) {
-        super(biomeSource, STRUCTURES_CONFIG);
+    public SatelliteChunkGenerator(Biome biome, Structure structure) {
+        super(new FixedBiomeSource(biome), STRUCTURES_CONFIG);
+        this.structure = structure;
     }
 
     @Override
@@ -103,10 +111,16 @@ public class VoidChunkGenerator extends ChunkGenerator {
 
     @Override
     public void generateFeatures(ChunkRegion region, StructureAccessor accessor) {
+        if (region.isChunkLoaded(0, 0) && region.getChunk(0, 0, ChunkStatus.BIOMES, false) == null) this.structure.place(region.toServerWorld(), BlockPos.ORIGIN, BlockPos.ORIGIN, new StructurePlacementData().clearProcessors().setIgnoreEntities(true).setPlaceFluids(true).setUpdateNeighbors(false), new Random(78921412L), 0);
     }
 
     @Override
     public void populateEntities(ChunkRegion region) {
+        ChunkPos chunkPos = region.getCenterPos();
+        Biome biome = region.getBiome(chunkPos.getStartPos());
+        ChunkRandom chunkRandom = new ChunkRandom();
+        chunkRandom.setPopulationSeed(region.getSeed(), chunkPos.getStartX(), chunkPos.getStartZ());
+        SpawnHelper.populateEntities(region, biome, chunkPos, chunkRandom);
     }
 
     @Override
