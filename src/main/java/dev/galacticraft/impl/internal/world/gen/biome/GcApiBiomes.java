@@ -30,6 +30,7 @@ import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.BiomeEffects;
 import net.minecraft.world.biome.GenerationSettings;
 import net.minecraft.world.biome.SpawnSettings;
+import net.minecraft.world.gen.surfacebuilder.ConfiguredSurfaceBuilders;
 
 public class GcApiBiomes {
     public static final Biome SPACE = createSpaceBiome();
@@ -39,6 +40,8 @@ public class GcApiBiomes {
         SpawnSettings.Builder spawns = new SpawnSettings.Builder();
         GenerationSettings.Builder genSettings = new GenerationSettings.Builder();
         BiomeEffects.Builder effects = new BiomeEffects.Builder();
+        effects.fogColor(0).waterColor(4159204).waterFogColor(329011).skyColor(0);
+        genSettings.surfaceBuilder(ConfiguredSurfaceBuilders.NOPE);
         return builder
                 .depth(-5)
                 .scale(-10)
