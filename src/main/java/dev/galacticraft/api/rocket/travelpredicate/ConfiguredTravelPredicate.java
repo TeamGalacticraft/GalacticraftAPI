@@ -24,14 +24,14 @@ package dev.galacticraft.api.rocket.travelpredicate;
 
 import com.mojang.serialization.Codec;
 import dev.galacticraft.api.registry.AddonRegistry;
-import dev.galacticraft.api.rocket.part.RocketPart;
 import dev.galacticraft.api.universe.celestialbody.CelestialBody;
 import it.unimi.dsi.fastutil.objects.Object2BooleanFunction;
+import net.minecraft.util.Identifier;
 
 public record ConfiguredTravelPredicate<C extends TravelPredicateConfig>(C config, TravelPredicateType<C> type) {
     public static final Codec<ConfiguredTravelPredicate<?>> CODEC = AddonRegistry.TRAVEL_PREDICATE.dispatch(ConfiguredTravelPredicate::type, TravelPredicateType::codec);
 
-    public TravelPredicateType.AccessType canTravelTo(CelestialBody<?, ?> type, Object2BooleanFunction<RocketPart> parts) {
+    public TravelPredicateType.AccessType canTravelTo(CelestialBody<?, ?> type, Object2BooleanFunction<Identifier> parts) {
         return this.type.canTravelTo(type, parts, this.config);
     }
 }

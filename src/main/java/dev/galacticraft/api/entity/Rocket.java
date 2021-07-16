@@ -23,10 +23,10 @@
 package dev.galacticraft.api.entity;
 
 import dev.galacticraft.api.rocket.LaunchStage;
-import dev.galacticraft.api.rocket.part.RocketPart;
 import dev.galacticraft.api.rocket.part.RocketPartType;
 import dev.galacticraft.api.universe.celestialbody.CelestialBody;
 import net.minecraft.entity.damage.DamageSource;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
@@ -59,7 +59,7 @@ public interface Rocket {
      * Returns all six rocket parts applied to this rocket
      * @return all parts applied to this rocket
      */
-    RocketPart[/*6*/] getParts();
+    Identifier[/*6*/] getPartIds();
 
     /**
      * Returns the rocket launch pad linked to this rocket or {@link BlockPos#ORIGIN} if it is not linked to one
@@ -115,22 +115,23 @@ public interface Rocket {
 
     /**
      * Swaps out a part of this rocket with the provided one
-     * The type of part is automatically determined
      * @param part the rocket part to swap in
+     * @param type the type of rocket part to swap
+     * @throws AssertionError {@code if (part.type != type) } and assertions are enabled
      */
-    void setPart(RocketPart part);
+    void setPart(Identifier part, RocketPartType type);
 
     /**
      * Replaces all the current parts of this rocket with new ones.
      * The part type of a rocket part at any given index should equal to
      * @param parts the parts to put in
      */
-    void setParts(RocketPart[/*6*/] parts);
+    void setParts(Identifier[/*6*/] parts);
 
     /**
-     * Returns the rocket part applied to this rocket of this {@code type}
+     * Returns the id of the rocket part applied to this rocket of this {@code type}
      * @param type the type of part to return
-     * @return the rocket part applied to this rocket of this {@code type}
+     * @return the id of the rocket part applied to this rocket of this {@code type}
      */
-    RocketPart getPartForType(RocketPartType type);
+    Identifier getPartForType(RocketPartType type);
 }

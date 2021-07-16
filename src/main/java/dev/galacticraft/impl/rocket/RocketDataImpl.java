@@ -27,29 +27,31 @@ import dev.galacticraft.api.rocket.part.RocketPart;
 import dev.galacticraft.api.rocket.part.RocketPartType;
 import dev.galacticraft.api.rocket.travelpredicate.TravelPredicateType;
 import dev.galacticraft.api.universe.celestialbody.CelestialBody;
+import dev.galacticraft.impl.Constant;
 import it.unimi.dsi.fastutil.objects.Object2BooleanArrayMap;
 import it.unimi.dsi.fastutil.objects.Object2BooleanMap;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.DynamicRegistryManager;
+import net.minecraft.util.registry.Registry;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.Arrays;
 
 @ApiStatus.Internal
-public record RocketDataImpl(int color, RocketPart cone, RocketPart body, RocketPart fin, RocketPart booster, RocketPart bottom, RocketPart upgrade) implements RocketData {
-    public static final RocketDataImpl EMPTY = new RocketDataImpl(0xffffffff, RocketPart.INVALID, RocketPart.INVALID, RocketPart.INVALID, RocketPart.INVALID, RocketPart.INVALID, RocketPart.INVALID);
+public record RocketDataImpl(int color, Identifier cone, Identifier body, Identifier fin, Identifier booster, Identifier bottom, Identifier upgrade) implements RocketData {
+    public static final RocketDataImpl EMPTY = new RocketDataImpl(0xffffffff, new Identifier(Constant.MOD_ID, "invalid"), new Identifier(Constant.MOD_ID, "invalid"), new Identifier(Constant.MOD_ID, "invalid"), new Identifier(Constant.MOD_ID, "invalid"), new Identifier(Constant.MOD_ID, "invalid"), new Identifier(Constant.MOD_ID, "invalid"));
 
-    public static RocketDataImpl fromNbt(NbtCompound nbt, DynamicRegistryManager manager) {
+    public static RocketDataImpl fromNbt(NbtCompound nbt) {
         if (nbt.getBoolean("Empty")) return empty();
         return new RocketDataImpl(
                 nbt.getInt("Color"),
-                RocketPart.getById(manager, new Identifier(nbt.getString("Cone"))),
-                RocketPart.getById(manager, new Identifier(nbt.getString("Body"))),
-                RocketPart.getById(manager, new Identifier(nbt.getString("Fin"))),
-                RocketPart.getById(manager, new Identifier(nbt.getString("Booster"))),
-                RocketPart.getById(manager, new Identifier(nbt.getString("Bottom"))),
-                RocketPart.getById(manager, new Identifier(nbt.getString("Upgrade")))
+                new Identifier(nbt.getString("Cone")),
+                new Identifier(nbt.getString("Body")),
+                new Identifier(nbt.getString("Fin")),
+                new Identifier(nbt.getString("Booster")),
+                new Identifier(nbt.getString("Bottom")),
+                new Identifier(nbt.getString("Upgrade"))
         );
     }
 
@@ -58,18 +60,18 @@ public record RocketDataImpl(int color, RocketPart cone, RocketPart body, Rocket
     }
 
     @Override
-    public NbtCompound toNbt(DynamicRegistryManager manager, NbtCompound nbt) {
+    public NbtCompound toNbt(NbtCompound nbt) {
         if (this.isEmpty()) {
             nbt.putBoolean("Empty", true);
             return nbt;
         }
         nbt.putInt("Color", this.color());
-        nbt.putString("Cone", RocketPart.getId(manager, this.cone()).toString());
-        nbt.putString("Body", RocketPart.getId(manager, this.body()).toString());
-        nbt.putString("Fin", RocketPart.getId(manager, this.fin()).toString());
-        nbt.putString("Booster", RocketPart.getId(manager, this.booster()).toString());
-        nbt.putString("Bottom", RocketPart.getId(manager, this.bottom()).toString());
-        nbt.putString("Upgrade", RocketPart.getId(manager, this.upgrade()).toString());
+        nbt.putString("Cone", this.cone().toString());
+        nbt.putString("Body", this.body().toString());
+        nbt.putString("Fin", this.fin().toString());
+        nbt.putString("Booster", this.booster().toString());
+        nbt.putString("Bottom", this.bottom().toString());
+        nbt.putString("Upgrade", this.upgrade().toString());
         return nbt;
     }
 
@@ -102,16 +104,18 @@ public record RocketDataImpl(int color, RocketPart cone, RocketPart body, Rocket
     public boolean canTravelTo(DynamicRegistryManager manager, CelestialBody<?, ?> celestialBodyType) {
         Object2BooleanMap<RocketPart> map = new Object2BooleanArrayMap<>();
         TravelPredicateType.AccessType type = TravelPredicateType.AccessType.PASS;
-        for (RocketPart part : this.parts()) {
-            map.put(part, true);
-            type = type.merge(this.travel(manager, part, celestialBodyType, map));
+        Registry<RocketPart> registry = RocketPart.getRegistry(manager);
+        for (Identifier part : this.parts()) {
+            RocketPart rocketPart = RocketPart.getById(registry, part);
+            map.put(rocketPart, true);
+            type = type.merge(this.travel(manager, rocketPart, celestialBodyType, map));
         }
         return type == TravelPredicateType.AccessType.ALLOW;
     }
 
     private TravelPredicateType.AccessType travel(DynamicRegistryManager manager, RocketPart part, CelestialBody<?, ?> type, Object2BooleanMap<RocketPart> map) {
         return part.travelPredicate().canTravelTo(type, p -> map.computeBooleanIfAbsent((RocketPart) p, p1 -> {
-            if (Arrays.stream(this.parts()).anyMatch(p2 -> RocketPart.getId(manager, p2).equals(RocketPart.getId(manager, p1)))) {
+            if (Arrays.asList(this.parts()).contains(p1)) {
                 map.put((RocketPart) p, false);
                 return travel(manager, p1, type, map) != TravelPredicateType.AccessType.BLOCK;
             } else {
@@ -121,12 +125,12 @@ public record RocketDataImpl(int color, RocketPart cone, RocketPart body, Rocket
     }
 
     @Override
-    public RocketPart getPartForType(RocketPartType type) {
+    public Identifier getPartForType(RocketPartType type) {
         return this.parts()[type.ordinal()];
     }
 
     @Override
-    public RocketPart[] parts() {
-        return new RocketPart[]{this.cone(), this.body(), this.fin(), this.booster(), this.bottom(), this.upgrade()};
+    public Identifier[] parts() {
+        return new Identifier[]{this.cone(), this.body(), this.fin(), this.booster(), this.bottom(), this.upgrade()};
     }
 }

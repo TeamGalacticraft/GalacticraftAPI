@@ -23,9 +23,9 @@
 package dev.galacticraft.api.rocket.travelpredicate;
 
 import com.mojang.serialization.Codec;
-import dev.galacticraft.api.rocket.part.RocketPart;
 import dev.galacticraft.api.universe.celestialbody.CelestialBody;
 import it.unimi.dsi.fastutil.objects.Object2BooleanFunction;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.StringIdentifiable;
 
 import java.util.Locale;
@@ -41,7 +41,7 @@ public abstract class TravelPredicateType<C extends TravelPredicateConfig> {
         return new ConfiguredTravelPredicate<>(config, this);
     }
 
-    public abstract AccessType canTravelTo(CelestialBody<?, ?> type, Object2BooleanFunction<RocketPart> parts, C config);
+    public abstract AccessType canTravelTo(CelestialBody<?, ?> type, Object2BooleanFunction<Identifier> parts, C config);
 
     public Codec<ConfiguredTravelPredicate<C>> codec() {
         return this.codec;
