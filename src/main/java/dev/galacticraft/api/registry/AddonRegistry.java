@@ -47,7 +47,7 @@ public class AddonRegistry {
      * <i>THIS REGISTRY WILL NOT CONTAIN ENTRIES OBTAINED VIA DATAPACK</i>.
      */
     public static final RegistryKey<Registry<Gas>> GAS_KEY = RegistryKey.ofRegistry(new Identifier(Constant.MOD_ID, "gas"));
-    public static final MutableRegistry<Gas> _GAS = FabricRegistryBuilder.from(
+    public static final MutableRegistry<Gas> GAS = FabricRegistryBuilder.from(
             new DefaultedRegistry<>(new Identifier(Constant.MOD_ID, "oxygen").toString(),
                     GAS_KEY, Lifecycle.experimental())).buildAndRegister();
 
@@ -99,22 +99,22 @@ public class AddonRegistry {
                     ROCKET_PART_KEY, Lifecycle.experimental())).buildAndRegister();
 
     static {
-        Registry.register(_GAS, Gas.HYDROGEN_ID, Gas.HYDROGEN);
-        Registry.register(_GAS, Gas.NITROGEN_ID, Gas.NITROGEN);
-        Registry.register(_GAS, Gas.OXYGEN_ID, Gas.OXYGEN);
-        Registry.register(_GAS, Gas.CARBON_DIOXIDE_ID, Gas.CARBON_DIOXIDE);
-        Registry.register(_GAS, Gas.WATER_VAPOR_ID, Gas.WATER_VAPOR);
-        Registry.register(_GAS, Gas.METHANE_ID, Gas.METHANE);
-        Registry.register(_GAS, Gas.HELIUM_ID, Gas.HELIUM);
-        Registry.register(_GAS, Gas.ARGON_ID, Gas.ARGON);
-        Registry.register(_GAS, Gas.NEON_ID, Gas.NEON);
-        Registry.register(_GAS, Gas.KRYPTON_ID, Gas.KRYPTON);
-        Registry.register(_GAS, Gas.NITROUS_OXIDE_ID, Gas.NITROUS_OXIDE);
-        Registry.register(_GAS, Gas.CARBON_MONOXIDE_ID, Gas.CARBON_MONOXIDE);
-        Registry.register(_GAS, Gas.XENON_ID, Gas.XENON);
-        Registry.register(_GAS, Gas.OZONE_ID, Gas.OZONE);
-        Registry.register(_GAS, Gas.NITROUS_DIOXIDE_ID, Gas.NITROUS_DIOXIDE);
-        Registry.register(_GAS, Gas.IODINE_ID, Gas.IODINE);
+        Registry.register(GAS, Gas.HYDROGEN_ID, Gas.HYDROGEN);
+        Registry.register(GAS, Gas.NITROGEN_ID, Gas.NITROGEN);
+        Registry.register(GAS, Gas.OXYGEN_ID, Gas.OXYGEN);
+        Registry.register(GAS, Gas.CARBON_DIOXIDE_ID, Gas.CARBON_DIOXIDE);
+        Registry.register(GAS, Gas.WATER_VAPOR_ID, Gas.WATER_VAPOR);
+        Registry.register(GAS, Gas.METHANE_ID, Gas.METHANE);
+        Registry.register(GAS, Gas.HELIUM_ID, Gas.HELIUM);
+        Registry.register(GAS, Gas.ARGON_ID, Gas.ARGON);
+        Registry.register(GAS, Gas.NEON_ID, Gas.NEON);
+        Registry.register(GAS, Gas.KRYPTON_ID, Gas.KRYPTON);
+        Registry.register(GAS, Gas.NITROUS_OXIDE_ID, Gas.NITROUS_OXIDE);
+        Registry.register(GAS, Gas.CARBON_MONOXIDE_ID, Gas.CARBON_MONOXIDE);
+        Registry.register(GAS, Gas.XENON_ID, Gas.XENON);
+        Registry.register(GAS, Gas.OZONE_ID, Gas.OZONE);
+        Registry.register(GAS, Gas.NITROUS_DIOXIDE_ID, Gas.NITROUS_DIOXIDE);
+        Registry.register(GAS, Gas.IODINE_ID, Gas.IODINE);
 
         Registry.register(TRAVEL_PREDICATE, new Identifier(Constant.MOD_ID, "access_weight"), AccessWeightPredicateType.INSTANCE);
         Registry.register(TRAVEL_PREDICATE, new Identifier(Constant.MOD_ID, "constant"), ConstantTravelPredicateType.INSTANCE);
