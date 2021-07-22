@@ -71,7 +71,7 @@ public class RegistryArgumentType<T> implements ArgumentType<Registry<T>> {
         return ImmutableList.of(
                 AddonRegistry.CELESTIAL_BODY_TYPE_KEY.getValue().toString(),
                 AddonRegistry.CELESTIAL_POSITION_TYPE_KEY.getValue().toString(),
-                AddonRegistry.ATMOSPHERIC_GAS_KEY.getValue().toString()
+                AddonRegistry.GAS_KEY.getValue().toString()
         );
     }
 }

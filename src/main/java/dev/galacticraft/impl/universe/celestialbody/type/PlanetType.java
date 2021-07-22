@@ -22,7 +22,7 @@
 
 package dev.galacticraft.impl.universe.celestialbody.type;
 
-import dev.galacticraft.api.atmosphere.AtmosphericInfo;
+import dev.galacticraft.api.gas.GasComposition;
 import dev.galacticraft.api.satellite.SatelliteRecipe;
 import dev.galacticraft.api.universe.celestialbody.CelestialBody;
 import dev.galacticraft.api.universe.celestialbody.CelestialBodyType;
@@ -81,7 +81,7 @@ public class PlanetType extends CelestialBodyType<PlanetConfig> implements Landa
     }
 
     @Override
-    public @NotNull AtmosphericInfo atmosphere(PlanetConfig config) {
+    public @NotNull GasComposition atmosphere(PlanetConfig config) {
         return config.atmosphere();
     }
 
@@ -93,6 +93,16 @@ public class PlanetType extends CelestialBodyType<PlanetConfig> implements Landa
     @Override
     public int accessWeight(PlanetConfig config) {
         return config.accessWeight();
+    }
+
+    @Override
+    public int dayTemperature(PlanetConfig config) {
+        return config.dayTemperature();
+    }
+
+    @Override
+    public int nightTemperature(PlanetConfig config) {
+        return config.nightTemperature();
     }
 
     @Override

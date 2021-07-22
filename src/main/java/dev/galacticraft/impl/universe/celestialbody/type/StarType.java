@@ -22,6 +22,7 @@
 
 package dev.galacticraft.impl.universe.celestialbody.type;
 
+import dev.galacticraft.api.gas.GasComposition;
 import dev.galacticraft.api.universe.celestialbody.CelestialBody;
 import dev.galacticraft.api.universe.celestialbody.CelestialBodyType;
 import dev.galacticraft.api.universe.celestialbody.star.Star;
@@ -75,6 +76,20 @@ public class StarType extends CelestialBodyType<StarConfig> implements Star<Star
     @Override
     public @NotNull CelestialDisplay<?, ?> display(StarConfig config) {
         return config.display();
+    }
+
+    /**
+     * {@inheritDoc}
+     * Treat as this star's photospheric composition
+     */
+    @Override
+    public @NotNull GasComposition atmosphere(StarConfig config) {
+        return config.photosphericComposition();
+    }
+
+    @Override
+    public float gravity(StarConfig config) {
+        return config.gravity();
     }
 
     @Override

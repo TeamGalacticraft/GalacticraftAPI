@@ -34,31 +34,15 @@ import net.minecraft.client.render.model.BakedQuad;
 import net.minecraft.client.render.model.json.ModelTransformation;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.client.world.ClientWorld;
-import net.minecraft.util.Lazy;
 import net.minecraft.util.math.Vec3f;
 
 import java.util.List;
+import java.util.function.Supplier;
 
 @Environment(EnvType.CLIENT)
-public class BakedModelRocketPartRenderer implements RocketPartRenderer {
-    private final Lazy<BakedModel> model;
-    private final Lazy<RenderLayer> layer;
-
-    public BakedModelRocketPartRenderer(Lazy<BakedModel> model, Lazy<RenderLayer> layer) {
-        this.model = model;
-        this.layer = layer;
-    }
-
-    public BakedModelRocketPartRenderer(BakedModel model, RenderLayer layer) {
-        this(new Lazy<>(() -> model), new Lazy<>(() -> layer));
-    }
-
-    public BakedModelRocketPartRenderer(Lazy<BakedModel> model) {
-        this(model, new Lazy<>(() -> RenderLayer.getEntityTranslucent(model.get().getSprite().getId(), true)));
-    }
-
-    public BakedModelRocketPartRenderer(BakedModel model) {
-        this(new Lazy<>(() -> model));
+public record BakedModelRocketPartRenderer(Supplier<BakedModel> model, Supplier<RenderLayer> layer) implements RocketPartRenderer {
+    public BakedModelRocketPartRenderer(Supplier<BakedModel> model) {
+        this(model, () -> RenderLayer.getEntityTranslucent(model.get().getSprite().getId(), true));
     }
 
     @Override
@@ -103,6 +87,7 @@ public class BakedModelRocketPartRenderer implements RocketPartRenderer {
 
     @Override
     public void render(ClientWorld world, MatrixStack matrices, Rocket rocket, VertexConsumerProvider vertices, float delta, int light) {
+        RenderSystem.setShaderColor((((rocket.getColor() >> 16) & 0xFF) / 255f), (((rocket.getColor() >> 8) & 0xFF) / 255f), ((rocket.getColor() & 0xFF) / 255f), (((rocket.getColor() >> 24) & 0xFF) / 255f));
         matrices.translate(0.5D, 0.5D, 0.5D);
         MatrixStack.Entry entry = matrices.peek();
         VertexConsumer vertexConsumer = vertices.getBuffer(layer.get());
@@ -110,9 +95,9 @@ public class BakedModelRocketPartRenderer implements RocketPartRenderer {
             vertexConsumer.quad(
                     entry,
                     quad,
-                    (((rocket.getColor() << 16) & 0xFF) / 255f) * (((rocket.getColor() << 24) & 0xFF) / 255f),
-                    (((rocket.getColor() << 8) & 0xFF) / 255f) * (((rocket.getColor() << 24) & 0xFF) / 255f),
-                    ((rocket.getColor() & 0xFF) / 255f) * (((rocket.getColor() << 24) & 0xFF) / 255f),
+                    1,
+                    1,
+                    1,
                     light,
                     //15728880,
                     OverlayTexture.DEFAULT_UV

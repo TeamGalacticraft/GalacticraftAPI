@@ -22,6 +22,7 @@
 
 package dev.galacticraft.impl.universe.celestialbody.type;
 
+import dev.galacticraft.api.gas.GasComposition;
 import dev.galacticraft.api.satellite.SatelliteRecipe;
 import dev.galacticraft.api.universe.celestialbody.CelestialBody;
 import dev.galacticraft.api.universe.celestialbody.CelestialBodyType;
@@ -71,6 +72,16 @@ public class DecorativePlanet extends CelestialBodyType<DecorativePlanetConfig> 
     @Override
     public @NotNull CelestialDisplay<?, ?> display(DecorativePlanetConfig config) {
         return config.display();
+    }
+
+    @Override
+    public @NotNull GasComposition atmosphere(DecorativePlanetConfig config) {
+        return config.atmosphere();
+    }
+
+    @Override
+    public float gravity(DecorativePlanetConfig config) {
+        return config.gravity();
     }
 
     @Override

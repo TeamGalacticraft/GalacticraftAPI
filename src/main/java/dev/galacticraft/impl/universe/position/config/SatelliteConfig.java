@@ -24,7 +24,7 @@ package dev.galacticraft.impl.universe.position.config;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import dev.galacticraft.api.atmosphere.AtmosphericInfo;
+import dev.galacticraft.api.gas.GasComposition;
 import dev.galacticraft.api.registry.AddonRegistry;
 import dev.galacticraft.api.satellite.SatelliteOwnershipData;
 import dev.galacticraft.api.universe.celestialbody.CelestialBody;
@@ -50,7 +50,7 @@ public final class SatelliteConfig implements CelestialBodyConfig {
             CelestialDisplay.CODEC.fieldOf("display").forGetter(SatelliteConfig::display),
             SatelliteOwnershipData.CODEC.fieldOf("ownershipData").forGetter(SatelliteConfig::ownershipData),
             Identifier.CODEC.fieldOf("world").xmap(id -> RegistryKey.of(Registry.WORLD_KEY, id), RegistryKey::getValue).forGetter(SatelliteConfig::world),
-            AtmosphericInfo.CODEC.fieldOf("atmosphere").forGetter(SatelliteConfig::atmosphere),
+            GasComposition.CODEC.fieldOf("atmosphere").forGetter(SatelliteConfig::atmosphere),
             Codec.FLOAT.fieldOf("gravity").forGetter(SatelliteConfig::gravity),
             Codec.INT.fieldOf("accessWeight").forGetter(SatelliteConfig::accessWeight),
             DimensionOptions.CODEC.fieldOf("dimension_options").forGetter(SatelliteConfig::dimensionOptions)
@@ -62,13 +62,13 @@ public final class SatelliteConfig implements CelestialBodyConfig {
     private final CelestialDisplay<?, ?> display;
     private final SatelliteOwnershipData ownershipData;
     private final RegistryKey<World> world;
-    private final AtmosphericInfo atmosphere;
+    private final GasComposition atmosphere;
     private final float gravity;
     private final int accessWeight;
     private final DimensionOptions dimensionOptions;
     private Text customName = LiteralText.EMPTY;
 
-    public SatelliteConfig(RegistryKey<CelestialBody<?, ?>> parent, RegistryKey<Galaxy> galaxy, CelestialPosition<?, ?> position, CelestialDisplay<?, ?> display, SatelliteOwnershipData ownershipData, RegistryKey<World> world, AtmosphericInfo atmosphere, float gravity, int accessWeight, DimensionOptions dimensionOptions) {
+    public SatelliteConfig(RegistryKey<CelestialBody<?, ?>> parent, RegistryKey<Galaxy> galaxy, CelestialPosition<?, ?> position, CelestialDisplay<?, ?> display, SatelliteOwnershipData ownershipData, RegistryKey<World> world, GasComposition atmosphere, float gravity, int accessWeight, DimensionOptions dimensionOptions) {
         this.parent = parent;
         this.galaxy = galaxy;
         this.position = position;
@@ -97,7 +97,7 @@ public final class SatelliteConfig implements CelestialBodyConfig {
 
     public RegistryKey<World> world() { return world; }
 
-    public AtmosphericInfo atmosphere() { return atmosphere; }
+    public GasComposition atmosphere() { return atmosphere; }
 
     public float gravity() { return gravity; }
 

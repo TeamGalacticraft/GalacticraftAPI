@@ -23,6 +23,7 @@
 package dev.galacticraft.api.universe.celestialbody;
 
 import com.mojang.serialization.Codec;
+import dev.galacticraft.api.gas.GasComposition;
 import dev.galacticraft.api.universe.display.CelestialDisplay;
 import dev.galacticraft.api.universe.galaxy.Galaxy;
 import dev.galacticraft.api.universe.position.CelestialPosition;
@@ -30,6 +31,7 @@ import net.minecraft.text.TranslatableText;
 import net.minecraft.util.registry.DynamicRegistryManager;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryKey;
+import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -97,6 +99,21 @@ public abstract class CelestialBodyType<C extends CelestialBodyConfig> {
     public @Nullable CelestialBody<?, ?> parent(DynamicRegistryManager manager, C config) {
         return this.parent(CelestialBody.getRegistry(manager), config);
     }
+
+    /**
+     * Returns the {@link GasComposition atmospheric information} of this celestial body
+     * @param config the celestial body configuration to be queried
+     * @return the registry key of the {@link World} this celestial body is linked to
+     * @see GasComposition#breathable() to see the requirements for a celestial body to be considered breatheable
+     */
+    public abstract @NotNull GasComposition atmosphere(C config);
+
+    /**
+     * Returns the gravity of this celestial body, relative to earth
+     * @param config the celestial body configuration to be queried
+     * @return the gravity of this celestial body
+     */
+    public abstract float gravity(C config);
 
     /**
      * Returns a codec that will (de)serialize a fully-configured celestial body of this type.

@@ -25,7 +25,7 @@ package dev.galacticraft.impl.universe.celestialbody.type;
 import com.google.common.collect.ImmutableList;
 import com.mojang.serialization.Codec;
 import dev.galacticraft.api.accessor.SatelliteAccessor;
-import dev.galacticraft.api.atmosphere.AtmosphericInfo;
+import dev.galacticraft.api.gas.GasComposition;
 import dev.galacticraft.api.registry.AddonRegistry;
 import dev.galacticraft.api.satellite.Satellite;
 import dev.galacticraft.api.satellite.SatelliteOwnershipData;
@@ -77,7 +77,7 @@ import java.util.OptionalLong;
 
 public class SatelliteType extends CelestialBodyType<SatelliteConfig> implements Satellite<SatelliteConfig>, Landable<SatelliteConfig> {
     public static final SatelliteType INSTANCE = new SatelliteType(SatelliteConfig.CODEC);
-    private static final AtmosphericInfo DEFAULT_ATMOSPHERE = new AtmosphericInfo.Builder().build();
+    private static final GasComposition EMPTY_GAS_COMPOSITION = new GasComposition.Builder().build();
     private static final TranslatableText NAME = new TranslatableText("ui.galacticraft-api.satellite.name");
     private static final TranslatableText DESCRIPTION = new TranslatableText("ui.galacticraft-api.satellite.description");
     public static final WorldGenerationProgressListener EMPTY_PROGRESS_LISTENER = new WorldGenerationProgressListener() {
@@ -121,7 +121,7 @@ public class SatelliteType extends CelestialBodyType<SatelliteConfig> implements
     @ApiStatus.Internal
     public static CelestialBody<SatelliteConfig, SatelliteType> create(Identifier id, MinecraftServer server, CelestialBody<?, ?> parent, CelestialPosition<?, ?> position, CelestialDisplay<?, ?> display,
                                                                        DimensionOptions options, SatelliteOwnershipData ownershipData, String name) {
-        SatelliteConfig config = new SatelliteConfig(RegistryKey.of(AddonRegistry.CELESTIAL_BODY_KEY, server.getRegistryManager().get(AddonRegistry.CELESTIAL_BODY_KEY).getId(parent)), parent.galaxy(), position, display, ownershipData, RegistryKey.of(Registry.WORLD_KEY, id), DEFAULT_ATMOSPHERE, 0.0f, parent.type() instanceof Landable ? ((Landable) parent.type()).accessWeight(parent.config()) : 1, options);
+        SatelliteConfig config = new SatelliteConfig(RegistryKey.of(AddonRegistry.CELESTIAL_BODY_KEY, server.getRegistryManager().get(AddonRegistry.CELESTIAL_BODY_KEY).getId(parent)), parent.galaxy(), position, display, ownershipData, RegistryKey.of(Registry.WORLD_KEY, id), EMPTY_GAS_COMPOSITION, 0.0f, parent.type() instanceof Landable ? ((Landable) parent.type()).accessWeight(parent.config()) : 1, options);
         config.customName(new TranslatableText(name));
         CelestialBody<SatelliteConfig, SatelliteType> satellite = INSTANCE.configure(config);
         ((SatelliteAccessor) server).addSatellite(id, satellite);
@@ -192,7 +192,7 @@ public class SatelliteType extends CelestialBodyType<SatelliteConfig> implements
     }
 
     @Override
-    public @NotNull AtmosphericInfo atmosphere(SatelliteConfig config) {
+    public @NotNull GasComposition atmosphere(SatelliteConfig config) {
         return config.atmosphere();
     }
 
@@ -204,6 +204,16 @@ public class SatelliteType extends CelestialBodyType<SatelliteConfig> implements
     @Override
     public int accessWeight(SatelliteConfig config) {
         return config.accessWeight();
+    }
+
+    @Override
+    public int dayTemperature(SatelliteConfig config) {
+        return 121;
+    }
+
+    @Override
+    public int nightTemperature(SatelliteConfig config) {
+        return -157;
     }
 
     @Override

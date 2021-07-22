@@ -23,7 +23,7 @@
 package dev.galacticraft.api.registry;
 
 import com.mojang.serialization.Lifecycle;
-import dev.galacticraft.api.atmosphere.AtmosphericGas;
+import dev.galacticraft.api.gas.Gas;
 import dev.galacticraft.api.rocket.part.RocketPart;
 import dev.galacticraft.api.rocket.travelpredicate.TravelPredicateType;
 import dev.galacticraft.api.universe.celestialbody.CelestialBody;
@@ -46,10 +46,10 @@ public class AddonRegistry {
      * <b>WARNING</b>: DO NOT USE THIS REGISTRY TO OBTAIN INSTANCES OR IDS OF OBJECTS WHEN IN-WORLD; USE THE {@link net.minecraft.util.registry.DynamicRegistryManager DYNAMIC REGISTRY MANAGER} INSTEAD.
      * <i>THIS REGISTRY WILL NOT CONTAIN ENTRIES OBTAINED VIA DATAPACK</i>.
      */
-    public static final RegistryKey<Registry<AtmosphericGas>> ATMOSPHERIC_GAS_KEY = RegistryKey.ofRegistry(new Identifier(Constant.MOD_ID, "atmospheric_gas"));
-    public static final MutableRegistry<AtmosphericGas> ATMOSPHERIC_GAS = FabricRegistryBuilder.from(
+    public static final RegistryKey<Registry<Gas>> GAS_KEY = RegistryKey.ofRegistry(new Identifier(Constant.MOD_ID, "gas"));
+    public static final MutableRegistry<Gas> _GAS = FabricRegistryBuilder.from(
             new DefaultedRegistry<>(new Identifier(Constant.MOD_ID, "oxygen").toString(),
-                    ATMOSPHERIC_GAS_KEY, Lifecycle.experimental())).buildAndRegister();
+                    GAS_KEY, Lifecycle.experimental())).buildAndRegister();
 
     public static final RegistryKey<Registry<TravelPredicateType<?>>> TRAVEL_PREDICATE_KEY = RegistryKey.ofRegistry(new Identifier(Constant.MOD_ID, "travel_predicate"));
     public static final MutableRegistry<TravelPredicateType<?>> TRAVEL_PREDICATE = FabricRegistryBuilder.from(
@@ -99,22 +99,22 @@ public class AddonRegistry {
                     ROCKET_PART_KEY, Lifecycle.experimental())).buildAndRegister();
 
     static {
-        Registry.register(ATMOSPHERIC_GAS, AtmosphericGas.HYDROGEN_ID, AtmosphericGas.HYDROGEN);
-        Registry.register(ATMOSPHERIC_GAS, AtmosphericGas.NITROGEN_ID, AtmosphericGas.NITROGEN);
-        Registry.register(ATMOSPHERIC_GAS, AtmosphericGas.OXYGEN_ID, AtmosphericGas.OXYGEN);
-        Registry.register(ATMOSPHERIC_GAS, AtmosphericGas.CARBON_DIOXIDE_ID, AtmosphericGas.CARBON_DIOXIDE);
-        Registry.register(ATMOSPHERIC_GAS, AtmosphericGas.WATER_VAPOR_ID, AtmosphericGas.WATER_VAPOR);
-        Registry.register(ATMOSPHERIC_GAS, AtmosphericGas.METHANE_ID, AtmosphericGas.METHANE);
-        Registry.register(ATMOSPHERIC_GAS, AtmosphericGas.HELIUM_ID, AtmosphericGas.HELIUM);
-        Registry.register(ATMOSPHERIC_GAS, AtmosphericGas.ARGON_ID, AtmosphericGas.ARGON);
-        Registry.register(ATMOSPHERIC_GAS, AtmosphericGas.NEON_ID, AtmosphericGas.NEON);
-        Registry.register(ATMOSPHERIC_GAS, AtmosphericGas.KRYPTON_ID, AtmosphericGas.KRYPTON);
-        Registry.register(ATMOSPHERIC_GAS, AtmosphericGas.NITROUS_OXIDE_ID, AtmosphericGas.NITROUS_OXIDE);
-        Registry.register(ATMOSPHERIC_GAS, AtmosphericGas.CARBON_MONOXIDE_ID, AtmosphericGas.CARBON_MONOXIDE);
-        Registry.register(ATMOSPHERIC_GAS, AtmosphericGas.XENON_ID, AtmosphericGas.XENON);
-        Registry.register(ATMOSPHERIC_GAS, AtmosphericGas.OZONE_ID, AtmosphericGas.OZONE);
-        Registry.register(ATMOSPHERIC_GAS, AtmosphericGas.NITROUS_DIOXIDE_ID, AtmosphericGas.NITROUS_DIOXIDE);
-        Registry.register(ATMOSPHERIC_GAS, AtmosphericGas.IODINE_ID, AtmosphericGas.IODINE);
+        Registry.register(_GAS, Gas.HYDROGEN_ID, Gas.HYDROGEN);
+        Registry.register(_GAS, Gas.NITROGEN_ID, Gas.NITROGEN);
+        Registry.register(_GAS, Gas.OXYGEN_ID, Gas.OXYGEN);
+        Registry.register(_GAS, Gas.CARBON_DIOXIDE_ID, Gas.CARBON_DIOXIDE);
+        Registry.register(_GAS, Gas.WATER_VAPOR_ID, Gas.WATER_VAPOR);
+        Registry.register(_GAS, Gas.METHANE_ID, Gas.METHANE);
+        Registry.register(_GAS, Gas.HELIUM_ID, Gas.HELIUM);
+        Registry.register(_GAS, Gas.ARGON_ID, Gas.ARGON);
+        Registry.register(_GAS, Gas.NEON_ID, Gas.NEON);
+        Registry.register(_GAS, Gas.KRYPTON_ID, Gas.KRYPTON);
+        Registry.register(_GAS, Gas.NITROUS_OXIDE_ID, Gas.NITROUS_OXIDE);
+        Registry.register(_GAS, Gas.CARBON_MONOXIDE_ID, Gas.CARBON_MONOXIDE);
+        Registry.register(_GAS, Gas.XENON_ID, Gas.XENON);
+        Registry.register(_GAS, Gas.OZONE_ID, Gas.OZONE);
+        Registry.register(_GAS, Gas.NITROUS_DIOXIDE_ID, Gas.NITROUS_DIOXIDE);
+        Registry.register(_GAS, Gas.IODINE_ID, Gas.IODINE);
 
         Registry.register(TRAVEL_PREDICATE, new Identifier(Constant.MOD_ID, "access_weight"), AccessWeightPredicateType.INSTANCE);
         Registry.register(TRAVEL_PREDICATE, new Identifier(Constant.MOD_ID, "constant"), ConstantTravelPredicateType.INSTANCE);

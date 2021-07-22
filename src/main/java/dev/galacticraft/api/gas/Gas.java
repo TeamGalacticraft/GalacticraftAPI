@@ -20,7 +20,7 @@
  * SOFTWARE.
  */
 
-package dev.galacticraft.api.atmosphere;
+package dev.galacticraft.api.gas;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -32,92 +32,92 @@ import net.minecraft.util.registry.DynamicRegistryManager;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryKey;
 
-public record AtmosphericGas(TranslatableText name, String symbol) {
-    public static final Codec<AtmosphericGas> CODEC = RecordCodecBuilder.create(instance ->
+public record Gas(TranslatableText name, String symbol) {
+    public static final Codec<Gas> CODEC = RecordCodecBuilder.create(instance ->
             instance.group(
                     Codec.STRING.fieldOf("name").xmap(TranslatableText::new, TranslatableText::getKey).forGetter(i -> i.name),
                     Codec.STRING.fieldOf("symbol").forGetter(i -> i.symbol)
-            ).apply(instance, AtmosphericGas::new)
+            ).apply(instance, Gas::new)
     );
 
     public static final Identifier HYDROGEN_ID = new Identifier(Constant.MOD_ID, "hydrogen");
-    public static final AtmosphericGas HYDROGEN = new AtmosphericGas(
+    public static final Gas HYDROGEN = new Gas(
             new TranslatableText("ui.galacticraft-api.gases.hydrogen"),
             "H"
     );
     public static final Identifier NITROGEN_ID = new Identifier(Constant.MOD_ID, "nitrogen");
-    public static final AtmosphericGas NITROGEN = new AtmosphericGas(
+    public static final Gas NITROGEN = new Gas(
             new TranslatableText("ui.galacticraft-api.gases.nitrogen"),
             "N"
     );
     public static final Identifier OXYGEN_ID = new Identifier(Constant.MOD_ID, "oxygen");
-    public static final RegistryKey<AtmosphericGas> OXYGEN_KEY = RegistryKey.of(AddonRegistry.ATMOSPHERIC_GAS_KEY, OXYGEN_ID);
-    public static final AtmosphericGas OXYGEN = new AtmosphericGas(
+    public static final RegistryKey<Gas> OXYGEN_KEY = RegistryKey.of(AddonRegistry.GAS_KEY, OXYGEN_ID);
+    public static final Gas OXYGEN = new Gas(
             new TranslatableText("ui.galacticraft-api.gases.oxygen"),
             "O2"
     );
     public static final Identifier CARBON_DIOXIDE_ID = new Identifier(Constant.MOD_ID, "carbon_dioxide");
-    public static final AtmosphericGas CARBON_DIOXIDE = new AtmosphericGas(
+    public static final Gas CARBON_DIOXIDE = new Gas(
             new TranslatableText("ui.galacticraft-api.gases.carbon_dioxide"),
             "CO2"
     );
     public static final Identifier WATER_VAPOR_ID = new Identifier(Constant.MOD_ID, "water_vapor");
-    public static final AtmosphericGas WATER_VAPOR = new AtmosphericGas(
+    public static final Gas WATER_VAPOR = new Gas(
             new TranslatableText("ui.galacticraft-api.gases.water_vapor"),
             "H2O"
     );
     public static final Identifier METHANE_ID = new Identifier(Constant.MOD_ID, "methane");
-    public static final AtmosphericGas METHANE = new AtmosphericGas(
+    public static final Gas METHANE = new Gas(
             new TranslatableText("ui.galacticraft-api.gases.methane"),
             "CH4"
     );
     public static final Identifier HELIUM_ID = new Identifier(Constant.MOD_ID, "helium");
-    public static final AtmosphericGas HELIUM = new AtmosphericGas(
+    public static final Gas HELIUM = new Gas(
             new TranslatableText("ui.galacticraft-api.gases.helium"),
             "He"
     );
     public static final Identifier ARGON_ID = new Identifier(Constant.MOD_ID, "argon");
-    public static final AtmosphericGas ARGON = new AtmosphericGas(
+    public static final Gas ARGON = new Gas(
             new TranslatableText("ui.galacticraft-api.gases.argon"),
             "Ar"
     );
     public static final Identifier NEON_ID = new Identifier(Constant.MOD_ID, "neon");
-    public static final AtmosphericGas NEON = new AtmosphericGas(
+    public static final Gas NEON = new Gas(
             new TranslatableText("ui.galacticraft-api.gases.neon"),
             "Ne"
     );
     public static final Identifier KRYPTON_ID = new Identifier(Constant.MOD_ID, "krypton");
-    public static final AtmosphericGas KRYPTON = new AtmosphericGas(
+    public static final Gas KRYPTON = new Gas(
             new TranslatableText("ui.galacticraft-api.gases.krypton"),
             "Kr"
     );
     public static final Identifier NITROUS_OXIDE_ID = new Identifier(Constant.MOD_ID, "nitrous_oxide");
-    public static final AtmosphericGas NITROUS_OXIDE = new AtmosphericGas(
+    public static final Gas NITROUS_OXIDE = new Gas(
             new TranslatableText("ui.galacticraft-api.gases.nitrous_oxide"),
             "N2O"
     );
     public static final Identifier CARBON_MONOXIDE_ID = new Identifier(Constant.MOD_ID, "carbon_monoxide");
-    public static final AtmosphericGas CARBON_MONOXIDE = new AtmosphericGas(
+    public static final Gas CARBON_MONOXIDE = new Gas(
             new TranslatableText("ui.galacticraft-api.gases.carbon_monoxide"),
             "CO"
     );
     public static final Identifier XENON_ID = new Identifier(Constant.MOD_ID, "xenon");
-    public static final AtmosphericGas XENON = new AtmosphericGas(
+    public static final Gas XENON = new Gas(
             new TranslatableText("ui.galacticraft-api.gases.xenon"),
             "Xe"
     );
     public static final Identifier OZONE_ID = new Identifier(Constant.MOD_ID, "ozone");
-    public static final AtmosphericGas OZONE = new AtmosphericGas(
+    public static final Gas OZONE = new Gas(
             new TranslatableText("ui.galacticraft-api.gases.ozone"),
             "O3"
     );
     public static final Identifier NITROUS_DIOXIDE_ID = new Identifier(Constant.MOD_ID, "nitrous_dioxide");
-    public static final AtmosphericGas NITROUS_DIOXIDE = new AtmosphericGas(
+    public static final Gas NITROUS_DIOXIDE = new Gas(
             new TranslatableText("ui.galacticraft-api.gases.nitrous_dioxide"),
             "NO2"
     );
     public static final Identifier IODINE_ID = new Identifier(Constant.MOD_ID, "iodine");
-    public static final AtmosphericGas IODINE = new AtmosphericGas(
+    public static final Gas IODINE = new Gas(
             new TranslatableText("ui.galacticraft-api.gases.iodine"),
             "I2"
     );
@@ -136,15 +136,15 @@ public record AtmosphericGas(TranslatableText name, String symbol) {
                 .replaceAll("9", "\u2089");
     }
 
-    public static Registry<AtmosphericGas> getRegistry(DynamicRegistryManager manager) {
-        return manager.get(AddonRegistry.ATMOSPHERIC_GAS_KEY);
+    public static Registry<Gas> getRegistry(DynamicRegistryManager manager) {
+        return manager.get(AddonRegistry.GAS_KEY);
     }
 
-    public static AtmosphericGas getById(DynamicRegistryManager manager, Identifier id) {
+    public static Gas getById(DynamicRegistryManager manager, Identifier id) {
         return getById(getRegistry(manager), id);
     }
 
-    public static Identifier getId(DynamicRegistryManager manager, AtmosphericGas gas) {
+    public static Identifier getId(DynamicRegistryManager manager, Gas gas) {
         return getId(getRegistry(manager), gas);
     }
 
@@ -152,27 +152,27 @@ public record AtmosphericGas(TranslatableText name, String symbol) {
         return containsSymbol(getRegistry(manager), symbol);
     }
 
-    public static AtmosphericGas getBySymbol(DynamicRegistryManager manager, String symbol) {
+    public static Gas getBySymbol(DynamicRegistryManager manager, String symbol) {
         return getBySymbol(getRegistry(manager), symbol);
     }
 
-    public static AtmosphericGas getById(Registry<AtmosphericGas> registry, Identifier id) {
+    public static Gas getById(Registry<Gas> registry, Identifier id) {
         return registry.get(id);
     }
 
-    public static Identifier getId(Registry<AtmosphericGas> registry, AtmosphericGas gas) {
+    public static Identifier getId(Registry<Gas> registry, Gas gas) {
         return registry.getId(gas);
     }
 
-    public static boolean containsSymbol(Registry<AtmosphericGas> registry, String symbol) {
-        for (AtmosphericGas g : registry) {
+    public static boolean containsSymbol(Registry<Gas> registry, String symbol) {
+        for (Gas g : registry) {
             if (g.symbol().equals(symbol)) return true;
         }
         return false;
     }
 
-    public static AtmosphericGas getBySymbol(Registry<AtmosphericGas> registry, String symbol) {
-        for (AtmosphericGas g : registry) {
+    public static Gas getBySymbol(Registry<Gas> registry, String symbol) {
+        for (Gas g : registry) {
             if (g.symbol().equals(symbol)) return g;
         }
         return null;
