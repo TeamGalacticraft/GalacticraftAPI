@@ -6,16 +6,15 @@
     "AdvancementRewardsMixin",
     "BuiltinRegistriesMixin",
     "DynamicRegistryManagerMixin",
-    "ItemEntityMixin",
+    "EntityGravityMixin",
     "LivingEntityMixin",
     "MinecraftServerMixin",
     "ServerPlayerEntityMixin"
   ],
   "client": [
-    "client.BlockDustParticleMixin",
     "client.ClientPlayerEntityMixin",
     "client.ClientPlayNetworkHandlerMixin",
-    "client.ParticleMixin"
+    "client.ParticleManagerMixin"
   ],
   "minVersion": "0.8.0",
   "injectors": {

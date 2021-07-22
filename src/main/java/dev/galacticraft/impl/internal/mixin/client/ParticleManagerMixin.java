@@ -20,18 +20,27 @@
  * SOFTWARE.
  */
 
-package dev.galacticraft.impl.internal.mixin;
+package dev.galacticraft.impl.internal.mixin.client;
 
 import dev.galacticraft.api.universe.celestialbody.CelestialBody;
-import net.minecraft.entity.ItemEntity;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+import net.minecraft.client.particle.Particle;
+import net.minecraft.client.particle.ParticleManager;
+import net.minecraft.client.world.ClientWorld;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.injection.Constant;
-import org.spongepowered.asm.mixin.injection.ModifyConstant;
+import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(ItemEntity.class)
-public abstract class ItemEntityMixin {
-    @ModifyConstant(method = "tick", constant = @Constant(doubleValue = -0.04D))
-    private double changeItemGravity(double defaultValue) {
-        return CelestialBody.getCelestialBodyByDimension(((ItemEntity)(Object)this).world).map(celestialBodyType -> celestialBodyType.type().gravity(celestialBodyType.config()) / 1.75D * defaultValue).orElse(defaultValue);
+@Mixin(ParticleManager.class)
+@Environment(EnvType.CLIENT)
+public abstract class ParticleManagerMixin {
+    @Shadow protected ClientWorld world;
+
+    @Inject(method = "addParticle(Lnet/minecraft/client/particle/Particle;)V", at = @At("RETURN"))
+    protected void overrideGravity_gc(Particle particle, CallbackInfo ci) {
+        CelestialBody.getByDimension(this.world).ifPresent(celestialBodyType -> particle.gravityStrength *= celestialBodyType.type().gravity(celestialBodyType.config()));
     }
 }

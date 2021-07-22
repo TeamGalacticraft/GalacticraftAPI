@@ -23,6 +23,7 @@
 package dev.galacticraft.api.universe.celestialbody;
 
 import com.mojang.serialization.Codec;
+import dev.galacticraft.api.gas.GasComposition;
 import dev.galacticraft.api.registry.AddonRegistry;
 import dev.galacticraft.api.universe.celestialbody.landable.Landable;
 import dev.galacticraft.api.universe.display.CelestialDisplay;
@@ -105,6 +106,22 @@ public record CelestialBody<C extends CelestialBodyConfig, T extends CelestialBo
         return this.type().display(this.config());
     }
 
+    /**
+     * Returns this celestial body's atmospheric composition
+     * @return this celestial body's atmospheric composition
+     */
+    public @NotNull GasComposition atmosphere() {
+        return this.type().atmosphere(this.config());
+    }
+
+    /**
+     * Returns this celestial body's gravity
+     * @return this celestial body's gravity
+     */
+    public float gravity() {
+        return this.type().gravity(this.config());
+    }
+
     public static Registry<CelestialBody<?, ?>> getRegistry(DynamicRegistryManager manager) {
         return manager.get(AddonRegistry.CELESTIAL_BODY_KEY);
     }
@@ -117,12 +134,12 @@ public record CelestialBody<C extends CelestialBodyConfig, T extends CelestialBo
         return getId(getRegistry(manager), celestialBody);
     }
 
-    public static <C extends CelestialBodyConfig, T extends CelestialBodyType<C> & Landable<C>> Optional<CelestialBody<C, T>> getCelestialBodyByDimension(DynamicRegistryManager manager, RegistryKey<World> key) {
-        return getCelestialBodyByDimension(getRegistry(manager), key);
+    public static <C extends CelestialBodyConfig, T extends CelestialBodyType<C> & Landable<C>> Optional<CelestialBody<C, T>> getByDimension(DynamicRegistryManager manager, RegistryKey<World> key) {
+        return getByDimension(getRegistry(manager), key);
     }
 
-    public static <C extends CelestialBodyConfig, T extends CelestialBodyType<C> & Landable<C>> Optional<CelestialBody<C, T>> getCelestialBodyByDimension(World world) {
-        return getCelestialBodyByDimension(world.getRegistryManager(), world.getRegistryKey());
+    public static <C extends CelestialBodyConfig, T extends CelestialBodyType<C> & Landable<C>> Optional<CelestialBody<C, T>> getByDimension(World world) {
+        return getByDimension(world.getRegistryManager(), world.getRegistryKey());
     }
 
     public static CelestialBody<?, ?> getById(Registry<CelestialBody<?, ?>> registry, Identifier id) {
@@ -133,7 +150,7 @@ public record CelestialBody<C extends CelestialBodyConfig, T extends CelestialBo
         return registry.getId(celestialBody);
     }
 
-    public static <C extends CelestialBodyConfig, T extends CelestialBodyType<C> & Landable<C>> Optional<CelestialBody<C, T>> getCelestialBodyByDimension(Registry<CelestialBody<?, ?>> registry, RegistryKey<World> key) {
+    public static <C extends CelestialBodyConfig, T extends CelestialBodyType<C> & Landable<C>> Optional<CelestialBody<C, T>> getByDimension(Registry<CelestialBody<?, ?>> registry, RegistryKey<World> key) {
         for (CelestialBody<?, ?> body : registry) {
             if (body.type() instanceof Landable landable && landable.world(body.config()).equals(key)) return Optional.of((CelestialBody<C, T>)body);
         }

@@ -20,29 +20,20 @@
  * SOFTWARE.
  */
 
-package dev.galacticraft.impl.internal.mixin.client;
+package dev.galacticraft.impl.internal.mixin;
 
 import dev.galacticraft.api.universe.celestialbody.CelestialBody;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import net.minecraft.client.particle.Particle;
-import net.minecraft.client.world.ClientWorld;
+import net.minecraft.entity.ItemEntity;
+import net.minecraft.entity.TntEntity;
+import net.minecraft.entity.vehicle.AbstractMinecartEntity;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.Constant;
+import org.spongepowered.asm.mixin.injection.ModifyConstant;
 
-@Mixin(Particle.class)
-@Environment(EnvType.CLIENT)
-public abstract class ParticleMixin {
-
-    @Shadow
-    protected float gravityStrength;
-
-    @Inject(method = "<init>(Lnet/minecraft/client/world/ClientWorld;DDD)V", at = @At("RETURN"))
-    protected void Particle(ClientWorld world, double x, double y, double z, CallbackInfo ci) {
-        this.gravityStrength = 1.0f;
-        CelestialBody.getCelestialBodyByDimension(world).ifPresent(celestialBodyType -> this.gravityStrength = celestialBodyType.type().gravity(celestialBodyType.config()));
+@Mixin({ItemEntity.class, TntEntity.class, AbstractMinecartEntity.class})
+public abstract class EntityGravityMixin {
+    @ModifyConstant(method = "tick", constant = @Constant(doubleValue = -0.04D))
+    private double changeEntityGravity_gc(double defaultValue) {
+        return CelestialBody.getByDimension(((ItemEntity)(Object)this).world).map(celestialBodyType -> celestialBodyType.type().gravity(celestialBodyType.config()) / 1.75D * defaultValue).orElse(defaultValue);
     }
 }

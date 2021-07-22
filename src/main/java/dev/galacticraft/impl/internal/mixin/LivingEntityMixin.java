@@ -47,7 +47,7 @@ public abstract class LivingEntityMixin extends Entity {
 
     @ModifyVariable(method = "travel", at = @At(value = "FIELD"), ordinal = 0, name = "d")
     private double modifyGravity(double d) {
-        return CelestialBody.getCelestialBodyByDimension(this.world).map(celestialBodyType -> celestialBodyType.type().gravity(celestialBodyType.config()) * 0.08d).orElse(0.08d);
+        return CelestialBody.getByDimension(this.world).map(celestialBodyType -> celestialBodyType.type().gravity(celestialBodyType.config()) * 0.08d).orElse(0.08d);
     }
 
     @Shadow
@@ -57,6 +57,6 @@ public abstract class LivingEntityMixin extends Entity {
     protected void onComputeFallDamage(float fallDistance, float damageMultiplier, CallbackInfoReturnable<Integer> cir) {
         StatusEffectInstance effectInstance = this.getStatusEffect(StatusEffects.JUMP_BOOST);
         float ff = effectInstance == null ? 0.0F : (float) (effectInstance.getAmplifier() + 6);
-        CelestialBody.getCelestialBodyByDimension(this.world).ifPresent(celestialBodyType -> cir.setReturnValue(MathHelper.ceil(((fallDistance / (1 / celestialBodyType.type().gravity(celestialBodyType.config()))) - 3.0F - ff) * damageMultiplier)));
+        CelestialBody.getByDimension(this.world).ifPresent(celestialBodyType -> cir.setReturnValue(MathHelper.ceil(((fallDistance / (1 / celestialBodyType.type().gravity(celestialBodyType.config()))) - 3.0F - ff) * damageMultiplier)));
     }
 }

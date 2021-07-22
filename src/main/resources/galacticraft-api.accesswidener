@@ -6,5 +6,6 @@ accessible method net/minecraft/world/dimension/DimensionType <init> (Ljava/util
 accessible field net/minecraft/server/MinecraftServer workerExecutor Ljava/util/concurrent/Executor;
 accessible field net/minecraft/server/MinecraftServer session Lnet/minecraft/world/level/storage/LevelStorage$Session;
 accessible field net/minecraft/server/MinecraftServer worlds Ljava/util/Map;
+accessible field net/minecraft/client/particle/Particle gravityStrength F
 accessible method net/minecraft/world/biome/BuiltinBiomes register (ILnet/minecraft/util/registry/RegistryKey;Lnet/minecraft/world/biome/Biome;)Lnet/minecraft/world/biome/Biome;
 accessible method net/minecraft/util/dynamic/RegistryOps <init> (Lcom/mojang/serialization/DynamicOps;Lnet/minecraft/util/dynamic/RegistryOps$EntryLoader;Lnet/minecraft/util/registry/DynamicRegistryManager$Impl;Ljava/util/IdentityHashMap;)V
