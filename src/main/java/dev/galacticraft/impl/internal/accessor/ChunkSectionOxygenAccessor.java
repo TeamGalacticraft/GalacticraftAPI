@@ -22,10 +22,27 @@
 
 package dev.galacticraft.impl.internal.accessor;
 
-import net.minecraft.util.Identifier;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import net.minecraft.network.PacketByteBuf;
+import org.jetbrains.annotations.ApiStatus;
 
-public interface AdvancementRewardsAccessor {
-    void setRocketPartRewards_gc(@NotNull Identifier @Nullable[] parts);
+/**
+ * @author <a href="https://github.com/TeamGalacticraft">TeamGalacticraft</a>
+ */
+public interface ChunkSectionOxygenAccessor {
+    boolean isBreathable(int x, int y, int z);
+
+    void setBreathable(int x, int y, int z, boolean value);
+
+    @ApiStatus.Internal
+    boolean[] getArray();
+
+    @ApiStatus.Internal
+    short getTotalOxygen();
+
+    @ApiStatus.Internal
+    void setTotalOxygen(short amount);
+
+    void writeOxygen(PacketByteBuf buf);
+
+    void readOxygen(PacketByteBuf buf);
 }

@@ -20,12 +20,21 @@
  * SOFTWARE.
  */
 
-package dev.galacticraft.impl.internal.accessor;
+package dev.galacticraft.api.attribute.oxygen.extractable;
 
-import net.minecraft.util.Identifier;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import alexiil.mc.lib.attributes.Simulation;
+import alexiil.mc.lib.attributes.misc.NullVariant;
 
-public interface AdvancementRewardsAccessor {
-    void setRocketPartRewards_gc(@NotNull Identifier @Nullable[] parts);
+public enum EmptyOxygenExtractable implements OxygenExtractable, NullVariant {
+    NULL;
+
+    @Override
+    public int tryExtractOxygen(int amount, Simulation simulation) {
+        return 0;
+    }
+
+    @Override
+    public OxygenExtractable getPureExtractable() {
+        return this;
+    }
 }

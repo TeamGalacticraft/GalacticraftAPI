@@ -20,12 +20,14 @@
  * SOFTWARE.
  */
 
-package dev.galacticraft.impl.internal.accessor;
+package dev.galacticraft.api.entity.attribute;
 
+import dev.galacticraft.impl.Constant;
+import net.minecraft.entity.attribute.ClampedEntityAttribute;
+import net.minecraft.entity.attribute.EntityAttribute;
 import net.minecraft.util.Identifier;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import net.minecraft.util.registry.Registry;
 
-public interface AdvancementRewardsAccessor {
-    void setRocketPartRewards_gc(@NotNull Identifier @Nullable[] parts);
+public class GcApiEntityAttributes {
+    public static final EntityAttribute CAN_BREATHE_IN_SPACE = Registry.register(Registry.ATTRIBUTE, new Identifier(Constant.MOD_ID, "can_breathe_in_space"), (new ClampedEntityAttribute("galacticraft-api.attribute.name.generic.can_breathe_in_space", 0.0D, 0.0D, 1.0D)).setTracked(true));
 }

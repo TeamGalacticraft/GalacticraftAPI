@@ -20,12 +20,19 @@
  * SOFTWARE.
  */
 
-package dev.galacticraft.impl.internal.accessor;
+package dev.galacticraft.api.attribute.oxygen.insertable;
 
-import net.minecraft.util.Identifier;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import alexiil.mc.lib.attributes.Simulation;
 
-public interface AdvancementRewardsAccessor {
-    void setRocketPartRewards_gc(@NotNull Identifier @Nullable[] parts);
+public interface OxygenInsertable {
+    default int insertOxygen(int amount) {
+        return this.tryInsertOxygen(amount, Simulation.ACTION);
+    }
+
+    int tryInsertOxygen(int amount, Simulation simulation);
+
+    default OxygenInsertable getPureInsertable() {
+        //noinspection FunctionalExpressionCanBeFolded
+        return OxygenInsertable.this::tryInsertOxygen;
+    }
 }

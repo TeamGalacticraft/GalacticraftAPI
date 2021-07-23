@@ -20,12 +20,37 @@
  * SOFTWARE.
  */
 
-package dev.galacticraft.impl.internal.accessor;
+package dev.galacticraft.api.attribute.oxygen;
 
-import net.minecraft.util.Identifier;
-import org.jetbrains.annotations.NotNull;
+import alexiil.mc.lib.attributes.ListenerToken;
 import org.jetbrains.annotations.Nullable;
 
-public interface AdvancementRewardsAccessor {
-    void setRocketPartRewards_gc(@NotNull Identifier @Nullable[] parts);
+/**
+ * @author <a href="https://github.com/TeamGalacticraft">TeamGalacticraft</a>
+ */
+public enum EmptyOxygenTank implements OxygenTank {
+    NULL;
+
+    @Override
+    public int getCapacity() {
+        return 0;
+    }
+
+    @Override
+    public void setAmount(int amount) {
+    }
+
+    @Override
+    public int getAmount() {
+        return 0;
+    }
+
+    @Override
+    public @Nullable ListenerToken listen(OxygenTankChangedListener listener) {
+        return null;
+    }
+
+    @Override
+    public void removeListeners() {
+    }
 }

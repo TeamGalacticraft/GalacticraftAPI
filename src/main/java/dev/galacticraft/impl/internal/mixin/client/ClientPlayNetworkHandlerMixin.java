@@ -41,37 +41,37 @@ import java.util.Map;
 @Environment(EnvType.CLIENT)
 @Mixin(ClientPlayNetworkHandler.class)
 public abstract class ClientPlayNetworkHandlerMixin implements ClientSatelliteAccessor {
-    private final @Unique Map<Identifier, CelestialBody<SatelliteConfig, SatelliteType>> satellites_gcr = new HashMap<>();
-    private final @Unique List<SatelliteListener> listeners_gcr = new ArrayList<>();
+    private final @Unique Map<Identifier, CelestialBody<SatelliteConfig, SatelliteType>> satellites_gc = new HashMap<>();
+    private final @Unique List<SatelliteListener> listeners_gc = new ArrayList<>();
 
     @Override
     public Map<Identifier, CelestialBody<SatelliteConfig, SatelliteType>> satellites() {
-        return this.satellites_gcr;
+        return this.satellites_gc;
     }
 
     @Override
     public void addSatellite(Identifier id, CelestialBody<SatelliteConfig, SatelliteType> satellite) {
-        this.satellites_gcr.put(id, satellite);
-        for (SatelliteListener listener : this.listeners_gcr) {
+        this.satellites_gc.put(id, satellite);
+        for (SatelliteListener listener : this.listeners_gc) {
             listener.onSatelliteUpdated(satellite, true);
         }
     }
 
     @Override
     public void removeSatellite(Identifier id) {
-        CelestialBody<SatelliteConfig, SatelliteType> removed = this.satellites_gcr.remove(id);
-        for (SatelliteListener listener : this.listeners_gcr) {
+        CelestialBody<SatelliteConfig, SatelliteType> removed = this.satellites_gc.remove(id);
+        for (SatelliteListener listener : this.listeners_gc) {
             listener.onSatelliteUpdated(removed, false);
         }
     }
 
     @Override
     public void addListener(SatelliteListener listener) {
-        this.listeners_gcr.add(listener);
+        this.listeners_gc.add(listener);
     }
 
     @Override
     public void removeListener(SatelliteListener listener) {
-        this.listeners_gcr.remove(listener);
+        this.listeners_gc.remove(listener);
     }
 }

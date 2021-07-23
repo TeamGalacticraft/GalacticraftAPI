@@ -42,7 +42,7 @@ import java.util.function.Supplier;
 @Environment(EnvType.CLIENT)
 public record BakedModelRocketPartRenderer(Supplier<BakedModel> model, Supplier<RenderLayer> layer) implements RocketPartRenderer {
     public BakedModelRocketPartRenderer(Supplier<BakedModel> model) {
-        this(model, () -> RenderLayer.getEntityTranslucent(model.get().getSprite().getId(), true));
+        this(model, () -> RenderLayer.getEntityTranslucent(model.get().getParticleSprite().getId(), true));
     }
 
     @Override
@@ -58,9 +58,9 @@ public record BakedModelRocketPartRenderer(Supplier<BakedModel> model, Supplier<
 
         MatrixStack.Entry entry = matrices.peek();
         List<BakedQuad> quads = this.model.get().getQuads(null, null, world.random);
-        this.model.get().getSprite().getAtlas().bindTexture();
+        this.model.get().getParticleSprite().getAtlas().bindTexture();
         RenderSystem.enableTexture();
-        RenderSystem.setShaderTexture(0, this.model.get().getSprite().getAtlas().getGlId());
+        RenderSystem.setShaderTexture(0, this.model.get().getParticleSprite().getAtlas().getGlId());
         RenderSystem.enableBlend();
         RenderSystem.blendFunc(GlStateManager.SrcFactor.SRC_ALPHA, GlStateManager.DstFactor.ONE_MINUS_SRC_ALPHA);
         RenderSystem.enableDepthTest();

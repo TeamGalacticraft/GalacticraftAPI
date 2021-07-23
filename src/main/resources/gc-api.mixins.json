@@ -5,16 +5,27 @@
   "mixins": [
     "AdvancementRewardsMixin",
     "BuiltinRegistriesMixin",
+    "ChunkHolderMixin",
+    "ChunkSectionMixin",
+    "ChunkSerializerMixin",
     "DynamicRegistryManagerMixin",
+    "EmptyChunkMixin",
     "EntityGravityMixin",
     "LivingEntityMixin",
     "MinecraftServerMixin",
-    "ServerPlayerEntityMixin"
+    "PlayerManagerMixin",
+    "ProtoChunkMixin",
+    "ServerPlayerEntityMixin",
+    "WorldChunkMixin",
+    "WorldMixin"
   ],
   "client": [
-    "client.ClientPlayerEntityMixin",
+    "client.AbstractClientPlayerEntityMixin",
+    "client.ClientChunkSectionMixin",
     "client.ClientPlayNetworkHandlerMixin",
-    "client.ParticleManagerMixin"
+    "client.MinecraftClientMixin",
+    "client.ParticleManagerMixin",
+    "client.SoundSystemMixin"
   ],
   "minVersion": "0.8.0",
   "injectors": {

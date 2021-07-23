@@ -20,12 +20,18 @@
  * SOFTWARE.
  */
 
-package dev.galacticraft.impl.internal.accessor;
+package dev.galacticraft.api.accessor;
 
-import net.minecraft.util.Identifier;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import alexiil.mc.lib.attributes.item.FixedItemInv;
+import net.minecraft.nbt.NbtCompound;
 
-public interface AdvancementRewardsAccessor {
-    void setRocketPartRewards_gc(@NotNull Identifier @Nullable[] parts);
+/**
+ * @author <a href="https://github.com/TeamGalacticraft">TeamGalacticraft</a>
+ */
+public interface GearInventoryProvider {
+    FixedItemInv getGearInv();
+
+    NbtCompound writeGearToNbt(NbtCompound tag);
+
+    void readGearFromNbt(NbtCompound tag);
 }

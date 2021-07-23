@@ -20,12 +20,18 @@
  * SOFTWARE.
  */
 
-package dev.galacticraft.impl.internal.accessor;
+package dev.galacticraft.api.attribute.oxygen;
 
-import net.minecraft.util.Identifier;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import dev.galacticraft.api.attribute.oxygen.transferable.OxygenTransferable;
 
-public interface AdvancementRewardsAccessor {
-    void setRocketPartRewards_gc(@NotNull Identifier @Nullable[] parts);
+/**
+ * @author <a href="https://github.com/TeamGalacticraft">TeamGalacticraft</a>
+ */
+public interface OxygenTank extends OxygenTankView {
+    void setAmount(int amount);
+
+    @Override
+    default OxygenTransferable getTransferable() {
+        return new OxygenTankWrapper(this);
+    }
 }

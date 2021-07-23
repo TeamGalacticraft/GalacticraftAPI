@@ -22,16 +22,20 @@
 
 package dev.galacticraft.impl.internal.client.fabric;
 
+import dev.galacticraft.api.accessor.GearInventoryProvider;
 import dev.galacticraft.api.accessor.SatelliteAccessor;
 import dev.galacticraft.api.client.accessor.ClientResearchAccessor;
 import dev.galacticraft.api.universe.celestialbody.CelestialBody;
 import dev.galacticraft.impl.Constant;
+import dev.galacticraft.impl.internal.accessor.ChunkOxygenSyncer;
 import dev.galacticraft.impl.universe.celestialbody.type.SatelliteType;
 import dev.galacticraft.impl.universe.position.config.SatelliteConfig;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.Identifier;
@@ -39,7 +43,7 @@ import net.minecraft.util.Identifier;
 import java.util.Objects;
 
 @Environment(EnvType.CLIENT)
-public class ClientGalacticraftAPI implements ClientModInitializer {
+public class GalacticraftAPIClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
         Constant.LOGGER.info("Loaded client module");
@@ -53,6 +57,24 @@ public class ClientGalacticraftAPI implements ClientModInitializer {
         ClientPlayNetworking.registerGlobalReceiver(new Identifier(Constant.MOD_ID, "remove_satellite"), (client, networkHandler, buffer, sender) -> {
             PacketByteBuf buf = new PacketByteBuf(buffer.copy());
             ((SatelliteAccessor) networkHandler).removeSatellite(buf.readIdentifier());
+        });
+        ClientPlayNetworking.registerGlobalReceiver(new Identifier(Constant.MOD_ID, "oxygen_update"), (client, handler, buf, responseSender) -> {
+            byte b = buf.readByte();
+            ChunkOxygenSyncer syncer = ((ChunkOxygenSyncer) handler.getWorld().getChunk(buf.readInt(), buf.readInt()));
+            syncer.readOxygenUpdate(b, buf);
+        });
+
+        ClientPlayNetworking.registerGlobalReceiver(new Identifier(Constant.MOD_ID, "gear_inv_sync"), (client, handler, buf, responseSender) -> {
+            int entity = buf.readInt();
+            int index = buf.readByte();
+            ItemStack stack = buf.readItemStack();
+            client.execute(() -> ((GearInventoryProvider) client.world.getEntityById(entity)).getGearInv().forceSetInvStack(index, stack));
+        });
+
+        ClientPlayNetworking.registerGlobalReceiver(new Identifier(Constant.MOD_ID, "gear_inv_sync_full"), (client, handler, buf, responseSender) -> {
+            int entity = buf.readInt();
+            NbtCompound tag = buf.readNbt();
+            client.execute(() -> ((GearInventoryProvider) client.world.getEntityById(entity)).readGearFromNbt(tag));
         });
     }
 }

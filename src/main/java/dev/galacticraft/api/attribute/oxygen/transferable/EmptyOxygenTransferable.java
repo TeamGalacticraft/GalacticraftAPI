@@ -20,12 +20,35 @@
  * SOFTWARE.
  */
 
-package dev.galacticraft.impl.internal.accessor;
+package dev.galacticraft.api.attribute.oxygen.transferable;
 
-import net.minecraft.util.Identifier;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import alexiil.mc.lib.attributes.Simulation;
+import alexiil.mc.lib.attributes.misc.NullVariant;
+import dev.galacticraft.api.attribute.oxygen.extractable.EmptyOxygenExtractable;
+import dev.galacticraft.api.attribute.oxygen.extractable.OxygenExtractable;
+import dev.galacticraft.api.attribute.oxygen.insertable.OxygenInsertable;
+import dev.galacticraft.api.attribute.oxygen.insertable.RejectingOxygenInsertable;
 
-public interface AdvancementRewardsAccessor {
-    void setRocketPartRewards_gc(@NotNull Identifier @Nullable[] parts);
+public enum EmptyOxygenTransferable implements OxygenTransferable, NullVariant {
+    NULL;
+
+    @Override
+    public int tryExtractOxygen(int amount, Simulation simulation) {
+        return 0;
+    }
+
+    @Override
+    public int tryInsertOxygen(int amount, Simulation simulation) {
+        return amount;
+    }
+
+    @Override
+    public OxygenExtractable getPureExtractable() {
+        return EmptyOxygenExtractable.NULL;
+    }
+
+    @Override
+    public OxygenInsertable getPureInsertable() {
+        return RejectingOxygenInsertable.NULL;
+    }
 }

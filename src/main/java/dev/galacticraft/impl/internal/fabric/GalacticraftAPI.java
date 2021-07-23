@@ -44,8 +44,8 @@ public class GalacticraftAPI implements ModInitializer {
         GCApiCommands.register();
         ServerTickEvents.END_SERVER_TICK.register(server -> {
             for (ServerPlayerEntity player : server.getPlayerManager().getPlayerList()) {
-                if (((ServerResearchAccessor)player).changed_gcr()) {
-                    ServerPlayNetworking.send(player, new Identifier(Constant.MOD_ID, "research_update"), ((ServerResearchAccessor) player).writeResearchChanges_gcr(new PacketByteBuf(Unpooled.buffer())));
+                if (((ServerResearchAccessor)player).changed_gc()) {
+                    ServerPlayNetworking.send(player, new Identifier(Constant.MOD_ID, "research_update"), ((ServerResearchAccessor) player).writeResearchChanges_gc(new PacketByteBuf(Unpooled.buffer())));
                 }
             }
         });

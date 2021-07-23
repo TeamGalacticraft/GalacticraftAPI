@@ -20,17 +20,20 @@
  * SOFTWARE.
  */
 
-package dev.galacticraft.impl.internal.mixin;
+package dev.galacticraft.api.accessor;
 
-import dev.galacticraft.api.accessor.ResearchAccessor;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.Identifier;
-import org.spongepowered.asm.mixin.Mixin;
+import net.minecraft.util.math.BlockPos;
 
-@Mixin(PlayerEntity.class)
-public abstract class PlayerEntityMixin implements ResearchAccessor {
-    @Override
-    public boolean hasUnlocked_gcr(Identifier id) {
-        throw new UnsupportedOperationException("This shouldn't be possible!");
-    }
+/**
+ * @author <a href="https://github.com/TeamGalacticraft">TeamGalacticraft</a>
+ */
+public interface WorldOxygenAccessor {
+    /**
+     * Returns whether the supplied position in this world is breathable for entities
+     * @param pos the position to test
+     * @return whether the supplied position in the chunk is breathable for entities
+     */
+    boolean isBreathable(BlockPos pos);
+
+    void setBreathable(BlockPos pos, boolean value);
 }

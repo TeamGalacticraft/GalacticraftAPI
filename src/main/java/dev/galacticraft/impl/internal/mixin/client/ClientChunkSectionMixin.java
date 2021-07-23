@@ -20,12 +20,28 @@
  * SOFTWARE.
  */
 
-package dev.galacticraft.impl.internal.accessor;
+package dev.galacticraft.impl.internal.mixin.client;
 
-import net.minecraft.util.Identifier;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import dev.galacticraft.impl.internal.accessor.ChunkSectionOxygenAccessor;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+import net.minecraft.network.PacketByteBuf;
+import net.minecraft.world.chunk.ChunkSection;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-public interface AdvancementRewardsAccessor {
-    void setRocketPartRewards_gc(@NotNull Identifier @Nullable[] parts);
+/**
+ * @author <a href="https://github.com/TeamGalacticraft">TeamGalacticraft</a>
+ */
+@Mixin(ChunkSection.class)
+@Environment(EnvType.CLIENT)
+public abstract class ClientChunkSectionMixin implements ChunkSectionOxygenAccessor {
+    @Inject(method = "fromPacket", at = @At("RETURN"))
+    private void fromPacket(PacketByteBuf buf, CallbackInfo ci) {
+        this.setTotalOxygen(buf.readShort());
+        if (this.getTotalOxygen() == 0) return;
+        this.readOxygen(buf);
+    }
 }

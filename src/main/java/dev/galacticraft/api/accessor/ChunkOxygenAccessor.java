@@ -22,13 +22,25 @@
 
 package dev.galacticraft.api.accessor;
 
-import net.minecraft.util.Identifier;
-
-public interface ResearchAccessor {
+/**
+ * @author <a href="https://github.com/TeamGalacticraft">TeamGalacticraft</a>
+ */
+public interface ChunkOxygenAccessor {
     /**
-     * Returns whether the supplied rocket part is unlocked for the player
-     * @param id The ID of the rocket part to test for
-     * @return whether the supplied rocket part is unlocked for the player
+     * Returns whether the supplied position in the chunk is breathable for entities
+     * @param x the position to test on the X-axis, normalized from 0 to 15
+     * @param y the position to test on the Y-axis, will return {@code false} if it is outside the world's min/max height
+     * @param z the position to test on the Z-axis, normalized from 0 to 15
+     * @return whether the supplied position in the chunk is breathable for entities
      */
-    boolean hasUnlocked_gc(Identifier id);
+    boolean isBreathable(int x, int y, int z);
+
+    /**
+     * Sets the breathable state for entities for the supplied position
+     * @param x the position to test on the X-axis, normalized from 0 to 15
+     * @param y the position to test on the Y-axis, this method will do nothing if it is outside the world's min/max height
+     * @param z the position to test on the Z-axis, normalized from 0 to 15
+     * @param value whether the supplied position is breathable
+     */
+    void setBreathable(int x, int y, int z, boolean value);
 }

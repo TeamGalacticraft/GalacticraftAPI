@@ -20,38 +20,38 @@
  * SOFTWARE.
  */
 
-package dev.galacticraft.impl.internal.mixin.client;
+package dev.galacticraft.impl.internal.mixin;
 
-import dev.galacticraft.api.client.accessor.ClientResearchAccessor;
-import net.minecraft.client.network.ClientPlayerEntity;
+import dev.galacticraft.api.accessor.ChunkOxygenAccessor;
+import dev.galacticraft.impl.internal.accessor.ChunkOxygenSyncer;
 import net.minecraft.network.PacketByteBuf;
-import net.minecraft.util.Identifier;
+import net.minecraft.network.packet.s2c.play.CustomPayloadS2CPacket;
+import net.minecraft.world.chunk.EmptyChunk;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Unique;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-@Mixin(ClientPlayerEntity.class)
-public abstract class ClientPlayerEntityMixin implements ClientResearchAccessor {
-    @Unique
-    private final List<Identifier> unlockedResearch = new ArrayList<>();
-
+/**
+ * @author <a href="https://github.com/TeamGalacticraft">TeamGalacticraft</a>
+ */
+@Mixin(EmptyChunk.class)
+public abstract class EmptyChunkMixin implements ChunkOxygenAccessor, ChunkOxygenSyncer {
     @Override
-    public void readChanges(PacketByteBuf buf) {
-        byte size = buf.readByte();
-
-        for (byte i = 0; i < size; i++) {
-            if (buf.readBoolean()) {
-                this.unlockedResearch.add(new Identifier(buf.readString()));
-            } else {
-                this.unlockedResearch.remove(new Identifier(buf.readString()));
-            }
-        }
+    public boolean isBreathable(int x, int y, int z) {
+        return false;
     }
 
     @Override
-    public boolean hasUnlocked_gcr(Identifier id) {
-        return this.unlockedResearch.contains(id);
+    public void setBreathable(int x, int y, int z, boolean value) {
+    }
+
+    @Override
+    public List<CustomPayloadS2CPacket> syncToClient() {
+        return Collections.emptyList();
+    }
+
+    @Override
+    public void readOxygenUpdate(byte b, PacketByteBuf buf) {
     }
 }

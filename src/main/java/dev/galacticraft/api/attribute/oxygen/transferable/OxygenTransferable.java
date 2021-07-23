@@ -20,12 +20,10 @@
  * SOFTWARE.
  */
 
-package dev.galacticraft.impl.internal.accessor;
+package dev.galacticraft.api.attribute.oxygen.transferable;
 
-import net.minecraft.util.Identifier;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import dev.galacticraft.api.attribute.oxygen.extractable.OxygenExtractable;
+import dev.galacticraft.api.attribute.oxygen.insertable.OxygenInsertable;
 
-public interface AdvancementRewardsAccessor {
-    void setRocketPartRewards_gc(@NotNull Identifier @Nullable[] parts);
+public interface OxygenTransferable extends OxygenExtractable, OxygenInsertable {
 }

@@ -79,7 +79,7 @@ public final class DynamicallyRegisteredObject<T> {
     public boolean equals(Object obj) {
         if (obj == this) return true;
         if (obj == null || obj.getClass() != this.getClass()) return false;
-        var that = (DynamicallyRegisteredObject) obj;
+        DynamicallyRegisteredObject that = (DynamicallyRegisteredObject) obj;
         return Objects.equals(this.id, that.id) &&
                 Objects.equals(this.registryKey, that.registryKey);
     }

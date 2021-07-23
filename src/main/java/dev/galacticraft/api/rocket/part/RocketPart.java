@@ -68,7 +68,7 @@ public record RocketPart(TranslatableText name, RocketPartType type, ConfiguredT
 
     public boolean isUnlocked(PlayerEntity player) {
         if (this.research() == null) return true;
-        return ((ResearchAccessor) player).hasUnlocked_gcr(this.research());
+        return ((ResearchAccessor) player).hasUnlocked_gc(this.research());
     }
 
     public static RocketPart deserialize(DynamicRegistryManager manager, Dynamic<?> dynamic) {

@@ -22,10 +22,14 @@
 
 package dev.galacticraft.impl.internal.accessor;
 
-import net.minecraft.util.Identifier;
+import net.minecraft.network.PacketByteBuf;
+import net.minecraft.network.packet.s2c.play.CustomPayloadS2CPacket;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-public interface AdvancementRewardsAccessor {
-    void setRocketPartRewards_gc(@NotNull Identifier @Nullable[] parts);
+import java.util.List;
+
+public interface ChunkOxygenSyncer {
+    @NotNull List<@NotNull CustomPayloadS2CPacket> syncToClient();
+
+    void readOxygenUpdate(byte b, @NotNull PacketByteBuf buf);
 }

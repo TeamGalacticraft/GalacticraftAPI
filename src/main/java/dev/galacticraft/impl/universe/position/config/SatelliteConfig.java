@@ -111,7 +111,7 @@ public final class SatelliteConfig implements CelestialBodyConfig {
     public boolean equals(Object obj) {
         if (obj == this) return true;
         if (obj == null || obj.getClass() != this.getClass()) return false;
-        var that = (SatelliteConfig) obj;
+        SatelliteConfig that = (SatelliteConfig) obj;
         return Objects.equals(this.parent, that.parent) &&
                 Objects.equals(this.galaxy, that.galaxy) &&
                 Objects.equals(this.position, that.position) &&

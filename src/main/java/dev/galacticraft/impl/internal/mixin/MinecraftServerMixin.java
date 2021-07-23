@@ -93,7 +93,7 @@ public abstract class MinecraftServerMixin implements SatelliteAccessor {
     }
 
     @Inject(method = "save", at = @At("RETURN"))
-    private void save_gcr(boolean suppressLogs, boolean bl, boolean bl2, CallbackInfoReturnable<Boolean> cir) {
+    private void save_gc(boolean suppressLogs, boolean bl, boolean bl2, CallbackInfoReturnable<Boolean> cir) {
         Path path = this.session.getDirectory(WorldSavePath.ROOT);
         NbtList nbt = new NbtList();
         for (Map.Entry<Identifier, CelestialBody<SatelliteConfig, SatelliteType>> entry : this.satellites.entrySet()) {
@@ -111,7 +111,7 @@ public abstract class MinecraftServerMixin implements SatelliteAccessor {
     }
 
     @Inject(method = "runServer", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/MinecraftServer;setupServer()Z", shift = At.Shift.AFTER))
-    private void load_gcr(CallbackInfo ci) {
+    private void load_gc(CallbackInfo ci) {
         Path path = this.session.getDirectory(WorldSavePath.ROOT);
         if (new File(path.toFile(), "satellites.dat").exists()) {
             try {

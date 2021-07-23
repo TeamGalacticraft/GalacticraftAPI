@@ -9,13 +9,13 @@ plugins {
 }
 
 val mc = "1.17.1"
-val yarn = "10"
+val yarn = "29"
 val loader = "0.11.6"
-val fabric = "0.36.1+1.17"
+val fabric = "0.37.1+1.17"
 val lba = "0.9.0"
 
 group = "dev.galacticraft"
-version ="0.4.0-prealpha.13+$mc"
+version ="0.4.0-prealpha.14+$mc"
 
 base.archivesName.set("GalacticraftAPI")
 
@@ -76,6 +76,7 @@ dependencies {
     }
 
     modImplementation("alexiil.mc.lib:libblockattributes-core:$lba")
+    modImplementation("alexiil.mc.lib:libblockattributes-items:$lba")
     modRuntime("net.fabricmc.fabric-api:fabric-api:$fabric")
 
     testmodCompile(sourceSets.main.get().output)

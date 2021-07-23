@@ -48,16 +48,16 @@ public abstract class AdvancementRewardsMixin implements AdvancementRewardsAcces
     private Identifier @Nullable[] rocketParts = null;
 
     @Inject(method = "apply", at = @At("RETURN"))
-    private void init_gcr(ServerPlayerEntity player, CallbackInfo ci) {
+    private void init_gc(ServerPlayerEntity player, CallbackInfo ci) {
         if (this.rocketParts != null) {
             for (Identifier id : this.rocketParts) {
-                ((ServerResearchAccessor) player).setUnlocked_gcr(id, true);
+                ((ServerResearchAccessor) player).setUnlocked_gc(id, true);
             }
         }
     }
 
     @Inject(method = "toJson", at = @At("RETURN"), cancellable = true)
-    private void toJson_gcr(CallbackInfoReturnable<JsonElement> cir) {
+    private void toJson_gc(CallbackInfoReturnable<JsonElement> cir) {
         if (this.rocketParts != null) {
             JsonObject object = cir.getReturnValue().getAsJsonObject();
             JsonArray array = new JsonArray();
@@ -70,13 +70,13 @@ public abstract class AdvancementRewardsMixin implements AdvancementRewardsAcces
     }
 
     @Inject(method = "toString", at = @At("RETURN"), cancellable = true)
-    private void toString_gcr(CallbackInfoReturnable<String> cir) {
+    private void toString_gc(CallbackInfoReturnable<String> cir) {
         String s = cir.getReturnValue();
         cir.setReturnValue(s.substring(0, s.length() - 1) + ", parts=" + Arrays.toString(this.rocketParts) + '}');
     }
 
     @Inject(method = "fromJson", at = @At("RETURN"), cancellable = true)
-    private static void fromJson_gcr(JsonObject json, CallbackInfoReturnable<AdvancementRewards> cir) {
+    private static void fromJson_gc(JsonObject json, CallbackInfoReturnable<AdvancementRewards> cir) {
         if (json.has("rocket_parts")) {
             AdvancementRewards rewards = cir.getReturnValue();
             JsonArray array = json.get("rocket_parts").getAsJsonArray();
@@ -84,12 +84,12 @@ public abstract class AdvancementRewardsMixin implements AdvancementRewardsAcces
             for (int i = 0; i < array.size(); i++) {
                 ids[i] = new Identifier(array.get(i).getAsString());
             }
-            ((AdvancementRewardsAccessor) rewards).setRocketPartRewards(ids);
+            ((AdvancementRewardsAccessor) rewards).setRocketPartRewards_gc(ids);
         }
     }
 
     @Override
-    public void setRocketPartRewards(@NotNull Identifier @Nullable [] parts) {
+    public void setRocketPartRewards_gc(@NotNull Identifier @Nullable [] parts) {
         this.rocketParts = parts;
     }
 }
