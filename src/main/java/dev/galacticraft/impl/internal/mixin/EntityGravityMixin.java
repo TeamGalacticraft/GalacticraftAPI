@@ -23,6 +23,7 @@
 package dev.galacticraft.impl.internal.mixin;
 
 import dev.galacticraft.api.universe.celestialbody.CelestialBody;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.TntEntity;
 import net.minecraft.entity.vehicle.AbstractMinecartEntity;
@@ -34,6 +35,6 @@ import org.spongepowered.asm.mixin.injection.ModifyConstant;
 public abstract class EntityGravityMixin {
     @ModifyConstant(method = "tick", constant = @Constant(doubleValue = -0.04D))
     private double changeEntityGravity_gc(double defaultValue) {
-        return CelestialBody.getByDimension(((ItemEntity)(Object)this).world).map(celestialBodyType -> celestialBodyType.type().gravity(celestialBodyType.config()) / 1.75D * defaultValue).orElse(defaultValue);
+        return CelestialBody.getByDimension(((Entity)(Object)this).world).map(celestialBody -> celestialBody.gravity() / 1.75D * defaultValue).orElse(defaultValue);
     }
 }
