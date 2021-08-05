@@ -34,6 +34,7 @@ import net.minecraft.client.render.model.BakedQuad;
 import net.minecraft.client.render.model.json.ModelTransformation;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.client.world.ClientWorld;
+import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3f;
 
 import java.util.List;
@@ -91,17 +92,23 @@ public record BakedModelRocketPartRenderer(Supplier<BakedModel> model, Supplier<
         matrices.translate(0.5D, 0.5D, 0.5D);
         MatrixStack.Entry entry = matrices.peek();
         VertexConsumer vertexConsumer = vertices.getBuffer(layer.get());
-        for (BakedQuad quad : this.model.get().getQuads(null, null, world.random)) {
-            vertexConsumer.quad(
-                    entry,
-                    quad,
-                    1,
-                    1,
-                    1,
-                    light,
-                    //15728880,
-                    OverlayTexture.DEFAULT_UV
-            );
-        }
+        Direction[] values = Direction.values();
+        int i = 0;
+        Direction direction = null;
+        do {
+            for (BakedQuad quad : this.model.get().getQuads(null, direction, world.random)) {
+                vertexConsumer.quad(
+                        entry,
+                        quad,
+                        1,
+                        1,
+                        1,
+                        light,
+                        //15728880,
+                        OverlayTexture.DEFAULT_UV
+                );
+            }
+            direction = values[i++];
+        } while (i < values.length);
     }
 }

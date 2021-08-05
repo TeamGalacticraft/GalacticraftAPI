@@ -24,46 +24,16 @@ package dev.galacticraft.impl.internal.mixin;
 
 import dev.galacticraft.api.accessor.ChunkOxygenAccessor;
 import dev.galacticraft.impl.internal.accessor.ChunkOxygenAccessorInternal;
-import dev.galacticraft.impl.internal.accessor.ChunkOxygenSyncer;
-import net.minecraft.network.PacketByteBuf;
-import net.minecraft.network.packet.s2c.play.CustomPayloadS2CPacket;
-import net.minecraft.world.chunk.EmptyChunk;
-import org.jetbrains.annotations.NotNull;
+import net.minecraft.world.chunk.ReadOnlyChunk;
 import org.spongepowered.asm.mixin.Mixin;
 
-import java.util.Collections;
-import java.util.List;
-
-/**
- * @author <a href="https://github.com/TeamGalacticraft">TeamGalacticraft</a>
- */
-@Mixin(EmptyChunk.class)
-public abstract class EmptyChunkMixin implements ChunkOxygenAccessor, ChunkOxygenSyncer, ChunkOxygenAccessorInternal {
-    @Override
-    public boolean isBreathable(int x, int y, int z) {
-        return false;
-    }
-
+@Mixin(ReadOnlyChunk.class)
+public abstract class ReadOnlyChunkMixin implements ChunkOxygenAccessor, ChunkOxygenAccessorInternal {
     @Override
     public void setBreathable(int x, int y, int z, boolean value) {
     }
 
     @Override
-    public @NotNull List<CustomPayloadS2CPacket> syncToClient() {
-        return Collections.emptyList();
-    }
-
-    @Override
-    public void readOxygenUpdate(byte b, @NotNull PacketByteBuf buf) {
-    }
-
-    @Override
     public void setDefaultBreathable_gc(boolean breathable) {
-
-    }
-
-    @Override
-    public boolean getDefaultBreathable_gc() {
-        return false;
     }
 }

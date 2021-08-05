@@ -23,15 +23,18 @@
 package dev.galacticraft.impl.internal.mixin;
 
 import dev.galacticraft.api.accessor.ChunkOxygenAccessor;
+import dev.galacticraft.api.accessor.ChunkSectionOxygenAccessor;
+import dev.galacticraft.impl.internal.accessor.ChunkOxygenAccessorInternal;
 import dev.galacticraft.impl.internal.accessor.ChunkOxygenSyncer;
-import dev.galacticraft.impl.internal.accessor.ChunkSectionOxygenAccessor;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.packet.s2c.play.CustomPayloadS2CPacket;
 import net.minecraft.world.chunk.ChunkSection;
 import net.minecraft.world.chunk.ProtoChunk;
+import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 
 import java.util.List;
 
@@ -39,17 +42,18 @@ import java.util.List;
  * @author <a href="https://github.com/TeamGalacticraft">TeamGalacticraft</a>
  */
 @Mixin(ProtoChunk.class)
-public abstract class ProtoChunkMixin implements ChunkOxygenAccessor, ChunkOxygenSyncer {
+public abstract class ProtoChunkMixin implements ChunkOxygenAccessor, ChunkOxygenSyncer, ChunkOxygenAccessorInternal {
     @Shadow @Final private ChunkSection[] sections;
+    private @Unique boolean defaultBreathable = false;
 
     @Override
     public boolean isBreathable(int x, int y, int z) {
-        if (((ProtoChunk)(Object)this).isOutOfHeightLimit(y)) return false;
+        if (((ProtoChunk)(Object)this).isOutOfHeightLimit(y)) return this.defaultBreathable;
         ChunkSection section = sections[y >> 4];
         if (!ChunkSection.isEmpty(section)) {
             return ((ChunkSectionOxygenAccessor) section).isBreathable(x & 15, y & 15, z & 15);
         }
-        return false;
+        return this.defaultBreathable;
     }
 
     @Override
@@ -62,12 +66,17 @@ public abstract class ProtoChunkMixin implements ChunkOxygenAccessor, ChunkOxyge
     }
 
     @Override
-    public List<CustomPayloadS2CPacket> syncToClient() {
+    public @NotNull List<CustomPayloadS2CPacket> syncToClient() {
         throw new UnsupportedOperationException("ProtoChunks shouldn't be synced");
     }
 
     @Override
-    public void readOxygenUpdate(byte b, PacketByteBuf buf) {
+    public void setDefaultBreathable_gc(boolean defaultBreathable) {
+        this.defaultBreathable = defaultBreathable;
+    }
+
+    @Override
+    public void readOxygenUpdate(byte b, @NotNull PacketByteBuf buf) {
         throw new UnsupportedOperationException("ProtoChunks shouldn't be synced");
     }
 }

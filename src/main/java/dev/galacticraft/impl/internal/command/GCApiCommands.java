@@ -22,17 +22,24 @@
 
 package dev.galacticraft.impl.internal.command;
 
+import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+import com.mojang.brigadier.context.CommandContext;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import dev.galacticraft.api.accessor.WorldOxygenAccessor;
 import dev.galacticraft.impl.Constant;
 import dev.galacticraft.impl.internal.command.argument.RegistryArgumentType;
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
+import net.minecraft.command.argument.BlockPosArgumentType;
 import net.minecraft.command.argument.IdentifierArgumentType;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.BlockBox;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.registry.Registry;
 
 public class GCApiCommands {
@@ -71,11 +78,80 @@ public class GCApiCommands {
                         Registry<?> registry = RegistryArgumentType.getRegistry(context, "registry");
                         source.sendFeedback(new TranslatableText("command.galacticraft-api.debug.registry.dump", registry.getKey().getValue().toString()), true);
                         for (Identifier id : registry.getIds()) {
-                            source.sendFeedback(new LiteralText(id.toString() + " - " + registry.get(id).toString()), false);
+                            source.sendFeedback(new LiteralText(id.toString() + " - " + registry.get(id)), false);
                         }
                         return 1;
                     })))));
             commandDispatcher.register(builder);
+            builder = CommandManager.literal(Constant.MOD_ID + ":oxygen").requires(source -> source.hasPermissionLevel(3));
+            builder.then(CommandManager.literal("get").then(CommandManager.argument("start_pos", BlockPosArgumentType.blockPos()).executes(GCApiCommands::getOxygen).then(CommandManager.argument("end_pos", BlockPosArgumentType.blockPos()).executes(GCApiCommands::getOxygenArea))));
+            builder.then(CommandManager.literal("set").requires(source -> source.hasPermissionLevel(4)).then(CommandManager.argument("start_pos", BlockPosArgumentType.blockPos()).then(CommandManager.argument("oxygen", BoolArgumentType.bool()).executes(GCApiCommands::setOxygen)).then(CommandManager.argument("end_pos", BlockPosArgumentType.blockPos()).then(CommandManager.argument("oxygen", BoolArgumentType.bool()).executes(GCApiCommands::setOxygenArea)))));
+            commandDispatcher.register(builder);
         });
+    }
+
+    private static int setOxygen(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
+        BlockPos pos = BlockPosArgumentType.getLoadedBlockPos(context, "start_pos");
+        boolean b = BoolArgumentType.getBool(context, "oxygen");
+        ((WorldOxygenAccessor) context.getSource().getWorld()).setBreathable(pos, b);
+        context.getSource().sendFeedback(new TranslatableText("command.galacticraft-api.oxygen.set.single"), true);
+        return 1;
+    }
+
+    private static int setOxygenArea(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
+        BlockPos startPos = BlockPosArgumentType.getLoadedBlockPos(context, "start_pos");
+        BlockPos endPos = BlockPosArgumentType.getLoadedBlockPos(context, "end_pos");
+        WorldOxygenAccessor accessor = (WorldOxygenAccessor) context.getSource().getWorld();
+        BlockBox box = BlockBox.create(startPos, endPos);
+        boolean b = BoolArgumentType.getBool(context, "oxygen");
+        BlockPos.Mutable mutable = new BlockPos.Mutable();
+        for (int x = box.getMinX(); x <= box.getMaxX(); x++) {
+            for (int y = box.getMinX(); y <= box.getMaxX(); y++) {
+                for (int z = box.getMinX(); z <= box.getMaxX(); z++) {
+                    accessor.setBreathable(mutable.set(x, y, z), b);
+                }
+            }
+        }
+
+        context.getSource().sendFeedback(new TranslatableText("command.galacticraft-api.oxygen.set.multiple"), true);
+        return 1;
+    }
+
+    private static int getOxygen(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
+        BlockPos pos = BlockPosArgumentType.getLoadedBlockPos(context, "start_pos");
+        if (((WorldOxygenAccessor) context.getSource().getWorld()).isBreathable(pos)) {
+            context.getSource().sendFeedback(new TranslatableText("command.galacticraft-api.oxygen.get.single.oxygen"), false);
+        } else {
+            context.getSource().sendFeedback(new TranslatableText("command.galacticraft-api.oxygen.get.single.no_oxygen"), false);
+        }
+        return 1;
+    }
+
+    private static int getOxygenArea(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
+        BlockPos startPos = BlockPosArgumentType.getLoadedBlockPos(context, "start_pos");
+        BlockPos endPos = BlockPosArgumentType.getLoadedBlockPos(context, "end_pos");
+        WorldOxygenAccessor accessor = (WorldOxygenAccessor) context.getSource().getWorld();
+        BlockBox box = BlockBox.create(startPos, endPos);
+        BlockPos.Mutable mutable = new BlockPos.Mutable();
+        boolean allOxygen = true;
+        boolean hasSomeOxygen = false;
+        boolean breathable;
+        for (int x = box.getMinX(); x <= box.getMaxX(); x++) {
+            for (int y = box.getMinX(); y <= box.getMaxX(); y++) {
+                for (int z = box.getMinX(); z <= box.getMaxX(); z++) {
+                    breathable = accessor.isBreathable(mutable.set(x, y, z));
+                    hasSomeOxygen |= breathable;
+                    allOxygen = allOxygen && breathable;
+                }
+            }
+        }
+        if (allOxygen) {
+            context.getSource().sendFeedback(new TranslatableText("command.galacticraft-api.oxygen.get.area.full"), false);
+        } else if (hasSomeOxygen) {
+            context.getSource().sendFeedback(new TranslatableText("command.galacticraft-api.oxygen.get.area.partial"), false);
+        } else {
+            context.getSource().sendFeedback(new TranslatableText("command.galacticraft-api.oxygen.get.area.none"), false);
+        }
+        return 1;
     }
 }

@@ -25,6 +25,7 @@ package dev.galacticraft.impl.internal.mixin;
 import dev.galacticraft.api.accessor.ChunkOxygenAccessor;
 import dev.galacticraft.api.accessor.WorldOxygenAccessor;
 import dev.galacticraft.api.universe.celestialbody.CelestialBody;
+import dev.galacticraft.impl.internal.accessor.WorldOxygenAccessorInternal;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.WorldChunk;
@@ -36,7 +37,7 @@ import org.spongepowered.asm.mixin.Unique;
  * @author <a href="https://github.com/TeamGalacticraft">TeamGalacticraft</a>
  */
 @Mixin(World.class)
-public abstract class WorldMixin implements WorldOxygenAccessor {
+public abstract class WorldMixin implements WorldOxygenAccessor, WorldOxygenAccessorInternal {
 
     @Shadow public abstract WorldChunk getWorldChunk(BlockPos pos);
 
@@ -55,8 +56,7 @@ public abstract class WorldMixin implements WorldOxygenAccessor {
             this.init = true;
             CelestialBody.getByDimension(((World)(Object)this)).ifPresent(celestialBodyType -> this.breathable = celestialBodyType.atmosphere().breathable());
         }
-        if (breathable) return true;
-        if (!isValid(pos)) return false;
+        if (!isValid(pos)) return this.breathable;
         return ((ChunkOxygenAccessor) this.getWorldChunk(pos)).isBreathable(pos.getX() & 15, pos.getY(), pos.getZ() & 15);
     }
 
@@ -66,7 +66,22 @@ public abstract class WorldMixin implements WorldOxygenAccessor {
             this.init = true;
             CelestialBody.getByDimension(((World)(Object)this)).ifPresent(celestialBodyType -> this.breathable = celestialBodyType.atmosphere().breathable());
         }
-        if (breathable || !isValid(pos)) return;
+        if (!isValid(pos)) return;
         ((ChunkOxygenAccessor) this.getWorldChunk(pos)).setBreathable(pos.getX() & 15, pos.getY(), pos.getZ() & 15, value);
+    }
+
+    @Override
+    public boolean getDefaultBreathable() {
+        if (!this.init) {
+            this.init = true;
+            CelestialBody.getByDimension(((World)(Object)this)).ifPresent(celestialBodyType -> this.breathable = celestialBodyType.atmosphere().breathable());
+        }
+        return this.breathable;
+    }
+
+    @Override
+    public void setDefaultBreathable(boolean breathable) {
+        this.init = true;
+        this.breathable = breathable;
     }
 }

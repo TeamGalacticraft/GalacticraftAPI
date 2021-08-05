@@ -15,6 +15,7 @@
     "MinecraftServerMixin",
     "PlayerManagerMixin",
     "ProtoChunkMixin",
+    "ReadOnlyChunkMixin",
     "ServerPlayerEntityMixin",
     "WorldChunkMixin",
     "WorldMixin"

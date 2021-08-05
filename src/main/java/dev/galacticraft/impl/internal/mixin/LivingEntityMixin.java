@@ -68,7 +68,7 @@ public abstract class LivingEntityMixin extends Entity implements GearInventoryP
 
     @ModifyVariable(method = "travel", at = @At(value = "FIELD"), ordinal = 0)
     private double modifyGravity_gc(double d) {
-        return CelestialBody.getByDimension(this.world).map(celestialBodyType -> celestialBodyType.type().gravity(celestialBodyType.config()) * 0.08d).orElse(0.08d);
+        return CelestialBody.getByDimension(this.world).map(celestialBodyType -> celestialBodyType.gravity() * 0.08d).orElse(0.08d);
     }
 
     @Shadow
@@ -78,7 +78,7 @@ public abstract class LivingEntityMixin extends Entity implements GearInventoryP
     protected void onComputeFallDamage_gc(float fallDistance, float damageMultiplier, CallbackInfoReturnable<Integer> cir) {
         StatusEffectInstance effectInstance = this.getStatusEffect(StatusEffects.JUMP_BOOST);
         float ff = effectInstance == null ? 0.0F : (float) (effectInstance.getAmplifier() + 6);
-        CelestialBody.getByDimension(this.world).ifPresent(celestialBodyType -> cir.setReturnValue((int) (MathHelper.ceil((fallDistance * celestialBodyType.type().gravity(celestialBodyType.config())) - 3.0F - ff) * damageMultiplier)));
+        CelestialBody.getByDimension(this.world).ifPresent(celestialBodyType -> cir.setReturnValue((int) (MathHelper.ceil((fallDistance * celestialBodyType.gravity()) - 3.0F - ff) * damageMultiplier)));
     }
 
     @Redirect(method = "baseTick", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;isSubmergedIn(Lnet/minecraft/tag/Tag;)Z", ordinal = 0))

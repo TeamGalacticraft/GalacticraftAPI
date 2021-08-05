@@ -20,35 +20,29 @@
  * SOFTWARE.
  */
 
-package dev.galacticraft.impl.internal.mixin.client;
+package dev.galacticraft.impl.internal.accessor;
 
-import dev.galacticraft.impl.internal.accessor.ChunkSectionOxygenAccessorInternal;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.minecraft.network.PacketByteBuf;
-import net.minecraft.world.chunk.ChunkSection;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.jetbrains.annotations.ApiStatus;
 
 /**
  * @author <a href="https://github.com/TeamGalacticraft">TeamGalacticraft</a>
  */
-@Mixin(ChunkSection.class)
-@Environment(EnvType.CLIENT)
-public abstract class ClientChunkSectionMixin implements ChunkSectionOxygenAccessorInternal {
-    @Inject(method = "fromPacket", at = @At("RETURN"))
-    private void fromPacket_gc(PacketByteBuf buf, CallbackInfo ci) {
-        this.setDefaultBreathable_gc(buf.readBoolean());
-        this.setTotalChanged_gc(buf.readShort());
-        if (this.getChangedCount_gc() == 0) {
-            this.setChangedArray_gc(null);
-            return;
-        }
-        if (this.getChangedArray_gc() == null) {
-            this.setChangedArray_gc(new boolean[16 * 16 * 16]);
-        }
-        this.readData_gc(buf);
-    }
+@ApiStatus.Internal
+public interface ChunkSectionOxygenAccessorInternal {
+    boolean[] getChangedArray_gc();
+
+    void setChangedArray_gc(boolean[] inverted);
+
+    short getChangedCount_gc();
+
+    void setTotalChanged_gc(short amount);
+
+    void setDefaultBreathable_gc(boolean breathable);
+
+    void writeData_gc(PacketByteBuf buf);
+
+    void readData_gc(PacketByteBuf buf);
+
+    boolean getDefaultBreathable_gc();
 }

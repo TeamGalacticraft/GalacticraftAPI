@@ -22,27 +22,11 @@
 
 package dev.galacticraft.impl.internal.accessor;
 
-import net.minecraft.network.PacketByteBuf;
 import org.jetbrains.annotations.ApiStatus;
 
-/**
- * @author <a href="https://github.com/TeamGalacticraft">TeamGalacticraft</a>
- */
-public interface ChunkSectionOxygenAccessor {
-    boolean isBreathable(int x, int y, int z);
+@ApiStatus.Internal
+public interface ChunkOxygenAccessorInternal {
+    void setDefaultBreathable_gc(boolean breathable);
 
-    void setBreathable(int x, int y, int z, boolean value);
-
-    @ApiStatus.Internal
-    boolean[] getArray();
-
-    @ApiStatus.Internal
-    short getTotalOxygen();
-
-    @ApiStatus.Internal
-    void setTotalOxygen(short amount);
-
-    void writeOxygen(PacketByteBuf buf);
-
-    void readOxygen(PacketByteBuf buf);
+    boolean getDefaultBreathable_gc();
 }

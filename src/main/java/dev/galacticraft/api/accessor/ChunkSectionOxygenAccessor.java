@@ -20,35 +20,13 @@
  * SOFTWARE.
  */
 
-package dev.galacticraft.impl.internal.mixin.client;
-
-import dev.galacticraft.impl.internal.accessor.ChunkSectionOxygenAccessorInternal;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import net.minecraft.network.PacketByteBuf;
-import net.minecraft.world.chunk.ChunkSection;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+package dev.galacticraft.api.accessor;
 
 /**
  * @author <a href="https://github.com/TeamGalacticraft">TeamGalacticraft</a>
  */
-@Mixin(ChunkSection.class)
-@Environment(EnvType.CLIENT)
-public abstract class ClientChunkSectionMixin implements ChunkSectionOxygenAccessorInternal {
-    @Inject(method = "fromPacket", at = @At("RETURN"))
-    private void fromPacket_gc(PacketByteBuf buf, CallbackInfo ci) {
-        this.setDefaultBreathable_gc(buf.readBoolean());
-        this.setTotalChanged_gc(buf.readShort());
-        if (this.getChangedCount_gc() == 0) {
-            this.setChangedArray_gc(null);
-            return;
-        }
-        if (this.getChangedArray_gc() == null) {
-            this.setChangedArray_gc(new boolean[16 * 16 * 16]);
-        }
-        this.readData_gc(buf);
-    }
+public interface ChunkSectionOxygenAccessor {
+    boolean isBreathable(int x, int y, int z);
+
+    void setBreathable(int x, int y, int z, boolean value);
 }

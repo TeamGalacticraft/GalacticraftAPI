@@ -22,7 +22,8 @@
 
 package dev.galacticraft.impl.internal.mixin;
 
-import dev.galacticraft.impl.internal.accessor.ChunkSectionOxygenAccessor;
+import dev.galacticraft.api.accessor.ChunkSectionOxygenAccessor;
+import dev.galacticraft.impl.internal.accessor.ChunkSectionOxygenAccessorInternal;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.world.chunk.ChunkSection;
 import org.spongepowered.asm.mixin.Mixin;
@@ -36,92 +37,122 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
  * @author <a href="https://github.com/TeamGalacticraft">TeamGalacticraft</a>
  */
 @Mixin(ChunkSection.class)
-public abstract class ChunkSectionMixin implements ChunkSectionOxygenAccessor {
-    private @Unique boolean[] breathable;
-    private @Unique short breathableCount = 0;
+public abstract class ChunkSectionMixin implements ChunkSectionOxygenAccessor, ChunkSectionOxygenAccessorInternal {
+    private @Unique boolean[] inverted;
+    private @Unique short changedCount = 0;
+    private @Unique boolean defaultBreathable = false;
 
     @Override
     public boolean isBreathable(int x, int y, int z) {
-        if (breathableCount == 0 || this.breathable == null) return false;
-        return this.breathable[x + (y << 4) + (z << 8)];
+        if (this.changedCount == 0) return this.defaultBreathable;
+        return this.defaultBreathable ^ this.inverted[x + (y << 4) + (z << 8)];
     }
 
     @Override
     public void setBreathable(int x, int y, int z, boolean value) {
-        if (value && this.breathable == null) this.breathable = new boolean[16 * 16 * 16];
-        boolean current = this.breathable[x + (y * 16) + (z * 16 * 16)];
+        if (this.inverted == null) {
+            assert this.changedCount == 0;
+            if (this.defaultBreathable != value) {
+                this.inverted = new boolean[16 * 16 * 16];
+                this.inverted[x + (y * 16) + (z * 16 * 16)] = true;
+                this.changedCount = 1;
+            }
+            return;
+        }
+        boolean current = this.inverted[x + (y * 16) + (z * 16 * 16)];
         if (current != value) {
             if (value) {
-                breathableCount++;
+                changedCount++;
             } else {
-                breathableCount--;
-                if (breathableCount == 0) {
-                    this.breathable = null;
+                changedCount--;
+                if (changedCount == 0) {
+                    this.inverted = null;
                     return;
                 }
             }
         }
-        this.breathable[x + (y * 16) + (z * 16 * 16)] = value;
+        this.inverted[x + (y << 4) + (z << 8)] = (this.defaultBreathable ^ value);
+    }
+
+    @Override
+    public void setDefaultBreathable_gc(boolean defaultBreathable) {
+        this.defaultBreathable = defaultBreathable;
     }
 
     @Inject(method = "getPacketSize", at = @At("RETURN"), cancellable = true)
     private void addOxygenSize_gc(CallbackInfoReturnable<Integer> cir) {
-        cir.setReturnValue(cir.getReturnValueI() + (this.breathableCount == 0 ? 0 : (4096 / 8)) + 2 + 1);
+        cir.setReturnValue(cir.getReturnValueI() + (this.changedCount == 0 ? 0 : (4096 / 8)) + 2 + 1 + 1);
+    }
+
+    @Inject(method = "isEmpty()Z", at = @At("RETURN"), cancellable = true)
+    private void testForOxygenEmpty_gc(CallbackInfoReturnable<Boolean> cir) {
+        cir.setReturnValue(cir.getReturnValueZ() && this.changedCount == 0);
     }
 
     @Inject(method = "toPacket", at = @At("RETURN"))
     private void toPacket_gc(PacketByteBuf buf, CallbackInfo ci) {
-        buf.writeShort(this.breathableCount);
-        if (this.breathableCount > 0) {
-            this.writeOxygen(buf);
+        buf.writeBoolean(this.defaultBreathable);
+        buf.writeShort(this.changedCount);
+        if (this.changedCount > 0) {
+            this.writeData_gc(buf);
         }
     }
 
     @Override
-    public boolean[] getArray() {
-        return this.breathable;
+    public boolean[] getChangedArray_gc() {
+        return this.inverted;
     }
 
     @Override
-    public short getTotalOxygen() {
-        return this.breathableCount;
+    public void setChangedArray_gc(boolean[] inverted) {
+        this.inverted = inverted;
     }
 
     @Override
-    public void setTotalOxygen(short amount) {
-        this.breathableCount = amount;
+    public short getChangedCount_gc() {
+        return this.changedCount;
     }
 
     @Override
-    public void writeOxygen(PacketByteBuf buf) {
-        boolean[] arr = this.getArray();
+    public void setTotalChanged_gc(short amount) {
+        this.changedCount = amount;
+    }
+
+    @Override
+    public boolean getDefaultBreathable_gc() {
+        return this.defaultBreathable;
+    }
+
+    @Override
+    public void writeData_gc(PacketByteBuf buf) {
+        boolean[] inverted = this.getChangedArray_gc();
         for (int p = 0; p < (16 * 16 * 16) / 8; p++) {
             byte b = -128;
-            b += arr[(p * 8)] ? 1 : 0;
-            b += arr[(p * 8) + 1] ? 2 : 0;
-            b += arr[(p * 8) + 2] ? 4 : 0;
-            b += arr[(p * 8) + 3] ? 8 : 0;
-            b += arr[(p * 8) + 4] ? 16 : 0;
-            b += arr[(p * 8) + 5] ? 32 : 0;
-            b += arr[(p * 8) + 6] ? 64 : 0;
-            b += arr[(p * 8) + 7] ? 128 : 0;
+            b += inverted[(p * 8)] ? 1 : 0;
+            b += inverted[(p * 8) + 1] ? 2 : 0;
+            b += inverted[(p * 8) + 2] ? 4 : 0;
+            b += inverted[(p * 8) + 3] ? 8 : 0;
+            b += inverted[(p * 8) + 4] ? 16 : 0;
+            b += inverted[(p * 8) + 5] ? 32 : 0;
+            b += inverted[(p * 8) + 6] ? 64 : 0;
+            b += inverted[(p * 8) + 7] ? 128 : 0;
             buf.writeByte(b);
         }
     }
 
     @Override
-    public void readOxygen(PacketByteBuf buf) {
-        boolean[] oxygen = this.getArray();
-        for (int i = 0; i < (16 * 16 * 16) / 8; i++) {
+    public void readData_gc(PacketByteBuf buf) {
+        boolean[] inverted = this.getChangedArray_gc();
+        for (int i = 0; i < 512; i++) {
             short b = (short) (buf.readByte() + 128);
-            oxygen[(i * 8)] = (b & 1) != 0;
-            oxygen[(i * 8) + 1] = (b & 2) != 0;
-            oxygen[(i * 8) + 2] = (b & 4) != 0;
-            oxygen[(i * 8) + 3] = (b & 8) != 0;
-            oxygen[(i * 8) + 4] = (b & 16) != 0;
-            oxygen[(i * 8) + 5] = (b & 32) != 0;
-            oxygen[(i * 8) + 6] = (b & 64) != 0;
-            oxygen[(i * 8) + 7] = (b & 128) != 0;
+            inverted[(i * 8)] = (b & 1) != 0;
+            inverted[(i * 8) + 1] = (b & 2) != 0;
+            inverted[(i * 8) + 2] = (b & 4) != 0;
+            inverted[(i * 8) + 3] = (b & 8) != 0;
+            inverted[(i * 8) + 4] = (b & 16) != 0;
+            inverted[(i * 8) + 5] = (b & 32) != 0;
+            inverted[(i * 8) + 6] = (b & 64) != 0;
+            inverted[(i * 8) + 7] = (b & 128) != 0;
         }
     }
 }

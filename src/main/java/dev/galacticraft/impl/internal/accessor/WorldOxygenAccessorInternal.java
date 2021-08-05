@@ -20,27 +20,13 @@
  * SOFTWARE.
  */
 
-package dev.galacticraft.impl.internal.mixin.client;
+package dev.galacticraft.impl.internal.accessor;
 
-import dev.galacticraft.api.universe.celestialbody.CelestialBody;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import net.minecraft.client.particle.Particle;
-import net.minecraft.client.particle.ParticleManager;
-import net.minecraft.client.world.ClientWorld;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.jetbrains.annotations.ApiStatus;
 
-@Mixin(ParticleManager.class)
-@Environment(EnvType.CLIENT)
-public abstract class ParticleManagerMixin {
-    @Shadow protected ClientWorld world;
+@ApiStatus.Internal
+public interface WorldOxygenAccessorInternal {
+    boolean getDefaultBreathable();
 
-    @Inject(method = "addParticle(Lnet/minecraft/client/particle/Particle;)V", at = @At("RETURN"))
-    protected void overrideGravity_gc(Particle particle, CallbackInfo ci) {
-        CelestialBody.getByDimension(this.world).ifPresent(celestialBodyType -> particle.gravityStrength *= celestialBodyType.gravity());
-    }
+    void setDefaultBreathable(boolean breathable);
 }
