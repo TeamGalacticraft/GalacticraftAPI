@@ -29,8 +29,11 @@ import alexiil.mc.lib.attributes.item.impl.EmptyFixedItemInv;
 import dev.galacticraft.api.accessor.GearInventoryProvider;
 import dev.galacticraft.api.accessor.WorldOxygenAccessor;
 import dev.galacticraft.api.attribute.GcApiAttributes;
-import dev.galacticraft.api.attribute.oxygen.OxygenTank;
+import dev.galacticraft.api.attribute.oxygen.extractable.OxygenExtractable;
 import dev.galacticraft.api.entity.attribute.GcApiEntityAttributes;
+import dev.galacticraft.api.item.Accessory;
+import dev.galacticraft.api.item.OxygenGear;
+import dev.galacticraft.api.item.OxygenMask;
 import dev.galacticraft.api.universe.celestialbody.CelestialBody;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
@@ -42,6 +45,7 @@ import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.Fluid;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.tag.Tag;
@@ -88,6 +92,16 @@ public abstract class LivingEntityMixin extends Entity implements GearInventoryP
         return entity.isSubmergedIn(tag) || !((WorldOxygenAccessor) this.world).isBreathable(entity.getBlockPos().offset(Direction.UP, (int)Math.floor(this.getEyeHeight(entity.getPose(), entity.getDimensions(entity.getPose())))));
     }
 
+    @Inject(method = "tick", at = @At(value = "RETURN"))
+    private void checkOxygenAtmosphere_gc(CallbackInfo ci) {
+        LivingEntity thisEntity = ((LivingEntity) (Object)this);
+        for (ItemStack stack : this.getAccessories().stackIterable()) {
+            if (stack.getItem() instanceof Accessory accessory) {
+                accessory.tick(thisEntity);
+            }
+        }
+    }
+
     @Inject(method = "getNextAirUnderwater", at = @At(value = "INVOKE", target = "Lnet/minecraft/enchantment/EnchantmentHelper;getRespiration(Lnet/minecraft/entity/LivingEntity;)I"), cancellable = true)
     private void overrideOxygen_gc(int air, CallbackInfoReturnable<Integer> ci) {
         EntityAttributeInstance attribute = ((LivingEntity) (Object) this).getAttributeInstance(GcApiEntityAttributes.CAN_BREATHE_IN_SPACE);
@@ -95,17 +109,28 @@ public abstract class LivingEntityMixin extends Entity implements GearInventoryP
             ci.setReturnValue(this.getNextAirOnLand(air));
         }
 
-        FixedItemInv gearInv = this.getGearInv();
-        if (gearInv.getSlotCount() >= 7) {
-            OxygenTank tank = GcApiAttributes.OXYGEN_TANK.getFirst(gearInv.getSlot(6));
-            if (tank.getAmount() > 0) {
-                tank.setAmount(tank.getAmount() - 1);
-                ci.setReturnValue(this.getNextAirOnLand(air));
+        FixedItemInv accessories = this.getAccessories();
+        boolean mask = false;
+        boolean gear = false;
+        for (int i = 0; i < accessories.getSlotCount(); i++) {
+            Item item = accessories.getInvStack(i).getItem();
+            if (!mask && item instanceof OxygenMask) {
+                mask = true;
+                if (gear) break;
+            } else if (!gear && item instanceof OxygenGear) {
+                gear = true;
+                if (mask) break;
             }
-            tank = GcApiAttributes.OXYGEN_TANK.getFirst(gearInv.getSlot(7));
-            if (tank.getAmount() > 0) {
-                tank.setAmount(tank.getAmount() - 1);
-                ci.setReturnValue(this.getNextAirOnLand(air));
+        }
+
+        if (mask && gear) {
+            FixedItemInv tankInv = this.getOxygenTanks();
+            for (int i = 0; i < tankInv.getSlotCount(); i++) {
+                OxygenExtractable tank = GcApiAttributes.OXYGEN_EXTRACTABLE.getFirst(tankInv.getSlot(i));
+                if (tank.extractOxygen(1) > 0) {
+                    ci.setReturnValue(this.getNextAirOnLand(air));
+                    return;
+                }
             }
         }
     }
@@ -130,6 +155,21 @@ public abstract class LivingEntityMixin extends Entity implements GearInventoryP
 
     @Override
     public FixedItemInv getGearInv() {
+        return EmptyFixedItemInv.INSTANCE;
+    }
+
+    @Override
+    public FixedItemInv getOxygenTanks() {
+        return EmptyFixedItemInv.INSTANCE;
+    }
+
+    @Override
+    public FixedItemInv getThermalArmor() {
+        return EmptyFixedItemInv.INSTANCE;
+    }
+
+    @Override
+    public FixedItemInv getAccessories() {
         return EmptyFixedItemInv.INSTANCE;
     }
 

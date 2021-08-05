@@ -4,7 +4,7 @@ import java.time.format.DateTimeFormatter
 plugins {
     java
     `maven-publish`
-    id("fabric-loom") version "0.8-SNAPSHOT"
+    id("fabric-loom") version "0.9-SNAPSHOT"
     id("org.cadixdev.licenser") version "0.6.1"
 }
 
@@ -15,7 +15,7 @@ val fabric = "0.37.1+1.17"
 val lba = "0.9.0"
 
 group = "dev.galacticraft"
-version ="0.4.0-prealpha.15-m+$mc"
+version ="0.4.0-prealpha.15+$mc"
 
 base.archivesName.set("GalacticraftAPI")
 
@@ -27,8 +27,11 @@ val testmodSourceSet = sourceSets.create("testmod") {
 }
 
 loom {
-    refmapName = "galacticraft-api.refmap.json"
-    accessWidener(project.file("src/main/resources/galacticraft-api.accesswidener"))
+    accessWidenerPath.set(project.file("src/main/resources/galacticraft-api.accesswidener"))
+    mixin {
+        add(sourceSets.getByName("testmod"), "gc-testmod.refmap.json")
+        add(sourceSets.getByName("main"), "galacticraft-api.refmap.json")
+    }
 
     runs {
         register("TestModClient") {

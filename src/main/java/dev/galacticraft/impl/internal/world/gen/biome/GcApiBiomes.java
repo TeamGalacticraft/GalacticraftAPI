@@ -31,7 +31,9 @@ import net.minecraft.world.biome.BiomeEffects;
 import net.minecraft.world.biome.GenerationSettings;
 import net.minecraft.world.biome.SpawnSettings;
 import net.minecraft.world.gen.surfacebuilder.ConfiguredSurfaceBuilders;
+import org.jetbrains.annotations.ApiStatus;
 
+@ApiStatus.Internal
 public class GcApiBiomes {
     public static final Biome SPACE = createSpaceBiome();
 

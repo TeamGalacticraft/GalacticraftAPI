@@ -20,24 +20,7 @@
  * SOFTWARE.
  */
 
-package dev.galacticraft.api.accessor;
+@ApiStatus.Internal
+package dev.galacticraft.impl.internal.accessor;
 
-import alexiil.mc.lib.attributes.item.FixedItemInv;
-import net.minecraft.nbt.NbtCompound;
-
-/**
- * @author <a href="https://github.com/TeamGalacticraft">TeamGalacticraft</a>
- */
-public interface GearInventoryProvider {
-    FixedItemInv getGearInv();
-
-    FixedItemInv getOxygenTanks();
-
-    FixedItemInv getThermalArmor();
-
-    FixedItemInv getAccessories();
-
-    NbtCompound writeGearToNbt(NbtCompound tag);
-
-    void readGearFromNbt(NbtCompound tag);
-}
+import org.jetbrains.annotations.ApiStatus;

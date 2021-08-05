@@ -22,6 +22,7 @@
 
 package dev.galacticraft.impl.internal.mixin;
 
+import alexiil.mc.lib.attributes.item.FixedItemInv;
 import alexiil.mc.lib.attributes.item.impl.FullFixedItemInv;
 import dev.galacticraft.api.accessor.GearInventoryProvider;
 import dev.galacticraft.api.accessor.ServerResearchAccessor;
@@ -46,11 +47,13 @@ import java.util.List;
 
 @Mixin(ServerPlayerEntity.class)
 public abstract class ServerPlayerEntityMixin implements ServerResearchAccessor, GearInventoryProvider {
-    private final @Unique FullFixedItemInv gearInv = createGearInv();
-    @Unique
-    private final List<Identifier> unlockedResearch = new ArrayList<>();
-    @Unique
-    private final Object2BooleanMap<Identifier> changes = new Object2BooleanArrayMap<>();
+    private final @Unique List<Identifier> unlockedResearch = new ArrayList<>();
+    private final @Unique Object2BooleanMap<Identifier> changes = new Object2BooleanArrayMap<>();
+
+    private final @Unique FullFixedItemInv gearInv = this.createGearInv();
+    private final @Unique FixedItemInv tankInv = this.gearInv.getSubInv(4, 5 + 1);
+    private final @Unique FixedItemInv thermalArmorInv = this.gearInv.getSubInv(0, 3 + 1);
+    private final @Unique FixedItemInv accessoryInv = this.gearInv.getSubInv(6, 11 + 1);
 
     @Override
     public boolean hasUnlocked_gc(Identifier id) {
@@ -132,6 +135,21 @@ public abstract class ServerPlayerEntityMixin implements ServerResearchAccessor,
     @Override
     public FullFixedItemInv getGearInv() {
         return this.gearInv;
+    }
+
+    @Override
+    public FixedItemInv getOxygenTanks() {
+        return this.tankInv;
+    }
+
+    @Override
+    public FixedItemInv getThermalArmor() {
+        return this.thermalArmorInv;
+    }
+
+    @Override
+    public FixedItemInv getAccessories() {
+        return this.accessoryInv;
     }
 
     @Override

@@ -20,7 +20,7 @@
  * SOFTWARE.
  */
 
-package dev.galacticraft.impl.internal.command.argument;
+package dev.galacticraft.impl.command.argument;
 
 import com.google.common.collect.ImmutableList;
 import com.mojang.brigadier.StringReader;

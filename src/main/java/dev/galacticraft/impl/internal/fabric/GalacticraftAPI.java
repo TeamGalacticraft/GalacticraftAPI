@@ -35,7 +35,9 @@ import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
+import org.jetbrains.annotations.ApiStatus;
 
+@ApiStatus.Internal
 public class GalacticraftAPI implements ModInitializer {
     @Override
     public void onInitialize() {

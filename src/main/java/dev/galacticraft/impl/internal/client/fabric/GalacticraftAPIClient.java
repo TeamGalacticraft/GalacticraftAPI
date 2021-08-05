@@ -39,9 +39,11 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.Identifier;
+import org.jetbrains.annotations.ApiStatus;
 
 import java.util.Objects;
 
+@ApiStatus.Internal
 @Environment(EnvType.CLIENT)
 public class GalacticraftAPIClient implements ClientModInitializer {
     @Override

@@ -56,6 +56,7 @@ import net.minecraft.world.gen.chunk.ChunkGenerator;
 import net.minecraft.world.gen.chunk.StructuresConfig;
 import net.minecraft.world.gen.chunk.VerticalBlockSample;
 import net.minecraft.world.gen.feature.StructureFeature;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
@@ -64,6 +65,7 @@ import java.util.Random;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 
+@ApiStatus.Internal
 public class SatelliteChunkGenerator extends ChunkGenerator {
     public static final SatelliteChunkGenerator VOID_INSTANCE = new SatelliteChunkGenerator(GcApiBiomes.SPACE, new Structure());
     public static final Codec<SatelliteChunkGenerator> CODEC = Codec.unit(VOID_INSTANCE);

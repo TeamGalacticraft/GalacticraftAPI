@@ -22,11 +22,17 @@
 
 package dev.galacticraft.api.item;
 
+import net.minecraft.entity.LivingEntity;
+
 /**
  * @author <a href="https://github.com/TeamGalacticraft">TeamGalacticraft</a>
  */
 public interface Accessory {
     default boolean enablesHearing() {
         return false;
+    }
+
+    default void tick(LivingEntity entity) {
+
     }
 }

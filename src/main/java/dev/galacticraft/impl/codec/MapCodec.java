@@ -20,7 +20,7 @@
  * SOFTWARE.
  */
 
-package dev.galacticraft.impl.internal.codec;
+package dev.galacticraft.impl.codec;
 
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.*;

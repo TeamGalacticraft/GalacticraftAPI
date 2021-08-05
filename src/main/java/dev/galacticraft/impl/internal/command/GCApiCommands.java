@@ -29,7 +29,7 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import dev.galacticraft.api.accessor.WorldOxygenAccessor;
 import dev.galacticraft.impl.Constant;
-import dev.galacticraft.impl.internal.command.argument.RegistryArgumentType;
+import dev.galacticraft.impl.command.argument.RegistryArgumentType;
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
 import net.minecraft.command.argument.BlockPosArgumentType;
 import net.minecraft.command.argument.IdentifierArgumentType;
@@ -41,7 +41,9 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockBox;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.registry.Registry;
+import org.jetbrains.annotations.ApiStatus;
 
+@ApiStatus.Internal
 public class GCApiCommands {
     public static void register() {
         CommandRegistrationCallback.EVENT.register((commandDispatcher, server) -> {

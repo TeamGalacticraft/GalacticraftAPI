@@ -22,6 +22,7 @@
 
 package dev.galacticraft.impl.internal.mixin.client;
 
+import alexiil.mc.lib.attributes.item.FixedItemInv;
 import alexiil.mc.lib.attributes.item.impl.FullFixedItemInv;
 import dev.galacticraft.api.accessor.GearInventoryProvider;
 import dev.galacticraft.api.accessor.SoundSystemAccessor;
@@ -48,6 +49,9 @@ public abstract class AbstractClientPlayerEntityMixin implements ClientResearchA
     @Unique
     private final List<Identifier> unlockedResearch = new ArrayList<>();
     private final @Unique FullFixedItemInv gearInv = createInv();
+    private final @Unique FixedItemInv tankInv = this.gearInv.getSubInv(4, 5 + 1);
+    private final @Unique FixedItemInv thermalArmorInv = this.gearInv.getSubInv(0, 3 + 1);
+    private final @Unique FixedItemInv accessoryInv = this.gearInv.getSubInv(6, 11 + 1);
 
     private FullFixedItemInv createInv() {
         FullFixedItemInv inv = new FullFixedItemInv(12);
@@ -95,6 +99,21 @@ public abstract class AbstractClientPlayerEntityMixin implements ClientResearchA
     @Override
     public FullFixedItemInv getGearInv() {
         return this.gearInv;
+    }
+
+    @Override
+    public FixedItemInv getOxygenTanks() {
+        return this.tankInv;
+    }
+
+    @Override
+    public FixedItemInv getThermalArmor() {
+        return this.thermalArmorInv;
+    }
+
+    @Override
+    public FixedItemInv getAccessories() {
+        return this.accessoryInv;
     }
 
     @Override

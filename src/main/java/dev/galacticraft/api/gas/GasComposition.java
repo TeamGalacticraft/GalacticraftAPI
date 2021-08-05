@@ -25,7 +25,7 @@ package dev.galacticraft.api.gas;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import dev.galacticraft.api.registry.AddonRegistry;
-import dev.galacticraft.impl.internal.codec.MapCodec;
+import dev.galacticraft.impl.codec.MapCodec;
 import it.unimi.dsi.fastutil.objects.Object2DoubleArrayMap;
 import it.unimi.dsi.fastutil.objects.Object2DoubleMap;
 import net.minecraft.network.PacketByteBuf;
