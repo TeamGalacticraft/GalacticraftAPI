@@ -29,6 +29,7 @@ import net.fabricmc.api.Environment;
 import net.minecraft.client.render.BufferBuilder;
 import net.minecraft.client.render.Shader;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.util.math.Vector4f;
 
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -37,7 +38,7 @@ public record CelestialDisplay<C extends CelestialDisplayConfig, T extends Celes
     public static final Codec<CelestialDisplay<?, ?>> CODEC = AddonRegistry.CELESTIAL_DISPLAY_TYPE.dispatch(CelestialDisplay::type, CelestialDisplayType::codec);
 
     @Environment(EnvType.CLIENT)
-    public void render(MatrixStack matrices, BufferBuilder buffer, int scale, double mouseX, double mouseY, float delta, Consumer<Supplier<Shader>> shaderSetter) {
-        this.type().render(matrices, buffer, scale, mouseX, mouseY, delta, shaderSetter, this.config());
+    public Vector4f render(MatrixStack matrices, BufferBuilder buffer, int scale, double mouseX, double mouseY, float delta, Consumer<Supplier<Shader>> shaderSetter) {
+        return this.type().render(matrices, buffer, scale, mouseX, mouseY, delta, shaderSetter, this.config());
     }
 }

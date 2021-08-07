@@ -32,6 +32,7 @@ import net.minecraft.client.render.*;
 import net.minecraft.client.texture.AbstractTexture;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.math.Matrix4f;
+import net.minecraft.util.math.Vector4f;
 import org.lwjgl.opengl.GL32C;
 
 import java.util.function.Consumer;
@@ -45,7 +46,7 @@ public class IconCelestialDisplayType extends CelestialDisplayType<IconCelestial
     }
 
     @Override
-    public void render(MatrixStack matrices, BufferBuilder buffer, int size, double mouseX, double mouseY, float delta, Consumer<Supplier<Shader>> shaderSetter, IconCelestialDisplayConfig config) {
+    public Vector4f render(MatrixStack matrices, BufferBuilder buffer, int size, double mouseX, double mouseY, float delta, Consumer<Supplier<Shader>> shaderSetter, IconCelestialDisplayConfig config) {
         shaderSetter.accept(GameRenderer::getPositionTexShader);
         Matrix4f model = matrices.peek().getModel();
         AbstractTexture texture = MinecraftClient.getInstance().getTextureManager().getTexture(config.texture());
@@ -60,5 +61,6 @@ public class IconCelestialDisplayType extends CelestialDisplayType<IconCelestial
         buffer.vertex(model, config.scale() * size, config.scale() * -size, 0).texture((config.u() + config.width()) / width, config.v() / height).next();
         buffer.end();
         BufferRenderer.draw(buffer);
+        return new Vector4f(config.scale() * -size, config.scale() * -size, (config.scale() * size) * 2, (config.scale() * size) * 2);
     }
 }
