@@ -51,6 +51,25 @@ public class GalacticraftAPI implements ModInitializer {
                 }
             }
         });
+        ServerPlayNetworking.registerGlobalReceiver(new Identifier(Constant.MOD_ID, "flag_data"), (server, player, handler, buf, responseSender) -> {
+            int[] array = buf.readIntArray();
+            for (int i = 0; i < array.length; i++) {
+                array[i] &= 0x00FFFFFF;
+            }
+            // FORMAT: [A - IGNORE]BGR - 48 width 32 height if it is not a 1536 int array then ignore
+            // since it is purely colour data, there isn't really much a malicious client could do
+            server.execute(() -> {
+                //todo: teams
+            });
+        });
+        ServerPlayNetworking.registerGlobalReceiver(new Identifier(Constant.MOD_ID, "team_name"), (server, player, handler, buf, responseSender) -> {
+            String s = buf.readString();
+
+            server.execute(() -> {
+                //todo: teams
+            });
+        });
+
         Registry.register(Registry.CHUNK_GENERATOR, new Identifier(Constant.MOD_ID, "satellite"), SatelliteChunkGenerator.CODEC);
         GcApiBiomes.register();
         Constant.LOGGER.info("Initialization Complete. (Took {}ms).", System.currentTimeMillis() - startInitTime);
