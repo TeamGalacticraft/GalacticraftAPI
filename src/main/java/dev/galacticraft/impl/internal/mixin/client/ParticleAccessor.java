@@ -20,33 +20,17 @@
  * SOFTWARE.
  */
 
-package dev.galacticraft.impl.internal.mixin;
+package dev.galacticraft.impl.internal.mixin.client;
 
-import dev.galacticraft.impl.internal.accessor.ChunkOxygenSyncer;
-import net.minecraft.network.Packet;
-import net.minecraft.network.packet.s2c.play.CustomPayloadS2CPacket;
-import net.minecraft.server.world.ChunkHolder;
-import net.minecraft.world.chunk.WorldChunk;
+import net.minecraft.client.particle.Particle;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.gen.Accessor;
 
-import java.util.List;
+@Mixin(Particle.class)
+public interface ParticleAccessor {
+    @Accessor("gravityStrength")
+    float getGravityStrength();
 
-/**
- * @author <a href="https://github.com/TeamGalacticraft">TeamGalacticraft</a>
- */
-@Mixin(ChunkHolder.class)
-public abstract class ChunkHolderMixin {
-    @Shadow protected abstract void sendPacketToPlayersWatching(Packet<?> packet, boolean onlyOnWatchDistanceEdge);
-
-    @Inject(method = "flushUpdates", at = @At("HEAD"))
-    private void flushOxygen_gc(WorldChunk chunk, CallbackInfo ci) {
-        List<CustomPayloadS2CPacket> packets = ((ChunkOxygenSyncer) chunk).syncToClient_gc();
-        for (CustomPayloadS2CPacket packet : packets) {
-            this.sendPacketToPlayersWatching(packet, false);
-        }
-    }
+    @Accessor("gravityStrength")
+    void setGravityStrength(float gravityStrength);
 }

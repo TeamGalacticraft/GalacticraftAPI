@@ -36,6 +36,7 @@ import dev.galacticraft.api.universe.display.CelestialDisplay;
 import dev.galacticraft.api.universe.galaxy.Galaxy;
 import dev.galacticraft.api.universe.position.CelestialPosition;
 import dev.galacticraft.impl.Constant;
+import dev.galacticraft.impl.internal.mixin.MinecraftServerAccessor;
 import dev.galacticraft.impl.internal.world.gen.SatelliteChunkGenerator;
 import dev.galacticraft.impl.internal.world.gen.biome.GcApiBiomes;
 import dev.galacticraft.impl.universe.display.config.IconCelestialDisplayConfig;
@@ -130,9 +131,9 @@ public class SatelliteType extends CelestialBodyType<SatelliteConfig> implements
         DimensionType dimensionType3 = options.getDimensionType();
         ChunkGenerator chunkGenerator3 = options.getChunkGenerator();
         UnmodifiableLevelProperties unmodifiableLevelProperties = new UnmodifiableLevelProperties(server.getSaveProperties(), server.getSaveProperties().getMainWorldProperties());
-        ServerWorld serverWorld2 = new ServerWorld(server, server.workerExecutor, server.session, unmodifiableLevelProperties, RegistryKey.of(Registry.WORLD_KEY, id), dimensionType3, EMPTY_PROGRESS_LISTENER, chunkGenerator3, server.getSaveProperties().getGeneratorOptions().isDebugWorld(), BiomeAccess.hashSeed(server.getSaveProperties().getGeneratorOptions().getSeed()), ImmutableList.of(), false);
+        ServerWorld serverWorld2 = new ServerWorld(server, ((MinecraftServerAccessor) server).getWorkerExecutor(), ((MinecraftServerAccessor) server).getSession(), unmodifiableLevelProperties, RegistryKey.of(Registry.WORLD_KEY, id), dimensionType3, EMPTY_PROGRESS_LISTENER, chunkGenerator3, server.getSaveProperties().getGeneratorOptions().isDebugWorld(), BiomeAccess.hashSeed(server.getSaveProperties().getGeneratorOptions().getSeed()), ImmutableList.of(), false);
         server.getWorld(World.OVERWORLD).getWorldBorder().addListener(new WorldBorderListener.WorldBorderSyncer(serverWorld2.getWorldBorder()));
-        server.worlds.put(RegistryKey.of(Registry.WORLD_KEY, id), serverWorld2);
+        ((MinecraftServerAccessor) server).getWorlds().put(RegistryKey.of(Registry.WORLD_KEY, id), serverWorld2);
 
         for (ServerPlayerEntity player : server.getPlayerManager().getPlayerList()) {
             NbtCompound compound = (NbtCompound) SatelliteConfig.CODEC.encode(satellite.config(), NbtOps.INSTANCE, new NbtCompound()).get().orThrow();

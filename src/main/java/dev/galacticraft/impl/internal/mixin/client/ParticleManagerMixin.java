@@ -41,6 +41,6 @@ public abstract class ParticleManagerMixin {
 
     @Inject(method = "addParticle(Lnet/minecraft/client/particle/Particle;)V", at = @At("RETURN"))
     protected void overrideGravity_gc(Particle particle, CallbackInfo ci) {
-        CelestialBody.getByDimension(this.world).ifPresent(celestialBodyType -> particle.gravityStrength *= celestialBodyType.gravity());
+        CelestialBody.getByDimension(this.world).ifPresent(celestialBodyType -> ((ParticleAccessor) particle).setGravityStrength(((ParticleAccessor) particle).getGravityStrength() * celestialBodyType.gravity()));
     }
 }

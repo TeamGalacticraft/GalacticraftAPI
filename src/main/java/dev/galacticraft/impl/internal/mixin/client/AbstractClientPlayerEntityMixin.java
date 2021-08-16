@@ -57,19 +57,19 @@ public abstract class AbstractClientPlayerEntityMixin implements ClientResearchA
         FullFixedItemInv inv = new FullFixedItemInv(12);
         inv.setOwnerListener((invView, slot, prev, current) -> {
             if (current.getItem() instanceof Accessory accessory && accessory.enablesHearing()) {
-                ((SoundSystemAccessor) MinecraftClient.getInstance().getSoundManager().soundSystem).gc_updateAtmosphericMultiplier(1.0f);
+                ((SoundSystemAccessor) ((SoundManagerAccessor)MinecraftClient.getInstance().getSoundManager()).getSoundSystem()).gc_updateAtmosphericMultiplier(1.0f);
             } else if (prev.getItem() instanceof Accessory accessory && accessory.enablesHearing()) {
                 boolean hasFreqModule = false;
                 for (int i = 0; i < invView.getSlotCount(); i++) {
                     if (i == slot) continue;
                     if (invView.getInvStack(i).getItem() instanceof Accessory accessory2 && accessory2.enablesHearing()) {
-                        ((SoundSystemAccessor) MinecraftClient.getInstance().getSoundManager().soundSystem).gc_updateAtmosphericMultiplier(1.0f);
+                        ((SoundSystemAccessor) ((SoundManagerAccessor)MinecraftClient.getInstance().getSoundManager()).getSoundSystem()).gc_updateAtmosphericMultiplier(1.0f);
                         hasFreqModule = true;
                         break;
                     }
                 }
                 if (!hasFreqModule) {
-                    ((SoundSystemAccessor) MinecraftClient.getInstance().getSoundManager().soundSystem)
+                    ((SoundSystemAccessor) ((SoundManagerAccessor)MinecraftClient.getInstance().getSoundManager()).getSoundSystem())
                             .gc_updateAtmosphericMultiplier(CelestialBody.getByDimension(this.clientWorld)
                                     .map(body -> body.atmosphere().pressure()).orElse(1.0f));
                 }

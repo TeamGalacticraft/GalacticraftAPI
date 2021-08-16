@@ -126,33 +126,43 @@ public abstract class ChunkSectionMixin implements ChunkSectionOxygenAccessor, C
     @Override
     public void writeData_gc(PacketByteBuf buf) {
         boolean[] inverted = this.getChangedArray_gc();
-        for (int p = 0; p < (16 * 16 * 16) / 8; p++) {
-            byte b = -128;
-            b += inverted[(p * 8)] ? 1 : 0;
-            b += inverted[(p * 8) + 1] ? 2 : 0;
-            b += inverted[(p * 8) + 2] ? 4 : 0;
-            b += inverted[(p * 8) + 3] ? 8 : 0;
-            b += inverted[(p * 8) + 4] ? 16 : 0;
-            b += inverted[(p * 8) + 5] ? 32 : 0;
-            b += inverted[(p * 8) + 6] ? 64 : 0;
-            b += inverted[(p * 8) + 7] ? 128 : 0;
-            buf.writeByte(b);
+        if (this.inverted == null) {
+            buf.writeBoolean(false);
+        } else {
+            buf.writeBoolean(true);
+            for (int p = 0; p < (16 * 16 * 16) / 8; p++) {
+                byte b = -128;
+                b += inverted[(p * 8)] ? 1 : 0;
+                b += inverted[(p * 8) + 1] ? 2 : 0;
+                b += inverted[(p * 8) + 2] ? 4 : 0;
+                b += inverted[(p * 8) + 3] ? 8 : 0;
+                b += inverted[(p * 8) + 4] ? 16 : 0;
+                b += inverted[(p * 8) + 5] ? 32 : 0;
+                b += inverted[(p * 8) + 6] ? 64 : 0;
+                b += inverted[(p * 8) + 7] ? 128 : 0;
+                buf.writeByte(b);
+            }
         }
     }
 
     @Override
     public void readData_gc(PacketByteBuf buf) {
         boolean[] inverted = this.getChangedArray_gc();
-        for (int i = 0; i < 512; i++) {
-            short b = (short) (buf.readByte() + 128);
-            inverted[(i * 8)] = (b & 1) != 0;
-            inverted[(i * 8) + 1] = (b & 2) != 0;
-            inverted[(i * 8) + 2] = (b & 4) != 0;
-            inverted[(i * 8) + 3] = (b & 8) != 0;
-            inverted[(i * 8) + 4] = (b & 16) != 0;
-            inverted[(i * 8) + 5] = (b & 32) != 0;
-            inverted[(i * 8) + 6] = (b & 64) != 0;
-            inverted[(i * 8) + 7] = (b & 128) != 0;
+        boolean notEmpty = buf.readBoolean();
+        if (notEmpty) {
+            for (int i = 0; i < 512; i++) {
+                short b = (short) (buf.readByte() + 128);
+                inverted[(i * 8)] = (b & 1) != 0;
+                inverted[(i * 8) + 1] = (b & 2) != 0;
+                inverted[(i * 8) + 2] = (b & 4) != 0;
+                inverted[(i * 8) + 3] = (b & 8) != 0;
+                inverted[(i * 8) + 4] = (b & 16) != 0;
+                inverted[(i * 8) + 5] = (b & 32) != 0;
+                inverted[(i * 8) + 6] = (b & 64) != 0;
+                inverted[(i * 8) + 7] = (b & 128) != 0;
+            }
+        } else {
+            this.setChangedArray_gc(null);
         }
     }
 }

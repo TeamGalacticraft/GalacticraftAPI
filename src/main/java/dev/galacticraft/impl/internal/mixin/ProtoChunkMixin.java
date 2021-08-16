@@ -66,7 +66,7 @@ public abstract class ProtoChunkMixin implements ChunkOxygenAccessor, ChunkOxyge
     }
 
     @Override
-    public @NotNull List<CustomPayloadS2CPacket> syncToClient() {
+    public @NotNull List<CustomPayloadS2CPacket> syncToClient_gc() {
         throw new UnsupportedOperationException("ProtoChunks shouldn't be synced");
     }
 

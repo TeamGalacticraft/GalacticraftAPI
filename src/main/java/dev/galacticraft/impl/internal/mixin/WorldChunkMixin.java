@@ -105,14 +105,14 @@ public abstract class WorldChunkMixin implements ChunkOxygenAccessor, ChunkOxyge
     }
 
     @Override
-    public @NotNull List<CustomPayloadS2CPacket> syncToClient() {
+    public @NotNull List<CustomPayloadS2CPacket> syncToClient_gc() {
         if (update && !world.isClient) {
             update = false;
             List<CustomPayloadS2CPacket> list = new LinkedList<>();
             for (int i = 0; i < 16; i++) {
                 if (updatable[i]) {
                     updatable[i] = false;
-                    PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer(1 + ((16 * 16 * 16) / 8) + (4 * 2), 50 + 1 + ((16 * 16 * 16) / 8) + (4 * 2)).writeByte(i).writeInt(this.pos.x).writeInt(this.pos.z));
+                    PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer(1 + 1 + ((16 * 16 * 16) / 8) + (4 * 2), 50 + 1 + ((16 * 16 * 16) / 8) + (4 * 2)).writeByte(i).writeInt(this.pos.x).writeInt(this.pos.z));
                     ((ChunkSectionOxygenAccessorInternal) sections[i]).writeData_gc(buf);
                     list.add(new CustomPayloadS2CPacket(new Identifier(Constant.MOD_ID, "oxygen_update"), buf));
                 }

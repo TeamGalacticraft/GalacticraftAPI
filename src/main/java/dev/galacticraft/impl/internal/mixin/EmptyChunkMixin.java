@@ -49,7 +49,7 @@ public abstract class EmptyChunkMixin implements ChunkOxygenAccessor, ChunkOxyge
     }
 
     @Override
-    public @NotNull List<CustomPayloadS2CPacket> syncToClient() {
+    public @NotNull List<CustomPayloadS2CPacket> syncToClient_gc() {
         return Collections.emptyList();
     }
 

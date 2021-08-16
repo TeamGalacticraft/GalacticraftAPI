@@ -29,7 +29,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 public interface ChunkOxygenSyncer {
-    @NotNull List<@NotNull CustomPayloadS2CPacket> syncToClient();
+    @NotNull List<@NotNull CustomPayloadS2CPacket> syncToClient_gc();
 
     void readOxygenUpdate(byte b, @NotNull PacketByteBuf buf);
 }

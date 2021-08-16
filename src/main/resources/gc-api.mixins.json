@@ -12,13 +12,16 @@
     "EmptyChunkMixin",
     "EntityGravityMixin",
     "LivingEntityMixin",
+    "MinecraftServerAccessor",
     "MinecraftServerMixin",
     "PlayerManagerMixin",
     "ProtoChunkMixin",
     "ReadOnlyChunkMixin",
     "ServerPlayerEntityMixin",
     "WorldChunkMixin",
-    "WorldMixin"
+    "WorldMixin",
+    "client.ParticleAccessor",
+    "client.SoundManagerAccessor"
   ],
   "client": [
     "client.AbstractClientPlayerEntityMixin",

@@ -22,33 +22,16 @@
 
 package dev.galacticraft.impl.internal.mixin.client;
 
-import dev.galacticraft.api.accessor.SoundSystemAccessor;
-import dev.galacticraft.api.universe.celestialbody.CelestialBody;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.sound.SoundManager;
-import net.minecraft.client.world.ClientWorld;
+import net.minecraft.client.sound.SoundSystem;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.gen.Accessor;
 
-/**
- * @author <a href="https://github.com/TeamGalacticraft">TeamGalacticraft</a>
- */
-@Mixin(MinecraftClient.class)
+@Mixin(SoundManager.class)
 @Environment(EnvType.CLIENT)
-public abstract class MinecraftClientMixin {
-    @Shadow public abstract SoundManager getSoundManager();
-
-    @Inject(method = "setWorld", at = @At("RETURN"))
-    private void gc_updateSoundMultiplier(ClientWorld world, CallbackInfo ci) {
-        if (world != null) {
-            ((SoundSystemAccessor) ((SoundManagerAccessor)this.getSoundManager()).getSoundSystem()).gc_updateAtmosphericMultiplier(CelestialBody.getByDimension(world).map(body -> body.atmosphere().pressure()).orElse(1.0f));
-        } else {
-            ((SoundSystemAccessor) ((SoundManagerAccessor)this.getSoundManager()).getSoundSystem()).gc_updateAtmosphericMultiplier(1.0f);
-        }
-    }
+public interface SoundManagerAccessor {
+    @Accessor("soundSystem")
+    SoundSystem getSoundSystem();
 }
