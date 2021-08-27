@@ -27,13 +27,13 @@ import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.Identifier;
 
 public interface ServerResearchAccessor extends ResearchAccessor {
-    void setUnlocked_gcr(Identifier id, boolean unlocked);
+    void setUnlocked_gc(Identifier id, boolean unlocked);
 
-    boolean changed_gcr();
+    boolean changed_gc();
 
-    PacketByteBuf writeResearchChanges_gcr(PacketByteBuf buf);
+    PacketByteBuf writeResearchChanges_gc(PacketByteBuf buf);
 
-    NbtCompound writeToNbt_gcr(NbtCompound nbt);
+    NbtCompound writeToNbt_gc(NbtCompound nbt);
 
-    void readFromNbt_gcr(NbtCompound nbt);
+    void readFromNbt_gc(NbtCompound nbt);
 }

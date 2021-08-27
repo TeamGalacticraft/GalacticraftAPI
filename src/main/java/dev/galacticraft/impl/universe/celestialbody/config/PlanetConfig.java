@@ -24,7 +24,7 @@ package dev.galacticraft.impl.universe.celestialbody.config;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import dev.galacticraft.api.atmosphere.AtmosphericInfo;
+import dev.galacticraft.api.gas.GasComposition;
 import dev.galacticraft.api.registry.AddonRegistry;
 import dev.galacticraft.api.satellite.SatelliteRecipe;
 import dev.galacticraft.api.universe.celestialbody.CelestialBody;
@@ -40,7 +40,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 
-public record PlanetConfig(@NotNull TranslatableText name, @NotNull TranslatableText description, @NotNull RegistryKey<Galaxy> galaxy, @NotNull RegistryKey<CelestialBody<?, ?>> parent, @NotNull CelestialPosition<?, ?> position, @NotNull CelestialDisplay<?, ?> display, @NotNull RegistryKey<World> world, @NotNull AtmosphericInfo atmosphere, float gravity, int accessWeight, @NotNull Optional<SatelliteRecipe> satelliteRecipe) implements CelestialBodyConfig {
+public record PlanetConfig(@NotNull TranslatableText name, @NotNull TranslatableText description, @NotNull RegistryKey<Galaxy> galaxy, @NotNull RegistryKey<CelestialBody<?, ?>> parent, @NotNull CelestialPosition<?, ?> position, @NotNull CelestialDisplay<?, ?> display, @NotNull RegistryKey<World> world, @NotNull GasComposition atmosphere, float gravity, int accessWeight, int dayTemperature, int nightTemperature, @NotNull Optional<SatelliteRecipe> satelliteRecipe) implements CelestialBodyConfig {
     public static final Codec<PlanetConfig> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             Codec.STRING.fieldOf("name").xmap(TranslatableText::new, TranslatableText::getKey).forGetter(PlanetConfig::name),
             Codec.STRING.fieldOf("description").xmap(TranslatableText::new, TranslatableText::getKey).forGetter(PlanetConfig::description),
@@ -49,9 +49,11 @@ public record PlanetConfig(@NotNull TranslatableText name, @NotNull Translatable
             CelestialPosition.CODEC.fieldOf("position").forGetter(PlanetConfig::position),
             CelestialDisplay.CODEC.fieldOf("display").forGetter(PlanetConfig::display),
             World.CODEC.fieldOf("world").forGetter(PlanetConfig::world),
-            AtmosphericInfo.CODEC.fieldOf("atmosphere").forGetter(PlanetConfig::atmosphere),
+            GasComposition.CODEC.fieldOf("atmosphere").forGetter(PlanetConfig::atmosphere),
             Codec.FLOAT.fieldOf("gravity").forGetter(PlanetConfig::gravity),
             Codec.INT.fieldOf("access_weight").forGetter(PlanetConfig::accessWeight),
+            Codec.INT.fieldOf("day_temperature").forGetter(PlanetConfig::dayTemperature),
+            Codec.INT.fieldOf("night_temperature").forGetter(PlanetConfig::nightTemperature),
             SatelliteRecipe.CODEC.optionalFieldOf("satellite_recipe").forGetter(PlanetConfig::satelliteRecipe)
     ).apply(instance, PlanetConfig::new));
 }

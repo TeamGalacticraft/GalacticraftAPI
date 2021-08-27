@@ -24,11 +24,33 @@ package dev.galacticraft.api.satellite;
 
 import dev.galacticraft.api.universe.celestialbody.CelestialBodyConfig;
 import net.minecraft.text.Text;
+import org.jetbrains.annotations.NotNull;
 
+/**
+ * Represents a player-made satellite which orbits another planet
+ * @param <C> the type of configuration
+ */
 public interface Satellite<C extends CelestialBodyConfig> {
+    /**
+     * Returns the ownership data of this satellite
+     * @param config the satellite configuration to be queried
+     * @return the ownership data of this satellite
+     * @see SatelliteOwnershipData
+     */
     SatelliteOwnershipData ownershipData(C config);
 
-    void setCustomName(Text text, C config);
+    /**
+     * Returns the custom name of this satellite
+     * By default it is {@code <Player Name>'s satellite}
+     * @param config the satellite configuration to be queried
+     * @return the custom name of this satellite
+     */
+    @NotNull Text getCustomName(C config);
 
-    Text getCustomName(C config);
+    /**
+     * Sets the custom name of this satellite
+     * @param text the text to set
+     * @param config the satellite configuration to be set
+     */
+    void setCustomName(@NotNull Text text, C config);
 }

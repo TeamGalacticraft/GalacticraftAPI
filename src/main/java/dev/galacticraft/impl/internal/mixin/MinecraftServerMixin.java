@@ -26,7 +26,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import dev.galacticraft.api.accessor.SatelliteAccessor;
 import dev.galacticraft.api.universe.celestialbody.CelestialBody;
-import dev.galacticraft.impl.internal.fabric.GalacticraftAPI;
+import dev.galacticraft.impl.Constant;
 import dev.galacticraft.impl.universe.celestialbody.type.SatelliteType;
 import dev.galacticraft.impl.universe.position.config.SatelliteConfig;
 import net.fabricmc.fabric.api.util.NbtType;
@@ -93,7 +93,7 @@ public abstract class MinecraftServerMixin implements SatelliteAccessor {
     }
 
     @Inject(method = "save", at = @At("RETURN"))
-    private void save_gcr(boolean suppressLogs, boolean bl, boolean bl2, CallbackInfoReturnable<Boolean> cir) {
+    private void save_gc(boolean suppressLogs, boolean bl, boolean bl2, CallbackInfoReturnable<Boolean> cir) {
         Path path = this.session.getDirectory(WorldSavePath.ROOT);
         NbtList nbt = new NbtList();
         for (Map.Entry<Identifier, CelestialBody<SatelliteConfig, SatelliteType>> entry : this.satellites.entrySet()) {
@@ -106,12 +106,12 @@ public abstract class MinecraftServerMixin implements SatelliteAccessor {
         try {
             NbtIo.writeCompressed(compound, new File(path.toFile(), "satellites.dat"));
         } catch (Throwable exception) {
-            GalacticraftAPI.LOGGER.fatal("Failed to write satellite data!", exception);
+            Constant.LOGGER.fatal("Failed to write satellite data!", exception);
         }
     }
 
     @Inject(method = "runServer", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/MinecraftServer;setupServer()Z", shift = At.Shift.AFTER))
-    private void load_gcr(CallbackInfo ci) {
+    private void load_gc(CallbackInfo ci) {
         Path path = this.session.getDirectory(WorldSavePath.ROOT);
         if (new File(path.toFile(), "satellites.dat").exists()) {
             try {
@@ -131,7 +131,7 @@ public abstract class MinecraftServerMixin implements SatelliteAccessor {
                     worlds.put(RegistryKey.of(Registry.WORLD_KEY, entry.getKey()), world);
                 }
             } catch (Throwable exception) {
-                GalacticraftAPI.LOGGER.fatal("Failed to read satellite data!", exception);
+                Constant.LOGGER.fatal("Failed to read satellite data!", exception);
             }
         }
     }

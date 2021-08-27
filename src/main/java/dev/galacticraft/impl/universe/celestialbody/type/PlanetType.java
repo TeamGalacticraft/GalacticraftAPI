@@ -22,8 +22,7 @@
 
 package dev.galacticraft.impl.universe.celestialbody.type;
 
-import dev.galacticraft.api.atmosphere.AtmosphericInfo;
-import dev.galacticraft.api.registry.AddonRegistry;
+import dev.galacticraft.api.gas.GasComposition;
 import dev.galacticraft.api.satellite.SatelliteRecipe;
 import dev.galacticraft.api.universe.celestialbody.CelestialBody;
 import dev.galacticraft.api.universe.celestialbody.CelestialBodyType;
@@ -34,7 +33,7 @@ import dev.galacticraft.api.universe.galaxy.Galaxy;
 import dev.galacticraft.api.universe.position.CelestialPosition;
 import dev.galacticraft.impl.universe.celestialbody.config.PlanetConfig;
 import net.minecraft.text.TranslatableText;
-import net.minecraft.util.registry.DynamicRegistryManager;
+import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
@@ -52,8 +51,8 @@ public class PlanetType extends CelestialBodyType<PlanetConfig> implements Landa
     }
 
     @Override
-    public @Nullable CelestialBody<?, ?> parent(DynamicRegistryManager manager, PlanetConfig config) {
-        return manager.get(AddonRegistry.CELESTIAL_BODY_KEY).get(config.parent());
+    public @Nullable CelestialBody<?, ?> parent(Registry<CelestialBody<?, ?>> registry, PlanetConfig config) {
+        return registry.get(config.parent());
     }
 
     @Override
@@ -82,7 +81,7 @@ public class PlanetType extends CelestialBodyType<PlanetConfig> implements Landa
     }
 
     @Override
-    public @NotNull AtmosphericInfo atmosphere(PlanetConfig config) {
+    public @NotNull GasComposition atmosphere(PlanetConfig config) {
         return config.atmosphere();
     }
 
@@ -94,6 +93,16 @@ public class PlanetType extends CelestialBodyType<PlanetConfig> implements Landa
     @Override
     public int accessWeight(PlanetConfig config) {
         return config.accessWeight();
+    }
+
+    @Override
+    public int dayTemperature(PlanetConfig config) {
+        return config.dayTemperature();
+    }
+
+    @Override
+    public int nightTemperature(PlanetConfig config) {
+        return config.nightTemperature();
     }
 
     @Override

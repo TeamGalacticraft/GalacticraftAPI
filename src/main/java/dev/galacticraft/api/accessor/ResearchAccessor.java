@@ -25,5 +25,10 @@ package dev.galacticraft.api.accessor;
 import net.minecraft.util.Identifier;
 
 public interface ResearchAccessor {
-    boolean hasUnlocked_gcr(Identifier id);
+    /**
+     * Returns whether the supplied rocket part is unlocked for the player
+     * @param id The ID of the rocket part to test for
+     * @return whether the supplied rocket part is unlocked for the player
+     */
+    boolean hasUnlocked_gc(Identifier id);
 }

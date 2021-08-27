@@ -29,7 +29,7 @@ import dev.galacticraft.api.accessor.ResearchAccessor;
 import dev.galacticraft.api.registry.AddonRegistry;
 import dev.galacticraft.api.rocket.travelpredicate.ConfiguredTravelPredicate;
 import dev.galacticraft.api.rocket.travelpredicate.TravelPredicateType;
-import dev.galacticraft.impl.internal.fabric.GalacticraftAPI;
+import dev.galacticraft.impl.Constant;
 import dev.galacticraft.impl.rocket.travelpredicate.config.AccessTypeTravelPredicateConfig;
 import dev.galacticraft.impl.rocket.travelpredicate.type.ConstantTravelPredicateType;
 import net.minecraft.entity.player.PlayerEntity;
@@ -54,7 +54,7 @@ public record RocketPart(TranslatableText name, RocketPartType type, ConfiguredT
             .name(new TranslatableText("tooltip.galacticraft-api.something_went_wrong"))
             .type(RocketPartType.UPGRADE)
             .travelPredicate(ConstantTravelPredicateType.INSTANCE.configure(new AccessTypeTravelPredicateConfig(TravelPredicateType.AccessType.BLOCK)))
-            .research(new Identifier(GalacticraftAPI.MOD_ID, "unobtainable"))
+            .research(new Identifier(Constant.MOD_ID, "unobtainable"))
             .recipe(false)
             .build();
 
@@ -68,23 +68,31 @@ public record RocketPart(TranslatableText name, RocketPartType type, ConfiguredT
 
     public boolean isUnlocked(PlayerEntity player) {
         if (this.research() == null) return true;
-        return ((ResearchAccessor) player).hasUnlocked_gcr(this.research());
+        return ((ResearchAccessor) player).hasUnlocked_gc(this.research());
     }
 
     public static RocketPart deserialize(DynamicRegistryManager manager, Dynamic<?> dynamic) {
         return manager.get(AddonRegistry.ROCKET_PART_KEY).get(new Identifier(dynamic.asString("")));
     }
 
-    public static Registry<RocketPart> getAll(DynamicRegistryManager manager) {
+    public static Registry<RocketPart> getRegistry(DynamicRegistryManager manager) {
         return manager.get(AddonRegistry.ROCKET_PART_KEY);
     }
 
     public static RocketPart getById(DynamicRegistryManager manager, Identifier id) {
-        return manager.get(AddonRegistry.ROCKET_PART_KEY).get(id);
+        return getById(getRegistry(manager), id);
     }
 
-    public static Identifier getId(DynamicRegistryManager manager, RocketPart type) {
-        return manager.get(AddonRegistry.ROCKET_PART_KEY).getId(type);
+    public static Identifier getId(DynamicRegistryManager manager, RocketPart rocketPart) {
+        return getId(getRegistry(manager), rocketPart);
+    }
+
+    public static RocketPart getById(Registry<RocketPart> registry, Identifier id) {
+        return registry.get(id);
+    }
+
+    public static Identifier getId(Registry<RocketPart> registry, RocketPart rocketPart) {
+        return registry.getId(rocketPart);
     }
 
     public static class Builder {

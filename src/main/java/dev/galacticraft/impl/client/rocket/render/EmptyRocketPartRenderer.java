@@ -24,7 +24,7 @@ package dev.galacticraft.impl.client.rocket.render;
 
 import dev.galacticraft.api.client.rocket.render.RocketPartRenderer;
 import dev.galacticraft.api.entity.Rocket;
-import dev.galacticraft.impl.internal.fabric.GalacticraftAPI;
+import dev.galacticraft.impl.Constant;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.render.VertexConsumerProvider;
@@ -40,7 +40,7 @@ public enum EmptyRocketPartRenderer implements RocketPartRenderer {
     public void renderGUI(ClientWorld world, MatrixStack matrices, int mouseX, int mouseY, float delta) {
         if (!hasWarned) {
             hasWarned = true;
-            GalacticraftAPI.LOGGER.warn("EmptyRocketPartRenderer renderer is in use! RocketPartRenderer wasn't registered?");
+            Constant.LOGGER.warn("EmptyRocketPartRenderer renderer is in use! RocketPartRenderer wasn't registered?");
         }
     }
 
@@ -48,7 +48,7 @@ public enum EmptyRocketPartRenderer implements RocketPartRenderer {
     public void render(ClientWorld world, MatrixStack matrices, Rocket rocket, VertexConsumerProvider vertices, float delta, int light) {
         if (!hasWarned) {
             hasWarned = true;
-            GalacticraftAPI.LOGGER.warn("EmptyRocketPartRenderer renderer is in use! RocketPartRenderer wasn't registered?");
+            Constant.LOGGER.warn("EmptyRocketPartRenderer renderer is in use! RocketPartRenderer wasn't registered?");
         }
     }
 }

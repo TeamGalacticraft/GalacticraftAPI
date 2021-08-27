@@ -22,6 +22,7 @@
 
 package dev.galacticraft.impl.universe.celestialbody.type;
 
+import dev.galacticraft.api.gas.GasComposition;
 import dev.galacticraft.api.universe.celestialbody.CelestialBody;
 import dev.galacticraft.api.universe.celestialbody.CelestialBodyType;
 import dev.galacticraft.api.universe.celestialbody.star.Star;
@@ -30,7 +31,7 @@ import dev.galacticraft.api.universe.galaxy.Galaxy;
 import dev.galacticraft.api.universe.position.CelestialPosition;
 import dev.galacticraft.impl.universe.celestialbody.config.StarConfig;
 import net.minecraft.text.TranslatableText;
-import net.minecraft.util.registry.DynamicRegistryManager;
+import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryKey;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -46,8 +47,14 @@ public class StarType extends CelestialBodyType<StarConfig> implements Star<Star
         return config.name();
     }
 
+    /**
+     * Returns {@code null} as stars do not have parent celestial bodies
+     * @param registry the registry to query for the parent
+     * @param config the celestial body configuration to be queried
+     * @return {@code null}
+     */
     @Override
-    public @Nullable CelestialBody<?, ?> parent(DynamicRegistryManager manager, StarConfig config) {
+    public @Nullable CelestialBody<?, ?> parent(Registry<CelestialBody<?, ?>> registry, StarConfig config) {
         return null;
     }
 
@@ -69,6 +76,20 @@ public class StarType extends CelestialBodyType<StarConfig> implements Star<Star
     @Override
     public @NotNull CelestialDisplay<?, ?> display(StarConfig config) {
         return config.display();
+    }
+
+    /**
+     * {@inheritDoc}
+     * Treat as this star's photospheric composition
+     */
+    @Override
+    public @NotNull GasComposition atmosphere(StarConfig config) {
+        return config.photosphericComposition();
+    }
+
+    @Override
+    public float gravity(StarConfig config) {
+        return config.gravity();
     }
 
     @Override

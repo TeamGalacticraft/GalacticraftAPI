@@ -23,8 +23,10 @@
 package dev.galacticraft.impl.internal.fabric;
 
 import dev.galacticraft.api.accessor.ServerResearchAccessor;
+import dev.galacticraft.impl.Constant;
 import dev.galacticraft.impl.internal.command.GCApiCommands;
-import dev.galacticraft.impl.internal.world.gen.VoidChunkGenerator;
+import dev.galacticraft.impl.internal.world.gen.SatelliteChunkGenerator;
+import dev.galacticraft.impl.internal.world.gen.biome.GcApiBiomes;
 import io.netty.buffer.Unpooled;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
@@ -33,32 +35,43 @@ import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
-import net.minecraft.util.registry.RegistryKey;
-import net.minecraft.world.biome.*;
-import net.minecraft.world.gen.surfacebuilder.ConfiguredSurfaceBuilders;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.ApiStatus;
 
+@ApiStatus.Internal
 public class GalacticraftAPI implements ModInitializer {
-    public static final String MOD_ID = "galacticraft-api";
-    public static final Logger LOGGER = LogManager.getLogger("GalacticraftAPI");
-
-    public static final Biome SPACE = new Biome.Builder().generationSettings(new GenerationSettings.Builder().surfaceBuilder(ConfiguredSurfaceBuilders.NOPE).build()).precipitation(Biome.Precipitation.NONE).category(Biome.Category.NONE).depth(0).downfall(0).spawnSettings(SpawnSettings.INSTANCE).effects(new BiomeEffects.Builder().fogColor(0).waterFogColor(0).waterColor(0).skyColor(0).build()).temperature(0).scale(0).build();
-
     @Override
     public void onInitialize() {
         long startInitTime = System.currentTimeMillis();
-        LOGGER.info("Initializing...");
+        Constant.LOGGER.info("Initializing...");
         GCApiCommands.register();
         ServerTickEvents.END_SERVER_TICK.register(server -> {
             for (ServerPlayerEntity player : server.getPlayerManager().getPlayerList()) {
-                if (((ServerResearchAccessor)player).changed_gcr()) {
-                    ServerPlayNetworking.send(player, new Identifier(GalacticraftAPI.MOD_ID, "research_update"), ((ServerResearchAccessor) player).writeResearchChanges_gcr(new PacketByteBuf(Unpooled.buffer())));
+                if (((ServerResearchAccessor)player).changed_gc()) {
+                    ServerPlayNetworking.send(player, new Identifier(Constant.MOD_ID, "research_update"), ((ServerResearchAccessor) player).writeResearchChanges_gc(new PacketByteBuf(Unpooled.buffer())));
                 }
             }
         });
-        Registry.register(Registry.CHUNK_GENERATOR, new Identifier(GalacticraftAPI.MOD_ID, "empty"), VoidChunkGenerator.CODEC);
-        BuiltinBiomes.register(284, RegistryKey.of(Registry.BIOME_KEY, new Identifier(GalacticraftAPI.MOD_ID, "space")), SPACE);
-        LOGGER.info("Initialization Complete. (Took {}ms).", System.currentTimeMillis() - startInitTime);
+        ServerPlayNetworking.registerGlobalReceiver(new Identifier(Constant.MOD_ID, "flag_data"), (server, player, handler, buf, responseSender) -> {
+            int[] array = buf.readIntArray();
+            for (int i = 0; i < array.length; i++) {
+                array[i] &= 0x00FFFFFF;
+            }
+            // FORMAT: [A - IGNORE]BGR - 48 width 32 height if it is not a 1536 int array then ignore
+            // since it is purely colour data, there isn't really much a malicious client could do
+            server.execute(() -> {
+                //todo: teams
+            });
+        });
+        ServerPlayNetworking.registerGlobalReceiver(new Identifier(Constant.MOD_ID, "team_name"), (server, player, handler, buf, responseSender) -> {
+            String s = buf.readString();
+
+            server.execute(() -> {
+                //todo: teams
+            });
+        });
+
+        Registry.register(Registry.CHUNK_GENERATOR, new Identifier(Constant.MOD_ID, "satellite"), SatelliteChunkGenerator.CODEC);
+        GcApiBiomes.register();
+        Constant.LOGGER.info("Initialization Complete. (Took {}ms).", System.currentTimeMillis() - startInitTime);
     }
 }

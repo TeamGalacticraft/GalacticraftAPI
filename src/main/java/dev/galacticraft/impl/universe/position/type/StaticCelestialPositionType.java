@@ -32,12 +32,12 @@ public class StaticCelestialPositionType extends CelestialPositionType<StaticCel
     }
 
     @Override
-    public double x(StaticCelestialPositionConfig config, int worldTime, float delta) {
+    public double x(StaticCelestialPositionConfig config, long worldTime, float delta) {
         return config.x();
     }
 
     @Override
-    public double y(StaticCelestialPositionConfig config, int worldTime, float delta) {
+    public double y(StaticCelestialPositionConfig config, long worldTime, float delta) {
         return config.y();
     }
 }

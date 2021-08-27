@@ -26,12 +26,11 @@ import dev.galacticraft.api.universe.celestialbody.CelestialBody;
 import dev.galacticraft.impl.universe.celestialbody.type.SatelliteType;
 import dev.galacticraft.impl.universe.position.config.SatelliteConfig;
 import net.minecraft.util.Identifier;
-import org.jetbrains.annotations.Unmodifiable;
 
 import java.util.Map;
 
 public interface SatelliteAccessor {
-    @Unmodifiable Map<Identifier, CelestialBody<SatelliteConfig, SatelliteType>> satellites();
+    Map<Identifier, CelestialBody<SatelliteConfig, SatelliteType>> satellites();
 
     void addSatellite(Identifier id, CelestialBody<SatelliteConfig, SatelliteType> satellite);
 

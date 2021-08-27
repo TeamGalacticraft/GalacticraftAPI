@@ -22,14 +22,21 @@
 
 package dev.galacticraft.impl.universe.display.type;
 
+import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.serialization.Codec;
 import dev.galacticraft.api.universe.display.CelestialDisplayType;
 import dev.galacticraft.impl.universe.display.config.IconCelestialDisplayConfig;
-import net.minecraft.client.render.BufferBuilder;
-import net.minecraft.client.render.BufferRenderer;
-import net.minecraft.client.render.VertexFormat;
-import net.minecraft.client.render.VertexFormats;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.render.*;
+import net.minecraft.client.texture.AbstractTexture;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.util.math.Matrix4f;
+import net.minecraft.util.math.Vector4f;
+import org.lwjgl.opengl.GL32C;
+
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 public class IconCelestialDisplayType extends CelestialDisplayType<IconCelestialDisplayConfig> {
     public static final IconCelestialDisplayType INSTANCE = new IconCelestialDisplayType(IconCelestialDisplayConfig.CODEC);
@@ -39,13 +46,21 @@ public class IconCelestialDisplayType extends CelestialDisplayType<IconCelestial
     }
 
     @Override
-    public void render(MatrixStack matrices, BufferBuilder buffer, int scale, int mouseX, int mouseY, float delta, IconCelestialDisplayConfig config) {
-        buffer.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_TEXTURE_COLOR);
-        buffer.vertex(-8 * config.scale(), -8 * config.scale(), 0).texture(config.u(), config.v()).color(255, 255, 255, 255).next();
-        buffer.vertex(-8 * config.scale(), 8 * config.scale(), 0).texture(config.u(), config.v() + config.height()).color(255, 255, 255, 255).next();
-        buffer.vertex(8 * config.scale(), 8 * config.scale(), 0).texture(config.u() + config.width(), config.v() + config.height()).color(255, 255, 255, 255).next();
-        buffer.vertex(8 * config.scale(), -8 * config.scale(), 0).texture(config.u() + config.width(), config.v()).color(255, 255, 255, 255).next();
+    public Vector4f render(MatrixStack matrices, BufferBuilder buffer, int size, double mouseX, double mouseY, float delta, Consumer<Supplier<Shader>> shaderSetter, IconCelestialDisplayConfig config) {
+        shaderSetter.accept(GameRenderer::getPositionTexShader);
+        Matrix4f model = matrices.peek().getModel();
+        AbstractTexture texture = MinecraftClient.getInstance().getTextureManager().getTexture(config.texture());
+        RenderSystem.setShaderTexture(0, texture.getGlId());
+        texture.bindTexture();
+        float width = GlStateManager._getTexLevelParameter(GL32C.GL_TEXTURE_2D, 0, GL32C.GL_TEXTURE_WIDTH);
+        float height = GlStateManager._getTexLevelParameter(GL32C.GL_TEXTURE_2D, 0, GL32C.GL_TEXTURE_HEIGHT);
+        buffer.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_TEXTURE);
+        buffer.vertex(model, config.scale() * -size, config.scale() * -size, 0).texture(config.u() / width, config.v() / height).next();
+        buffer.vertex(model, config.scale() * -size, config.scale() * size, 0).texture(config.u() / width, (config.v() + config.height()) / height).next();
+        buffer.vertex(model, config.scale() * size, config.scale() * size, 0).texture((config.u() + config.width()) / width, (config.v() + config.height()) / height).next();
+        buffer.vertex(model, config.scale() * size, config.scale() * -size, 0).texture((config.u() + config.width()) / width, config.v() / height).next();
         buffer.end();
         BufferRenderer.draw(buffer);
+        return new Vector4f(config.scale() * -size, config.scale() * -size, (config.scale() * size) * 2, (config.scale() * size) * 2);
     }
 }

@@ -23,9 +23,9 @@
 package dev.galacticraft.api.rocket.travelpredicate;
 
 import com.mojang.serialization.Codec;
-import dev.galacticraft.api.rocket.part.RocketPart;
 import dev.galacticraft.api.universe.celestialbody.CelestialBody;
 import it.unimi.dsi.fastutil.objects.Object2BooleanFunction;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.StringIdentifiable;
 
 import java.util.Locale;
@@ -41,7 +41,7 @@ public abstract class TravelPredicateType<C extends TravelPredicateConfig> {
         return new ConfiguredTravelPredicate<>(config, this);
     }
 
-    public abstract AccessType canTravelTo(CelestialBody<?, ?> type, Object2BooleanFunction<RocketPart> parts, C config);
+    public abstract AccessType canTravelTo(CelestialBody<?, ?> type, Object2BooleanFunction<Identifier> parts, C config);
 
     public Codec<ConfiguredTravelPredicate<C>> codec() {
         return this.codec;
@@ -52,13 +52,15 @@ public abstract class TravelPredicateType<C extends TravelPredicateConfig> {
          * Allow other rocket parts to decide whether or not the player may visit the celestial body
          */
         PASS,
+
         /**
-         * Forcefully block access to celestial body - overrides {@link AccessType#ALLOW}
+         * Forcefully block access to celestial body - overrides {@link AccessType#ALLOW ALLOW}
          */
         BLOCK,
+
         /**
          * Allow access to celestial body.
-         * Can be overridden by {@link AccessType#BLOCK}
+         * Can be overridden by {@link AccessType#BLOCK BLOCK}
          */
         ALLOW;
 

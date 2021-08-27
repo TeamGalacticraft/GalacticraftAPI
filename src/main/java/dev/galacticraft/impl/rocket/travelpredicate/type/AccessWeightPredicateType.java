@@ -23,12 +23,12 @@
 package dev.galacticraft.impl.rocket.travelpredicate.type;
 
 import com.mojang.serialization.Codec;
-import dev.galacticraft.api.rocket.part.RocketPart;
 import dev.galacticraft.api.rocket.travelpredicate.TravelPredicateType;
 import dev.galacticraft.api.universe.celestialbody.CelestialBody;
 import dev.galacticraft.api.universe.celestialbody.landable.Landable;
 import dev.galacticraft.impl.rocket.travelpredicate.config.AccessWeightTravelPredicateConfig;
 import it.unimi.dsi.fastutil.objects.Object2BooleanFunction;
+import net.minecraft.util.Identifier;
 
 public class AccessWeightPredicateType extends TravelPredicateType<AccessWeightTravelPredicateConfig> {
     public static final AccessWeightPredicateType INSTANCE = new AccessWeightPredicateType(AccessWeightTravelPredicateConfig.CODEC);
@@ -38,9 +38,10 @@ public class AccessWeightPredicateType extends TravelPredicateType<AccessWeightT
     }
 
     @Override
-    public AccessType canTravelTo(CelestialBody<?, ?> type, Object2BooleanFunction<RocketPart> parts, AccessWeightTravelPredicateConfig config) {
+    public AccessType canTravelTo(CelestialBody<?, ?> type, Object2BooleanFunction<Identifier> parts, AccessWeightTravelPredicateConfig config) {
         if (type.type() instanceof Landable landable) {
-            if (landable.accessWeight(type.config()) <= config.weight()) {
+            int weight = landable.accessWeight(type.config());
+            if (weight >= 0 && weight <= config.weight()) {
                 return AccessType.ALLOW;
             } else {
                 return config.defaultType();

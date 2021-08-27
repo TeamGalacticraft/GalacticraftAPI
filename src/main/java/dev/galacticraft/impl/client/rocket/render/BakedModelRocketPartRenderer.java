@@ -28,63 +28,64 @@ import dev.galacticraft.api.client.rocket.render.RocketPartRenderer;
 import dev.galacticraft.api.entity.Rocket;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.*;
 import net.minecraft.client.render.model.BakedModel;
 import net.minecraft.client.render.model.BakedQuad;
 import net.minecraft.client.render.model.json.ModelTransformation;
+import net.minecraft.client.texture.SpriteAtlasTexture;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.client.world.ClientWorld;
-import net.minecraft.util.Lazy;
+import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3f;
 
+import java.util.LinkedList;
 import java.util.List;
+import java.util.function.Supplier;
 
 @Environment(EnvType.CLIENT)
-public class BakedModelRocketPartRenderer implements RocketPartRenderer {
-    private final Lazy<BakedModel> model;
-    private final Lazy<RenderLayer> layer;
-
-    public BakedModelRocketPartRenderer(Lazy<BakedModel> model, Lazy<RenderLayer> layer) {
-        this.model = model;
-        this.layer = layer;
-    }
-
-    public BakedModelRocketPartRenderer(BakedModel model, RenderLayer layer) {
-        this(new Lazy<>(() -> model), new Lazy<>(() -> layer));
-    }
-
-    public BakedModelRocketPartRenderer(Lazy<BakedModel> model) {
-        this(model, new Lazy<>(() -> RenderLayer.getEntityTranslucent(model.get().getSprite().getId(), true)));
-    }
-
-    public BakedModelRocketPartRenderer(BakedModel model) {
-        this(new Lazy<>(() -> model));
+public record BakedModelRocketPartRenderer(Supplier<BakedModel> model, Supplier<RenderLayer> layer) implements RocketPartRenderer {
+    private static final Direction[] DIRECTIONS_AND_NULL = new Direction[]{null, Direction.DOWN, Direction.UP, Direction.NORTH, Direction.SOUTH, Direction.WEST, Direction.EAST};
+    public BakedModelRocketPartRenderer(Supplier<BakedModel> model) {
+        this(model, () -> RenderLayer.getEntityTranslucent(model.get().getParticleSprite().getId(), true));
     }
 
     @Override
     public void renderGUI(ClientWorld world, MatrixStack matrices, int mouseX, int mouseY, float delta) {
-        model.get().getTransformation().getTransformation(ModelTransformation.Mode.GUI).apply(false, matrices);
-        matrices.translate(0, 0, 250);
+        RenderSystem.setShader(GameRenderer::getPositionColorTexShader);
+        matrices.translate(0, 0, 150);
         matrices.translate(8, 8, 8);
-        matrices.multiply(Vec3f.POSITIVE_X.getDegreesQuaternion(35));
-        matrices.multiply(Vec3f.POSITIVE_Y.getDegreesQuaternion(45));
+        model.get().getTransformation().getTransformation(ModelTransformation.Mode.GUI).apply(false, matrices);
+        matrices.multiply(Vec3f.NEGATIVE_X.getDegreesQuaternion(35));
+        matrices.multiply(Vec3f.POSITIVE_Y.getDegreesQuaternion(225));
         matrices.multiply(Vec3f.POSITIVE_Z.getDegreesQuaternion(180));
-        matrices.scale(10, 10, 10);
+        matrices.scale(16, 16, 16);
 
         MatrixStack.Entry entry = matrices.peek();
-        VertexConsumer vertexConsumer = new SpriteTexturedVertexConsumer(Tessellator.getInstance().getBuffer(), this.model.get().getSprite());
-        List<BakedQuad> quads = this.model.get().getQuads(null, null, world.random);
-        this.model.get().getSprite().getAtlas().bindTexture();
+        List<BakedQuad> quads = new LinkedList<>();
+        for (Direction direction : DIRECTIONS_AND_NULL) {
+            quads.addAll(this.model.get().getQuads(null, direction, world.random));
+        }
+        MinecraftClient.getInstance().getTextureManager().getTexture(SpriteAtlasTexture.BLOCK_ATLAS_TEXTURE).setFilter(false, false);
+        RenderSystem.setShaderTexture(0, SpriteAtlasTexture.BLOCK_ATLAS_TEXTURE);
+        RenderSystem.enableTexture();
+        RenderSystem.setShaderTexture(0, this.model.get().getParticleSprite().getAtlas().getGlId());
         RenderSystem.enableBlend();
         RenderSystem.blendFunc(GlStateManager.SrcFactor.SRC_ALPHA, GlStateManager.DstFactor.ONE_MINUS_SRC_ALPHA);
-        RenderSystem.enableDepthTest();
+        RenderSystem.disableDepthTest();
+        RenderSystem.disableCull();
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-        DiffuseLighting.enableGuiDepthLighting();
+        if (model.get().isSideLit()) {
+            DiffuseLighting.enableGuiDepthLighting();
+        } else {
+            DiffuseLighting.disableGuiDepthLighting();
+        }
 
         if (!quads.isEmpty()) {
+            VertexConsumerProvider.Immediate entityVertexConsumers = MinecraftClient.getInstance().getBufferBuilders().getEntityVertexConsumers();
+            VertexConsumer itemGlintConsumer = entityVertexConsumers.getBuffer(TexturedRenderLayers.getEntityCutout());
             for (BakedQuad quad : quads) {
-                Tessellator.getInstance().getBuffer().begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR_TEXTURE_OVERLAY_LIGHT_NORMAL);
-                vertexConsumer.quad(
+                itemGlintConsumer.quad(
                         entry,
                         quad,
                         1,
@@ -93,27 +94,33 @@ public class BakedModelRocketPartRenderer implements RocketPartRenderer {
                         15728880,
                         OverlayTexture.DEFAULT_UV
                 );
-                Tessellator.getInstance().draw();
             }
+            entityVertexConsumers.draw();
+        }
+
+        if (model.get().isSideLit()) {
+            DiffuseLighting.enableGuiDepthLighting();
         }
     }
 
     @Override
     public void render(ClientWorld world, MatrixStack matrices, Rocket rocket, VertexConsumerProvider vertices, float delta, int light) {
+        RenderSystem.setShaderColor((((rocket.getColor() >> 16) & 0xFF) / 255f), (((rocket.getColor() >> 8) & 0xFF) / 255f), ((rocket.getColor() & 0xFF) / 255f), (((rocket.getColor() >> 24) & 0xFF) / 255f));
         matrices.translate(0.5D, 0.5D, 0.5D);
         MatrixStack.Entry entry = matrices.peek();
         VertexConsumer vertexConsumer = vertices.getBuffer(layer.get());
-        for (BakedQuad quad : this.model.get().getQuads(null, null, world.random)) {
-            vertexConsumer.quad(
-                    entry,
-                    quad,
-                    (((rocket.getColor() << 16) & 0xFF) / 255f) * (((rocket.getColor() << 24) & 0xFF) / 255f),
-                    (((rocket.getColor() << 8) & 0xFF) / 255f) * (((rocket.getColor() << 24) & 0xFF) / 255f),
-                    ((rocket.getColor() & 0xFF) / 255f) * (((rocket.getColor() << 24) & 0xFF) / 255f),
-                    light,
-                    //15728880,
-                    OverlayTexture.DEFAULT_UV
-            );
+        for (Direction direction : DIRECTIONS_AND_NULL) {
+            for (BakedQuad quad : this.model.get().getQuads(null, direction, world.random)) {
+                vertexConsumer.quad(
+                        entry,
+                        quad,
+                        1,
+                        1,
+                        1,
+                        light,
+                        OverlayTexture.DEFAULT_UV
+                );
+            }
         }
     }
 }

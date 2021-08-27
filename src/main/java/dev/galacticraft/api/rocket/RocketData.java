@@ -22,33 +22,36 @@
 
 package dev.galacticraft.api.rocket;
 
-import dev.galacticraft.api.rocket.part.RocketPart;
 import dev.galacticraft.api.rocket.part.RocketPartType;
 import dev.galacticraft.api.universe.celestialbody.CelestialBody;
+import dev.galacticraft.impl.Constant;
 import dev.galacticraft.impl.rocket.RocketDataImpl;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.DynamicRegistryManager;
 
 public interface RocketData {
-    static RocketData create(int color, RocketPart cone, RocketPart body, RocketPart fin, RocketPart booster, RocketPart bottom, RocketPart upgrade) {
-        if (cone == RocketPart.INVALID
-                || body == RocketPart.INVALID
-                || fin == RocketPart.INVALID
-                || booster == RocketPart.INVALID
-                || bottom == RocketPart.INVALID
-                || upgrade == RocketPart.INVALID) return empty();
+    Identifier INVALID_ID = new Identifier(Constant.MOD_ID, "invalid");
+
+    static RocketData create(int color, Identifier cone, Identifier body, Identifier fin, Identifier booster, Identifier bottom, Identifier upgrade) {
+        if (cone == INVALID_ID
+                || body == INVALID_ID
+                || fin == INVALID_ID
+                || booster == INVALID_ID
+                || bottom == INVALID_ID
+                || upgrade == INVALID_ID) return empty();
         return new RocketDataImpl(color, cone, body, fin, booster, bottom, upgrade);
     }
 
-    static RocketData fromNbt(NbtCompound nbt, DynamicRegistryManager manager) {
-        return RocketDataImpl.fromNbt(nbt, manager);
+    static RocketData fromNbt(NbtCompound nbt) {
+        return RocketDataImpl.fromNbt(nbt);
     }
 
     static RocketData empty() {
         return RocketDataImpl.empty();
     };
 
-    NbtCompound toNbt(DynamicRegistryManager manager, NbtCompound nbt);
+    NbtCompound toNbt(NbtCompound nbt);
 
     int color();
 
@@ -60,23 +63,23 @@ public interface RocketData {
 
     int alpha();
 
-    RocketPart cone();
+    Identifier cone();
 
-    RocketPart body();
+    Identifier body();
 
-    RocketPart fin();
+    Identifier fin();
 
-    RocketPart booster();
+    Identifier booster();
 
-    RocketPart bottom();
+    Identifier bottom();
 
-    RocketPart upgrade();
+    Identifier upgrade();
 
     boolean isEmpty();
 
     boolean canTravelTo(DynamicRegistryManager manager, CelestialBody<?, ?> celestialBodyType);
 
-    RocketPart getPartForType(RocketPartType type);
+    Identifier getPartForType(RocketPartType type);
 
-    RocketPart[] parts();
+    Identifier[] parts();
 }

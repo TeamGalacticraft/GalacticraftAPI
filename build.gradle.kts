@@ -4,22 +4,20 @@ import java.time.format.DateTimeFormatter
 plugins {
     java
     `maven-publish`
-    id("fabric-loom") version "0.8-SNAPSHOT"
-    id("org.cadixdev.licenser") version "0.5.1"
+    id("fabric-loom") version "0.9-SNAPSHOT"
+    id("org.cadixdev.licenser") version "0.6.1"
 }
 
-val mc = "1.17"
-val yarn = "1"
-val loader = "0.11.3"
-val fabric = "0.34.9+1.17"
+val mc = "1.17.1"
+val yarn = "29"
+val loader = "0.11.6"
+val fabric = "0.37.1+1.17"
 val lba = "0.9.0"
 
 group = "dev.galacticraft"
-version ="0.4.0-prealpha3+$mc"
+version ="0.4.0-prealpha.18+$mc"
 
-base {
-    archivesBaseName = "GalacticraftAPI"
-}
+base.archivesName.set("GalacticraftAPI")
 
 val testmodSourceSet = sourceSets.create("testmod") {
     compileClasspath += sourceSets.main.get().compileClasspath
@@ -29,8 +27,11 @@ val testmodSourceSet = sourceSets.create("testmod") {
 }
 
 loom {
-    refmapName = "galacticraft-api.refmap.json"
-    accessWidener(project.file("src/main/resources/galacticraft-api.accesswidener"))
+    accessWidenerPath.set(project.file("src/main/resources/galacticraft-api.accesswidener"))
+    mixin {
+        add(sourceSets.getByName("testmod"), "gc-testmod.refmap.json")
+        add(sourceSets.getByName("main"), "galacticraft-api.refmap.json")
+    }
 
     runs {
         register("TestModClient") {
@@ -78,6 +79,7 @@ dependencies {
     }
 
     modImplementation("alexiil.mc.lib:libblockattributes-core:$lba")
+    modImplementation("alexiil.mc.lib:libblockattributes-items:$lba")
     modRuntime("net.fabricmc.fabric-api:fabric-api:$fabric")
 
     testmodCompile(sourceSets.main.get().output)
@@ -117,12 +119,12 @@ tasks.withType<JavaCompile> {
 
 val sourcesJar = tasks.create<Jar>("sourcesJarGC") {
     dependsOn(tasks.classes)
-    classifier = "sources"
+    archiveClassifier.set("sources")
     from(sourceSets.main.get().allSource)
 }
 
 val javadocJar = tasks.create<Jar>("javadocJarGC") {
-    classifier = "javadoc"
+    archiveClassifier.set("javadoc")
     from(tasks.javadoc)
 }
 
@@ -170,7 +172,7 @@ publishing {
 }
 
 license {
-    header = project.file("LICENSE_HEADER.txt")
+    setHeader(project.file("LICENSE_HEADER.txt"))
     include("**/dev/galacticraft/**/*.java")
     include("build.gradle.kts")
     ext {
