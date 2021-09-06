@@ -4,10 +4,10 @@
       "item": "minecraft:gold_block"
     },
     "title": {
-      "translate": "gc-testmod.advancements.custom.root.title"
+      "translate": "gc-api-test.advancements.custom.root.title"
     },
     "description": {
-      "translate": "gc-testmod.advancements.custom.root.description"
+      "translate": "gc-api-test.advancements.custom.root.description"
     },
     "frame": "task",
     "show_toast": false,

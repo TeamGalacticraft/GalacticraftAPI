@@ -20,16 +20,15 @@
  * SOFTWARE.
  */
 
-package dev.galacticraft.api.testmod;
+package dev.galacticraft.api.gametest;
 
-import net.fabricmc.api.ModInitializer;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
+import net.minecraft.test.GameTest;
+import net.minecraft.test.TestContext;
 
-public class GCApiTestMod implements ModInitializer {
-    public static final Logger LOGGER = LogManager.getLogger();
-    @Override
-    public void onInitialize() {
-        LOGGER.info("Loaded test mod!");
+public class GalacticraftApiTestSuite implements FabricGameTest {
+    @GameTest(structureName = EMPTY_STRUCTURE)
+    public void emptyTest(TestContext context) {
+        context.addInstantFinalTask(() -> {});
     }
 }

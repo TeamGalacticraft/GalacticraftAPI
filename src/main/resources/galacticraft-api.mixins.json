@@ -19,16 +19,16 @@
     "ReadOnlyChunkMixin",
     "ServerPlayerEntityMixin",
     "WorldChunkMixin",
-    "WorldMixin",
-    "client.ParticleAccessor",
-    "client.SoundManagerAccessor"
+    "WorldMixin"
   ],
   "client": [
     "client.AbstractClientPlayerEntityMixin",
     "client.ClientChunkSectionMixin",
     "client.ClientPlayNetworkHandlerMixin",
     "client.MinecraftClientMixin",
+    "client.ParticleAccessor",
     "client.ParticleManagerMixin",
+    "client.SoundManagerAccessor",
     "client.SoundSystemMixin"
   ],
   "minVersion": "0.8.0",

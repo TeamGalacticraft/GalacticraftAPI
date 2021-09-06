@@ -1,14 +1,14 @@
 {
-  "parent": "gc-testmod:custom/root",
+  "parent": "gc-api-test:custom/root",
   "display": {
     "icon": {
       "item": "minecraft:diamond_block"
     },
     "title": {
-      "translate": "gc-testmod.advancements.custom.diamond_block.title"
+      "translate": "gc-api-test.advancements.custom.diamond_block.title"
     },
     "description": {
-      "translate": "gc-testmod.advancements.custom.diamond_block.description"
+      "translate": "gc-api-test.advancements.custom.diamond_block.description"
     },
     "frame": "challenge",
     "show_toast": true,
@@ -17,7 +17,7 @@
   },
   "rewards": {
     "rocket_parts": [
-      "gc-testmod:test"
+      "gc-api-test:test"
     ]
   },
   "criteria": {
