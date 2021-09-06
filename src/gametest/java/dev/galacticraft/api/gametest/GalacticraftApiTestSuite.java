@@ -20,30 +20,15 @@
  * SOFTWARE.
  */
 
-package dev.galacticraft.api.team.network;
+package dev.galacticraft.api.gametest;
 
-/**
- * Team packet types
- */
-public enum PacketType {
-    /**
-     * When a team is created.
-     */
-    CREATE,
-    /**
-     * When a team is deleted/disbanded
-     */
-    DELETE,
-    /**
-     * When a team is updated
-     */
-    UPDATE,
-    /**
-     * When a player receives an invite to join a team.
-     */
-    INVITE,
-    /**
-     * When a player is kicked from a team.
-     */
-    REMOVE,
+import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
+import net.minecraft.test.GameTest;
+import net.minecraft.test.TestContext;
+
+public class GalacticraftApiTestSuite implements FabricGameTest {
+    @GameTest(structureName = EMPTY_STRUCTURE)
+    public void emptyTest(TestContext context) {
+        context.addInstantFinalTask(() -> {});
+    }
 }

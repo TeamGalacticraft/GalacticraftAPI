@@ -9,49 +9,50 @@ plugins {
 }
 
 val mc = "1.17.1"
-val yarn = "29"
+val yarn = "52"
 val loader = "0.11.6"
-val fabric = "0.37.1+1.17"
-val lba = "0.9.0"
+val fabric = "0.40.0+1.17"
+val lba = "0.9.1-pre.1"
 
 group = "dev.galacticraft"
-version ="0.4.0-prealpha.18+$mc"
+version ="0.4.0-prealpha.19+$mc"
 
 base.archivesName.set("GalacticraftAPI")
 
-val testmodSourceSet = sourceSets.create("testmod") {
+java {
+    targetCompatibility = JavaVersion.VERSION_16
+    sourceCompatibility = JavaVersion.VERSION_16
+
+    withSourcesJar()
+    withJavadocJar()
+}
+
+val gametestSourceSet = sourceSets.create("gametest") {
     compileClasspath += sourceSets.main.get().compileClasspath
     runtimeClasspath += sourceSets.main.get().runtimeClasspath
-    java.srcDir("src/testmod/java")
-    resources.srcDir("src/testmod/resources")
+    java.srcDir("src/gametest/java")
+    resources.srcDir("src/gametest/resources")
 }
 
 loom {
     accessWidenerPath.set(project.file("src/main/resources/galacticraft-api.accesswidener"))
     mixin {
-        add(sourceSets.getByName("testmod"), "gc-testmod.refmap.json")
-        add(sourceSets.getByName("main"), "galacticraft-api.refmap.json")
+        add(sourceSets.main.get(), "galacticraft-api.refmap.json")
     }
 
     runs {
-        register("TestModClient") {
-            client()
-            source(testmodSourceSet)
-            vmArgs("-ea")
-            property("fabric.log.level", "debug")
-            name("TestMod Client")
-        }
-        register("TestModServer") {
+        register("gametest") {
             server()
-            source(testmodSourceSet)
-            vmArgs("-ea",)
+            name("Game Test")
+            source(gametestSourceSet)
             property("fabric.log.level", "debug")
-            name("TestMod Server")
+            vmArg("-Dfabric-api.gametest=true")
+            vmArg("-ea")
         }
     }
 }
 
-val testmodCompile by configurations.creating { extendsFrom(configurations.runtimeOnly.get()) }
+val gametestCompile by configurations.creating { extendsFrom(configurations.runtimeOnly.get()) }
 
 repositories {
     maven("https://alexiil.uk/maven/") {
@@ -69,6 +70,7 @@ dependencies {
     listOf(
         "fabric-api-base",
         "fabric-command-api-v1",
+        "fabric-gametest-api-v1",
         "fabric-lifecycle-events-v1",
         "fabric-networking-api-v1",
         "fabric-registry-sync-v0",
@@ -82,33 +84,23 @@ dependencies {
     modImplementation("alexiil.mc.lib:libblockattributes-items:$lba")
     modRuntime("net.fabricmc.fabric-api:fabric-api:$fabric")
 
-    testmodCompile(sourceSets.main.get().output)
+    gametestCompile(sourceSets.main.get().output)
 }
 
 tasks.processResources {
     inputs.property("version", project.version)
-    duplicatesStrategy = DuplicatesStrategy.WARN
 
-    from(sourceSets.main.get().resources.srcDirs) {
-        include("fabric.mod.json")
-        expand(mutableMapOf("version" to project.version))
+    filesMatching("fabric.mod.json") {
+        expand("version" to project.version)
     }
 
-    from(sourceSets.main.get().resources.srcDirs) {
-        exclude("fabric.mod.json")
+    // Minify json resources
+    // https://stackoverflow.com/questions/41028030/gradle-minimize-json-resources-in-processresources#41029113
+    doLast {
+        fileTree(mapOf("dir" to outputs.files.asPath, "includes" to listOf("**/*.json", "**/*.mcmeta"))).forEach {
+                file: File -> file.writeText(groovy.json.JsonOutput.toJson(groovy.json.JsonSlurper().parse(file)))
+        }
     }
-}
-
-tasks.getByName<ProcessResources>("processTestmodResources") {
-    duplicatesStrategy = DuplicatesStrategy.WARN
-}
-
-java {
-    withSourcesJar()
-    withJavadocJar()
-
-    targetCompatibility = JavaVersion.VERSION_16
-    sourceCompatibility = JavaVersion.VERSION_16
 }
 
 tasks.withType<JavaCompile> {
@@ -135,14 +127,14 @@ tasks.remapSourcesJar.configure {
 tasks.jar {
     from("LICENSE")
     manifest {
-        attributes(mapOf(
+        attributes(
             "Implementation-Title"     to "GalacticraftAPI",
             "Implementation-Version"   to "${project.version}",
             "Implementation-Vendor"    to "Team Galacticraft",
             "Implementation-Timestamp" to DateTimeFormatter.ISO_DATE_TIME,
             "Maven-Artifact"           to "${project.group}:GalacticraftAPI:${project.version}",
             "ModSide"                  to "BOTH"
-        ))
+        )
     }
 }
 
@@ -180,3 +172,9 @@ license {
         set("company", "Team Galacticraft")
     }
 }
+
+tasks.named<ProcessResources>("processGametestResources") {
+    duplicatesStrategy = DuplicatesStrategy.WARN
+}
+
+tasks.getByName("gametestClasses").dependsOn("classes")
