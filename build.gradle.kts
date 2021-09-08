@@ -30,6 +30,8 @@ java {
 val gametestSourceSet = sourceSets.create("gametest") {
     compileClasspath += sourceSets.main.get().compileClasspath
     runtimeClasspath += sourceSets.main.get().runtimeClasspath
+    compileClasspath += sourceSets.main.get().output
+    runtimeClasspath += sourceSets.main.get().output
     java.srcDir("src/gametest/java")
     resources.srcDir("src/gametest/resources")
 }
@@ -51,8 +53,6 @@ loom {
         }
     }
 }
-
-val gametestCompile by configurations.creating { extendsFrom(configurations.runtimeOnly.get()) }
 
 repositories {
     maven("https://alexiil.uk/maven/") {
@@ -83,8 +83,6 @@ dependencies {
     modImplementation("alexiil.mc.lib:libblockattributes-core:$lba")
     modImplementation("alexiil.mc.lib:libblockattributes-items:$lba")
     modRuntime("net.fabricmc.fabric-api:fabric-api:$fabric")
-
-    gametestCompile(sourceSets.main.get().output)
 }
 
 tasks.processResources {
