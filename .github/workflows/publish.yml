@@ -29,8 +29,8 @@ jobs:
         uses: eskatos/gradle-command-action@v1
         with:
           arguments: checkLicenses publish
-          wrapper-cache-enabled: true
+          distributions-cache-enabled: true
           dependencies-cache-enabled: true
         env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.GC_AWS_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.GC_AWS_KEY }}
+          ORG_GRADLE_PROJECT_mavenUsername: ${{ secrets.MAVEN_USER }}
+          ORG_GRADLE_PROJECT_mavenPassword: ${{ secrets.MAVEN_PASS }}
