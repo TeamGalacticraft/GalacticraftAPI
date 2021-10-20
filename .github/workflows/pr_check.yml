@@ -11,6 +11,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
+        with:
+          fetch-depth: 1
 
       - name: Validate Gradle wrapper
         uses: gradle/wrapper-validation-action@v1
@@ -24,4 +26,15 @@ jobs:
       - name: Build
         uses: gradle/gradle-build-action@v2
         with:
-          arguments: checkLicenses build
+          arguments: checkLicenses build test runGametest
+          gradle-version: wrapper
+
+      - name: Copy GameTest Results
+        run: cp run/TEST-gametest.xml build/test-results/test/
+
+      - name: Publish Test Report
+        uses: mikepenz/action-junit-report@v2
+        if: always()
+        with:
+          report_paths: "**/build/test-results/test/TEST-*.xml"
+          token: ${{ secrets.GITHUB_TOKEN }}

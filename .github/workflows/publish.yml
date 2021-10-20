@@ -11,6 +11,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
+        with:
+          fetch-depth: 1
 
       - name: Validate Gradle wrapper
         uses: gradle/wrapper-validation-action@v1
@@ -25,6 +27,7 @@ jobs:
         uses: gradle/gradle-build-action@v2
         with:
           arguments: publish
+          gradle-version: wrapper
         env:
           ORG_GRADLE_PROJECT_mavenUsername: ${{ secrets.MAVEN_USER }}
           ORG_GRADLE_PROJECT_mavenPassword: ${{ secrets.MAVEN_PASS }}
