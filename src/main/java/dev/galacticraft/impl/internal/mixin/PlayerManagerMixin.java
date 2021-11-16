@@ -24,10 +24,10 @@ package dev.galacticraft.impl.internal.mixin;
 
 import dev.galacticraft.api.accessor.GearInventoryProvider;
 import dev.galacticraft.impl.Constant;
-import io.netty.buffer.Unpooled;
+import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import net.minecraft.nbt.NbtCompound;
+import net.minecraft.inventory.Inventory;
 import net.minecraft.network.ClientConnection;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.PlayerManager;
@@ -38,6 +38,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import java.util.Collection;
+
 /**
  * @author <a href="https://github.com/TeamGalacticraft">TeamGalacticraft</a>
  */
@@ -45,10 +47,20 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public abstract class PlayerManagerMixin {
     @Inject(method = "onPlayerConnect", at = @At("RETURN"))
     private void gc_syncInv(ClientConnection connection, ServerPlayerEntity player, CallbackInfo ci) {
-        NbtCompound tag = ((GearInventoryProvider) player).writeGearToNbt(new NbtCompound());
-        ServerPlayNetworking.send(player, new Identifier(Constant.MOD_ID, "gear_inv_sync_full"), new PacketByteBuf(Unpooled.buffer().writeInt(player.getId())).writeNbt(tag));
-        for (ServerPlayerEntity player1 : PlayerLookup.tracking(player)) {
-            ServerPlayNetworking.send(player1, new Identifier(Constant.MOD_ID, "gear_inv_sync_full"), new PacketByteBuf(Unpooled.buffer().writeInt(player.getId())).writeNbt(tag));
+        PacketByteBuf buf = PacketByteBufs.create();
+        Inventory inventory = ((GearInventoryProvider) player).getGearInv();
+        buf.writeInt(player.getId());
+        buf.writeInt(inventory.size());
+        for (int i = 0; i < inventory.size(); i++) {
+            buf.writeItemStack(inventory.getStack(i));
+        }
+
+        Collection<ServerPlayerEntity> tracking = PlayerLookup.tracking(player);
+        if (!tracking.contains(player)) {
+            ServerPlayNetworking.send(player, new Identifier(Constant.MOD_ID, "gear_inv_sync"), buf);
+        }
+        for (ServerPlayerEntity pl : tracking) {
+            ServerPlayNetworking.send(pl, new Identifier(Constant.MOD_ID, "gear_inv_sync"), PacketByteBufs.copy(buf));
         }
     }
 }

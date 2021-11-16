@@ -22,17 +22,19 @@
 
 package dev.galacticraft.impl.internal.mixin;
 
-import alexiil.mc.lib.attributes.item.FixedItemInv;
-import alexiil.mc.lib.attributes.item.impl.FullFixedItemInv;
 import dev.galacticraft.api.accessor.GearInventoryProvider;
 import dev.galacticraft.api.accessor.ServerResearchAccessor;
 import dev.galacticraft.impl.Constant;
-import io.netty.buffer.Unpooled;
+import dev.galacticraft.impl.internal.inventory.MappedInventory;
 import it.unimi.dsi.fastutil.objects.Object2BooleanArrayMap;
 import it.unimi.dsi.fastutil.objects.Object2BooleanMap;
+import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.minecraft.inventory.Inventory;
+import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtElement;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
@@ -43,23 +45,18 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 @Mixin(ServerPlayerEntity.class)
 public abstract class ServerPlayerEntityMixin implements ServerResearchAccessor, GearInventoryProvider {
-    private final @Unique
-    List<Identifier> unlockedResearch = new ArrayList<>();
-    private final @Unique
-    Object2BooleanMap<Identifier> changes = new Object2BooleanArrayMap<>();
+    private final @Unique List<Identifier> unlockedResearch = new ArrayList<>();
+    private final @Unique Object2BooleanMap<Identifier> changes = new Object2BooleanArrayMap<>();
 
-    private final @Unique
-    FullFixedItemInv gearInv = this.createGearInv();
-    private final @Unique
-    FixedItemInv tankInv = this.gearInv.getSubInv(4, 5 + 1);
-    private final @Unique
-    FixedItemInv thermalArmorInv = this.gearInv.getSubInv(0, 3 + 1);
-    private final @Unique
-    FixedItemInv accessoryInv = this.gearInv.getSubInv(6, 11 + 1);
+    private final @Unique SimpleInventory gearInv = this.createGearInv();
+    private final @Unique Inventory tankInv = MappedInventory.create(this.gearInv, 4, 5);
+    private final @Unique Inventory thermalArmorInv = MappedInventory.create(this.gearInv, 0, 1, 2, 3);
+    private final @Unique Inventory accessoryInv = MappedInventory.create(this.gearInv, 6, 7, 8, 9, 10, 11);
 
     @Override
     public boolean hasUnlocked_gc(Identifier id) {
@@ -127,45 +124,56 @@ public abstract class ServerPlayerEntityMixin implements ServerResearchAccessor,
         this.writeToNbt_gc(nbt);
     }
 
-    private FullFixedItemInv createGearInv() {
-        FullFixedItemInv inv = new FullFixedItemInv(12);
-        inv.setOwnerListener((invView, slot, prev, cur) -> {
-            ServerPlayNetworking.send(((ServerPlayerEntity) (Object) this), new Identifier(Constant.MOD_ID, "gear_inv_sync"), new PacketByteBuf(Unpooled.buffer().writeInt(((ServerPlayerEntity) (Object) this).getId()).writeByte(slot)).writeItemStack(cur));
-            for (ServerPlayerEntity player : PlayerLookup.tracking(((ServerPlayerEntity) (Object) this))) {
-                ServerPlayNetworking.send(player, new Identifier(Constant.MOD_ID, "gear_inv_sync"), new PacketByteBuf(Unpooled.buffer().writeInt(((ServerPlayerEntity) (Object) this).getId()).writeByte(slot)).writeItemStack(cur));
+    private SimpleInventory createGearInv() {
+        SimpleInventory inv = new SimpleInventory(12);
+        inv.addListener((inventory) -> {
+            PacketByteBuf buf = PacketByteBufs.create();
+            buf.writeInt(((ServerPlayerEntity) (Object) this).getId());
+            buf.writeInt(inventory.size());
+            for (int i = 0; i < inventory.size(); i++) {
+                buf.writeItemStack(inventory.getStack(i));
+            }
+
+            Collection<ServerPlayerEntity> tracking = PlayerLookup.tracking(((ServerPlayerEntity) (Object) this));
+            //noinspection SuspiciousMethodCalls
+            if (!tracking.contains(this)) {
+                ServerPlayNetworking.send(((ServerPlayerEntity) (Object) this), new Identifier(Constant.MOD_ID, "gear_inv_sync"), buf);
+            }
+            for (ServerPlayerEntity player : tracking) {
+                ServerPlayNetworking.send(player, new Identifier(Constant.MOD_ID, "gear_inv_sync"), PacketByteBufs.copy(buf));
             }
         });
         return inv;
     }
 
     @Override
-    public FullFixedItemInv getGearInv() {
+    public SimpleInventory getGearInv() {
         return this.gearInv;
     }
 
     @Override
-    public FixedItemInv getOxygenTanks() {
+    public Inventory getOxygenTanks() {
         return this.tankInv;
     }
 
     @Override
-    public FixedItemInv getThermalArmor() {
+    public Inventory getThermalArmor() {
         return this.thermalArmorInv;
     }
 
     @Override
-    public FixedItemInv getAccessories() {
+    public Inventory getAccessories() {
         return this.accessoryInv;
     }
 
     @Override
     public NbtCompound writeGearToNbt(NbtCompound tag) {
-        tag.put("GearInv", this.getGearInv().toTag());
+        tag.put(Constant.Nbt.GEAR_INV, this.getGearInv().toNbtList());
         return tag;
     }
 
     @Override
     public void readGearFromNbt(NbtCompound tag) {
-        this.getGearInv().fromTag(tag.getCompound("GearInv"));
+        this.getGearInv().readNbtList(tag.getList(Constant.Nbt.GEAR_INV, NbtElement.COMPOUND_TYPE));
     }
 }

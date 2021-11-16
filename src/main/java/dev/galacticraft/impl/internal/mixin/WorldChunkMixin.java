@@ -65,8 +65,7 @@ import java.util.function.Consumer;
  */
 @Mixin(WorldChunk.class)
 public abstract class WorldChunkMixin implements ChunkOxygenAccessor, ChunkOxygenSyncer, ChunkOxygenAccessorInternal {
-    private final @Unique
-    boolean[] updatable = new boolean[16];
+    private @Unique boolean /*@NotNull*/ [] updatable;
     @Shadow
     @Final
     World world;
@@ -75,10 +74,16 @@ public abstract class WorldChunkMixin implements ChunkOxygenAccessor, ChunkOxyge
     private @Unique
     boolean update = false;
 
+    @Inject(method = "<init>(Lnet/minecraft/world/World;Lnet/minecraft/util/math/ChunkPos;Lnet/minecraft/world/chunk/UpgradeData;Lnet/minecraft/world/tick/ChunkTickScheduler;Lnet/minecraft/world/tick/ChunkTickScheduler;J[Lnet/minecraft/world/chunk/ChunkSection;Ljava/util/function/Consumer;Lnet/minecraft/world/gen/chunk/Blender;)V", at = @At("RETURN"))
+    private void init_gc(World world, ChunkPos pos, UpgradeData upgradeData, ChunkTickScheduler blockTickScheduler, ChunkTickScheduler fluidTickScheduler, long inhabitedTime, ChunkSection[] sectionArrayInitializer, Consumer loadToWorldConsumer, Blender blendingData, CallbackInfo ci) {
+        this.updatable = new boolean[world.countVerticalSections()];
+    }
+
+
     @Override
     public boolean isBreathable(int x, int y, int z) {
         if (((WorldChunk) (Object) this).isOutOfHeightLimit(y)) return this.defaultBreathable;
-        ChunkSection section = ((WorldChunk)(Object)this).getSection(y >> 4);
+        ChunkSection section = ((WorldChunk)(Object)this).getSection(((WorldChunk)(Object)this).getSectionIndex(y));
         if (!section.isEmpty()) {
             return ((ChunkSectionOxygenAccessor) section).isBreathable(x & 15, y & 15, z & 15);
         }
@@ -88,14 +93,14 @@ public abstract class WorldChunkMixin implements ChunkOxygenAccessor, ChunkOxyge
     @Override
     public void setBreathable(int x, int y, int z, boolean value) {
         if (((WorldChunk) (Object) this).isOutOfHeightLimit(y)) return;
-        ChunkSection section = ((WorldChunk)(Object)this).getSection(y >> 4);
+        ChunkSection section = ((WorldChunk)(Object)this).getSection(((WorldChunk)(Object)this).getSectionIndex(y));
         assert section != null;
         ChunkSectionOxygenAccessor accessor = ((ChunkSectionOxygenAccessor) section);
         if (value != accessor.isBreathable(x & 15, y & 15, z & 15)) {
             if (!this.world.isClient) {
                 ((WorldChunk) (Object) this).setShouldSave(true);
                 update = true;
-                updatable[y >> 4] = true;
+                updatable[((WorldChunk)(Object)this).getSectionIndex(y)] = true;
             }
             accessor.setBreathable(x & 15, y & 15, z & 15, value);
         }
@@ -107,7 +112,7 @@ public abstract class WorldChunkMixin implements ChunkOxygenAccessor, ChunkOxyge
         if (update && !world.isClient) {
             update = false;
             List<CustomPayloadS2CPacket> list = new LinkedList<>();
-            for (int i = 0; i < 16; i++) {
+            for (int i = 0; i < updatable.length; i++) {
                 if (updatable[i]) {
                     updatable[i] = false;
                     ChunkPos pos = ((WorldChunk) (Object) this).getPos();

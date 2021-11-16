@@ -35,7 +35,6 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.Identifier;
@@ -68,15 +67,15 @@ public class GalacticraftAPIClient implements ClientModInitializer {
 
         ClientPlayNetworking.registerGlobalReceiver(new Identifier(Constant.MOD_ID, "gear_inv_sync"), (client, handler, buf, responseSender) -> {
             int entity = buf.readInt();
-            int index = buf.readByte();
-            ItemStack stack = buf.readItemStack();
-            client.execute(() -> ((GearInventoryProvider) client.world.getEntityById(entity)).getGearInv().forceSetInvStack(index, stack));
-        });
-
-        ClientPlayNetworking.registerGlobalReceiver(new Identifier(Constant.MOD_ID, "gear_inv_sync_full"), (client, handler, buf, responseSender) -> {
-            int entity = buf.readInt();
-            NbtCompound tag = buf.readNbt();
-            client.execute(() -> ((GearInventoryProvider) client.world.getEntityById(entity)).readGearFromNbt(tag));
+            ItemStack[] stacks = new ItemStack[buf.readInt()];
+            for (int i = 0; i < stacks.length; i++) {
+                stacks[i] = buf.readItemStack();
+            }
+            client.execute(() -> {
+                for (int i = 0; i < stacks.length; i++) {
+                    ((GearInventoryProvider) Objects.requireNonNull(client.world.getEntityById(entity))).getGearInv().setStack(i, stacks[i]);
+                }
+            });
         });
     }
 }

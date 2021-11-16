@@ -24,7 +24,6 @@ package dev.galacticraft.impl.internal.mixin;
 
 import com.mojang.serialization.Codec;
 import dev.galacticraft.impl.Constant;
-import dev.galacticraft.impl.internal.accessor.ChunkOxygenAccessorInternal;
 import dev.galacticraft.impl.internal.accessor.ChunkSectionOxygenAccessorInternal;
 import dev.galacticraft.impl.internal.accessor.WorldOxygenAccessorInternal;
 import net.minecraft.nbt.NbtCompound;
@@ -49,46 +48,46 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 public abstract class ChunkSerializerMixin {
     @Inject(method = "serialize", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/chunk/ChunkSection;getBlockStateContainer()Lnet/minecraft/world/chunk/PalettedContainer;"), locals = LocalCapture.CAPTURE_FAILHARD)
     private static void serialize_gc(ServerWorld world, Chunk chunk, CallbackInfoReturnable<NbtCompound> cir, ChunkPos chunkPos, NbtCompound nbtCompound, ChunkSection chunkSections[], NbtList nbtList, LightingProvider lightingProvider, Registry registry, Codec codec, boolean bl, int i, int j, boolean bl2, ChunkNibbleArray chunkNibbleArray, ChunkNibbleArray chunkNibbleArray2, NbtCompound nbtCompound2, ChunkSection chunkSection) {
-        NbtCompound tag = new NbtCompound();
+        NbtCompound nbt = new NbtCompound();
         if (((WorldOxygenAccessorInternal) world).getDefaultBreathable() != ((ChunkSectionOxygenAccessorInternal) chunkSection).getDefaultBreathable_gc()) {
-            tag.putBoolean(Constant.Nbt.DEFAULT_BREATHABLE, ((ChunkSectionOxygenAccessorInternal) chunkSection).getDefaultBreathable_gc());
+            nbt.putBoolean(Constant.Nbt.DEFAULT_BREATHABLE, ((ChunkSectionOxygenAccessorInternal) chunkSection).getDefaultBreathable_gc());
         }
-        tag.putShort(Constant.Nbt.CHANGE_COUNT, ((ChunkSectionOxygenAccessorInternal) chunkSection).getChangedCount_gc());
+        nbt.putShort(Constant.Nbt.CHANGE_COUNT, ((ChunkSectionOxygenAccessorInternal) chunkSection).getChangedCount_gc());
         if (((ChunkSectionOxygenAccessorInternal) chunkSection).getChangedCount_gc() > 0) {
-            byte[] array = new byte[(16 * 16 * 16) / 8];
+            byte[] output = new byte[(16 * 16 * 16) / 8];
             boolean[] oxygenValues = ((ChunkSectionOxygenAccessorInternal) chunkSection).getChangedArray_gc();
             assert oxygenValues != null;
-            for (int p = 0; p < oxygenValues.length - 8; p += 9) {
+            for (int p = 0; p < (16 * 16 * 16 / 8); p++) {
                 byte serialized = -128;
-                serialized |= oxygenValues[p] ? 0b1 : 0;
-                serialized |= oxygenValues[p + 1] ? 0b10 : 0;
-                serialized |= oxygenValues[p + 2] ? 0b100 : 0;
-                serialized |= oxygenValues[p + 3] ? 0b1000 : 0;
-                serialized |= oxygenValues[p + 4] ? 0b10000 : 0;
-                serialized |= oxygenValues[p + 5] ? 0b100000 : 0;
-                serialized |= oxygenValues[p + 6] ? 0b1000000 : 0;
-                serialized |= oxygenValues[p + 7] ? 0b10000000 : 0;
-                array[p / 8] = serialized;
+                serialized += oxygenValues[(p * 8)]     ? 0b1 : 0;
+                serialized += oxygenValues[(p * 8) + 1] ? 0b10 : 0;
+                serialized += oxygenValues[(p * 8) + 2] ? 0b100 : 0;
+                serialized += oxygenValues[(p * 8) + 3] ? 0b1000 : 0;
+                serialized += oxygenValues[(p * 8) + 4] ? 0b10000 : 0;
+                serialized += oxygenValues[(p * 8) + 5] ? 0b100000 : 0;
+                serialized += oxygenValues[(p * 8) + 6] ? 0b1000000 : 0;
+                serialized += oxygenValues[(p * 8) + 7] ? 0b10000000 : 0;
+                output[p] = serialized;
             }
-            tag.putByteArray(Constant.Nbt.OXYGEN, array);
+            nbt.putByteArray(Constant.Nbt.OXYGEN, output);
         }
-        nbtCompound2.put(Constant.Nbt.GC_API, tag);
+        nbtCompound2.put(Constant.Nbt.GC_API, nbt);
     }
 
     @Inject(method = "deserialize", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/poi/PointOfInterestStorage;initForPalette(Lnet/minecraft/util/math/ChunkPos;Lnet/minecraft/world/chunk/ChunkSection;)V"), locals = LocalCapture.CAPTURE_FAILHARD)
     private static void deserialize_gc(ServerWorld world, PointOfInterestStorage poiStorage, ChunkPos chunkPos, NbtCompound nbt, CallbackInfoReturnable<ProtoChunk> cir, UpgradeData upgradeData, boolean bl, NbtList nbtList, int i, ChunkSection chunkSections[], boolean bl2, ChunkManager chunkManager, LightingProvider lightingProvider, Registry registry, Codec codec, int j, NbtCompound nbtCompound, int k, int l, PalettedContainer palettedContainer, PalettedContainer palettedContainer2, ChunkSection chunkSection) {
-        NbtCompound compound = nbtCompound.getCompound(Constant.Nbt.GC_API);
-        short changedCount = compound.getShort(Constant.Nbt.CHANGE_COUNT);
-        if (compound.contains(Constant.Nbt.DEFAULT_BREATHABLE)) {
-            ((ChunkSectionOxygenAccessorInternal) chunkSection).setDefaultBreathable_gc(compound.getBoolean(Constant.Nbt.DEFAULT_BREATHABLE));
+        NbtCompound nbtC = nbtCompound.getCompound(Constant.Nbt.GC_API);
+        short changedCount = nbtC.getShort(Constant.Nbt.CHANGE_COUNT);
+        if (nbtC.contains(Constant.Nbt.DEFAULT_BREATHABLE)) {
+            ((ChunkSectionOxygenAccessorInternal) chunkSection).setDefaultBreathable_gc(nbtC.getBoolean(Constant.Nbt.DEFAULT_BREATHABLE));
         } else {
-            ((ChunkOxygenAccessorInternal) cir.getReturnValue()).setDefaultBreathable_gc(((WorldOxygenAccessorInternal) world).getDefaultBreathable());
+            ((ChunkSectionOxygenAccessorInternal) chunkSection).setDefaultBreathable_gc(((WorldOxygenAccessorInternal) world).getDefaultBreathable());
         }
         ((ChunkSectionOxygenAccessorInternal) chunkSection).setTotalChanged_gc(changedCount);
         if (changedCount > 0) {
             boolean[] oxygen = new boolean[16 * 16 * 16];
-            byte[] bytes = compound.getByteArray("Inverted");
-            for (int p = 0; p < 512; p++) {
+            byte[] bytes = nbtC.getByteArray(Constant.Nbt.OXYGEN);
+            for (int p = 0; p < (16 * 16 * 16) / 8; p++) {
                 short b = (short) (bytes[p] + 128);
                 oxygen[(p * 8)] = (b & 0b1) != 0;
                 oxygen[(p * 8) + 1] = (b & 0b10) != 0;

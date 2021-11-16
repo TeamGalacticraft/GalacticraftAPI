@@ -47,7 +47,7 @@ public abstract class ProtoChunkMixin implements ChunkOxygenAccessor, ChunkOxyge
     @Override
     public boolean isBreathable(int x, int y, int z) {
         if (((ProtoChunk) (Object) this).isOutOfHeightLimit(y)) return this.defaultBreathable;
-        ChunkSection section = ((ProtoChunk) (Object) this).getSectionArray()[y >> 4];
+        ChunkSection section = ((ProtoChunk) (Object) this).getSection(((ProtoChunk) (Object) this).getSectionIndex(y));
         if (!section.isEmpty()) {
             return ((ChunkSectionOxygenAccessor) section).isBreathable(x & 15, y & 15, z & 15);
         }
@@ -57,7 +57,7 @@ public abstract class ProtoChunkMixin implements ChunkOxygenAccessor, ChunkOxyge
     @Override
     public void setBreathable(int x, int y, int z, boolean value) {
         if (((ProtoChunk) (Object) this).isOutOfHeightLimit(y)) return;
-        ChunkSection section = ((ProtoChunk) (Object) this).getSectionArray()[y >> 4];
+        ChunkSection section = ((ProtoChunk) (Object) this).getSection(((ProtoChunk) (Object) this).getSectionIndex(y));
         if (!section.isEmpty()) {
             ((ChunkSectionOxygenAccessor) section).setBreathable(x & 15, y & 15, z & 15, value);
         }

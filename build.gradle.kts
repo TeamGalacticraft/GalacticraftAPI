@@ -35,7 +35,6 @@ val mc = "1.18-pre1"
 val yarn = "10"
 val loader = "0.12.5"
 val fabric = "0.42.2+1.18"
-val lba = "0.9.2"
 
 group = "dev.galacticraft"
 version ="0.4.0-prealpha.20+$mc"
@@ -88,6 +87,7 @@ dependencies {
 
     listOf(
         "fabric-api-base",
+        "fabric-api-lookup-api-v1",
         "fabric-command-api-v1",
         "fabric-gametest-api-v1",
         "fabric-lifecycle-events-v1",
@@ -95,12 +95,11 @@ dependencies {
         "fabric-registry-sync-v0",
         "fabric-renderer-api-v1",
         "fabric-resource-loader-v0",
+        "fabric-transfer-api-v1"
     ).forEach {
         modImplementation(fabricApi.module(it, fabric))
     }
 
-    modImplementation("alexiil.mc.lib:libblockattributes-core:$lba")
-    modImplementation("alexiil.mc.lib:libblockattributes-items:$lba")
     modRuntimeOnly("net.fabricmc.fabric-api:fabric-api:$fabric")
 }
 
@@ -124,21 +123,6 @@ tasks.withType<JavaCompile> {
     dependsOn(tasks.checkLicenses)
     options.encoding = "UTF-8"
     options.release.set(16)
-}
-
-val sourcesJar = tasks.create<Jar>("sourcesJarGC") {
-    dependsOn(tasks.classes)
-    archiveClassifier.set("sources")
-    from(sourceSets.main.get().allSource)
-}
-
-val javadocJar = tasks.create<Jar>("javadocJarGC") {
-    archiveClassifier.set("javadoc")
-    from(tasks.javadoc)
-}
-
-tasks.remapSourcesJar.configure {
-    dependsOn.add(sourcesJar)
 }
 
 tasks.jar {

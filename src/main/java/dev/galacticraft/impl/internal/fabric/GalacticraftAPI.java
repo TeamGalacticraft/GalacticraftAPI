@@ -31,6 +31,7 @@ import io.netty.buffer.Unpooled;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
@@ -39,6 +40,8 @@ import org.jetbrains.annotations.ApiStatus;
 
 @ApiStatus.Internal
 public class GalacticraftAPI implements ModInitializer {
+    public static final SimpleInventory EMPTY_INV = new SimpleInventory(0);
+
     @Override
     public void onInitialize() {
         long startInitTime = System.currentTimeMillis();

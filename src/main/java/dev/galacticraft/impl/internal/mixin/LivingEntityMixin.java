@@ -22,19 +22,19 @@
 
 package dev.galacticraft.impl.internal.mixin;
 
-import alexiil.mc.lib.attributes.Simulation;
-import alexiil.mc.lib.attributes.item.FixedItemInv;
-import alexiil.mc.lib.attributes.item.filter.ConstantItemFilter;
-import alexiil.mc.lib.attributes.item.impl.EmptyFixedItemInv;
 import dev.galacticraft.api.accessor.GearInventoryProvider;
 import dev.galacticraft.api.accessor.WorldOxygenAccessor;
-import dev.galacticraft.api.attribute.GcApiAttributes;
-import dev.galacticraft.api.attribute.oxygen.extractable.OxygenExtractable;
+import dev.galacticraft.api.attribute.GasStorage;
 import dev.galacticraft.api.entity.attribute.GcApiEntityAttributes;
+import dev.galacticraft.api.gas.Gas;
 import dev.galacticraft.api.item.Accessory;
 import dev.galacticraft.api.item.OxygenGear;
 import dev.galacticraft.api.item.OxygenMask;
 import dev.galacticraft.api.universe.celestialbody.CelestialBody;
+import dev.galacticraft.impl.internal.fabric.GalacticraftAPI;
+import net.fabricmc.fabric.api.transfer.v1.context.ContainerItemContext;
+import net.fabricmc.fabric.api.transfer.v1.storage.Storage;
+import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -45,6 +45,8 @@ import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.Fluid;
+import net.minecraft.inventory.Inventory;
+import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
@@ -55,10 +57,7 @@ import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.ModifyVariable;
-import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
@@ -68,12 +67,16 @@ public abstract class LivingEntityMixin extends Entity implements GearInventoryP
         super(type, world);
     }
 
-    @Shadow
-    protected abstract int getNextAirOnLand(int air);
+    @Shadow protected abstract int getNextAirOnLand(int air);
 
-    @ModifyVariable(method = "travel", at = @At(value = "FIELD"), ordinal = 0)
+    @ModifyConstant(method = "travel", constant = @Constant(doubleValue = 0.08))
     private double modifyGravity_gc(double d) {
-        return CelestialBody.getByDimension(this.world).map(celestialBodyType -> celestialBodyType.gravity() * 0.08d).orElse(0.08d);
+        return CelestialBody.getByDimension(this.world).map(celestialBodyType -> celestialBodyType.gravity() * 0.08d).orElse(0.08);
+    }
+
+    @ModifyConstant(method = "travel", constant = @Constant(doubleValue = 0.01))
+    private double modifyGravitySlowFalling_gc(double d) {
+        return CelestialBody.getByDimension(this.world).map(celestialBodyType -> celestialBodyType.gravity() * 0.01d).orElse(0.01);
     }
 
     @Shadow
@@ -96,7 +99,8 @@ public abstract class LivingEntityMixin extends Entity implements GearInventoryP
     @Inject(method = "tick", at = @At(value = "RETURN"))
     private void checkOxygenAtmosphere_gc(CallbackInfo ci) {
         LivingEntity thisEntity = ((LivingEntity) (Object) this);
-        for (ItemStack stack : this.getAccessories().stackIterable()) {
+        for (int i = 0; i < this.getAccessories().size(); i++) {
+            ItemStack stack = this.getAccessories().getStack(i);
             if (stack.getItem() instanceof Accessory accessory) {
                 accessory.tick(thisEntity);
             }
@@ -110,11 +114,10 @@ public abstract class LivingEntityMixin extends Entity implements GearInventoryP
             ci.setReturnValue(this.getNextAirOnLand(air));
         }
 
-        FixedItemInv accessories = this.getAccessories();
         boolean mask = false;
         boolean gear = false;
-        for (int i = 0; i < accessories.getSlotCount(); i++) {
-            Item item = accessories.getInvStack(i).getItem();
+        for (int i = 0; i < this.getAccessories().size(); i++) {
+            Item item = this.getAccessories().getStack(i).getItem();
             if (!mask && item instanceof OxygenMask) {
                 mask = true;
                 if (gear) break;
@@ -125,12 +128,17 @@ public abstract class LivingEntityMixin extends Entity implements GearInventoryP
         }
 
         if (mask && gear) {
-            FixedItemInv tankInv = this.getOxygenTanks();
-            for (int i = 0; i < tankInv.getSlotCount(); i++) {
-                OxygenExtractable tank = GcApiAttributes.OXYGEN_EXTRACTABLE.getFirst(tankInv.getSlot(i));
-                if (tank.extractOxygen(1) > 0) {
-                    ci.setReturnValue(this.getNextAirOnLand(air));
-                    return;
+            Inventory tankInv = this.getOxygenTanks();
+            for (int i = 0; i < tankInv.size(); i++) {
+                Storage<Gas> storage = ContainerItemContext.withInitial(tankInv.getStack(i)).find(GasStorage.ITEM);
+                if (storage != null) {
+                    try (Transaction transaction = Transaction.openOuter()) {
+                        if (storage.extract(Gas.OXYGEN, 1L, transaction) > 0) {
+                            transaction.commit();
+                            ci.setReturnValue(this.getNextAirOnLand(air));
+                            return;
+                        }
+                    }
                 }
             }
         }
@@ -139,10 +147,11 @@ public abstract class LivingEntityMixin extends Entity implements GearInventoryP
     @Inject(method = "dropInventory", at = @At(value = "RETURN"))
     private void dropGearInv(CallbackInfo ci) {
         if (!this.world.getGameRules().getBoolean(GameRules.KEEP_INVENTORY)) {
-            FixedItemInv gearInv = this.getGearInv();
-            for (int i = 0; i < gearInv.getSlotCount(); ++i) {
-                ItemStack itemStack = gearInv.extractStack(i, ConstantItemFilter.ANYTHING, ItemStack.EMPTY, Integer.MAX_VALUE, Simulation.ACTION);
-                if (!itemStack.isEmpty() && EnchantmentHelper.hasVanishingCurse(itemStack)) {
+            Inventory gearInv = this.getGearInv();
+            for (int i = 0; i < gearInv.size(); ++i) {
+                ItemStack itemStack = gearInv.getStack(i);
+                gearInv.setStack(i, ItemStack.EMPTY);
+                if (!itemStack.isEmpty() && !EnchantmentHelper.hasVanishingCurse(itemStack)) {
                     //noinspection ConstantConditions
                     if (((Object) this) instanceof PlayerEntity player) {
                         player.dropItem(itemStack, true, false);
@@ -155,23 +164,23 @@ public abstract class LivingEntityMixin extends Entity implements GearInventoryP
     }
 
     @Override
-    public FixedItemInv getGearInv() {
-        return EmptyFixedItemInv.INSTANCE;
+    public SimpleInventory getGearInv() {
+        return GalacticraftAPI.EMPTY_INV;
     }
 
     @Override
-    public FixedItemInv getOxygenTanks() {
-        return EmptyFixedItemInv.INSTANCE;
+    public Inventory getOxygenTanks() {
+        return GalacticraftAPI.EMPTY_INV;
     }
 
     @Override
-    public FixedItemInv getThermalArmor() {
-        return EmptyFixedItemInv.INSTANCE;
+    public Inventory getThermalArmor() {
+        return GalacticraftAPI.EMPTY_INV;
     }
 
     @Override
-    public FixedItemInv getAccessories() {
-        return EmptyFixedItemInv.INSTANCE;
+    public Inventory getAccessories() {
+        return GalacticraftAPI.EMPTY_INV;
     }
 
     @Inject(method = "writeCustomDataToNbt", at = @At("HEAD"))

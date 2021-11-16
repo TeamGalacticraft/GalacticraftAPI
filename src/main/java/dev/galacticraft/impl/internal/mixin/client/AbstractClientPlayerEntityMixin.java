@@ -22,17 +22,21 @@
 
 package dev.galacticraft.impl.internal.mixin.client;
 
-import alexiil.mc.lib.attributes.item.FixedItemInv;
-import alexiil.mc.lib.attributes.item.impl.FullFixedItemInv;
 import dev.galacticraft.api.accessor.GearInventoryProvider;
 import dev.galacticraft.api.accessor.SoundSystemAccessor;
 import dev.galacticraft.api.client.accessor.ClientResearchAccessor;
 import dev.galacticraft.api.item.Accessory;
 import dev.galacticraft.api.universe.celestialbody.CelestialBody;
+import dev.galacticraft.impl.Constant;
+import dev.galacticraft.impl.internal.inventory.MappedInventory;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.world.ClientWorld;
+import net.minecraft.inventory.Inventory;
+import net.minecraft.inventory.SimpleInventory;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtElement;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.Identifier;
 import org.spongepowered.asm.mixin.Final;
@@ -50,35 +54,29 @@ public abstract class AbstractClientPlayerEntityMixin implements ClientResearchA
     @Shadow
     @Final
     public ClientWorld clientWorld;
-    private final @Unique
-    FullFixedItemInv gearInv = createInv();
-    private final @Unique
-    FixedItemInv tankInv = this.gearInv.getSubInv(4, 5 + 1);
-    private final @Unique
-    FixedItemInv thermalArmorInv = this.gearInv.getSubInv(0, 3 + 1);
-    private final @Unique
-    FixedItemInv accessoryInv = this.gearInv.getSubInv(6, 11 + 1);
+    private final @Unique SimpleInventory gearInv = createInv();
+    private final @Unique Inventory tankInv = MappedInventory.create(this.gearInv, 4, 5);
+    private final @Unique Inventory thermalArmorInv = MappedInventory.create(this.gearInv, 0, 1, 2, 3);
+    private final @Unique Inventory accessoryInv = MappedInventory.create(this.gearInv, 6, 7, 8, 9, 10, 11);
 
-    private FullFixedItemInv createInv() {
-        FullFixedItemInv inv = new FullFixedItemInv(12);
-        inv.setOwnerListener((invView, slot, prev, current) -> {
-            if (current.getItem() instanceof Accessory accessory && accessory.enablesHearing()) {
-                ((SoundSystemAccessor) ((SoundManagerAccessor) MinecraftClient.getInstance().getSoundManager()).getSoundSystem()).gc_updateAtmosphericMultiplier(1.0f);
-            } else if (prev.getItem() instanceof Accessory accessory && accessory.enablesHearing()) {
-                boolean hasFreqModule = false;
-                for (int i = 0; i < invView.getSlotCount(); i++) {
-                    if (i == slot) continue;
-                    if (invView.getInvStack(i).getItem() instanceof Accessory accessory2 && accessory2.enablesHearing()) {
-                        ((SoundSystemAccessor) ((SoundManagerAccessor) MinecraftClient.getInstance().getSoundManager()).getSoundSystem()).gc_updateAtmosphericMultiplier(1.0f);
-                        hasFreqModule = true;
-                        break;
+    private SimpleInventory createInv() {
+        SimpleInventory inv = new SimpleInventory(12);
+        inv.addListener((inventory) -> {
+            float pressure = CelestialBody.getByDimension(this.clientWorld).map(body -> body.atmosphere().pressure()).orElse(1.0f);
+            if (pressure != 1.0f) {
+                for (int i = 0; i < inventory.size(); i++) {
+                    ItemStack stack = inventory.getStack(i);
+                    if (stack.getItem() instanceof Accessory accessory && accessory.enablesHearing()) {
+                        ((SoundSystemAccessor) ((SoundManagerAccessor) MinecraftClient.getInstance().getSoundManager()).getSoundSystem())
+                                .gc_updateAtmosphericMultiplier(1.0f);
+                        return;
+                    } else {
+                        ((SoundSystemAccessor) ((SoundManagerAccessor) MinecraftClient.getInstance().getSoundManager()).getSoundSystem())
+                                .gc_updateAtmosphericMultiplier(pressure);
                     }
                 }
-                if (!hasFreqModule) {
-                    ((SoundSystemAccessor) ((SoundManagerAccessor) MinecraftClient.getInstance().getSoundManager()).getSoundSystem())
-                            .gc_updateAtmosphericMultiplier(CelestialBody.getByDimension(this.clientWorld)
-                                    .map(body -> body.atmosphere().pressure()).orElse(1.0f));
-                }
+            } else {
+                ((SoundSystemAccessor) ((SoundManagerAccessor) MinecraftClient.getInstance().getSoundManager()).getSoundSystem()).gc_updateAtmosphericMultiplier(pressure);
             }
         });
         return inv;
@@ -103,33 +101,33 @@ public abstract class AbstractClientPlayerEntityMixin implements ClientResearchA
     }
 
     @Override
-    public FullFixedItemInv getGearInv() {
+    public SimpleInventory getGearInv() {
         return this.gearInv;
     }
 
     @Override
-    public FixedItemInv getOxygenTanks() {
+    public Inventory getOxygenTanks() {
         return this.tankInv;
     }
 
     @Override
-    public FixedItemInv getThermalArmor() {
+    public Inventory getThermalArmor() {
         return this.thermalArmorInv;
     }
 
     @Override
-    public FixedItemInv getAccessories() {
+    public Inventory getAccessories() {
         return this.accessoryInv;
     }
 
     @Override
     public NbtCompound writeGearToNbt(NbtCompound tag) {
-        tag.put("GearInv", this.getGearInv().toTag());
+        tag.put(Constant.Nbt.GEAR_INV, this.getGearInv().toNbtList());
         return tag;
     }
 
     @Override
     public void readGearFromNbt(NbtCompound tag) {
-        this.getGearInv().fromTag(tag.getCompound("GearInv"));
+        this.getGearInv().readNbtList(tag.getList(Constant.Nbt.GEAR_INV, NbtElement.COMPOUND_TYPE));
     }
 }

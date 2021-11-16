@@ -36,6 +36,6 @@ public interface Constant {
         String DEFAULT_BREATHABLE = "DefaultBreathable";
         String CHANGE_COUNT = "ChangeCount";
         String OXYGEN = "Oxygen";
-
+        String GEAR_INV = "GearInv";
     }
 }

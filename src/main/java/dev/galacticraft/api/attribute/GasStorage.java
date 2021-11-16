@@ -20,24 +20,24 @@
  * SOFTWARE.
  */
 
-package dev.galacticraft.api.attribute.oxygen;
+package dev.galacticraft.api.attribute;
 
-import alexiil.mc.lib.attributes.Simulation;
-import dev.galacticraft.api.attribute.oxygen.transferable.OxygenTransferable;
+import dev.galacticraft.api.gas.Gas;
+import dev.galacticraft.impl.Constant;
+import net.fabricmc.fabric.api.lookup.v1.block.BlockApiLookup;
+import net.fabricmc.fabric.api.lookup.v1.item.ItemApiLookup;
+import net.fabricmc.fabric.api.transfer.v1.context.ContainerItemContext;
+import net.fabricmc.fabric.api.transfer.v1.storage.Storage;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.math.Direction;
 
-public record OxygenTankWrapper(OxygenTank tank) implements OxygenTransferable {
+public final class GasStorage {
+    public static final ItemApiLookup<Storage<Gas>, ContainerItemContext> ITEM =
+            ItemApiLookup.get(new Identifier(Constant.MOD_ID, "gas_storage"), Storage.asClass(), ContainerItemContext.class);
 
-    @Override
-    public int tryExtractOxygen(int amount, Simulation simulation) {
-        amount = Math.min(amount, tank.getAmount());
-        if (simulation.isAction()) tank.setAmount(tank.getAmount() - amount);
-        return amount;
-    }
+    public static final BlockApiLookup<Storage<Gas>, Direction> SIDED =
+            BlockApiLookup.get(new Identifier(Constant.MOD_ID, "sided_gas_storage"), Storage.asClass(), Direction.class);
 
-    @Override
-    public int tryInsertOxygen(int amount, Simulation simulation) {
-        int min = Math.min(tank.getAmount() + amount, tank.getCapacity());
-        if (simulation.isAction()) tank.setAmount(min);
-        return Math.max(0, (tank.getCapacity() - (min + amount)) * -1);
-    }
+
+    private GasStorage() {}
 }
