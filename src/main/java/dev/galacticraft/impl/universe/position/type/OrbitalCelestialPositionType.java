@@ -37,14 +37,14 @@ public class OrbitalCelestialPositionType extends CelestialPositionType<OrbitalC
     public double x(OrbitalCelestialPositionConfig config, long worldTime, float delta) {
         int time = (int) (worldTime % config.orbitTime());
         double distanceFromCenter = 3.0 * config.distance() * (config.planet() ? 25.0 : (1.0 / 5.0));
-        return Math.sin(((double)(time + delta)) / ((config.planet() ? 200.0 : 2.0) * (config.orbitTime() / OVERWORLD_DAY_LENGTH)) + config.phaseShift()) * distanceFromCenter;
+        return Math.sin(((double) (time + delta)) / ((config.planet() ? 200.0 : 2.0) * (config.orbitTime() / OVERWORLD_DAY_LENGTH)) + config.phaseShift()) * distanceFromCenter;
     }
 
     @Override
     public double y(OrbitalCelestialPositionConfig config, long worldTime, float delta) {
         int time = (int) (worldTime % config.orbitTime());
         double distanceFromCenter = 3.0 * config.distance() * (config.planet() ? 25.0 : (1.0 / 5.0));
-        return Math.cos(((double)(time + delta)) / ((config.planet() ? 200.0 : 2.0) * (config.orbitTime() / OVERWORLD_DAY_LENGTH)) + config.phaseShift()) * distanceFromCenter;
+        return Math.cos(((double) (time + delta)) / ((config.planet() ? 200.0 : 2.0) * (config.orbitTime() / OVERWORLD_DAY_LENGTH)) + config.phaseShift()) * distanceFromCenter;
     }
 
     @Override

@@ -45,31 +45,37 @@ import java.util.List;
 
 @Mixin(AbstractClientPlayerEntity.class)
 public abstract class AbstractClientPlayerEntityMixin implements ClientResearchAccessor, GearInventoryProvider {
-    @Shadow @Final public ClientWorld clientWorld;
     @Unique
     private final List<Identifier> unlockedResearch = new ArrayList<>();
-    private final @Unique FullFixedItemInv gearInv = createInv();
-    private final @Unique FixedItemInv tankInv = this.gearInv.getSubInv(4, 5 + 1);
-    private final @Unique FixedItemInv thermalArmorInv = this.gearInv.getSubInv(0, 3 + 1);
-    private final @Unique FixedItemInv accessoryInv = this.gearInv.getSubInv(6, 11 + 1);
+    @Shadow
+    @Final
+    public ClientWorld clientWorld;
+    private final @Unique
+    FullFixedItemInv gearInv = createInv();
+    private final @Unique
+    FixedItemInv tankInv = this.gearInv.getSubInv(4, 5 + 1);
+    private final @Unique
+    FixedItemInv thermalArmorInv = this.gearInv.getSubInv(0, 3 + 1);
+    private final @Unique
+    FixedItemInv accessoryInv = this.gearInv.getSubInv(6, 11 + 1);
 
     private FullFixedItemInv createInv() {
         FullFixedItemInv inv = new FullFixedItemInv(12);
         inv.setOwnerListener((invView, slot, prev, current) -> {
             if (current.getItem() instanceof Accessory accessory && accessory.enablesHearing()) {
-                ((SoundSystemAccessor) ((SoundManagerAccessor)MinecraftClient.getInstance().getSoundManager()).getSoundSystem()).gc_updateAtmosphericMultiplier(1.0f);
+                ((SoundSystemAccessor) ((SoundManagerAccessor) MinecraftClient.getInstance().getSoundManager()).getSoundSystem()).gc_updateAtmosphericMultiplier(1.0f);
             } else if (prev.getItem() instanceof Accessory accessory && accessory.enablesHearing()) {
                 boolean hasFreqModule = false;
                 for (int i = 0; i < invView.getSlotCount(); i++) {
                     if (i == slot) continue;
                     if (invView.getInvStack(i).getItem() instanceof Accessory accessory2 && accessory2.enablesHearing()) {
-                        ((SoundSystemAccessor) ((SoundManagerAccessor)MinecraftClient.getInstance().getSoundManager()).getSoundSystem()).gc_updateAtmosphericMultiplier(1.0f);
+                        ((SoundSystemAccessor) ((SoundManagerAccessor) MinecraftClient.getInstance().getSoundManager()).getSoundSystem()).gc_updateAtmosphericMultiplier(1.0f);
                         hasFreqModule = true;
                         break;
                     }
                 }
                 if (!hasFreqModule) {
-                    ((SoundSystemAccessor) ((SoundManagerAccessor)MinecraftClient.getInstance().getSoundManager()).getSoundSystem())
+                    ((SoundSystemAccessor) ((SoundManagerAccessor) MinecraftClient.getInstance().getSoundManager()).getSoundSystem())
                             .gc_updateAtmosphericMultiplier(CelestialBody.getByDimension(this.clientWorld)
                                     .map(body -> body.atmosphere().pressure()).orElse(1.0f));
                 }

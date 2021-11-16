@@ -38,11 +38,11 @@ public interface ChunkSectionOxygenAccessorInternal {
 
     void setTotalChanged_gc(short amount);
 
-    void setDefaultBreathable_gc(boolean breathable);
-
     void writeData_gc(PacketByteBuf buf);
 
     void readData_gc(PacketByteBuf buf);
 
     boolean getDefaultBreathable_gc();
+
+    void setDefaultBreathable_gc(boolean breathable);
 }

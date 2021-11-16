@@ -30,7 +30,6 @@ import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.BiomeEffects;
 import net.minecraft.world.biome.GenerationSettings;
 import net.minecraft.world.biome.SpawnSettings;
-import net.minecraft.world.gen.surfacebuilder.ConfiguredSurfaceBuilders;
 import org.jetbrains.annotations.ApiStatus;
 
 @ApiStatus.Internal
@@ -43,12 +42,9 @@ public class GcApiBiomes {
         GenerationSettings.Builder genSettings = new GenerationSettings.Builder();
         BiomeEffects.Builder effects = new BiomeEffects.Builder();
         effects.fogColor(0).waterColor(4159204).waterFogColor(329011).skyColor(0);
-        genSettings.surfaceBuilder(ConfiguredSurfaceBuilders.NOPE);
         return builder
-                .depth(-5)
-                .scale(-10)
                 .downfall(0)
-                .temperature(0.1f)
+                .temperature(1)
                 .effects(effects.build())
                 .spawnSettings(spawns.build())
                 .precipitation(Biome.Precipitation.NONE)

@@ -1,21 +1,44 @@
+/*
+ * Copyright (c) 2019-2021 Team Galacticraft
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
 import java.time.Year
 import java.time.format.DateTimeFormatter
 
 plugins {
     java
     `maven-publish`
-    id("fabric-loom") version "0.9-SNAPSHOT"
+    id("fabric-loom") version "0.10-SNAPSHOT"
     id("org.cadixdev.licenser") version "0.6.1"
+   id("io.github.juuxel.loom-quiltflower-mini") version("1.1.0")
 }
 
-val mc = "1.17.1"
-val yarn = "52"
-val loader = "0.11.6"
-val fabric = "0.40.0+1.17"
-val lba = "0.9.1-pre.1"
+val mc = "1.18-pre1"
+val yarn = "10"
+val loader = "0.12.5"
+val fabric = "0.42.2+1.18"
+val lba = "0.9.2"
 
 group = "dev.galacticraft"
-version ="0.4.0-prealpha.19+$mc"
+version ="0.4.0-prealpha.20+$mc"
 
 base.archivesName.set("GalacticraftAPI")
 
@@ -28,10 +51,6 @@ java {
 }
 
 val gametestSourceSet = sourceSets.create("gametest") {
-    compileClasspath += sourceSets.main.get().compileClasspath
-    runtimeClasspath += sourceSets.main.get().runtimeClasspath
-    compileClasspath += sourceSets.main.get().output
-    runtimeClasspath += sourceSets.main.get().output
     java.srcDir("src/gametest/java")
     resources.srcDir("src/gametest/resources")
 }
@@ -82,7 +101,7 @@ dependencies {
 
     modImplementation("alexiil.mc.lib:libblockattributes-core:$lba")
     modImplementation("alexiil.mc.lib:libblockattributes-items:$lba")
-    modRuntime("net.fabricmc.fabric-api:fabric-api:$fabric")
+    modRuntimeOnly("net.fabricmc.fabric-api:fabric-api:$fabric")
 }
 
 tasks.processResources {
@@ -142,22 +161,16 @@ publishing {
             groupId = "dev.galacticraft"
             artifactId = "GalacticraftAPI"
 
-            artifact(tasks.remapJar) { builtBy(tasks.remapJar) }
-            artifact(sourcesJar) { builtBy(tasks.remapSourcesJar) }
-            artifact(javadocJar)
+            from(components["java"])
         }
     }
     repositories {
-        if (net.fabricmc.loom.util.OperatingSystem.isCIBuild()) {
-            maven("https://maven.galacticraft.dev/") {
-                name = "maven"
-                credentials(PasswordCredentials::class)
-                authentication {
-                    register("basic", BasicAuthentication::class)
-                }
+        maven("https://maven.galacticraft.dev/") {
+            name = "maven"
+            credentials(PasswordCredentials::class)
+            authentication {
+                register("basic", BasicAuthentication::class)
             }
-        } else {
-            mavenLocal()
         }
     }
 }
@@ -177,3 +190,5 @@ tasks.named<ProcessResources>("processGametestResources") {
 }
 
 tasks.getByName("gametestClasses").dependsOn("classes")
+gametestSourceSet.compileClasspath += sourceSets.main.get().compileClasspath + sourceSets.main.get().output
+gametestSourceSet.runtimeClasspath += sourceSets.main.get().runtimeClasspath + sourceSets.main.get().output

@@ -59,18 +59,36 @@ public class SatelliteOwnershipData {
                 return longs;
             }).forGetter(SatelliteOwnershipData::trusted),
             Codec.BOOL.fieldOf("open").forGetter(SatelliteOwnershipData::open)
-            ).apply(instance, SatelliteOwnershipData::new)); //fixme this looks terrible.
+    ).apply(instance, SatelliteOwnershipData::new)); //fixme this looks terrible.
 
     private final UUID owner;
     private final List<UUID> trusted;
     private String username;
-    private boolean open;
+    private final boolean open;
 
     public SatelliteOwnershipData(@NotNull UUID owner, String username, List<UUID> trusted, boolean open) {
         this.owner = owner;
         this.username = username;
         this.open = open;
         this.trusted = trusted;
+    }
+
+    public static SatelliteOwnershipData fromNbt(NbtCompound nbt) {
+        long[] trusted = nbt.getLongArray("trusted");
+        SatelliteOwnershipData data = new SatelliteOwnershipData(nbt.getUuid("owner"), nbt.getString("username"), new ArrayList<>(trusted.length / 2), nbt.getBoolean("open"));
+        for (int i = 0; i < trusted.length; i += 2) {
+            data.trusted.add(new UUID(trusted[i], trusted[i + 1]));
+        }
+        return data;
+    }
+
+    public static SatelliteOwnershipData fromPacket(PacketByteBuf buf) {
+        int size = buf.readInt();
+        SatelliteOwnershipData data = new SatelliteOwnershipData(buf.readUuid(), buf.readString(), new ArrayList<>(size), buf.readBoolean());
+        for (int i = 0; i < size; i++) {
+            data.trusted.add(buf.readUuid());
+        }
+        return data;
     }
 
     public void username(String username) {
@@ -128,23 +146,5 @@ public class SatelliteOwnershipData {
         }
         nbt.putLongArray("trusted", trusted);
         return nbt;
-    }
-
-    public static SatelliteOwnershipData fromNbt(NbtCompound nbt) {
-        long[] trusted = nbt.getLongArray("trusted");
-        SatelliteOwnershipData data = new SatelliteOwnershipData(nbt.getUuid("owner"), nbt.getString("username"), new ArrayList<>(trusted.length / 2), nbt.getBoolean("open"));
-        for (int i = 0; i < trusted.length; i += 2) {
-            data.trusted.add(new UUID(trusted[i], trusted[i + 1]));
-        }
-        return data;
-    }
-
-    public static SatelliteOwnershipData fromPacket(PacketByteBuf buf) {
-        int size = buf.readInt();
-        SatelliteOwnershipData data = new SatelliteOwnershipData(buf.readUuid(), buf.readString(), new ArrayList<>(size), buf.readBoolean());
-        for (int i = 0; i < size; i++) {
-            data.trusted.add(buf.readUuid());
-        }
-        return data;
     }
 }

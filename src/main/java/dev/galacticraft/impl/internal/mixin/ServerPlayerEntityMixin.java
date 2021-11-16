@@ -47,13 +47,19 @@ import java.util.List;
 
 @Mixin(ServerPlayerEntity.class)
 public abstract class ServerPlayerEntityMixin implements ServerResearchAccessor, GearInventoryProvider {
-    private final @Unique List<Identifier> unlockedResearch = new ArrayList<>();
-    private final @Unique Object2BooleanMap<Identifier> changes = new Object2BooleanArrayMap<>();
+    private final @Unique
+    List<Identifier> unlockedResearch = new ArrayList<>();
+    private final @Unique
+    Object2BooleanMap<Identifier> changes = new Object2BooleanArrayMap<>();
 
-    private final @Unique FullFixedItemInv gearInv = this.createGearInv();
-    private final @Unique FixedItemInv tankInv = this.gearInv.getSubInv(4, 5 + 1);
-    private final @Unique FixedItemInv thermalArmorInv = this.gearInv.getSubInv(0, 3 + 1);
-    private final @Unique FixedItemInv accessoryInv = this.gearInv.getSubInv(6, 11 + 1);
+    private final @Unique
+    FullFixedItemInv gearInv = this.createGearInv();
+    private final @Unique
+    FixedItemInv tankInv = this.gearInv.getSubInv(4, 5 + 1);
+    private final @Unique
+    FixedItemInv thermalArmorInv = this.gearInv.getSubInv(0, 3 + 1);
+    private final @Unique
+    FixedItemInv accessoryInv = this.gearInv.getSubInv(6, 11 + 1);
 
     @Override
     public boolean hasUnlocked_gc(Identifier id) {

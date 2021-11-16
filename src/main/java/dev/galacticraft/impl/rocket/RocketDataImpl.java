@@ -39,7 +39,8 @@ import org.jetbrains.annotations.ApiStatus;
 import java.util.Arrays;
 
 @ApiStatus.Internal
-public record RocketDataImpl(int color, Identifier cone, Identifier body, Identifier fin, Identifier booster, Identifier bottom, Identifier upgrade) implements RocketData {
+public record RocketDataImpl(int color, Identifier cone, Identifier body, Identifier fin, Identifier booster,
+                             Identifier bottom, Identifier upgrade) implements RocketData {
     public static final RocketDataImpl EMPTY = new RocketDataImpl(0xffffffff, new Identifier(Constant.MOD_ID, "invalid"), new Identifier(Constant.MOD_ID, "invalid"), new Identifier(Constant.MOD_ID, "invalid"), new Identifier(Constant.MOD_ID, "invalid"), new Identifier(Constant.MOD_ID, "invalid"), new Identifier(Constant.MOD_ID, "invalid"));
 
     public static RocketDataImpl fromNbt(NbtCompound nbt) {

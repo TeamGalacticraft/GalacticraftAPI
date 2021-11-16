@@ -37,7 +37,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(ParticleManager.class)
 @Environment(EnvType.CLIENT)
 public abstract class ParticleManagerMixin {
-    @Shadow protected ClientWorld world;
+    @Shadow
+    protected ClientWorld world;
 
     @Inject(method = "addParticle(Lnet/minecraft/client/particle/Particle;)V", at = @At("RETURN"))
     protected void overrideGravity_gc(Particle particle, CallbackInfo ci) {

@@ -121,20 +121,6 @@ public record Gas(TranslatableText name, String symbol) {
             new TranslatableText("ui.galacticraft-api.gases.iodine"),
             "I2"
     );
-    
-    public String symbolForDisplay() {
-        return this.symbol()
-                .replaceAll("0", "\u2080")
-                .replaceAll("1", "\u2081")
-                .replaceAll("2", "\u2082")
-                .replaceAll("3", "\u2083")
-                .replaceAll("4", "\u2084")
-                .replaceAll("5", "\u2085")
-                .replaceAll("6", "\u2086")
-                .replaceAll("7", "\u2087")
-                .replaceAll("8", "\u2088")
-                .replaceAll("9", "\u2089");
-    }
 
     public static Registry<Gas> getRegistry(DynamicRegistryManager manager) {
         return manager.get(AddonRegistry.GAS_KEY);
@@ -176,6 +162,20 @@ public record Gas(TranslatableText name, String symbol) {
             if (g.symbol().equals(symbol)) return g;
         }
         return null;
+    }
+
+    public String symbolForDisplay() {
+        return this.symbol()
+                .replaceAll("0", "\u2080")
+                .replaceAll("1", "\u2081")
+                .replaceAll("2", "\u2082")
+                .replaceAll("3", "\u2083")
+                .replaceAll("4", "\u2084")
+                .replaceAll("5", "\u2085")
+                .replaceAll("6", "\u2086")
+                .replaceAll("7", "\u2087")
+                .replaceAll("8", "\u2088")
+                .replaceAll("9", "\u2089");
     }
 
     @Override

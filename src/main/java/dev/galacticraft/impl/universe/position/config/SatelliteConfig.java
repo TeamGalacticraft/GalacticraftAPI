@@ -81,27 +81,27 @@ public final class SatelliteConfig implements CelestialBodyConfig {
         this.dimensionOptions = dimensionOptions;
     }
 
-    public RegistryKey<CelestialBody<?, ?>> parent() { return parent; }
+    public RegistryKey<CelestialBody<?, ?>> parent() {return parent;}
 
-    public RegistryKey<Galaxy> galaxy() { return galaxy; }
+    public RegistryKey<Galaxy> galaxy() {return galaxy;}
 
-    public CelestialPosition<?, ?> position() { return position; }
+    public CelestialPosition<?, ?> position() {return position;}
 
-    public CelestialDisplay<?, ?> display() { return display; }
+    public CelestialDisplay<?, ?> display() {return display;}
 
-    public SatelliteOwnershipData ownershipData() { return ownershipData; }
+    public SatelliteOwnershipData ownershipData() {return ownershipData;}
 
-    public Text customName() { return customName; }
+    public Text customName() {return customName;}
 
-    public void customName(Text name) { this.customName = name; }
+    public void customName(Text name) {this.customName = name;}
 
-    public RegistryKey<World> world() { return world; }
+    public RegistryKey<World> world() {return world;}
 
-    public GasComposition atmosphere() { return atmosphere; }
+    public GasComposition atmosphere() {return atmosphere;}
 
-    public float gravity() { return gravity; }
+    public float gravity() {return gravity;}
 
-    public int accessWeight() { return accessWeight; }
+    public int accessWeight() {return accessWeight;}
 
     public DimensionOptions dimensionOptions() {
         return this.dimensionOptions;

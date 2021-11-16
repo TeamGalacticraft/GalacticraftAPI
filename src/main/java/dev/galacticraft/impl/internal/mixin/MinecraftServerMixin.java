@@ -64,18 +64,24 @@ import java.util.concurrent.Executor;
 
 @Mixin(MinecraftServer.class)
 public abstract class MinecraftServerMixin implements SatelliteAccessor {
-    @Shadow @Final public LevelStorage.Session session;
-
-    @Shadow public abstract SaveProperties getSaveProperties();
-
-    @Shadow @Final public Executor workerExecutor;
-
-    @Shadow @Nullable public abstract ServerWorld getWorld(RegistryKey<World> key);
-
-    @Shadow @Final public Map<RegistryKey<World>, ServerWorld> worlds;
-
     @Unique
     private final Map<Identifier, CelestialBody<SatelliteConfig, SatelliteType>> satellites = new HashMap<>();
+    @Shadow
+    @Final
+    public LevelStorage.Session session;
+    @Shadow
+    @Final
+    public Executor workerExecutor;
+    @Shadow
+    @Final
+    public Map<RegistryKey<World>, ServerWorld> worlds;
+
+    @Shadow
+    public abstract SaveProperties getSaveProperties();
+
+    @Shadow
+    @Nullable
+    public abstract ServerWorld getWorld(RegistryKey<World> key);
 
     @Override
     public @Unmodifiable Map<Identifier, CelestialBody<SatelliteConfig, SatelliteType>> satellites() {
@@ -119,14 +125,14 @@ public abstract class MinecraftServerMixin implements SatelliteAccessor {
                 assert nbt != null : "NBT list was null";
                 for (NbtElement compound : nbt) {
                     assert compound instanceof NbtCompound : "Not a compound?!";
-                    this.satellites.put(new Identifier(((NbtCompound)compound).getString("id")), new CelestialBody<>(SatelliteType.INSTANCE, SatelliteConfig.CODEC.decode(NbtOps.INSTANCE, compound).get().orThrow().getFirst()));
+                    this.satellites.put(new Identifier(((NbtCompound) compound).getString("id")), new CelestialBody<>(SatelliteType.INSTANCE, SatelliteConfig.CODEC.decode(NbtOps.INSTANCE, compound).get().orThrow().getFirst()));
                 }
 
                 for (Map.Entry<Identifier, CelestialBody<SatelliteConfig, SatelliteType>> entry : this.satellites.entrySet()) {
                     DimensionType type = entry.getValue().config().dimensionOptions().getDimensionType();
                     ChunkGenerator chunkGenerator = entry.getValue().config().dimensionOptions().getChunkGenerator();
                     UnmodifiableLevelProperties unmodifiableLevelProperties = new UnmodifiableLevelProperties(getSaveProperties(), getSaveProperties().getMainWorldProperties());
-                    ServerWorld world = new ServerWorld((MinecraftServer)(Object)this, workerExecutor, session, unmodifiableLevelProperties, RegistryKey.of(Registry.WORLD_KEY, entry.getKey()), type, SatelliteType.EMPTY_PROGRESS_LISTENER, chunkGenerator, getSaveProperties().getGeneratorOptions().isDebugWorld(), BiomeAccess.hashSeed(getSaveProperties().getGeneratorOptions().getSeed()), ImmutableList.of(), false);
+                    ServerWorld world = new ServerWorld((MinecraftServer) (Object) this, workerExecutor, session, unmodifiableLevelProperties, RegistryKey.of(Registry.WORLD_KEY, entry.getKey()), type, SatelliteType.EMPTY_PROGRESS_LISTENER, chunkGenerator, getSaveProperties().getGeneratorOptions().isDebugWorld(), BiomeAccess.hashSeed(getSaveProperties().getGeneratorOptions().getSeed()), ImmutableList.of(), false);
                     getWorld(World.OVERWORLD).getWorldBorder().addListener(new WorldBorderListener.WorldBorderSyncer(world.getWorldBorder()));
                     worlds.put(RegistryKey.of(Registry.WORLD_KEY, entry.getKey()), world);
                 }

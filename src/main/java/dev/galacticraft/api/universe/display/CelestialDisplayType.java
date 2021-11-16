@@ -34,8 +34,8 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public abstract class CelestialDisplayType<C extends CelestialDisplayConfig> {
-    private final Codec<CelestialDisplay<C, CelestialDisplayType<C>>> codec;
     public static final Vector4f NULL_VECTOR = new Vector4f(0, 0, 0, 0);
+    private final Codec<CelestialDisplay<C, CelestialDisplayType<C>>> codec;
 
     public CelestialDisplayType(Codec<C> codec) {
         this.codec = codec.fieldOf("config").xmap((config) -> new CelestialDisplay<>(this, config), CelestialDisplay::config).codec();

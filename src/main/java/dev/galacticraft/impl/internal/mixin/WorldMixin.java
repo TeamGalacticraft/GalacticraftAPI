@@ -39,7 +39,10 @@ import org.spongepowered.asm.mixin.Unique;
 @Mixin(World.class)
 public abstract class WorldMixin implements WorldOxygenAccessor, WorldOxygenAccessorInternal {
 
-    @Shadow public abstract WorldChunk getWorldChunk(BlockPos pos);
+    private @Unique
+    boolean breathable = true;
+    private @Unique
+    boolean init = false;
 
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     @Shadow
@@ -47,14 +50,14 @@ public abstract class WorldMixin implements WorldOxygenAccessor, WorldOxygenAcce
         return false;
     }
 
-    private @Unique boolean breathable = true;
-    private @Unique boolean init = false;
+    @Shadow
+    public abstract WorldChunk getWorldChunk(BlockPos pos);
 
     @Override
     public boolean isBreathable(BlockPos pos) {
         if (!this.init) {
             this.init = true;
-            CelestialBody.getByDimension(((World)(Object)this)).ifPresent(celestialBodyType -> this.breathable = celestialBodyType.atmosphere().breathable());
+            CelestialBody.getByDimension(((World) (Object) this)).ifPresent(celestialBodyType -> this.breathable = celestialBodyType.atmosphere().breathable());
         }
         if (!isValid(pos)) return this.breathable;
         return ((ChunkOxygenAccessor) this.getWorldChunk(pos)).isBreathable(pos.getX() & 15, pos.getY(), pos.getZ() & 15);
@@ -64,7 +67,7 @@ public abstract class WorldMixin implements WorldOxygenAccessor, WorldOxygenAcce
     public void setBreathable(BlockPos pos, boolean value) {
         if (!this.init) {
             this.init = true;
-            CelestialBody.getByDimension(((World)(Object)this)).ifPresent(celestialBodyType -> this.breathable = celestialBodyType.atmosphere().breathable());
+            CelestialBody.getByDimension(((World) (Object) this)).ifPresent(celestialBodyType -> this.breathable = celestialBodyType.atmosphere().breathable());
         }
         if (!isValid(pos)) return;
         ((ChunkOxygenAccessor) this.getWorldChunk(pos)).setBreathable(pos.getX() & 15, pos.getY(), pos.getZ() & 15, value);
@@ -74,7 +77,7 @@ public abstract class WorldMixin implements WorldOxygenAccessor, WorldOxygenAcce
     public boolean getDefaultBreathable() {
         if (!this.init) {
             this.init = true;
-            CelestialBody.getByDimension(((World)(Object)this)).ifPresent(celestialBodyType -> this.breathable = celestialBodyType.atmosphere().breathable());
+            CelestialBody.getByDimension(((World) (Object) this)).ifPresent(celestialBodyType -> this.breathable = celestialBodyType.atmosphere().breathable());
         }
         return this.breathable;
     }

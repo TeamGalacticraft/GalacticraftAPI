@@ -41,7 +41,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 
-public record RocketPart(TranslatableText name, RocketPartType type, ConfiguredTravelPredicate<?> travelPredicate, boolean hasRecipe, Identifier research) {
+public record RocketPart(TranslatableText name, RocketPartType type, ConfiguredTravelPredicate<?> travelPredicate,
+                         boolean hasRecipe, Identifier research) {
     public static final Codec<RocketPart> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             Codec.STRING.fieldOf("name").xmap(TranslatableText::new, TranslatableText::getKey).forGetter(RocketPart::name),
             RocketPartType.CODEC.fieldOf("type").forGetter(RocketPart::type),
@@ -66,11 +67,6 @@ public record RocketPart(TranslatableText name, RocketPartType type, ConfiguredT
         this.research = research;
     }
 
-    public boolean isUnlocked(PlayerEntity player) {
-        if (this.research() == null) return true;
-        return ((ResearchAccessor) player).hasUnlocked_gc(this.research());
-    }
-
     public static RocketPart deserialize(DynamicRegistryManager manager, Dynamic<?> dynamic) {
         return manager.get(AddonRegistry.ROCKET_PART_KEY).get(new Identifier(dynamic.asString("")));
     }
@@ -93,6 +89,11 @@ public record RocketPart(TranslatableText name, RocketPartType type, ConfiguredT
 
     public static Identifier getId(Registry<RocketPart> registry, RocketPart rocketPart) {
         return registry.getId(rocketPart);
+    }
+
+    public boolean isUnlocked(PlayerEntity player) {
+        if (this.research() == null) return true;
+        return ((ResearchAccessor) player).hasUnlocked_gc(this.research());
     }
 
     public static class Builder {

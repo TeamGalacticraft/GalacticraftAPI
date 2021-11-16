@@ -28,7 +28,8 @@ import com.mojang.serialization.*;
 import java.util.Map;
 import java.util.function.Supplier;
 
-public record MapCodec<A, B, M extends Map<A, B>>(Supplier<M> supplier, Encoder<A> encoderA, Decoder<A> decoderA, Encoder<B> encoderB, Decoder<B> decoderB) implements Codec<M> {
+public record MapCodec<A, B, M extends Map<A, B>>(Supplier<M> supplier, Encoder<A> encoderA, Decoder<A> decoderA,
+                                                  Encoder<B> encoderB, Decoder<B> decoderB) implements Codec<M> {
 
     public static <A, B, M extends Map<A, B>> MapCodec<A, B, M> create(Supplier<M> supplier, Encoder<A> encoderA, Decoder<A> decoderA, Encoder<B> encoderB, Decoder<B> decoderB) {
         return new MapCodec<>(supplier, encoderA, decoderA, encoderB, decoderB);

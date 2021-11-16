@@ -40,7 +40,8 @@ import java.util.List;
  */
 @Mixin(ChunkHolder.class)
 public abstract class ChunkHolderMixin {
-    @Shadow protected abstract void sendPacketToPlayersWatching(Packet<?> packet, boolean onlyOnWatchDistanceEdge);
+    @Shadow
+    protected abstract void sendPacketToPlayersWatching(Packet<?> packet, boolean onlyOnWatchDistanceEdge);
 
     @Inject(method = "flushUpdates", at = @At("HEAD"))
     private void flushOxygen_gc(WorldChunk chunk, CallbackInfo ci) {

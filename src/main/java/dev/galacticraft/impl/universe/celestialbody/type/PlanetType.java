@@ -41,6 +41,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class PlanetType extends CelestialBodyType<PlanetConfig> implements Landable<PlanetConfig>, Orbitable<PlanetConfig> {
     public static final PlanetType INSTANCE = new PlanetType();
+
     protected PlanetType() {
         super(PlanetConfig.CODEC);
     }

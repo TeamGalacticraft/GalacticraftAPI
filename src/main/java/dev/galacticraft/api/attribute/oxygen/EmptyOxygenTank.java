@@ -37,12 +37,12 @@ public enum EmptyOxygenTank implements OxygenTank {
     }
 
     @Override
-    public void setAmount(int amount) {
+    public int getAmount() {
+        return 0;
     }
 
     @Override
-    public int getAmount() {
-        return 0;
+    public void setAmount(int amount) {
     }
 
     @Override

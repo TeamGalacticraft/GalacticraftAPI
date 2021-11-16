@@ -41,8 +41,10 @@ import java.util.Map;
 @Environment(EnvType.CLIENT)
 @Mixin(ClientPlayNetworkHandler.class)
 public abstract class ClientPlayNetworkHandlerMixin implements ClientSatelliteAccessor {
-    private final @Unique Map<Identifier, CelestialBody<SatelliteConfig, SatelliteType>> satellites_gc = new HashMap<>();
-    private final @Unique List<SatelliteListener> listeners_gc = new ArrayList<>();
+    private final @Unique
+    Map<Identifier, CelestialBody<SatelliteConfig, SatelliteType>> satellites_gc = new HashMap<>();
+    private final @Unique
+    List<SatelliteListener> listeners_gc = new ArrayList<>();
 
     @Override
     public Map<Identifier, CelestialBody<SatelliteConfig, SatelliteType>> satellites() {

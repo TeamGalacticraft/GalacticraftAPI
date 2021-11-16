@@ -38,9 +38,12 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
  */
 @Mixin(ChunkSection.class)
 public abstract class ChunkSectionMixin implements ChunkSectionOxygenAccessor, ChunkSectionOxygenAccessorInternal {
-    private @Unique boolean[] inverted;
-    private @Unique short changedCount = 0;
-    private @Unique boolean defaultBreathable = false;
+    private @Unique
+    boolean[] inverted;
+    private @Unique
+    short changedCount = 0;
+    private @Unique
+    boolean defaultBreathable = false;
 
     @Override
     public boolean isBreathable(int x, int y, int z) {
@@ -72,11 +75,6 @@ public abstract class ChunkSectionMixin implements ChunkSectionOxygenAccessor, C
             }
         }
         this.inverted[x + (y << 4) + (z << 8)] = (this.defaultBreathable ^ value);
-    }
-
-    @Override
-    public void setDefaultBreathable_gc(boolean defaultBreathable) {
-        this.defaultBreathable = defaultBreathable;
     }
 
     @Inject(method = "getPacketSize", at = @At("RETURN"), cancellable = true)
@@ -121,6 +119,11 @@ public abstract class ChunkSectionMixin implements ChunkSectionOxygenAccessor, C
     @Override
     public boolean getDefaultBreathable_gc() {
         return this.defaultBreathable;
+    }
+
+    @Override
+    public void setDefaultBreathable_gc(boolean defaultBreathable) {
+        this.defaultBreathable = defaultBreathable;
     }
 
     @Override

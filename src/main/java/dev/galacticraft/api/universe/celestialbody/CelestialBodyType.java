@@ -45,6 +45,7 @@ public abstract class CelestialBodyType<C extends CelestialBodyConfig> {
     /**
      * Returns the name of the celestial body
      * Be sure to {@link TranslatableText#copy() copy} the returned text if you intend on stylizing it.
+     *
      * @param config the celestial body configuration to be queried
      * @return the name of the celestial body
      */
@@ -53,6 +54,7 @@ public abstract class CelestialBodyType<C extends CelestialBodyConfig> {
     /**
      * Returns the description of the celestial body
      * Be sure to {@link TranslatableText#copy() copy} the returned text if you intend on stylizing it.
+     *
      * @param config the celestial body configuration to be queried
      * @return the description of the celestial body
      */
@@ -60,14 +62,16 @@ public abstract class CelestialBodyType<C extends CelestialBodyConfig> {
 
     /**
      * Returns the celestial body's parent, or {@code null} if it does not have one
+     *
      * @param registry the registry to query for the parent
-     * @param config the celestial body configuration to be queried
+     * @param config   the celestial body configuration to be queried
      * @return the celestial body's parent
      */
     public abstract @Nullable CelestialBody<?, ?> parent(Registry<CelestialBody<?, ?>> registry, C config);
 
     /**
      * Returns the celestial body's parent galaxy's id
+     *
      * @param config the celestial body configuration to be queried
      * @return the celestial body's parent galaxy's id
      */
@@ -75,6 +79,7 @@ public abstract class CelestialBodyType<C extends CelestialBodyConfig> {
 
     /**
      * Returns the celestial body's position provider
+     *
      * @param config the celestial body configuration to be queried
      * @return the celestial body's position provider
      * @see CelestialPosition
@@ -83,6 +88,7 @@ public abstract class CelestialBodyType<C extends CelestialBodyConfig> {
 
     /**
      * Returns the celestial body's display provider
+     *
      * @param config the celestial body configuration to be queried
      * @return the celestial body's display provider
      * @see CelestialDisplay
@@ -91,8 +97,9 @@ public abstract class CelestialBodyType<C extends CelestialBodyConfig> {
 
     /**
      * Returns the celestial body's parent, or {@code null} if it does not have one
+     *
      * @param manager the dynamic registry manager to supply the registry
-     * @param config the celestial body configuration to be queried
+     * @param config  the celestial body configuration to be queried
      * @return the celestial body's parent
      * @see #parent(Registry, CelestialBodyConfig)
      */
@@ -102,6 +109,7 @@ public abstract class CelestialBodyType<C extends CelestialBodyConfig> {
 
     /**
      * Returns the {@link GasComposition atmospheric information} of this celestial body
+     *
      * @param config the celestial body configuration to be queried
      * @return the registry key of the {@link World} this celestial body is linked to
      * @see GasComposition#breathable() to see the requirements for a celestial body to be considered breatheable
@@ -110,6 +118,7 @@ public abstract class CelestialBodyType<C extends CelestialBodyConfig> {
 
     /**
      * Returns the gravity of this celestial body, relative to earth
+     *
      * @param config the celestial body configuration to be queried
      * @return the gravity of this celestial body
      */
@@ -117,6 +126,7 @@ public abstract class CelestialBodyType<C extends CelestialBodyConfig> {
 
     /**
      * Returns a codec that will (de)serialize a fully-configured celestial body of this type.
+     *
      * @return a codec that will (de)serialize a fully-configured celestial body of this type.
      */
     public Codec<CelestialBody<C, CelestialBodyType<C>>> codec() {

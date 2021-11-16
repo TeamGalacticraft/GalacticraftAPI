@@ -27,6 +27,7 @@ import dev.galacticraft.impl.universe.position.config.StaticCelestialPositionCon
 
 public class StaticCelestialPositionType extends CelestialPositionType<StaticCelestialPositionConfig> {
     public static final StaticCelestialPositionType INSTANCE = new StaticCelestialPositionType();
+
     private StaticCelestialPositionType() {
         super(StaticCelestialPositionConfig.CODEC);
     }

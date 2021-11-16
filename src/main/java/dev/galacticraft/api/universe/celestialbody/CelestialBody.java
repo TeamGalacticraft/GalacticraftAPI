@@ -41,86 +41,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Optional;
 
 public record CelestialBody<C extends CelestialBodyConfig, T extends CelestialBodyType<C>>(T type, C config) {
-    public static final Codec<CelestialBody<?, ?>> CODEC = AddonRegistry.CELESTIAL_BODY_TYPE.dispatch(CelestialBody::type, CelestialBodyType::codec);
-    
-    /**
-     * Returns the name of this celestial body
-     * Be sure to {@link TranslatableText#copy() copy} the returned text if you intend on stylizing it.
-     * @return the name of this celestial body
-     */
-    public @NotNull TranslatableText name() {
-        return this.type().name(this.config());
-    }
-
-    /**
-     * Returns the description of this celestial body
-     * Be sure to {@link TranslatableText#copy() copy} the returned text if you intend on stylizing it.
-     * @return the description of this celestial body
-     */
-    public @NotNull TranslatableText description() {
-        return this.type().description(this.config());
-    }
-
-    /**
-     * Returns this celestial body's parent, or {@code null} if it does not have one
-     * @param registry the registry to query for the parent
-     * @return this celestial body's parent
-     */
-    public @Nullable CelestialBody<?, ?> parent(Registry<CelestialBody<?, ?>> registry) {
-        return this.type().parent(registry, this.config());
-    }
-
-    /**
-     * Returns this celestial body's parent, or {@code null} if it does not have one
-     * @param manager the dynamic registry manager to supply the registry
-     * @return this celestial body's parent
-     * @see #parent(Registry)
-     */
-    public @Nullable CelestialBody<?, ?> parent(DynamicRegistryManager manager) {
-        return this.type().parent(manager, this.config());
-    }
-
-    /**
-     * Returns this celestial body's parent galaxy's id
-     * @return this celestial body's parent galaxy's id
-     */
-    public @NotNull RegistryKey<Galaxy> galaxy() {
-        return this.type().galaxy(this.config());
-    }
-
-    /**
-     * Returns this celestial body's position provider
-     * @return this celestial body's position provider
-     * @see CelestialPosition
-     */
-    public @NotNull CelestialPosition<?, ?> position() {
-        return this.type().position(this.config());
-    }
-
-    /**
-     * Returns this celestial body's display provider
-     * @return this celestial body's display provider
-     * @see CelestialDisplay
-     */
-    public @NotNull CelestialDisplay<?, ?> display() {
-        return this.type().display(this.config());
-    }
-
-    /**
-     * Returns this celestial body's atmospheric composition
-     * @return this celestial body's atmospheric composition
-     */
-    public @NotNull GasComposition atmosphere() {
-        return this.type().atmosphere(this.config());
-    }
-
-    /**
-     * Returns this celestial body's gravity
-     * @return this celestial body's gravity
-     */
-    public float gravity() {
-        return this.type().gravity(this.config());
-    }
+    public static final Codec<CelestialBody<?, ?>> CODEC = AddonRegistry.CELESTIAL_BODY_TYPE.method_39673().dispatch(CelestialBody::type, CelestialBodyType::codec);
 
     public static Registry<CelestialBody<?, ?>> getRegistry(DynamicRegistryManager manager) {
         return manager.get(AddonRegistry.CELESTIAL_BODY_KEY);
@@ -152,9 +73,98 @@ public record CelestialBody<C extends CelestialBodyConfig, T extends CelestialBo
 
     public static <C extends CelestialBodyConfig, T extends CelestialBodyType<C> & Landable<C>> Optional<CelestialBody<C, T>> getByDimension(Registry<CelestialBody<?, ?>> registry, RegistryKey<World> key) {
         for (CelestialBody<?, ?> body : registry) {
-            if (body.type() instanceof Landable landable && landable.world(body.config()).equals(key)) return Optional.of((CelestialBody<C, T>)body);
+            if (body.type() instanceof Landable landable && landable.world(body.config()).equals(key))
+                return Optional.of((CelestialBody<C, T>) body);
         }
         return Optional.empty();
+    }
+
+    /**
+     * Returns the name of this celestial body
+     * Be sure to {@link TranslatableText#copy() copy} the returned text if you intend on stylizing it.
+     *
+     * @return the name of this celestial body
+     */
+    public @NotNull TranslatableText name() {
+        return this.type().name(this.config());
+    }
+
+    /**
+     * Returns the description of this celestial body
+     * Be sure to {@link TranslatableText#copy() copy} the returned text if you intend on stylizing it.
+     *
+     * @return the description of this celestial body
+     */
+    public @NotNull TranslatableText description() {
+        return this.type().description(this.config());
+    }
+
+    /**
+     * Returns this celestial body's parent, or {@code null} if it does not have one
+     *
+     * @param registry the registry to query for the parent
+     * @return this celestial body's parent
+     */
+    public @Nullable CelestialBody<?, ?> parent(Registry<CelestialBody<?, ?>> registry) {
+        return this.type().parent(registry, this.config());
+    }
+
+    /**
+     * Returns this celestial body's parent, or {@code null} if it does not have one
+     *
+     * @param manager the dynamic registry manager to supply the registry
+     * @return this celestial body's parent
+     * @see #parent(Registry)
+     */
+    public @Nullable CelestialBody<?, ?> parent(DynamicRegistryManager manager) {
+        return this.type().parent(manager, this.config());
+    }
+
+    /**
+     * Returns this celestial body's parent galaxy's id
+     *
+     * @return this celestial body's parent galaxy's id
+     */
+    public @NotNull RegistryKey<Galaxy> galaxy() {
+        return this.type().galaxy(this.config());
+    }
+
+    /**
+     * Returns this celestial body's position provider
+     *
+     * @return this celestial body's position provider
+     * @see CelestialPosition
+     */
+    public @NotNull CelestialPosition<?, ?> position() {
+        return this.type().position(this.config());
+    }
+
+    /**
+     * Returns this celestial body's display provider
+     *
+     * @return this celestial body's display provider
+     * @see CelestialDisplay
+     */
+    public @NotNull CelestialDisplay<?, ?> display() {
+        return this.type().display(this.config());
+    }
+
+    /**
+     * Returns this celestial body's atmospheric composition
+     *
+     * @return this celestial body's atmospheric composition
+     */
+    public @NotNull GasComposition atmosphere() {
+        return this.type().atmosphere(this.config());
+    }
+
+    /**
+     * Returns this celestial body's gravity
+     *
+     * @return this celestial body's gravity
+     */
+    public float gravity() {
+        return this.type().gravity(this.config());
     }
 
 }

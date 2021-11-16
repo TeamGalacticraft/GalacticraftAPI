@@ -25,33 +25,29 @@ package dev.galacticraft.impl.internal.world.gen;
 import com.mojang.serialization.Codec;
 import dev.galacticraft.impl.internal.world.gen.biome.GcApiBiomes;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
+import net.minecraft.class_6748;
 import net.minecraft.entity.SpawnGroup;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.structure.Structure;
 import net.minecraft.structure.StructureManager;
-import net.minecraft.structure.StructurePlacementData;
 import net.minecraft.util.collection.Pool;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.registry.DynamicRegistryManager;
 import net.minecraft.util.registry.Registry;
+import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.ChunkRegion;
 import net.minecraft.world.HeightLimitView;
 import net.minecraft.world.Heightmap.Type;
-import net.minecraft.world.SpawnHelper;
 import net.minecraft.world.StructureWorldAccess;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.SpawnSettings;
 import net.minecraft.world.biome.source.BiomeAccess;
 import net.minecraft.world.biome.source.FixedBiomeSource;
+import net.minecraft.world.biome.source.util.MultiNoiseUtil;
 import net.minecraft.world.chunk.Chunk;
-import net.minecraft.world.chunk.ChunkStatus;
-import net.minecraft.world.gen.BlockSource;
-import net.minecraft.world.gen.ChunkRandom;
 import net.minecraft.world.gen.GenerationStep;
 import net.minecraft.world.gen.StructureAccessor;
-import net.minecraft.world.gen.chunk.AquiferSampler;
 import net.minecraft.world.gen.chunk.ChunkGenerator;
 import net.minecraft.world.gen.chunk.StructuresConfig;
 import net.minecraft.world.gen.chunk.VerticalBlockSample;
@@ -61,25 +57,26 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.Optional;
-import java.util.Random;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
+import java.util.function.Predicate;
 
 @ApiStatus.Internal
 public class SatelliteChunkGenerator extends ChunkGenerator {
     public static final SatelliteChunkGenerator VOID_INSTANCE = new SatelliteChunkGenerator(GcApiBiomes.SPACE, new Structure());
     public static final Codec<SatelliteChunkGenerator> CODEC = Codec.unit(VOID_INSTANCE);
-    private static final BlockState AIR = Blocks.AIR.getDefaultState();
-
-    private static final BlockSource EMPTY_SOURCE = (x, y, z) -> AIR;
-    private static final VerticalBlockSample EMPTY_VIEW = new VerticalBlockSample(0, new BlockState[0]);
-
     public static final StructuresConfig STRUCTURES_CONFIG = new StructuresConfig(Optional.empty(), Collections.emptyMap());
+    private static final MultiNoiseUtil.NoiseValuePoint EMPTY_POINT = new MultiNoiseUtil.NoiseValuePoint(0, 0, 0, 0, 0, 0);
+    private static final MultiNoiseUtil.MultiNoiseSampler EMPTY_SAMPLER = (x, y, z) -> EMPTY_POINT;
+    private static final Pool<SpawnSettings.SpawnEntry> EMPTY_POOL = Pool.empty();
+    private static final VerticalBlockSample EMPTY_VIEW = new VerticalBlockSample(0, new BlockState[0]);
     private final Structure structure;
+    private final Biome biome;
 
     public SatelliteChunkGenerator(Biome biome, Structure structure) {
         super(new FixedBiomeSource(biome), STRUCTURES_CONFIG);
         this.structure = structure;
+        this.biome = biome;
     }
 
     @Override
@@ -93,16 +90,12 @@ public class SatelliteChunkGenerator extends ChunkGenerator {
     }
 
     @Override
-    public void populateBiomes(Registry<Biome> registry, Chunk chunk) {
+    public MultiNoiseUtil.MultiNoiseSampler getMultiNoiseSampler() {
+        return EMPTY_SAMPLER;
     }
 
     @Override
-    public void carve(long seed, BiomeAccess access, Chunk chunk, GenerationStep.Carver carver) {
-    }
-
-    @Override
-    protected AquiferSampler createAquiferSampler(Chunk chunk) {
-        return super.createAquiferSampler(chunk);
+    public void carve(ChunkRegion chunkRegion, long seed, BiomeAccess biomeAccess, StructureAccessor structureAccessor, Chunk chunk, GenerationStep.Carver generationStep) {
     }
 
     @Nullable
@@ -112,17 +105,31 @@ public class SatelliteChunkGenerator extends ChunkGenerator {
     }
 
     @Override
-    public void generateFeatures(ChunkRegion region, StructureAccessor accessor) {
-        if (region.isChunkLoaded(0, 0) && region.getChunk(0, 0, ChunkStatus.BIOMES, false) == null) this.structure.place(region.toServerWorld(), BlockPos.ORIGIN, BlockPos.ORIGIN, new StructurePlacementData().clearProcessors().setIgnoreEntities(true).setPlaceFluids(true).setUpdateNeighbors(false), new Random(78921412L), 0);
+    public void buildSurface(ChunkRegion region, StructureAccessor structures, Chunk chunk) {
     }
 
     @Override
     public void populateEntities(ChunkRegion region) {
-        ChunkPos chunkPos = region.getCenterPos();
-        Biome biome = region.getBiome(chunkPos.getStartPos());
-        ChunkRandom chunkRandom = new ChunkRandom();
-        chunkRandom.setPopulationSeed(region.getSeed(), chunkPos.getStartX(), chunkPos.getStartZ());
-        SpawnHelper.populateEntities(region, biome, chunkPos, chunkRandom);
+    }
+
+    @Override
+    public CompletableFuture<Chunk> populateBiomes(Executor executor, class_6748 arg, StructureAccessor structureAccessor, Chunk chunk) {
+        chunk.method_38258(() -> biome);
+        return CompletableFuture.completedFuture(chunk);
+    }
+
+    @Override
+    public Biome getBiomeForNoiseGen(int biomeX, int biomeY, int biomeZ) {
+        return biome;
+    }
+
+    @Override
+    public void generateFeatures(StructureWorldAccess world, Chunk chunk, StructureAccessor structureAccessor) {
+    }
+
+    @Override
+    protected boolean method_38274(Registry<Biome> registry, Predicate<RegistryKey<Biome>> predicate, Biome biome) {
+        return registry.getKey(this.biome).filter(predicate).isPresent();
     }
 
     @Override
@@ -134,6 +141,7 @@ public class SatelliteChunkGenerator extends ChunkGenerator {
     public int getSpawnHeight(HeightLimitView world) {
         return 255;
     }
+
     @Override
     public int getWorldHeight() {
         return 256;
@@ -141,7 +149,7 @@ public class SatelliteChunkGenerator extends ChunkGenerator {
 
     @Override
     public Pool<SpawnSettings.SpawnEntry> getEntitySpawnList(Biome biome, StructureAccessor accessor, SpawnGroup group, BlockPos pos) {
-        return Pool.empty();
+        return EMPTY_POOL;
     }
 
     @Override
@@ -153,13 +161,18 @@ public class SatelliteChunkGenerator extends ChunkGenerator {
     }
 
     @Override
+    public CompletableFuture<Chunk> populateNoise(Executor executor, class_6748 arg, StructureAccessor structureAccessor, Chunk chunk) {
+        return CompletableFuture.completedFuture(chunk);
+    }
+
+    @Override
     public int getSeaLevel() {
         return 0;
     }
 
     @Override
     public int getMinimumY() {
-        return 0;
+        return -64;
     }
 
     @Override
@@ -175,20 +188,6 @@ public class SatelliteChunkGenerator extends ChunkGenerator {
     @Override
     public boolean isStrongholdStartingChunk(ChunkPos pos) {
         return false;
-    }
-
-    @Override
-    public BlockSource getBlockSource() {
-        return EMPTY_SOURCE;
-    }
-
-    @Override
-    public void buildSurface(ChunkRegion region, Chunk chunk) {
-    }
-
-    @Override
-    public CompletableFuture<Chunk> populateNoise(Executor executor, StructureAccessor accessor, Chunk chunk) {
-        return CompletableFuture.completedFuture(chunk);
     }
 
     @Override

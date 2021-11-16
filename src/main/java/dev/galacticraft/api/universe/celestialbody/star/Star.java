@@ -26,11 +26,13 @@ import dev.galacticraft.api.universe.celestialbody.CelestialBodyConfig;
 
 /**
  * Represents a {@link dev.galacticraft.api.universe.celestialbody.CelestialBodyType<C> celestial body type} that is a star.
+ *
  * @param <C> the type of configuration
  */
 public interface Star<C extends CelestialBodyConfig> {
     /**
      * Returns the solar luminosity of this star (1.0 is the Sun's luminance)
+     *
      * @param config the star configuration to be parsed
      * @return the solar luminosity of this star
      */
@@ -38,6 +40,7 @@ public interface Star<C extends CelestialBodyConfig> {
 
     /**
      * Returns the surface temperature of this star in Kelvin
+     *
      * @param config the star configuration to be parsed
      * @return the surface temperature of this star
      */

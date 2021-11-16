@@ -22,6 +22,8 @@
 
 /**
  * Mixins for Galacticraft-API
+ * <p>
+ * Client-sided mixins for Galacticraft-API
  */
 
 /**

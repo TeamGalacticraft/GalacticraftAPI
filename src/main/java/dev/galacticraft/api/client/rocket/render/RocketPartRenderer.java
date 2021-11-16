@@ -34,11 +34,12 @@ import net.minecraft.client.world.ClientWorld;
 public interface RocketPartRenderer {
     /**
      * Called when this rocket part is being rendered inside a gui/screen.
-     * @param world the client world of the main player
+     *
+     * @param world    the client world of the main player
      * @param matrices the matrix stack containing the current transformations in the gui. All changes will not be popped out automatically
-     * @param mouseX the x position of the mouse
-     * @param mouseY the y position of the mouse
-     * @param delta time in-between ticks
+     * @param mouseX   the x position of the mouse
+     * @param mouseY   the y position of the mouse
+     * @param delta    time in-between ticks
      */
     default void renderGUI(ClientWorld world, MatrixStack matrices, int mouseX, int mouseY, float delta) {
     }

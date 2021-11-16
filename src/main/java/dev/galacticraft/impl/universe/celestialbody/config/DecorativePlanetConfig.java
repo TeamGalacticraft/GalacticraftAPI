@@ -39,7 +39,12 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 
-public record DecorativePlanetConfig(@NotNull TranslatableText name, @NotNull TranslatableText description, @NotNull RegistryKey<Galaxy> galaxy, @NotNull RegistryKey<CelestialBody<?, ?>> parent, @NotNull CelestialPosition<?, ?> position, @NotNull CelestialDisplay<?, ?> display, GasComposition atmosphere, float gravity, @NotNull Optional<SatelliteRecipe> satelliteRecipe) implements CelestialBodyConfig {
+public record DecorativePlanetConfig(@NotNull TranslatableText name, @NotNull TranslatableText description,
+                                     @NotNull RegistryKey<Galaxy> galaxy,
+                                     @NotNull RegistryKey<CelestialBody<?, ?>> parent,
+                                     @NotNull CelestialPosition<?, ?> position, @NotNull CelestialDisplay<?, ?> display,
+                                     GasComposition atmosphere, float gravity,
+                                     @NotNull Optional<SatelliteRecipe> satelliteRecipe) implements CelestialBodyConfig {
     public static final Codec<DecorativePlanetConfig> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             Codec.STRING.fieldOf("name").xmap(TranslatableText::new, TranslatableText::getKey).forGetter(DecorativePlanetConfig::name),
             Codec.STRING.fieldOf("description").xmap(TranslatableText::new, TranslatableText::getKey).forGetter(DecorativePlanetConfig::description),

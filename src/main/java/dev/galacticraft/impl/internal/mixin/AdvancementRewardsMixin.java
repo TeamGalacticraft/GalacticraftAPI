@@ -45,7 +45,20 @@ import java.util.Arrays;
 public abstract class AdvancementRewardsMixin implements AdvancementRewardsAccessor {
     @Unique
     @NotNull
-    private Identifier @Nullable[] rocketParts = null;
+    private Identifier @Nullable [] rocketParts = null;
+
+    @Inject(method = "fromJson", at = @At("RETURN"), cancellable = true)
+    private static void fromJson_gc(JsonObject json, CallbackInfoReturnable<AdvancementRewards> cir) {
+        if (json.has("rocket_parts")) {
+            AdvancementRewards rewards = cir.getReturnValue();
+            JsonArray array = json.get("rocket_parts").getAsJsonArray();
+            Identifier[] ids = new Identifier[array.size()];
+            for (int i = 0; i < array.size(); i++) {
+                ids[i] = new Identifier(array.get(i).getAsString());
+            }
+            ((AdvancementRewardsAccessor) rewards).setRocketPartRewards_gc(ids);
+        }
+    }
 
     @Inject(method = "apply", at = @At("RETURN"))
     private void init_gc(ServerPlayerEntity player, CallbackInfo ci) {
@@ -73,19 +86,6 @@ public abstract class AdvancementRewardsMixin implements AdvancementRewardsAcces
     private void toString_gc(CallbackInfoReturnable<String> cir) {
         String s = cir.getReturnValue();
         cir.setReturnValue(s.substring(0, s.length() - 1) + ", parts=" + Arrays.toString(this.rocketParts) + '}');
-    }
-
-    @Inject(method = "fromJson", at = @At("RETURN"), cancellable = true)
-    private static void fromJson_gc(JsonObject json, CallbackInfoReturnable<AdvancementRewards> cir) {
-        if (json.has("rocket_parts")) {
-            AdvancementRewards rewards = cir.getReturnValue();
-            JsonArray array = json.get("rocket_parts").getAsJsonArray();
-            Identifier[] ids = new Identifier[array.size()];
-            for (int i = 0; i < array.size(); i++) {
-                ids[i] = new Identifier(array.get(i).getAsString());
-            }
-            ((AdvancementRewardsAccessor) rewards).setRocketPartRewards_gc(ids);
-        }
     }
 
     @Override

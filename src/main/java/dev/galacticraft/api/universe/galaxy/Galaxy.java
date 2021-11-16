@@ -33,14 +33,15 @@ import net.minecraft.util.registry.DynamicRegistryManager;
 import net.minecraft.util.registry.Registry;
 import org.jetbrains.annotations.NotNull;
 
-public record Galaxy(@NotNull TranslatableText name, @NotNull TranslatableText description, CelestialPosition<?, ?> position, CelestialDisplay<?, ?> display) {
+public record Galaxy(@NotNull TranslatableText name, @NotNull TranslatableText description,
+                     CelestialPosition<?, ?> position, CelestialDisplay<?, ?> display) {
     public static final Codec<Galaxy> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             Codec.STRING.fieldOf("name").xmap(TranslatableText::new, TranslatableText::getKey).forGetter(Galaxy::name),
             Codec.STRING.fieldOf("description").xmap(TranslatableText::new, TranslatableText::getKey).forGetter(Galaxy::description),
             CelestialPosition.CODEC.fieldOf("position").forGetter(Galaxy::position),
             CelestialDisplay.CODEC.fieldOf("display").forGetter(Galaxy::display)
     ).apply(instance, Galaxy::new));
-    
+
     public static Registry<Galaxy> getRegistry(DynamicRegistryManager manager) {
         return manager.get(AddonRegistry.GALAXY_KEY);
     }

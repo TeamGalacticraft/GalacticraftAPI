@@ -1,29 +1,40 @@
-name: Build
+name: CodeQL Analysis
 
 on:
   push:
     branches:
       - main
+  pull_request:
+    branches:
+      - main
 
 jobs:
-  Build:
+  Analysis:
     runs-on: ubuntu-20.04
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
 
       - name: Validate Gradle wrapper
         uses: gradle/wrapper-validation-action@v1
 
-      - name: Setup JDK 16
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v1
+        with:
+          languages: java
+
+      - name: Setup JDK
         uses: actions/setup-java@v2
         with:
           java-version: 16
           distribution: temurin
 
       - name: Build
-        id: build
         uses: gradle/gradle-build-action@v2
         with:
           arguments: checkLicenses build
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v1

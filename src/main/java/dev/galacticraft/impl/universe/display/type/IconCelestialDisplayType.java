@@ -48,17 +48,17 @@ public class IconCelestialDisplayType extends CelestialDisplayType<IconCelestial
     @Override
     public Vector4f render(MatrixStack matrices, BufferBuilder buffer, int size, double mouseX, double mouseY, float delta, Consumer<Supplier<Shader>> shaderSetter, IconCelestialDisplayConfig config) {
         shaderSetter.accept(GameRenderer::getPositionTexShader);
-        Matrix4f model = matrices.peek().getModel();
+        Matrix4f positionMatrix = matrices.peek().getPositionMatrix();
         AbstractTexture texture = MinecraftClient.getInstance().getTextureManager().getTexture(config.texture());
         RenderSystem.setShaderTexture(0, texture.getGlId());
         texture.bindTexture();
         float width = GlStateManager._getTexLevelParameter(GL32C.GL_TEXTURE_2D, 0, GL32C.GL_TEXTURE_WIDTH);
         float height = GlStateManager._getTexLevelParameter(GL32C.GL_TEXTURE_2D, 0, GL32C.GL_TEXTURE_HEIGHT);
         buffer.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_TEXTURE);
-        buffer.vertex(model, config.scale() * -size, config.scale() * -size, 0).texture(config.u() / width, config.v() / height).next();
-        buffer.vertex(model, config.scale() * -size, config.scale() * size, 0).texture(config.u() / width, (config.v() + config.height()) / height).next();
-        buffer.vertex(model, config.scale() * size, config.scale() * size, 0).texture((config.u() + config.width()) / width, (config.v() + config.height()) / height).next();
-        buffer.vertex(model, config.scale() * size, config.scale() * -size, 0).texture((config.u() + config.width()) / width, config.v() / height).next();
+        buffer.vertex(positionMatrix, config.scale() * -size, config.scale() * -size, 0).texture(config.u() / width, config.v() / height).next();
+        buffer.vertex(positionMatrix, config.scale() * -size, config.scale() * size, 0).texture(config.u() / width, (config.v() + config.height()) / height).next();
+        buffer.vertex(positionMatrix, config.scale() * size, config.scale() * size, 0).texture((config.u() + config.width()) / width, (config.v() + config.height()) / height).next();
+        buffer.vertex(positionMatrix, config.scale() * size, config.scale() * -size, 0).texture((config.u() + config.width()) / width, config.v() / height).next();
         buffer.end();
         BufferRenderer.draw(buffer);
         return new Vector4f(config.scale() * -size, config.scale() * -size, (config.scale() * size) * 2, (config.scale() * size) * 2);

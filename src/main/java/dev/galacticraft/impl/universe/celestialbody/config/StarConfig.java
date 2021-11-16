@@ -35,7 +35,10 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.RegistryKey;
 import org.jetbrains.annotations.NotNull;
 
-public record StarConfig(@NotNull TranslatableText name, @NotNull TranslatableText description, @NotNull RegistryKey<Galaxy> galaxy, @NotNull CelestialPosition<?, ?> position, @NotNull CelestialDisplay<?, ?> display, GasComposition photosphericComposition, float gravity, double luminance, int surfaceTemperature) implements CelestialBodyConfig {
+public record StarConfig(@NotNull TranslatableText name, @NotNull TranslatableText description,
+                         @NotNull RegistryKey<Galaxy> galaxy, @NotNull CelestialPosition<?, ?> position,
+                         @NotNull CelestialDisplay<?, ?> display, GasComposition photosphericComposition, float gravity,
+                         double luminance, int surfaceTemperature) implements CelestialBodyConfig {
     public static final Codec<StarConfig> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             Codec.STRING.fieldOf("name").xmap(TranslatableText::new, TranslatableText::getKey).forGetter(StarConfig::name),
             Codec.STRING.fieldOf("description").xmap(TranslatableText::new, TranslatableText::getKey).forGetter(StarConfig::description),

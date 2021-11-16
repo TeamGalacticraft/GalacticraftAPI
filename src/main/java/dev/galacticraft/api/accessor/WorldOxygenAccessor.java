@@ -30,6 +30,7 @@ import net.minecraft.util.math.BlockPos;
 public interface WorldOxygenAccessor {
     /**
      * Returns whether the supplied position in this world is breathable for entities
+     *
      * @param pos the position to test
      * @return whether the supplied position in the chunk is breathable for entities
      */

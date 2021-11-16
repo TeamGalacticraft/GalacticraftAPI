@@ -44,8 +44,10 @@ import java.util.List;
 import java.util.function.Supplier;
 
 @Environment(EnvType.CLIENT)
-public record BakedModelRocketPartRenderer(Supplier<BakedModel> model, Supplier<RenderLayer> layer) implements RocketPartRenderer {
+public record BakedModelRocketPartRenderer(Supplier<BakedModel> model,
+                                           Supplier<RenderLayer> layer) implements RocketPartRenderer {
     private static final Direction[] DIRECTIONS_AND_NULL = new Direction[]{null, Direction.DOWN, Direction.UP, Direction.NORTH, Direction.SOUTH, Direction.WEST, Direction.EAST};
+
     public BakedModelRocketPartRenderer(Supplier<BakedModel> model) {
         this(model, () -> RenderLayer.getEntityTranslucent(model.get().getParticleSprite().getId(), true));
     }

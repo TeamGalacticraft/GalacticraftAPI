@@ -49,16 +49,16 @@ public class RegistryArgumentType<T> implements ArgumentType<Registry<T>> {
         return new RegistryArgumentType<>();
     }
 
-    @Override
-    public Registry<T> parse(StringReader reader) throws CommandSyntaxException {
-        RegistryKey<Registry<T>> key = RegistryKey.ofRegistry(Identifier.fromCommandInput(reader));
-        return ((Registry<Registry<T>>)Registry.REGISTRIES).get(key);
-    }
-
     public static <T> Registry<T> getRegistry(CommandContext<ServerCommandSource> context, String id) {
         Registry<T> registry = context.getArgument(id, Registry.class);
         Optional<MutableRegistry<T>> dynamic = context.getSource().getRegistryManager().getOptionalMutable(registry.getKey());
         return dynamic.isPresent() ? dynamic.get() : registry;
+    }
+
+    @Override
+    public Registry<T> parse(StringReader reader) throws CommandSyntaxException {
+        RegistryKey<Registry<T>> key = RegistryKey.ofRegistry(Identifier.fromCommandInput(reader));
+        return ((Registry<Registry<T>>) Registry.REGISTRIES).get(key);
     }
 
     @Override

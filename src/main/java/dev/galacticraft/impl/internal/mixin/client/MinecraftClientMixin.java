@@ -41,14 +41,15 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(MinecraftClient.class)
 @Environment(EnvType.CLIENT)
 public abstract class MinecraftClientMixin {
-    @Shadow public abstract SoundManager getSoundManager();
+    @Shadow
+    public abstract SoundManager getSoundManager();
 
     @Inject(method = "setWorld", at = @At("RETURN"))
     private void gc_updateSoundMultiplier(ClientWorld world, CallbackInfo ci) {
         if (world != null) {
-            ((SoundSystemAccessor) ((SoundManagerAccessor)this.getSoundManager()).getSoundSystem()).gc_updateAtmosphericMultiplier(CelestialBody.getByDimension(world).map(body -> body.atmosphere().pressure()).orElse(1.0f));
+            ((SoundSystemAccessor) ((SoundManagerAccessor) this.getSoundManager()).getSoundSystem()).gc_updateAtmosphericMultiplier(CelestialBody.getByDimension(world).map(body -> body.atmosphere().pressure()).orElse(1.0f));
         } else {
-            ((SoundSystemAccessor) ((SoundManagerAccessor)this.getSoundManager()).getSoundSystem()).gc_updateAtmosphericMultiplier(1.0f);
+            ((SoundSystemAccessor) ((SoundManagerAccessor) this.getSoundManager()).getSoundSystem()).gc_updateAtmosphericMultiplier(1.0f);
         }
     }
 }

@@ -49,17 +49,17 @@ public class OxygenTankImpl implements OxygenTank, Saveable {
     }
 
     @Override
+    public int getAmount() {
+        return amount;
+    }
+
+    @Override
     public void setAmount(int amount) {
         int prev = this.amount;
         this.amount = amount;
         for (OxygenTankChangedListener listener : listeners) {
             listener.onChanged(this, prev);
         }
-    }
-
-    @Override
-    public int getAmount() {
-        return amount;
     }
 
     @Override

@@ -30,7 +30,7 @@ After that you can add Galacticraft and the Addon API.
 dependencies {
     // add both the addon api and mod but only include the addon api 
     include modImplementation("dev.galacticraft:GalacticraftAPI:{VERSION}")
-    //modRuntime("dev.galacticraft:Galacticraft:{VERSION}") // not up yet
+    //modRuntimeOnly("dev.galacticraft:Galacticraft:{VERSION}") // not up yet
 }
 ```
 

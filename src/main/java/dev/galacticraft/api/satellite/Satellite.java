@@ -28,11 +28,13 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * Represents a player-made satellite which orbits another planet
+ *
  * @param <C> the type of configuration
  */
 public interface Satellite<C extends CelestialBodyConfig> {
     /**
      * Returns the ownership data of this satellite
+     *
      * @param config the satellite configuration to be queried
      * @return the ownership data of this satellite
      * @see SatelliteOwnershipData
@@ -42,6 +44,7 @@ public interface Satellite<C extends CelestialBodyConfig> {
     /**
      * Returns the custom name of this satellite
      * By default it is {@code <Player Name>'s satellite}
+     *
      * @param config the satellite configuration to be queried
      * @return the custom name of this satellite
      */
@@ -49,7 +52,8 @@ public interface Satellite<C extends CelestialBodyConfig> {
 
     /**
      * Sets the custom name of this satellite
-     * @param text the text to set
+     *
+     * @param text   the text to set
      * @param config the satellite configuration to be set
      */
     void setCustomName(@NotNull Text text, C config);

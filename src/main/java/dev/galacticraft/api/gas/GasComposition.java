@@ -40,6 +40,17 @@ public record GasComposition(Object2DoubleMap<RegistryKey<Gas>> composition, dou
             Codec.FLOAT.fieldOf("pressure").forGetter(GasComposition::pressure)
     ).apply(atmosphericInfoInstance, GasComposition::new));
 
+    public static GasComposition readPacket(PacketByteBuf buf) {
+        int size = buf.readInt();
+        Builder builder = new Builder();
+        builder.pressure(buf.readFloat());
+        builder.temperature(buf.readDouble());
+        for (int i = 0; i < size; i++) {
+            builder.gas(RegistryKey.of(AddonRegistry.GAS_KEY, buf.readIdentifier()), buf.readDouble());
+        }
+        return builder.build();
+    }
+
     public boolean breathable() {
         double oxygen = this.composition().getOrDefault(Gas.OXYGEN_KEY, 0.0);
         return oxygen > 195000.0 && oxygen < 235000.0; //195000ppm to 235000ppm (19.5% to 23.5%)
@@ -53,17 +64,6 @@ public record GasComposition(Object2DoubleMap<RegistryKey<Gas>> composition, dou
             buf.writeIdentifier(entry.getKey().getValue());
             buf.writeDouble(entry.getDoubleValue());
         }
-    }
-
-    public static GasComposition readPacket(PacketByteBuf buf) {
-        int size = buf.readInt();
-        Builder builder = new Builder();
-        builder.pressure(buf.readFloat());
-        builder.temperature(buf.readDouble());
-        for (int i = 0; i < size; i++) {
-            builder.gas(RegistryKey.of(AddonRegistry.GAS_KEY, buf.readIdentifier()), buf.readDouble());
-        }
-        return builder.build();
     }
 
     public static class Builder {

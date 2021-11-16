@@ -45,11 +45,14 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(SoundSystem.class)
 @Environment(EnvType.CLIENT)
 public abstract class SoundSystemMixin implements SoundSystemAccessor {
-    @Shadow public abstract void updateSoundVolume(SoundCategory soundCategory, float volume);
-
-    @Shadow @Final private SoundListener listener;
+    @Shadow
+    @Final
+    private SoundListener listener;
     @Unique
     private float multiplier = 1.0f;
+
+    @Shadow
+    public abstract void updateSoundVolume(SoundCategory soundCategory, float volume);
 
     @Inject(method = "getAdjustedVolume", at = @At("RETURN"), cancellable = true)
     private void adjustVolumeToAtmosphereGC(SoundInstance soundInstance, CallbackInfoReturnable<Float> cir) {

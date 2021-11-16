@@ -30,4 +30,12 @@ import org.jetbrains.annotations.ApiStatus;
 public interface Constant {
     String MOD_ID = "galacticraft-api";
     Logger LOGGER = LogManager.getLogger("GalacticraftAPI");
+
+    interface Nbt {
+        String GC_API = "GCApi";
+        String DEFAULT_BREATHABLE = "DefaultBreathable";
+        String CHANGE_COUNT = "ChangeCount";
+        String OXYGEN = "Oxygen";
+
+    }
 }

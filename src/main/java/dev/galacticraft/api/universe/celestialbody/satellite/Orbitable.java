@@ -28,11 +28,13 @@ import org.jetbrains.annotations.Nullable;
 
 /**
  * Represents a {@link dev.galacticraft.api.universe.celestialbody.CelestialBodyType<C> celestial body type} that can potentially allow player-made objects to orbit itself.
+ *
  * @param <C> the type of configuration
  */
 public interface Orbitable<C extends CelestialBodyConfig> {
     /**
      * Returns the {@link SatelliteRecipe stellite recipe} of this celestial body, or {@code null} if satellites should not be allowed to be created
+     *
      * @param config the celestial body configuration to be queried
      * @return the {@link SatelliteRecipe stellite recipe} of this celestial body
      */

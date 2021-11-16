@@ -1,40 +1,29 @@
 name: Pull Request Check
+
 on:
   pull_request:
     types: [ synchronize, opened ]
 
 jobs:
-  build:
-    if: ${{ github.repository != 'TeamGalacticraft/GalacticraftAPI' }}
-    strategy:
-      matrix:
-        java: [16]
-        os: [ubuntu-20.04]
-    runs-on: ${{ matrix.os }}
+  Build:
+    runs-on: ubuntu-20.04
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
+        with:
+          fetch-depth: 1
+
       - name: Validate Gradle wrapper
         uses: gradle/wrapper-validation-action@v1
-      - name: Initialize CodeQL
-        if: ${{ runner.os == 'Linux' && matrix.java == '16' }}
-        uses: github/codeql-action/init@v1
-        with:
-          languages: java
-      - name: Setup JDK ${{ matrix.java }}
+
+      - name: Setup JDK 16
         uses: actions/setup-java@v2
         with:
-          java-version: ${{ matrix.java }}
-          distribution: 'adopt'
-      - name: Make Gradle wrapper executable
-        if: ${{ runner.os != 'Windows' }}
-        run: chmod +x ./gradlew
+          java-version: 16
+          distribution: temurin
+
       - name: Build
-        uses: eskatos/gradle-command-action@v1
+        uses: gradle/gradle-build-action@v2
         with:
           arguments: checkLicenses build
-          wrapper-cache-enabled: true
-          dependencies-cache-enabled: true
-      - name: Perform CodeQL Analysis
-        if: ${{ runner.os == 'Linux' && matrix.java == '16' }}
-        uses: github/codeql-action/analyze@v1

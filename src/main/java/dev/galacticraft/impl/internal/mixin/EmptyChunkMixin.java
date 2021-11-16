@@ -58,12 +58,12 @@ public abstract class EmptyChunkMixin implements ChunkOxygenAccessor, ChunkOxyge
     }
 
     @Override
-    public void setDefaultBreathable_gc(boolean breathable) {
-
+    public boolean getDefaultBreathable_gc() {
+        return false;
     }
 
     @Override
-    public boolean getDefaultBreathable_gc() {
-        return false;
+    public void setDefaultBreathable_gc(boolean breathable) {
+
     }
 }

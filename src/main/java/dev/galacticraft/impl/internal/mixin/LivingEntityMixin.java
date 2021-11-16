@@ -64,11 +64,12 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(LivingEntity.class)
 public abstract class LivingEntityMixin extends Entity implements GearInventoryProvider {
-    @Shadow protected abstract int getNextAirOnLand(int air);
-
     public LivingEntityMixin(EntityType<?> type, World world) {
         super(type, world);
     }
+
+    @Shadow
+    protected abstract int getNextAirOnLand(int air);
 
     @ModifyVariable(method = "travel", at = @At(value = "FIELD"), ordinal = 0)
     private double modifyGravity_gc(double d) {
@@ -88,13 +89,13 @@ public abstract class LivingEntityMixin extends Entity implements GearInventoryP
     @Redirect(method = "baseTick", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;isSubmergedIn(Lnet/minecraft/tag/Tag;)Z", ordinal = 0))
     private boolean checkOxygenAtmosphere_gc(LivingEntity entity, Tag<Fluid> tag) {
         //noinspection ConstantConditions
-        assert ((Object)entity) == this;
-        return entity.isSubmergedIn(tag) || !((WorldOxygenAccessor) this.world).isBreathable(entity.getBlockPos().offset(Direction.UP, (int)Math.floor(this.getEyeHeight(entity.getPose(), entity.getDimensions(entity.getPose())))));
+        assert ((Object) entity) == this;
+        return entity.isSubmergedIn(tag) || !((WorldOxygenAccessor) this.world).isBreathable(entity.getBlockPos().offset(Direction.UP, (int) Math.floor(this.getEyeHeight(entity.getPose(), entity.getDimensions(entity.getPose())))));
     }
 
     @Inject(method = "tick", at = @At(value = "RETURN"))
     private void checkOxygenAtmosphere_gc(CallbackInfo ci) {
-        LivingEntity thisEntity = ((LivingEntity) (Object)this);
+        LivingEntity thisEntity = ((LivingEntity) (Object) this);
         for (ItemStack stack : this.getAccessories().stackIterable()) {
             if (stack.getItem() instanceof Accessory accessory) {
                 accessory.tick(thisEntity);
@@ -139,7 +140,7 @@ public abstract class LivingEntityMixin extends Entity implements GearInventoryP
     private void dropGearInv(CallbackInfo ci) {
         if (!this.world.getGameRules().getBoolean(GameRules.KEEP_INVENTORY)) {
             FixedItemInv gearInv = this.getGearInv();
-            for(int i = 0; i < gearInv.getSlotCount(); ++i) {
+            for (int i = 0; i < gearInv.getSlotCount(); ++i) {
                 ItemStack itemStack = gearInv.extractStack(i, ConstantItemFilter.ANYTHING, ItemStack.EMPTY, Integer.MAX_VALUE, Simulation.ACTION);
                 if (!itemStack.isEmpty() && EnchantmentHelper.hasVanishingCurse(itemStack)) {
                     //noinspection ConstantConditions

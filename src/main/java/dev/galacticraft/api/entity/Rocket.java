@@ -33,36 +33,42 @@ import org.jetbrains.annotations.NotNull;
 public interface Rocket {
     /**
      * Returns the colour of the rocket in ARGB format (8 bits per colour)
+     *
      * @return the colour of the rocket
      */
     int getColor();
 
     /**
      * Sets the colour of the rocket in ARGB format (8 bits per colour)
+     *
      * @param color the colour of the rocket
      */
     void setColor(int color);
 
     /**
      * Returns the launch stage of this rocket
+     *
      * @return the launch stage of this rocket
      */
     LaunchStage getStage();
 
     /**
      * Sets the launch stage of this rocket
+     *
      * @param stage the launch stage to set
      */
     void setStage(LaunchStage stage);
 
     /**
      * Returns all six rocket parts applied to this rocket
+     *
      * @return all parts applied to this rocket
      */
     Identifier[/*6*/] getPartIds();
 
     /**
      * Returns the rocket launch pad linked to this rocket or {@link BlockPos#ORIGIN} if it is not linked to one
+     *
      * @return the rocket launch pad linked to this rocket
      */
     @NotNull BlockPos getLinkedPad();
@@ -70,12 +76,14 @@ public interface Rocket {
     /**
      * Sets the rocket launch pad linked to this rocket
      * If the rocket is not linked to a launchpad, use {@link BlockPos#ORIGIN}
+     *
      * @param linkedPad the launchpad to link this rocket with
      */
     void setLinkedPad(@NotNull BlockPos linkedPad);
 
     /**
      * Returns whether this rocket is able to travel to the supplied celestial body
+     *
      * @param body the celestial body to test against
      * @return whether this rocket is able to travel to the supplied celestial body
      */
@@ -84,12 +92,14 @@ public interface Rocket {
     /**
      * Returns the speed of the rocket
      * This does equate to the vertical velocity of this rocket, as rockets may turn
+     *
      * @return the speed of the rocket
      */
     double getSpeed();
 
     /**
      * Sets the speed of the rocket
+     *
      * @param speed the speed to force the rocket to
      */
     void setSpeed(double speed);
@@ -108,13 +118,15 @@ public interface Rocket {
 
     /**
      * Called when the rocket is destroyed
-     * @param source the type of damage inflicted on this rocket
+     *
+     * @param source   the type of damage inflicted on this rocket
      * @param exploded whether the damage is self-inflicted (the rocket failed)
      */
     void dropItems(DamageSource source, boolean exploded);
 
     /**
      * Swaps out a part of this rocket with the provided one
+     *
      * @param part the rocket part to swap in
      * @param type the type of rocket part to swap
      * @throws AssertionError {@code if (part.type != type) } and assertions are enabled
@@ -124,12 +136,14 @@ public interface Rocket {
     /**
      * Replaces all the current parts of this rocket with new ones.
      * The part type of a rocket part at any given index should equal to
+     *
      * @param parts the parts to put in
      */
     void setParts(Identifier[/*6*/] parts);
 
     /**
      * Returns the id of the rocket part applied to this rocket of this {@code type}
+     *
      * @param type the type of part to return
      * @return the id of the rocket part applied to this rocket of this {@code type}
      */

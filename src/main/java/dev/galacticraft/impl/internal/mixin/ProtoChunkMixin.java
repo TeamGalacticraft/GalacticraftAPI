@@ -31,9 +31,7 @@ import net.minecraft.network.packet.s2c.play.CustomPayloadS2CPacket;
 import net.minecraft.world.chunk.ChunkSection;
 import net.minecraft.world.chunk.ProtoChunk;
 import org.jetbrains.annotations.NotNull;
-import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 
 import java.util.List;
@@ -43,14 +41,14 @@ import java.util.List;
  */
 @Mixin(ProtoChunk.class)
 public abstract class ProtoChunkMixin implements ChunkOxygenAccessor, ChunkOxygenSyncer, ChunkOxygenAccessorInternal {
-    @Shadow @Final private ChunkSection[] sections;
-    private @Unique boolean defaultBreathable = false;
+    private @Unique
+    boolean defaultBreathable = false;
 
     @Override
     public boolean isBreathable(int x, int y, int z) {
-        if (((ProtoChunk)(Object)this).isOutOfHeightLimit(y)) return this.defaultBreathable;
-        ChunkSection section = sections[y >> 4];
-        if (!ChunkSection.isEmpty(section)) {
+        if (((ProtoChunk) (Object) this).isOutOfHeightLimit(y)) return this.defaultBreathable;
+        ChunkSection section = ((ProtoChunk) (Object) this).getSectionArray()[y >> 4];
+        if (!section.isEmpty()) {
             return ((ChunkSectionOxygenAccessor) section).isBreathable(x & 15, y & 15, z & 15);
         }
         return this.defaultBreathable;
@@ -58,9 +56,9 @@ public abstract class ProtoChunkMixin implements ChunkOxygenAccessor, ChunkOxyge
 
     @Override
     public void setBreathable(int x, int y, int z, boolean value) {
-        if (((ProtoChunk)(Object)this).isOutOfHeightLimit(y)) return;
-        ChunkSection section = sections[y >> 4];
-        if (!ChunkSection.isEmpty(section)) {
+        if (((ProtoChunk) (Object) this).isOutOfHeightLimit(y)) return;
+        ChunkSection section = ((ProtoChunk) (Object) this).getSectionArray()[y >> 4];
+        if (!section.isEmpty()) {
             ((ChunkSectionOxygenAccessor) section).setBreathable(x & 15, y & 15, z & 15, value);
         }
     }

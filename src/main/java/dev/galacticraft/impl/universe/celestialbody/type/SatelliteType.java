@@ -74,13 +74,11 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.LinkedList;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.OptionalLong;
 
 public class SatelliteType extends CelestialBodyType<SatelliteConfig> implements Satellite<SatelliteConfig>, Landable<SatelliteConfig> {
     public static final SatelliteType INSTANCE = new SatelliteType(SatelliteConfig.CODEC);
-    private static final GasComposition EMPTY_GAS_COMPOSITION = new GasComposition.Builder().build();
-    private static final TranslatableText NAME = new TranslatableText("ui.galacticraft-api.satellite.name");
-    private static final TranslatableText DESCRIPTION = new TranslatableText("ui.galacticraft-api.satellite.description");
     public static final WorldGenerationProgressListener EMPTY_PROGRESS_LISTENER = new WorldGenerationProgressListener() {
         @Override
         public void start(ChunkPos spawnPos) {
@@ -98,6 +96,9 @@ public class SatelliteType extends CelestialBodyType<SatelliteConfig> implements
         public void stop() {
         }
     };
+    private static final GasComposition EMPTY_GAS_COMPOSITION = new GasComposition.Builder().build();
+    private static final TranslatableText NAME = new TranslatableText("ui.galacticraft-api.satellite.name");
+    private static final TranslatableText DESCRIPTION = new TranslatableText("ui.galacticraft-api.satellite.description");
 
     protected SatelliteType(Codec<SatelliteConfig> codec) {
         super(codec);
@@ -105,8 +106,8 @@ public class SatelliteType extends CelestialBodyType<SatelliteConfig> implements
 
     @ApiStatus.Internal
     public static CelestialBody<SatelliteConfig, SatelliteType> registerSatellite(@NotNull MinecraftServer server, @NotNull ServerPlayerEntity player, @NotNull CelestialBody<?, ?> parent, Structure structure) {
-        Identifier id = new Identifier(server.getRegistryManager().get(AddonRegistry.CELESTIAL_BODY_KEY).getId(parent).toString() + "_" + player.getEntityName().toLowerCase(Locale.ROOT));
-        DimensionType type = DimensionType.create(OptionalLong.empty(), true, false, false, true, 1, false, false, false, false, false, 0, 256, 256, (seed, x, y, z, storage) -> server.getRegistryManager().get(Registry.BIOME_KEY).get(new Identifier(Constant.MOD_ID, "space")), new Identifier(Constant.MOD_ID, "infiniburn_space"), new Identifier(Constant.MOD_ID, "space_sky"), 0);
+        Identifier id = new Identifier(Objects.requireNonNull(server.getRegistryManager().get(AddonRegistry.CELESTIAL_BODY_KEY).getId(parent)) + "_" + player.getEntityName().toLowerCase(Locale.ROOT));
+        DimensionType type = DimensionType.create(OptionalLong.empty(), true, false, false, true, 1, false, false, false, false, false, 0, 256, 256, new Identifier(Constant.MOD_ID, "infiniburn_space"), new Identifier(Constant.MOD_ID, "space_sky"), 0);
         DimensionOptions options = new DimensionOptions(() -> type, new SatelliteChunkGenerator(GcApiBiomes.SPACE, structure));
         SatelliteOwnershipData ownershipData = new SatelliteOwnershipData(player.getUuid(), player.getEntityName(), new LinkedList<>(), false);
         CelestialPosition<?, ?> position = new CelestialPosition<>(OrbitalCelestialPositionType.INSTANCE, new OrbitalCelestialPositionConfig(1550, 10.0f, 0.0F, false));

@@ -38,6 +38,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class StarType extends CelestialBodyType<StarConfig> implements Star<StarConfig> {
     public static final StarType INSTANCE = new StarType();
+
     protected StarType() {
         super(StarConfig.CODEC);
     }
@@ -49,8 +50,9 @@ public class StarType extends CelestialBodyType<StarConfig> implements Star<Star
 
     /**
      * Returns {@code null} as stars do not have parent celestial bodies
+     *
      * @param registry the registry to query for the parent
-     * @param config the celestial body configuration to be queried
+     * @param config   the celestial body configuration to be queried
      * @return {@code null}
      */
     @Override

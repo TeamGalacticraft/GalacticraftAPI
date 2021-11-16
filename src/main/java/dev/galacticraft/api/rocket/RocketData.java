@@ -49,7 +49,7 @@ public interface RocketData {
 
     static RocketData empty() {
         return RocketDataImpl.empty();
-    };
+    }
 
     NbtCompound toNbt(NbtCompound nbt);
 
