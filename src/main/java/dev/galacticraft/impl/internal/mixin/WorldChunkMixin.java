@@ -30,9 +30,7 @@ import dev.galacticraft.impl.internal.accessor.ChunkOxygenSyncer;
 import dev.galacticraft.impl.internal.accessor.ChunkSectionOxygenAccessorInternal;
 import dev.galacticraft.impl.internal.accessor.WorldOxygenAccessorInternal;
 import io.netty.buffer.Unpooled;
-import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.fluid.Fluid;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.packet.s2c.play.CustomPayloadS2CPacket;
 import net.minecraft.util.Identifier;
@@ -58,7 +56,6 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.function.Consumer;
 
 /**
  * @author <a href="https://github.com/TeamGalacticraft">TeamGalacticraft</a>
@@ -74,9 +71,14 @@ public abstract class WorldChunkMixin implements ChunkOxygenAccessor, ChunkOxyge
     private @Unique
     boolean update = false;
 
-    @Inject(method = "<init>(Lnet/minecraft/world/World;Lnet/minecraft/util/math/ChunkPos;Lnet/minecraft/world/chunk/UpgradeData;Lnet/minecraft/world/tick/ChunkTickScheduler;Lnet/minecraft/world/tick/ChunkTickScheduler;J[Lnet/minecraft/world/chunk/ChunkSection;Ljava/util/function/Consumer;Lnet/minecraft/world/gen/chunk/Blender;)V", at = @At("RETURN"))
-    private void init_gc(World world, ChunkPos pos, UpgradeData upgradeData, ChunkTickScheduler blockTickScheduler, ChunkTickScheduler fluidTickScheduler, long inhabitedTime, ChunkSection[] sectionArrayInitializer, Consumer loadToWorldConsumer, Blender blendingData, CallbackInfo ci) {
+    @Inject(method = "<init>(Lnet/minecraft/world/World;Lnet/minecraft/util/math/ChunkPos;Lnet/minecraft/world/chunk/UpgradeData;Lnet/minecraft/world/tick/ChunkTickScheduler;Lnet/minecraft/world/tick/ChunkTickScheduler;J[Lnet/minecraft/world/chunk/ChunkSection;Lnet/minecraft/world/chunk/WorldChunk$class_6829;Lnet/minecraft/world/gen/chunk/Blender;)V", at = @At("RETURN"))
+    private void init_gc(World world, ChunkPos pos, UpgradeData upgradeData, ChunkTickScheduler blockTickScheduler, ChunkTickScheduler fluidTickScheduler, long inhabitedTime, ChunkSection[] sectionArrayInitializer, WorldChunk.class_6829 arg, Blender blendingData, CallbackInfo ci) {
         this.updatable = new boolean[world.countVerticalSections()];
+        this.defaultBreathable = ((WorldOxygenAccessorInternal) world).getDefaultBreathable();
+        for (ChunkSection section : ((WorldChunk) (Object) this).getSectionArray()) {
+            assert section != null;
+            ((ChunkSectionOxygenAccessorInternal) section).setDefaultBreathable_gc(this.defaultBreathable);
+        }
     }
 
 
@@ -144,15 +146,6 @@ public abstract class WorldChunkMixin implements ChunkOxygenAccessor, ChunkOxyge
             ((ChunkSectionOxygenAccessorInternal) section).setChangedArray_gc(new boolean[16 * 16 * 16]);
         }
         ((ChunkSectionOxygenAccessorInternal) section).readData_gc(buf);
-    }
-
-    @Inject(method = "<init>(Lnet/minecraft/world/World;Lnet/minecraft/util/math/ChunkPos;Lnet/minecraft/world/chunk/UpgradeData;Lnet/minecraft/world/tick/ChunkTickScheduler;Lnet/minecraft/world/tick/ChunkTickScheduler;J[Lnet/minecraft/world/chunk/ChunkSection;Ljava/util/function/Consumer;Lnet/minecraft/world/gen/chunk/Blender;)V", at = @At("RETURN"))
-    private void initDefaultValue_gc(World world, ChunkPos pos, UpgradeData upgradeData, ChunkTickScheduler<Block> blockTickScheduler, ChunkTickScheduler<Fluid> fluidTickScheduler, long inhabitedTime, ChunkSection[] sectionArrayInitializer, Consumer<WorldChunk> loadToWorldConsumer, Blender blendingData, CallbackInfo ci) {
-        this.defaultBreathable = ((WorldOxygenAccessorInternal) world).getDefaultBreathable();
-        for (ChunkSection section : ((WorldChunk) (Object) this).getSectionArray()) {
-            assert section != null;
-            ((ChunkSectionOxygenAccessorInternal) section).setDefaultBreathable_gc(this.defaultBreathable);
-        }
     }
 
     @Inject(method = "setBlockState", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/chunk/ChunkSection;isEmpty()Z", ordinal = 0), locals = LocalCapture.CAPTURE_FAILHARD)

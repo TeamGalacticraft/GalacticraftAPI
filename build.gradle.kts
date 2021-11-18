@@ -31,10 +31,10 @@ plugins {
    id("io.github.juuxel.loom-quiltflower-mini") version("1.1.0")
 }
 
-val mc = "1.18-pre1"
-val yarn = "10"
+val mc = "1.18-pre4"
+val yarn = "3"
 val loader = "0.12.5"
-val fabric = "0.42.2+1.18"
+val fabric = "0.42.7+1.18"
 
 group = "dev.galacticraft"
 version ="0.4.0-prealpha.20+$mc"
@@ -42,8 +42,8 @@ version ="0.4.0-prealpha.20+$mc"
 base.archivesName.set("GalacticraftAPI")
 
 java {
-    targetCompatibility = JavaVersion.VERSION_16
-    sourceCompatibility = JavaVersion.VERSION_16
+    targetCompatibility = JavaVersion.VERSION_17
+    sourceCompatibility = JavaVersion.VERSION_17
 
     withSourcesJar()
     withJavadocJar()
@@ -122,7 +122,7 @@ tasks.processResources {
 tasks.withType<JavaCompile> {
     dependsOn(tasks.checkLicenses)
     options.encoding = "UTF-8"
-    options.release.set(16)
+    options.release.set(17)
 }
 
 tasks.jar {

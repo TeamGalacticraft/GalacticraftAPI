@@ -113,14 +113,14 @@ public class SatelliteChunkGenerator extends ChunkGenerator {
     }
 
     @Override
-    public CompletableFuture<Chunk> populateBiomes(Executor executor, class_6748 arg, StructureAccessor structureAccessor, Chunk chunk) {
-        chunk.method_38258(() -> biome);
+    public CompletableFuture<Chunk> populateBiomes(Registry<Biome> registry, Executor executor, class_6748 arg, StructureAccessor structureAccessor, Chunk chunk) {
+        chunk.method_38258(() -> this.biome);
         return CompletableFuture.completedFuture(chunk);
     }
 
     @Override
     public Biome getBiomeForNoiseGen(int biomeX, int biomeY, int biomeZ) {
-        return biome;
+        return this.biome;
     }
 
     @Override
@@ -128,8 +128,8 @@ public class SatelliteChunkGenerator extends ChunkGenerator {
     }
 
     @Override
-    protected boolean method_38274(Registry<Biome> registry, Predicate<RegistryKey<Biome>> predicate, Biome biome) {
-        return registry.getKey(this.biome).filter(predicate).isPresent();
+    protected boolean testBiomeByKey(Registry<Biome> registry, Predicate<RegistryKey<Biome>> condition, Biome biome) {
+        return registry.getKey(this.biome).filter(condition).isPresent();
     }
 
     @Override
