@@ -35,10 +35,12 @@ val mc = "1.18-pre4"
 val yarn = "3"
 val loader = "0.12.5"
 val fabric = "0.42.7+1.18"
+val junit = "5.8.1"
+val gameunit = "0.1.0"
 
 group = "dev.galacticraft"
 version ="0.4.0-prealpha.20+$mc"
-
+println("GalacticraftAPI: $version")
 base.archivesName.set("GalacticraftAPI")
 
 java {
@@ -66,8 +68,14 @@ loom {
             name("Game Test")
             source(gametestSourceSet)
             property("fabric.log.level", "debug")
-            vmArg("-Dfabric-api.gametest=true")
-            vmArg("-ea")
+            vmArg("-Dfabric-api.gametest")
+        }
+        register("gametestClient") {
+            client()
+            name("Game Test Client")
+            source(gametestSourceSet)
+            property("fabric.log.level", "debug")
+            vmArg("-Dfabric-api.gametest")
         }
     }
 }
@@ -78,6 +86,12 @@ repositories {
             includeGroup("alexiil.mc.lib")
         }
     }
+    maven("https://maven.galacticraft.dev") {
+        content {
+            includeGroup("dev.galacticraft")
+        }
+    }
+    mavenCentral()
 }
 
 dependencies {
@@ -101,8 +115,9 @@ dependencies {
     }
 
     modRuntimeOnly("net.fabricmc.fabric-api:fabric-api:$fabric")
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.1")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.8.1")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:$junit")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junit")
+    modRuntime("dev.galacticraft:GameUnit:$gameunit")
 }
 
 tasks.processResources {
