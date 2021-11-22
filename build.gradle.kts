@@ -31,13 +31,13 @@ plugins {
    id("io.github.juuxel.loom-quiltflower-mini") version("1.1.0")
 }
 
-val mc = "1.18-pre4"
-val yarn = "3"
+val mc = "1.18-pre5"
+val yarn = "4"
 val loader = "0.12.5"
-val fabric = "0.42.7+1.18"
+val fabric = "0.42.8+1.18"
 
 group = "dev.galacticraft"
-version ="0.4.0-prealpha.20+$mc"
+version ="0.4.0-prealpha.21+$mc"
 
 base.archivesName.set("GalacticraftAPI")
 

@@ -41,7 +41,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Optional;
 
 public record CelestialBody<C extends CelestialBodyConfig, T extends CelestialBodyType<C>>(T type, C config) {
-    public static final Codec<CelestialBody<?, ?>> CODEC = AddonRegistry.CELESTIAL_BODY_TYPE.method_39673().dispatch(CelestialBody::type, CelestialBodyType::codec);
+    public static final Codec<CelestialBody<?, ?>> CODEC = AddonRegistry.CELESTIAL_BODY_TYPE.getCodec().dispatch(CelestialBody::type, CelestialBodyType::codec);
 
     public static Registry<CelestialBody<?, ?>> getRegistry(DynamicRegistryManager manager) {
         return manager.get(AddonRegistry.CELESTIAL_BODY_KEY);

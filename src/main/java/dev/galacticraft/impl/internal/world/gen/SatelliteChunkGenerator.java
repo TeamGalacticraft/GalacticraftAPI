@@ -25,7 +25,6 @@ package dev.galacticraft.impl.internal.world.gen;
 import com.mojang.serialization.Codec;
 import dev.galacticraft.impl.internal.world.gen.biome.GcApiBiomes;
 import net.minecraft.block.BlockState;
-import net.minecraft.class_6748;
 import net.minecraft.entity.SpawnGroup;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.structure.Structure;
@@ -48,6 +47,7 @@ import net.minecraft.world.biome.source.util.MultiNoiseUtil;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.gen.GenerationStep;
 import net.minecraft.world.gen.StructureAccessor;
+import net.minecraft.world.gen.chunk.Blender;
 import net.minecraft.world.gen.chunk.ChunkGenerator;
 import net.minecraft.world.gen.chunk.StructuresConfig;
 import net.minecraft.world.gen.chunk.VerticalBlockSample;
@@ -113,7 +113,7 @@ public class SatelliteChunkGenerator extends ChunkGenerator {
     }
 
     @Override
-    public CompletableFuture<Chunk> populateBiomes(Registry<Biome> registry, Executor executor, class_6748 arg, StructureAccessor structureAccessor, Chunk chunk) {
+    public CompletableFuture<Chunk> populateBiomes(Registry<Biome> registry, Executor executor, Blender arg, StructureAccessor structureAccessor, Chunk chunk) {
         chunk.method_38258(() -> this.biome);
         return CompletableFuture.completedFuture(chunk);
     }
@@ -161,7 +161,7 @@ public class SatelliteChunkGenerator extends ChunkGenerator {
     }
 
     @Override
-    public CompletableFuture<Chunk> populateNoise(Executor executor, class_6748 arg, StructureAccessor structureAccessor, Chunk chunk) {
+    public CompletableFuture<Chunk> populateNoise(Executor executor, Blender arg, StructureAccessor structureAccessor, Chunk chunk) {
         return CompletableFuture.completedFuture(chunk);
     }
 

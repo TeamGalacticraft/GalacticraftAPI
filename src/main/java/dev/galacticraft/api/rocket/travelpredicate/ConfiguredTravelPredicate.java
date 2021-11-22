@@ -29,7 +29,7 @@ import it.unimi.dsi.fastutil.objects.Object2BooleanFunction;
 import net.minecraft.util.Identifier;
 
 public record ConfiguredTravelPredicate<C extends TravelPredicateConfig>(C config, TravelPredicateType<C> type) {
-    public static final Codec<ConfiguredTravelPredicate<?>> CODEC = AddonRegistry.TRAVEL_PREDICATE.method_39673().dispatch(ConfiguredTravelPredicate::type, TravelPredicateType::codec);
+    public static final Codec<ConfiguredTravelPredicate<?>> CODEC = AddonRegistry.TRAVEL_PREDICATE.getCodec().dispatch(ConfiguredTravelPredicate::type, TravelPredicateType::codec);
 
     public TravelPredicateType.AccessType canTravelTo(CelestialBody<?, ?> type, Object2BooleanFunction<Identifier> parts) {
         return this.type.canTravelTo(type, parts, this.config);

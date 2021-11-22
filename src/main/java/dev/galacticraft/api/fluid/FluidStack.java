@@ -20,31 +20,31 @@
  * SOFTWARE.
  */
 
-package dev.galacticraft.api.gas;
+package dev.galacticraft.api.fluid;
 
+import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
 import net.fabricmc.fabric.api.transfer.v1.storage.StoragePreconditions;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.DynamicRegistryManager;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
-public class GasStack {
-    public static final GasStack EMPTY = new GasStack(null, 0);
+public class FluidStack {
+    public static final FluidStack EMPTY = new FluidStack(FluidVariant.blank(), 0);
 
-    private final @Nullable Gas gas;
+    private final @NotNull FluidVariant fluid;
     private long amount;
 
-    public GasStack(@Nullable Gas gas, long amount) {
+    public FluidStack(@NotNull FluidVariant fluid, long amount) {
         StoragePreconditions.notNegative(amount);
-        this.gas = gas;
+        this.fluid = fluid;
         this.amount = amount;
     }
 
-    public @Nullable Gas gas() {
-        if (this.amount == 0) return null;
-        return this.gas;
+    public @Nullable FluidVariant fluid() {
+        if (this.amount == 0) return FluidVariant.blank();
+        return this.fluid;
     }
 
     public long amount() {
@@ -56,47 +56,47 @@ public class GasStack {
         this.amount = amount;
     }
 
-    public NbtCompound writeNbt(DynamicRegistryManager manager, NbtCompound nbt) {
-        if (this.gas == null) {
+    public NbtCompound writeNbt(NbtCompound nbt) {
+        if (this.fluid.isBlank()) {
             nbt.putBoolean("Empty", true);
         } else {
-            nbt.putString("Gas", Gas.getId(manager, this.gas).toString());
+            nbt.put("Fluid", this.fluid.toNbt());
             nbt.putLong("Amount", this.amount);
         }
         return nbt;
     }
 
-    public static GasStack readNbt(DynamicRegistryManager manager, NbtCompound nbt) {
+    public static FluidStack readNbt(NbtCompound nbt) {
         if (nbt.getBoolean("Empty")) return EMPTY;
-        return new GasStack(Gas.getById(manager, new Identifier(nbt.getString("Gas"))), nbt.getLong("Amount"));
+        return new FluidStack(FluidVariant.fromNbt(nbt.getCompound("Fluid")), nbt.getLong("Amount"));
     }
 
     public boolean isEmpty() {
-        return this.amount == 0 || this.gas == null;
+        return this.amount == 0 || this.fluid.isBlank();
     }
 
-    public GasStack copy() {
-        return new GasStack(this.gas, this.amount);
+    public FluidStack copy() {
+        return new FluidStack(this.fluid, this.amount);
     }
 
     @Override
     public boolean equals(Object obj) {
         if (obj == this) return true;
         if (obj == null || obj.getClass() != this.getClass()) return false;
-        var that = (GasStack) obj;
-        return Objects.equals(this.gas, that.gas) &&
+        var that = (FluidStack) obj;
+        return Objects.equals(this.fluid, that.fluid) &&
                 this.amount == that.amount;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(gas, amount);
+        return Objects.hash(this.fluid, this.amount);
     }
 
     @Override
     public String toString() {
-        return "GasStack[" +
-                "gas=" + gas + ", " +
-                "amount=" + amount + ']';
+        return "FluidStack[" +
+                "fluid=" + this.fluid + ", " +
+                "amount=" + this.amount + ']';
     }
 }

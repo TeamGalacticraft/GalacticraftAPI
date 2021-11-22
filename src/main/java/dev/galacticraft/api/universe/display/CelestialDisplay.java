@@ -35,7 +35,7 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public record CelestialDisplay<C extends CelestialDisplayConfig, T extends CelestialDisplayType<C>>(T type, C config) {
-    public static final Codec<CelestialDisplay<?, ?>> CODEC = AddonRegistry.CELESTIAL_DISPLAY_TYPE.method_39673().dispatch(CelestialDisplay::type, CelestialDisplayType::codec);
+    public static final Codec<CelestialDisplay<?, ?>> CODEC = AddonRegistry.CELESTIAL_DISPLAY_TYPE.getCodec().dispatch(CelestialDisplay::type, CelestialDisplayType::codec);
 
     @Environment(EnvType.CLIENT)
     public Vector4f render(MatrixStack matrices, BufferBuilder buffer, int scale, double mouseX, double mouseY, float delta, Consumer<Supplier<Shader>> shaderSetter) {
