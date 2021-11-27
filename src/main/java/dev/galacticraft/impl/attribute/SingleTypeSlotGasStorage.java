@@ -30,6 +30,7 @@ import net.fabricmc.fabric.api.transfer.v1.storage.StorageView;
 import net.fabricmc.fabric.api.transfer.v1.storage.base.SingleViewIterator;
 import net.fabricmc.fabric.api.transfer.v1.transaction.TransactionContext;
 import net.fabricmc.fabric.api.transfer.v1.transaction.base.SnapshotParticipant;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Iterator;
 
@@ -96,6 +97,11 @@ public class SingleTypeSlotGasStorage extends SnapshotParticipant<Long> implemen
     @Override
     public Iterator<StorageView<Gas>> iterator(TransactionContext transaction) {
         return SingleViewIterator.create(this, transaction);
+    }
+
+    @Override
+    public @Nullable StorageView<Gas> exactView(TransactionContext transaction, Gas resource) {
+        return resource == this.gas ? this : null;
     }
 
     @Override

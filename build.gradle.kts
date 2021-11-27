@@ -28,13 +28,13 @@ plugins {
     `maven-publish`
     id("fabric-loom") version "0.10-SNAPSHOT"
     id("org.cadixdev.licenser") version "0.6.1"
-   id("io.github.juuxel.loom-quiltflower-mini") version("1.1.0")
+    id("io.github.juuxel.loom-quiltflower-mini") version("1.1.0")
 }
 
-val mc = "1.18-pre5"
-val yarn = "4"
+val mc = "1.18-rc3"
+val yarn = "1"
 val loader = "0.12.5"
-val fabric = "0.42.8+1.18"
+val fabric = "0.43.1+1.18"
 
 group = "dev.galacticraft"
 version ="0.4.0-prealpha.21+$mc"

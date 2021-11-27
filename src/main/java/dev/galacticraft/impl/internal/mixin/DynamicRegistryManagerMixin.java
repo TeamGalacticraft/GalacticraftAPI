@@ -23,6 +23,7 @@
 package dev.galacticraft.impl.internal.mixin;
 
 import com.google.common.collect.ImmutableMap;
+import com.mojang.serialization.Codec;
 import dev.galacticraft.api.gas.Gas;
 import dev.galacticraft.api.registry.AddonRegistry;
 import dev.galacticraft.api.rocket.part.RocketPart;
@@ -34,6 +35,7 @@ import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryKey;
 import org.spongepowered.asm.mixin.Dynamic;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -44,6 +46,9 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 @Mixin(DynamicRegistryManager.class)
 public abstract class DynamicRegistryManagerMixin {
+    @Shadow
+    private static <E> void register(ImmutableMap.Builder<RegistryKey<? extends Registry<?>>, DynamicRegistryManager.Info<?>> infosBuilder, RegistryKey<? extends Registry<E>> registryRef, Codec<E> entryCodec) {}
+
     @Unique
     private static boolean override = false;
 
@@ -59,11 +64,11 @@ public abstract class DynamicRegistryManagerMixin {
     }
 
     @Dynamic("1.18-pre1 synthetic method")
-    @Inject(method = "method_30531", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/registry/DynamicRegistryManager;register(Lcom/google/common/collect/ImmutableMap$Builder;Lnet/minecraft/util/registry/RegistryKey;Lcom/mojang/serialization/Codec;)V", ordinal = 0), locals = LocalCapture.CAPTURE_FAILHARD)
+    @Inject(method = "method_30531", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/registry/DynamicRegistryManager;register(Lcom/google/common/collect/ImmutableMap$Builder;Lnet/minecraft/util/registry/RegistryKey;Lcom/mojang/serialization/Codec;Lcom/mojang/serialization/Codec;)V", ordinal = 0), locals = LocalCapture.CAPTURE_FAILHARD)
     private static void registerCustomRegistries_gc(CallbackInfoReturnable<ImmutableMap<RegistryKey<? extends Registry<?>>, DynamicRegistryManager.Info<?>>> ci, ImmutableMap.Builder<RegistryKey<? extends Registry<?>>, DynamicRegistryManager.Info<?>> builder) {
-        builder.put(AddonRegistry.GAS_KEY, new DynamicRegistryManager.Info<>(AddonRegistry.GAS_KEY, Gas.CODEC, Gas.CODEC));
-        builder.put(AddonRegistry.GALAXY_KEY, new DynamicRegistryManager.Info<>(AddonRegistry.GALAXY_KEY, Galaxy.CODEC, Galaxy.CODEC));
-        builder.put(AddonRegistry.CELESTIAL_BODY_KEY, new DynamicRegistryManager.Info<>(AddonRegistry.CELESTIAL_BODY_KEY, CelestialBody.CODEC, CelestialBody.CODEC));
-        builder.put(AddonRegistry.ROCKET_PART_KEY, new DynamicRegistryManager.Info<>(AddonRegistry.ROCKET_PART_KEY, RocketPart.CODEC, RocketPart.CODEC));
+        register(builder, AddonRegistry.GAS_KEY, Gas.CODEC);
+        register(builder, AddonRegistry.GALAXY_KEY, Galaxy.CODEC);
+        register(builder, AddonRegistry.CELESTIAL_BODY_KEY, CelestialBody.CODEC);
+        register(builder, AddonRegistry.ROCKET_PART_KEY, RocketPart.CODEC);
     }
 }

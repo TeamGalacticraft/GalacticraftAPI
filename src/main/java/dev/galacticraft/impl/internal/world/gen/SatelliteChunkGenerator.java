@@ -114,7 +114,7 @@ public class SatelliteChunkGenerator extends ChunkGenerator {
 
     @Override
     public CompletableFuture<Chunk> populateBiomes(Registry<Biome> registry, Executor executor, Blender arg, StructureAccessor structureAccessor, Chunk chunk) {
-        chunk.method_38258(() -> this.biome);
+        chunk.setBiomeIfAbsent(() -> this.biome);
         return CompletableFuture.completedFuture(chunk);
     }
 
