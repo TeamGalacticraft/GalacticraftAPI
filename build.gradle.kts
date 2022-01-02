@@ -31,10 +31,10 @@ plugins {
     id("io.github.juuxel.loom-quiltflower-mini") version("1.1.0")
 }
 
-val mc = "1.18-rc3"
-val yarn = "1"
-val loader = "0.12.5"
-val fabric = "0.43.1+1.18"
+val mc = "1.18.1"
+val yarn = "14"
+val loader = "0.12.12"
+val fabric = "0.45.0+1.18"
 
 group = "dev.galacticraft"
 version ="0.4.0-prealpha.21+$mc"
@@ -73,11 +73,6 @@ loom {
 }
 
 repositories {
-    maven("https://alexiil.uk/maven/") {
-        content {
-            includeGroup("alexiil.mc.lib")
-        }
-    }
 }
 
 dependencies {

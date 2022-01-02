@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2021 Team Galacticraft
+ * Copyright (c) 2019-2022 Team Galacticraft
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -167,9 +167,8 @@ public abstract class ServerPlayerEntityMixin implements ServerResearchAccessor,
     }
 
     @Override
-    public NbtCompound writeGearToNbt(NbtCompound tag) {
+    public void writeGearToNbt(NbtCompound tag) {
         tag.put(Constant.Nbt.GEAR_INV, this.getGearInv().toNbtList());
-        return tag;
     }
 
     @Override
