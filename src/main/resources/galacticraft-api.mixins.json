@@ -1,7 +1,7 @@
 {
   "required": true,
   "package": "dev.galacticraft.impl.internal.mixin",
-  "compatibilityLevel": "JAVA_16",
+  "compatibilityLevel": "JAVA_17",
   "mixins": [
     "AdvancementRewardsMixin",
     "BuiltinRegistriesMixin",

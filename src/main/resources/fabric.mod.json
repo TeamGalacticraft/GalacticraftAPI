@@ -35,8 +35,8 @@
   ],
   "accessWidener": "galacticraft-api.accesswidener",
   "depends": {
-    "fabricloader": ">=0.12",
-    "minecraft": ">=1.18",
+    "fabricloader": ">=0.12.12",
+    "minecraft": ">=1.18.1",
     "fabric-api-base": "*",
     "fabric-api-lookup-api-v1": "*",
     "fabric-command-api-v1": "*",
@@ -48,7 +48,7 @@
     "fabric-transfer-api-v1": "*"
   },
   "suggests": {
-    "modmenu": "*",
+    "modmenu": ">3.0.0",
     "galacticraft": "*"
   },
   "custom": {

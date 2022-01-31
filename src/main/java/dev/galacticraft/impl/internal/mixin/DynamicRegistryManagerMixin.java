@@ -58,12 +58,12 @@ public abstract class DynamicRegistryManagerMixin {
         override = (registryKey.equals(AddonRegistry.GAS_KEY) || registryKey.equals(AddonRegistry.GALAXY_KEY) || registryKey.equals(AddonRegistry.CELESTIAL_BODY_KEY) || registryKey.equals(AddonRegistry.ROCKET_PART_KEY));
     }
 
-    @ModifyVariable(method = "method_31141", at = @At(value = "STORE", ordinal = 0), name = "bl", ordinal = 0, index = 4)
+    @ModifyVariable(method = "method_31141", at = @At(value = "LOAD", ordinal = 0), name = "bl", ordinal = 0, index = 4)
     private static boolean modifyForSync_gc(boolean bl) {
         return bl && !override;
     }
 
-    @Dynamic("1.18-pre1 synthetic method")
+    @Dynamic("1.18.1 synthetic method")
     @Inject(method = "method_30531", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/registry/DynamicRegistryManager;register(Lcom/google/common/collect/ImmutableMap$Builder;Lnet/minecraft/util/registry/RegistryKey;Lcom/mojang/serialization/Codec;Lcom/mojang/serialization/Codec;)V", ordinal = 0), locals = LocalCapture.CAPTURE_FAILHARD)
     private static void registerCustomRegistries_gc(CallbackInfoReturnable<ImmutableMap<RegistryKey<? extends Registry<?>>, DynamicRegistryManager.Info<?>>> ci, ImmutableMap.Builder<RegistryKey<? extends Registry<?>>, DynamicRegistryManager.Info<?>> builder) {
         register(builder, AddonRegistry.GAS_KEY, Gas.CODEC);

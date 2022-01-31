@@ -34,6 +34,7 @@ import net.minecraft.util.registry.Registry;
 import net.minecraft.world.ChunkSerializer;
 import net.minecraft.world.chunk.*;
 import net.minecraft.world.chunk.light.LightingProvider;
+import net.minecraft.world.gen.chunk.BlendingData;
 import net.minecraft.world.poi.PointOfInterestStorage;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -47,7 +48,7 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 @Mixin(ChunkSerializer.class)
 public abstract class ChunkSerializerMixin {
     @Inject(method = "serialize", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/chunk/ChunkSection;getBlockStateContainer()Lnet/minecraft/world/chunk/PalettedContainer;"), locals = LocalCapture.CAPTURE_FAILHARD)
-    private static void serialize_gc(ServerWorld world, Chunk chunk, CallbackInfoReturnable<NbtCompound> cir, ChunkPos chunkPos, NbtCompound nbtCompound, ChunkSection chunkSections[], NbtList nbtList, LightingProvider lightingProvider, Registry registry, Codec codec, boolean bl, int i, int j, boolean bl2, ChunkNibbleArray chunkNibbleArray, ChunkNibbleArray chunkNibbleArray2, NbtCompound nbtCompound2, ChunkSection chunkSection) {
+    private static void serialize_gc(ServerWorld world, Chunk chunk, CallbackInfoReturnable<NbtCompound> cir, ChunkPos pos, NbtCompound compound, BlendingData blending, BelowZeroRetrogen retrogen, UpgradeData data, ChunkSection[] section, NbtList list, LightingProvider provider, Registry registry, Codec codec, boolean b, int i, int j, boolean bl, ChunkNibbleArray nibbleArray, ChunkNibbleArray nibbleArray2, NbtCompound nbtCompound, ChunkSection chunkSection) {
         NbtCompound nbt = new NbtCompound();
         if (((WorldOxygenAccessorInternal) world).getDefaultBreathable() != ((ChunkSectionOxygenAccessorInternal) chunkSection).getDefaultBreathable_gc()) {
             nbt.putBoolean(Constant.Nbt.DEFAULT_BREATHABLE, ((ChunkSectionOxygenAccessorInternal) chunkSection).getDefaultBreathable_gc());
@@ -71,11 +72,11 @@ public abstract class ChunkSerializerMixin {
             }
             nbt.putByteArray(Constant.Nbt.OXYGEN, output);
         }
-        nbtCompound2.put(Constant.Nbt.GC_API, nbt);
+        nbtCompound.put(Constant.Nbt.GC_API, nbt);
     }
 
     @Inject(method = "deserialize", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/poi/PointOfInterestStorage;initForPalette(Lnet/minecraft/util/math/ChunkPos;Lnet/minecraft/world/chunk/ChunkSection;)V"), locals = LocalCapture.CAPTURE_FAILHARD)
-    private static void deserialize_gc(ServerWorld world, PointOfInterestStorage poiStorage, ChunkPos chunkPos, NbtCompound nbt, CallbackInfoReturnable<ProtoChunk> cir, UpgradeData upgradeData, boolean bl, NbtList nbtList, int i, ChunkSection chunkSections[], boolean bl2, ChunkManager chunkManager, LightingProvider lightingProvider, Registry registry, Codec codec, int j, NbtCompound nbtCompound, int k, int l, PalettedContainer palettedContainer, PalettedContainer palettedContainer2, ChunkSection chunkSection) {
+    private static void deserialize_gc(ServerWorld world, PointOfInterestStorage poiStorage, ChunkPos chunkPos, NbtCompound nbt, CallbackInfoReturnable<ProtoChunk> cir, ChunkPos chunkPos2, UpgradeData upgradeData, boolean bl, NbtList nbtList, int i, ChunkSection[] chunkSections, boolean bl2, ChunkManager chunkManager, LightingProvider lightingProvider, Registry registry, Codec codec, int j, NbtCompound nbtCompound, int k, int l, PalettedContainer palettedContainer, PalettedContainer palettedContainer2, ChunkSection chunkSection) {
         NbtCompound nbtC = nbtCompound.getCompound(Constant.Nbt.GC_API);
         short changedCount = nbtC.getShort(Constant.Nbt.CHANGE_COUNT);
         if (nbtC.contains(Constant.Nbt.DEFAULT_BREATHABLE)) {

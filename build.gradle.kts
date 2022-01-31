@@ -25,18 +25,19 @@ import java.time.format.DateTimeFormatter
 plugins {
     java
     `maven-publish`
-    id("fabric-loom") version "0.10-SNAPSHOT"
+    id("fabric-loom") version "0.11-SNAPSHOT"
     id("org.cadixdev.licenser") version "0.6.1"
-    id("io.github.juuxel.loom-quiltflower-mini") version("1.1.0")
+    id("io.github.juuxel.loom-quiltflower") version("1.6.0")
 }
 
 val mc = "1.18.1"
-val yarn = "14"
+val yarn = "22"
 val loader = "0.12.12"
-val fabric = "0.45.0+1.18"
+val fabric = "0.46.3+1.18"
+val jupiter = "5.8.2"
 
 group = "dev.galacticraft"
-version ="0.4.0-prealpha.21+$mc"
+version ="0.4.0-prealpha.22+$mc"
 
 base.archivesName.set("GalacticraftAPI")
 
@@ -65,8 +66,7 @@ loom {
             name("Game Test")
             source(gametestSourceSet)
             property("fabric.log.level", "debug")
-            vmArg("-Dfabric-api.gametest=true")
-            vmArg("-ea")
+            vmArgs("-Dfabric-api.gametest", "-Dfabric-api.gametest.report-file=${project.buildDir}/junit.xml", "-ea")
         }
     }
 }
@@ -95,6 +95,9 @@ dependencies {
     }
 
     modRuntimeOnly("net.fabricmc.fabric-api:fabric-api:$fabric")
+
+    testImplementation("org.junit.jupiter:junit-jupiter-api:$jupiter")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$jupiter")
 }
 
 tasks.processResources {
@@ -111,6 +114,10 @@ tasks.processResources {
                 file: File -> file.writeText(groovy.json.JsonOutput.toJson(groovy.json.JsonSlurper().parse(file)))
         }
     }
+}
+
+tasks.test {
+    useJUnitPlatform()
 }
 
 tasks.withType<JavaCompile> {
