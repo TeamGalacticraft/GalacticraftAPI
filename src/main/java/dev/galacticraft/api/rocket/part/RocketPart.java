@@ -93,7 +93,7 @@ public record RocketPart(TranslatableText name, RocketPartType type, ConfiguredT
 
     public boolean isUnlocked(PlayerEntity player) {
         if (this.research() == null) return true;
-        return ((ResearchAccessor) player).hasUnlocked_gc(this.research());
+        return ((ResearchAccessor) player).hasUnlockedResearch(this.research());
     }
 
     public static class Builder {

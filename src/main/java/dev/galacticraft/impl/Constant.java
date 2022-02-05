@@ -38,4 +38,11 @@ public interface Constant {
         String OXYGEN = "Oxygen";
         String GEAR_INV = "GearInv";
     }
+
+    interface Chunk {
+        int WIDTH = 16;
+        int SECTION_HEIGHT = 16;
+        int CHUNK_SECTION_AREA = WIDTH * WIDTH * SECTION_HEIGHT;
+
+    }
 }

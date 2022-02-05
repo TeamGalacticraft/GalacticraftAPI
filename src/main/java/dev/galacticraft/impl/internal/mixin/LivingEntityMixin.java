@@ -46,7 +46,6 @@ import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.inventory.Inventory;
-import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
@@ -70,12 +69,12 @@ public abstract class LivingEntityMixin extends Entity implements GearInventoryP
     @Shadow protected abstract int getNextAirOnLand(int air);
 
     @ModifyConstant(method = "travel", constant = @Constant(doubleValue = 0.08))
-    private double modifyGravity_gc(double d) {
+    private double galacticraft_modifyGravity(double d) {
         return CelestialBody.getByDimension(this.world).map(celestialBodyType -> celestialBodyType.gravity() * 0.08d).orElse(0.08);
     }
 
     @ModifyConstant(method = "travel", constant = @Constant(doubleValue = 0.01))
-    private double modifyGravitySlowFalling_gc(double d) {
+    private double galacticraft_modifySlowFallingGravity(double d) {
         return CelestialBody.getByDimension(this.world).map(celestialBodyType -> celestialBodyType.gravity() * 0.01d).orElse(0.01);
     }
 
@@ -83,21 +82,21 @@ public abstract class LivingEntityMixin extends Entity implements GearInventoryP
     public abstract StatusEffectInstance getStatusEffect(StatusEffect effect);
 
     @Inject(method = "computeFallDamage", at = @At("HEAD"), cancellable = true)
-    protected void onComputeFallDamage_gc(float fallDistance, float damageMultiplier, CallbackInfoReturnable<Integer> cir) {
+    protected void galacticraft_modifyFallDamage(float fallDistance, float damageMultiplier, CallbackInfoReturnable<Integer> cir) {
         StatusEffectInstance effectInstance = this.getStatusEffect(StatusEffects.JUMP_BOOST);
         float ff = effectInstance == null ? 0.0F : (float) (effectInstance.getAmplifier() + 6);
         CelestialBody.getByDimension(this.world).ifPresent(celestialBodyType -> cir.setReturnValue((int) (MathHelper.ceil((fallDistance * celestialBodyType.gravity()) - 3.0F - ff) * damageMultiplier)));
     }
 
     @Redirect(method = "baseTick", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;isSubmergedIn(Lnet/minecraft/tag/Tag;)Z", ordinal = 0))
-    private boolean checkOxygenAtmosphere_gc(LivingEntity entity, Tag<Fluid> tag) {
+    private boolean galacticraft_testForBreathability(LivingEntity entity, Tag<Fluid> tag) {
         //noinspection ConstantConditions
         assert ((Object) entity) == this;
         return entity.isSubmergedIn(tag) || !((WorldOxygenAccessor) this.world).isBreathable(entity.getBlockPos().offset(Direction.UP, (int) Math.floor(this.getEyeHeight(entity.getPose(), entity.getDimensions(entity.getPose())))));
     }
 
     @Inject(method = "tick", at = @At(value = "RETURN"))
-    private void checkOxygenAtmosphere_gc(CallbackInfo ci) {
+    private void thistickAccessories(CallbackInfo ci) {
         LivingEntity thisEntity = ((LivingEntity) (Object) this);
         for (int i = 0; i < this.getAccessories().size(); i++) {
             ItemStack stack = this.getAccessories().getStack(i);
@@ -108,7 +107,7 @@ public abstract class LivingEntityMixin extends Entity implements GearInventoryP
     }
 
     @Inject(method = "getNextAirUnderwater", at = @At(value = "INVOKE", target = "Lnet/minecraft/enchantment/EnchantmentHelper;getRespiration(Lnet/minecraft/entity/LivingEntity;)I"), cancellable = true)
-    private void overrideOxygen_gc(int air, CallbackInfoReturnable<Integer> ci) {
+    private void galacticraft_modifyAirLevel(int air, CallbackInfoReturnable<Integer> ci) {
         EntityAttributeInstance attribute = ((LivingEntity) (Object) this).getAttributeInstance(GcApiEntityAttributes.CAN_BREATHE_IN_SPACE);
         if (attribute != null && attribute.getValue() >= 0.99D) {
             ci.setReturnValue(this.getNextAirOnLand(air));
@@ -145,7 +144,7 @@ public abstract class LivingEntityMixin extends Entity implements GearInventoryP
     }
 
     @Inject(method = "dropInventory", at = @At(value = "RETURN"))
-    private void dropGearInv(CallbackInfo ci) {
+    private void galacticraft_dropGearInventory(CallbackInfo ci) {
         if (!this.world.getGameRules().getBoolean(GameRules.KEEP_INVENTORY)) {
             Inventory gearInv = this.getGearInv();
             for (int i = 0; i < gearInv.size(); ++i) {
@@ -164,7 +163,7 @@ public abstract class LivingEntityMixin extends Entity implements GearInventoryP
     }
 
     @Override
-    public SimpleInventory getGearInv() {
+    public Inventory getGearInv() {
         return GalacticraftAPI.EMPTY_INV;
     }
 
@@ -184,12 +183,12 @@ public abstract class LivingEntityMixin extends Entity implements GearInventoryP
     }
 
     @Inject(method = "writeCustomDataToNbt", at = @At("HEAD"))
-    private void writeGear_gc(NbtCompound nbt, CallbackInfo ci) {
+    private void galacticraft_writeGearInventory(NbtCompound nbt, CallbackInfo ci) {
         this.writeGearToNbt(nbt);
     }
 
     @Inject(method = "readCustomDataFromNbt", at = @At("HEAD"))
-    private void readGear_gc(NbtCompound tag, CallbackInfo ci) {
+    private void galacticraft_readGearInventory(NbtCompound tag, CallbackInfo ci) {
         this.readGearFromNbt(tag);
     }
 

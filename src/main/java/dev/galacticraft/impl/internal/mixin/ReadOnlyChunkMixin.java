@@ -34,6 +34,6 @@ public abstract class ReadOnlyChunkMixin implements ChunkOxygenAccessor, ChunkOx
     }
 
     @Override
-    public void setDefaultBreathable_gc(boolean breathable) {
+    public void setDefaultBreathable(boolean breathable) {
     }
 }

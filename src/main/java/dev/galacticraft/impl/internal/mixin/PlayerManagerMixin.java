@@ -46,7 +46,7 @@ import java.util.Collection;
 @Mixin(PlayerManager.class)
 public abstract class PlayerManagerMixin {
     @Inject(method = "onPlayerConnect", at = @At("RETURN"))
-    private void gc_syncInv(ClientConnection connection, ServerPlayerEntity player, CallbackInfo ci) {
+    private void galacticraft_syncGearInventory(ClientConnection connection, ServerPlayerEntity player, CallbackInfo ci) {
         PacketByteBuf buf = PacketByteBufs.create();
         Inventory inventory = ((GearInventoryProvider) player).getGearInv();
         buf.writeInt(player.getId());

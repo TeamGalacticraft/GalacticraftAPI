@@ -25,10 +25,6 @@
  * <p>
  * Client-sided mixins for Galacticraft-API
  */
-
-/**
- * Client-sided mixins for Galacticraft-API
- */
 @ApiStatus.Internal
 package dev.galacticraft.impl.internal.mixin.client;
 

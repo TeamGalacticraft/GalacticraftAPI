@@ -26,7 +26,7 @@ import org.jetbrains.annotations.ApiStatus;
 
 @ApiStatus.Internal
 public interface ChunkOxygenAccessorInternal {
-    boolean getDefaultBreathable_gc();
+    boolean getDefaultBreathable();
 
-    void setDefaultBreathable_gc(boolean breathable);
+    void setDefaultBreathable(boolean breathable);
 }

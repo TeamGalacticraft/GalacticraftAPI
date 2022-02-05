@@ -31,5 +31,5 @@ public interface ResearchAccessor {
      * @param id The ID of the rocket part to test for
      * @return whether the supplied rocket part is unlocked for the player
      */
-    boolean hasUnlocked_gc(Identifier id);
+    boolean hasUnlockedResearch(Identifier id);
 }

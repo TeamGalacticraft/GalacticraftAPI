@@ -45,24 +45,20 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(SoundSystem.class)
 @Environment(EnvType.CLIENT)
 public abstract class SoundSystemMixin implements SoundSystemAccessor {
-    @Shadow
-    @Final
-    private SoundListener listener;
-    @Unique
-    private float multiplier = 1.0f;
+    @Shadow @Final private SoundListener listener;
+    @Unique private float multiplier = 1.0f;
 
-    @Shadow
-    public abstract void updateSoundVolume(SoundCategory soundCategory, float volume);
+    @Shadow public abstract void updateSoundVolume(SoundCategory soundCategory, float volume);
 
     @Inject(method = "getAdjustedVolume", at = @At("RETURN"), cancellable = true)
-    private void adjustVolumeToAtmosphereGC(SoundInstance soundInstance, CallbackInfoReturnable<Float> cir) {
+    private void galacticraft_adjustVolumeToAtmosphere(SoundInstance soundInstance, CallbackInfoReturnable<Float> cir) {
         if (multiplier != 1.0f) {
             cir.setReturnValue(MathHelper.clamp(cir.getReturnValueF() * this.multiplier, 0.0f, 2.0f));
         }
     }
 
     @Redirect(method = "play(Lnet/minecraft/client/sound/SoundInstance;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/sound/SoundInstance;shouldAlwaysPlay()Z", ordinal = 0))
-    private boolean gc_shouldAlwaysPlay(SoundInstance soundInstance) {
+    private boolean galacticraft_shouldAlwaysPlay(SoundInstance soundInstance) {
         if (this.multiplier != 1.0f) {
             return true;
         }
@@ -70,7 +66,7 @@ public abstract class SoundSystemMixin implements SoundSystemAccessor {
     }
 
     @Override
-    public void gc_updateAtmosphericMultiplier(float multiplier) {
+    public void updateAtmosphericVolumeMultiplier(float multiplier) {
         this.multiplier = multiplier;
         this.updateSoundVolume(null, this.listener.getVolume());
     }

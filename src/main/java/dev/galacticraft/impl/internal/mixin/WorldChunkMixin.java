@@ -30,19 +30,26 @@ import dev.galacticraft.impl.internal.accessor.ChunkOxygenSyncer;
 import dev.galacticraft.impl.internal.accessor.ChunkSectionOxygenAccessorInternal;
 import dev.galacticraft.impl.internal.accessor.WorldOxygenAccessorInternal;
 import io.netty.buffer.Unpooled;
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.fluid.Fluid;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.packet.s2c.play.CustomPayloadS2CPacket;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
+import net.minecraft.util.registry.Registry;
+import net.minecraft.world.HeightLimitView;
 import net.minecraft.world.World;
+import net.minecraft.world.biome.Biome;
+import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.ChunkSection;
 import net.minecraft.world.chunk.UpgradeData;
 import net.minecraft.world.chunk.WorldChunk;
 import net.minecraft.world.gen.chunk.BlendingData;
 import net.minecraft.world.tick.ChunkTickScheduler;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -61,31 +68,31 @@ import java.util.List;
  * @author <a href="https://github.com/TeamGalacticraft">TeamGalacticraft</a>
  */
 @Mixin(WorldChunk.class)
-public abstract class WorldChunkMixin implements ChunkOxygenAccessor, ChunkOxygenSyncer, ChunkOxygenAccessorInternal {
-    private @Unique boolean /*@NotNull*/ [] updatable;
-    @Shadow
-    @Final
-    World world;
-    private @Unique
-    boolean defaultBreathable = false;
-    private @Unique
-    boolean update = false;
+public abstract class WorldChunkMixin extends Chunk implements ChunkOxygenAccessor, ChunkOxygenSyncer, ChunkOxygenAccessorInternal {
+    @Shadow @Final World world;
+    private @Unique boolean /*@NotNull*/ [] sectionDirty;
+    private @Unique boolean defaultBreathable = false;
+    private @Unique boolean dirty = false;
+
+    private WorldChunkMixin(ChunkPos pos, UpgradeData upgradeData, HeightLimitView heightLimitView, Registry<Biome> biome, long inhabitedTime, @Nullable ChunkSection[] sectionArrayInitializer, @Nullable BlendingData blendingData) {
+        super(pos, upgradeData, heightLimitView, biome, inhabitedTime, sectionArrayInitializer, blendingData);
+    }
 
     @Inject(method = "<init>(Lnet/minecraft/world/World;Lnet/minecraft/util/math/ChunkPos;Lnet/minecraft/world/chunk/UpgradeData;Lnet/minecraft/world/tick/ChunkTickScheduler;Lnet/minecraft/world/tick/ChunkTickScheduler;J[Lnet/minecraft/world/chunk/ChunkSection;Lnet/minecraft/world/chunk/WorldChunk$EntityLoader;Lnet/minecraft/world/gen/chunk/BlendingData;)V", at = @At("RETURN"))
-    private void init_gc(World world, ChunkPos pos, UpgradeData upgradeData, ChunkTickScheduler blockTickScheduler, ChunkTickScheduler fluidTickScheduler, long inhabitedTime, ChunkSection[] sectionArrayInitializer, WorldChunk.EntityLoader entityLoader, BlendingData blendingData, CallbackInfo ci) {
-        this.updatable = new boolean[world.countVerticalSections()];
+    private void galacticraft_init(@NotNull World world, ChunkPos pos, UpgradeData upgradeData, ChunkTickScheduler<Block> blockTickScheduler, ChunkTickScheduler<Fluid> fluidTickScheduler, long inhabitedTime, ChunkSection[] sectionArrayInitializer, WorldChunk.EntityLoader entityLoader, BlendingData blendingData, CallbackInfo ci) {
+        this.sectionDirty = new boolean[world.countVerticalSections()];
         this.defaultBreathable = ((WorldOxygenAccessorInternal) world).getDefaultBreathable();
-        for (ChunkSection section : ((WorldChunk) (Object) this).getSectionArray()) {
+        for (ChunkSection section : this.getSectionArray()) {
             assert section != null;
-            ((ChunkSectionOxygenAccessorInternal) section).setDefaultBreathable_gc(this.defaultBreathable);
+            ((ChunkSectionOxygenAccessorInternal) section).setDefaultBreathable(this.defaultBreathable);
         }
     }
 
 
     @Override
     public boolean isBreathable(int x, int y, int z) {
-        if (((WorldChunk) (Object) this).isOutOfHeightLimit(y)) return this.defaultBreathable;
-        ChunkSection section = ((WorldChunk)(Object)this).getSection(((WorldChunk)(Object)this).getSectionIndex(y));
+        if (this.isOutOfHeightLimit(y)) return this.defaultBreathable;
+        ChunkSection section = this.getSection(this.getSectionIndex(y));
         if (!section.isEmpty()) {
             return ((ChunkSectionOxygenAccessor) section).isBreathable(x & 15, y & 15, z & 15);
         }
@@ -94,32 +101,34 @@ public abstract class WorldChunkMixin implements ChunkOxygenAccessor, ChunkOxyge
 
     @Override
     public void setBreathable(int x, int y, int z, boolean value) {
-        if (((WorldChunk) (Object) this).isOutOfHeightLimit(y)) return;
-        ChunkSection section = ((WorldChunk)(Object)this).getSection(((WorldChunk)(Object)this).getSectionIndex(y));
+        if (this.isOutOfHeightLimit(y)) return;
+        ChunkSection section = this.getSection(this.getSectionIndex(y));
         assert section != null;
         ChunkSectionOxygenAccessor accessor = ((ChunkSectionOxygenAccessor) section);
         if (value != accessor.isBreathable(x & 15, y & 15, z & 15)) {
             if (!this.world.isClient) {
-                ((WorldChunk) (Object) this).setShouldSave(true);
-                update = true;
-                updatable[((WorldChunk)(Object)this).getSectionIndex(y)] = true;
+                this.setShouldSave(true);
+                dirty = true;
+                sectionDirty[this.getSectionIndex(y)] = true;
             }
             accessor.setBreathable(x & 15, y & 15, z & 15, value);
         }
-
     }
 
     @Override
-    public @NotNull List<CustomPayloadS2CPacket> syncToClient_gc() {
-        if (update && !world.isClient) {
-            update = false;
+    public @NotNull List<CustomPayloadS2CPacket> syncOxygenPacketsToClient() {
+        if (dirty && !world.isClient) {
+            dirty = false;
             List<CustomPayloadS2CPacket> list = new LinkedList<>();
-            for (int i = 0; i < updatable.length; i++) {
-                if (updatable[i]) {
-                    updatable[i] = false;
-                    ChunkPos pos = ((WorldChunk) (Object) this).getPos();
-                    PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer(1 + 1 + ((16 * 16 * 16) / 8) + (4 * 2), 50 + 1 + ((16 * 16 * 16) / 8) + (4 * 2)).writeByte(i).writeInt(pos.x).writeInt(pos.z));
-                    ((ChunkSectionOxygenAccessorInternal) ((WorldChunk) (Object) this).getSection(i)).writeData_gc(buf);
+            for (int i = 0; i < sectionDirty.length; i++) {
+                if (sectionDirty[i]) {
+                    sectionDirty[i] = false;
+                    ChunkPos pos = this.getPos();
+                    ChunkSectionOxygenAccessorInternal accessor = (ChunkSectionOxygenAccessorInternal) this.getSection(i);
+                    int size = 1 + ((Integer.SIZE / Byte.SIZE) * 2) + (1 + (Short.SIZE / Byte.SIZE) + accessor.getModifiedBlocks() > 0 ? (Constant.Chunk.CHUNK_SECTION_AREA / Byte.SIZE) : 0);
+                    PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer(size, size)
+                            .writeByte(i).writeInt(pos.x).writeInt(pos.z));
+                    accessor.writeOxygenPacket(buf);
                     list.add(new CustomPayloadS2CPacket(new Identifier(Constant.MOD_ID, "oxygen_update"), buf));
                 }
             }
@@ -129,27 +138,24 @@ public abstract class WorldChunkMixin implements ChunkOxygenAccessor, ChunkOxyge
     }
 
     @Override
-    public boolean getDefaultBreathable_gc() {
+    public boolean getDefaultBreathable() {
         return this.defaultBreathable;
     }
 
     @Override
-    public void setDefaultBreathable_gc(boolean defaultBreathable) {
+    public void setDefaultBreathable(boolean defaultBreathable) {
         this.defaultBreathable = defaultBreathable;
     }
 
     @Override
     public void readOxygenUpdate(byte b, @NotNull PacketByteBuf buf) {
-        ChunkSection section = ((WorldChunk) (Object) this).getSection(b);
+        ChunkSection section = this.getSection(b);
         assert section != null;
-        if (((ChunkSectionOxygenAccessorInternal) section).getChangedArray_gc() == null) {
-            ((ChunkSectionOxygenAccessorInternal) section).setChangedArray_gc(new boolean[16 * 16 * 16]);
-        }
-        ((ChunkSectionOxygenAccessorInternal) section).readData_gc(buf);
+        ((ChunkSectionOxygenAccessorInternal) section).readOxygenPacket(buf);
     }
 
     @Inject(method = "setBlockState", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/chunk/ChunkSection;isEmpty()Z", ordinal = 0), locals = LocalCapture.CAPTURE_FAILHARD)
-    private void passDefaultValue_gc(BlockPos pos, BlockState state, boolean moved, CallbackInfoReturnable<BlockState> cir, int i, ChunkSection chunkSection) {
-        ((ChunkSectionOxygenAccessorInternal) chunkSection).setDefaultBreathable_gc(this.defaultBreathable);
+    private void galacticraft_passDefaultValue(BlockPos pos, BlockState state, boolean moved, CallbackInfoReturnable<BlockState> cir, int i, ChunkSection chunkSection) {
+        this.setBreathable(pos.getX(), pos.getY(), pos.getZ(), this.defaultBreathable);
     }
 }

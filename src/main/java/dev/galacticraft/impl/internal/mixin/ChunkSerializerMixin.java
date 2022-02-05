@@ -48,15 +48,15 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 @Mixin(ChunkSerializer.class)
 public abstract class ChunkSerializerMixin {
     @Inject(method = "serialize", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/chunk/ChunkSection;getBlockStateContainer()Lnet/minecraft/world/chunk/PalettedContainer;"), locals = LocalCapture.CAPTURE_FAILHARD)
-    private static void serialize_gc(ServerWorld world, Chunk chunk, CallbackInfoReturnable<NbtCompound> cir, ChunkPos pos, NbtCompound compound, BlendingData blending, BelowZeroRetrogen retrogen, UpgradeData data, ChunkSection[] section, NbtList list, LightingProvider provider, Registry registry, Codec codec, boolean b, int i, int j, boolean bl, ChunkNibbleArray nibbleArray, ChunkNibbleArray nibbleArray2, NbtCompound nbtCompound, ChunkSection chunkSection) {
+    private static void galacticraft_serializeOxygen(ServerWorld world, Chunk chunk, CallbackInfoReturnable<NbtCompound> cir, ChunkPos pos, NbtCompound compound, BlendingData blending, BelowZeroRetrogen retrogen, UpgradeData data, ChunkSection[] section, NbtList list, LightingProvider provider, Registry registry, Codec codec, boolean b, int i, int j, boolean bl, ChunkNibbleArray nibbleArray, ChunkNibbleArray nibbleArray2, NbtCompound nbtCompound, ChunkSection chunkSection) {
         NbtCompound nbt = new NbtCompound();
-        if (((WorldOxygenAccessorInternal) world).getDefaultBreathable() != ((ChunkSectionOxygenAccessorInternal) chunkSection).getDefaultBreathable_gc()) {
-            nbt.putBoolean(Constant.Nbt.DEFAULT_BREATHABLE, ((ChunkSectionOxygenAccessorInternal) chunkSection).getDefaultBreathable_gc());
+        if (((WorldOxygenAccessorInternal) world).getDefaultBreathable() != ((ChunkSectionOxygenAccessorInternal) chunkSection).getDefaultBreathable()) {
+            nbt.putBoolean(Constant.Nbt.DEFAULT_BREATHABLE, ((ChunkSectionOxygenAccessorInternal) chunkSection).getDefaultBreathable());
         }
-        nbt.putShort(Constant.Nbt.CHANGE_COUNT, ((ChunkSectionOxygenAccessorInternal) chunkSection).getChangedCount_gc());
-        if (((ChunkSectionOxygenAccessorInternal) chunkSection).getChangedCount_gc() > 0) {
+        nbt.putShort(Constant.Nbt.CHANGE_COUNT, ((ChunkSectionOxygenAccessorInternal) chunkSection).getModifiedBlocks());
+        if (((ChunkSectionOxygenAccessorInternal) chunkSection).getModifiedBlocks() > 0) {
             byte[] output = new byte[(16 * 16 * 16) / 8];
-            boolean[] oxygenValues = ((ChunkSectionOxygenAccessorInternal) chunkSection).getChangedArray_gc();
+            boolean[] oxygenValues = ((ChunkSectionOxygenAccessorInternal) chunkSection).getInversionArray();
             assert oxygenValues != null;
             for (int p = 0; p < (16 * 16 * 16 / 8); p++) {
                 byte serialized = -128;
@@ -76,15 +76,15 @@ public abstract class ChunkSerializerMixin {
     }
 
     @Inject(method = "deserialize", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/poi/PointOfInterestStorage;initForPalette(Lnet/minecraft/util/math/ChunkPos;Lnet/minecraft/world/chunk/ChunkSection;)V"), locals = LocalCapture.CAPTURE_FAILHARD)
-    private static void deserialize_gc(ServerWorld world, PointOfInterestStorage poiStorage, ChunkPos chunkPos, NbtCompound nbt, CallbackInfoReturnable<ProtoChunk> cir, ChunkPos chunkPos2, UpgradeData upgradeData, boolean bl, NbtList nbtList, int i, ChunkSection[] chunkSections, boolean bl2, ChunkManager chunkManager, LightingProvider lightingProvider, Registry registry, Codec codec, int j, NbtCompound nbtCompound, int k, int l, PalettedContainer palettedContainer, PalettedContainer palettedContainer2, ChunkSection chunkSection) {
+    private static void galacticraft_deserializeOxygen(ServerWorld world, PointOfInterestStorage poiStorage, ChunkPos chunkPos, NbtCompound nbt, CallbackInfoReturnable<ProtoChunk> cir, ChunkPos chunkPos2, UpgradeData upgradeData, boolean bl, NbtList nbtList, int i, ChunkSection[] chunkSections, boolean bl2, ChunkManager chunkManager, LightingProvider lightingProvider, Registry registry, Codec codec, int j, NbtCompound nbtCompound, int k, int l, PalettedContainer palettedContainer, PalettedContainer palettedContainer2, ChunkSection chunkSection) {
         NbtCompound nbtC = nbtCompound.getCompound(Constant.Nbt.GC_API);
         short changedCount = nbtC.getShort(Constant.Nbt.CHANGE_COUNT);
         if (nbtC.contains(Constant.Nbt.DEFAULT_BREATHABLE)) {
-            ((ChunkSectionOxygenAccessorInternal) chunkSection).setDefaultBreathable_gc(nbtC.getBoolean(Constant.Nbt.DEFAULT_BREATHABLE));
+            ((ChunkSectionOxygenAccessorInternal) chunkSection).setDefaultBreathable(nbtC.getBoolean(Constant.Nbt.DEFAULT_BREATHABLE));
         } else {
-            ((ChunkSectionOxygenAccessorInternal) chunkSection).setDefaultBreathable_gc(((WorldOxygenAccessorInternal) world).getDefaultBreathable());
+            ((ChunkSectionOxygenAccessorInternal) chunkSection).setDefaultBreathable(((WorldOxygenAccessorInternal) world).getDefaultBreathable());
         }
-        ((ChunkSectionOxygenAccessorInternal) chunkSection).setTotalChanged_gc(changedCount);
+        ((ChunkSectionOxygenAccessorInternal) chunkSection).setModifiedBlocks(changedCount);
         if (changedCount > 0) {
             boolean[] oxygen = new boolean[16 * 16 * 16];
             byte[] bytes = nbtC.getByteArray(Constant.Nbt.OXYGEN);
@@ -99,7 +99,7 @@ public abstract class ChunkSerializerMixin {
                 oxygen[(p * 8) + 6] = (b & 0b1000000) != 0;
                 oxygen[(p * 8) + 7] = (b & 0b10000000) != 0;
             }
-            ((ChunkSectionOxygenAccessorInternal) chunkSection).setChangedArray_gc(oxygen);
+            ((ChunkSectionOxygenAccessorInternal) chunkSection).setInversionArray(oxygen);
         }
     }
 }

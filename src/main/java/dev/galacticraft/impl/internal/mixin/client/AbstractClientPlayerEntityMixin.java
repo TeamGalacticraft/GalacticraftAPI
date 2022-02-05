@@ -49,17 +49,16 @@ import java.util.List;
 
 @Mixin(AbstractClientPlayerEntity.class)
 public abstract class AbstractClientPlayerEntityMixin implements ClientResearchAccessor, GearInventoryProvider {
-    @Unique
-    private final List<Identifier> unlockedResearch = new ArrayList<>();
-    @Shadow
-    @Final
-    public ClientWorld clientWorld;
-    private final @Unique SimpleInventory gearInv = createInv();
+    @Unique private final List<Identifier> unlockedResearch = new ArrayList<>();
+    @Shadow @Final public ClientWorld clientWorld;
+
+    private final @Unique SimpleInventory gearInv = galacticraft_createGearInventory();
     private final @Unique Inventory tankInv = MappedInventory.create(this.gearInv, 4, 5);
     private final @Unique Inventory thermalArmorInv = MappedInventory.create(this.gearInv, 0, 1, 2, 3);
     private final @Unique Inventory accessoryInv = MappedInventory.create(this.gearInv, 6, 7, 8, 9, 10, 11);
 
-    private SimpleInventory createInv() {
+    @Unique
+    private SimpleInventory galacticraft_createGearInventory() {
         SimpleInventory inv = new SimpleInventory(12);
         inv.addListener((inventory) -> {
             float pressure = CelestialBody.getByDimension(this.clientWorld).map(body -> body.atmosphere().pressure()).orElse(1.0f);
@@ -68,15 +67,15 @@ public abstract class AbstractClientPlayerEntityMixin implements ClientResearchA
                     ItemStack stack = inventory.getStack(i);
                     if (stack.getItem() instanceof Accessory accessory && accessory.enablesHearing()) {
                         ((SoundSystemAccessor) ((SoundManagerAccessor) MinecraftClient.getInstance().getSoundManager()).getSoundSystem())
-                                .gc_updateAtmosphericMultiplier(1.0f);
+                                .updateAtmosphericVolumeMultiplier(1.0f);
                         return;
                     } else {
                         ((SoundSystemAccessor) ((SoundManagerAccessor) MinecraftClient.getInstance().getSoundManager()).getSoundSystem())
-                                .gc_updateAtmosphericMultiplier(pressure);
+                                .updateAtmosphericVolumeMultiplier(pressure);
                     }
                 }
             } else {
-                ((SoundSystemAccessor) ((SoundManagerAccessor) MinecraftClient.getInstance().getSoundManager()).getSoundSystem()).gc_updateAtmosphericMultiplier(pressure);
+                ((SoundSystemAccessor) ((SoundManagerAccessor) MinecraftClient.getInstance().getSoundManager()).getSoundSystem()).updateAtmosphericVolumeMultiplier(pressure);
             }
         });
         return inv;
@@ -96,7 +95,7 @@ public abstract class AbstractClientPlayerEntityMixin implements ClientResearchA
     }
 
     @Override
-    public boolean hasUnlocked_gc(Identifier id) {
+    public boolean hasUnlockedResearch(Identifier id) {
         return this.unlockedResearch.contains(id);
     }
 

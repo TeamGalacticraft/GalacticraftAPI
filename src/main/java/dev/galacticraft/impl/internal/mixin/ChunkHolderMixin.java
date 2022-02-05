@@ -44,8 +44,8 @@ public abstract class ChunkHolderMixin {
     protected abstract void sendPacketToPlayersWatching(Packet<?> packet, boolean onlyOnWatchDistanceEdge);
 
     @Inject(method = "flushUpdates", at = @At("HEAD"))
-    private void flushOxygen_gc(WorldChunk chunk, CallbackInfo ci) {
-        List<CustomPayloadS2CPacket> packets = ((ChunkOxygenSyncer) chunk).syncToClient_gc();
+    private void galacticraft_flushOxygenPackets(WorldChunk chunk, CallbackInfo ci) {
+        List<CustomPayloadS2CPacket> packets = ((ChunkOxygenSyncer) chunk).syncOxygenPacketsToClient();
         for (CustomPayloadS2CPacket packet : packets) {
             this.sendPacketToPlayersWatching(packet, false);
         }

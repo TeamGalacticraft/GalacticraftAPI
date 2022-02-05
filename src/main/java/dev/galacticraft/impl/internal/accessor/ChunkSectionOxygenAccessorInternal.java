@@ -24,25 +24,27 @@ package dev.galacticraft.impl.internal.accessor;
 
 import net.minecraft.network.PacketByteBuf;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * @author <a href="https://github.com/TeamGalacticraft">TeamGalacticraft</a>
  */
 @ApiStatus.Internal
 public interface ChunkSectionOxygenAccessorInternal {
-    boolean[] getChangedArray_gc();
+    boolean @Nullable [] getInversionArray();
 
-    void setChangedArray_gc(boolean[] inverted);
+    void setInversionArray(boolean @Nullable [] inverted);
 
-    short getChangedCount_gc();
+    short getModifiedBlocks();
 
-    void setTotalChanged_gc(short amount);
+    void setModifiedBlocks(short amount);
 
-    void writeData_gc(PacketByteBuf buf);
+    void writeOxygenPacket(@NotNull PacketByteBuf buf);
 
-    void readData_gc(PacketByteBuf buf);
+    void readOxygenPacket(@NotNull PacketByteBuf buf);
 
-    boolean getDefaultBreathable_gc();
+    boolean getDefaultBreathable();
 
-    void setDefaultBreathable_gc(boolean breathable);
+    void setDefaultBreathable(boolean breathable);
 }

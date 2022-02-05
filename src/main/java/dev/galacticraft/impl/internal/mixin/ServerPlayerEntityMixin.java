@@ -53,18 +53,18 @@ public abstract class ServerPlayerEntityMixin implements ServerResearchAccessor,
     private final @Unique List<Identifier> unlockedResearch = new ArrayList<>();
     private final @Unique Object2BooleanMap<Identifier> changes = new Object2BooleanArrayMap<>();
 
-    private final @Unique SimpleInventory gearInv = this.createGearInv();
+    private final @Unique SimpleInventory gearInv = this.galacticraft_createGearInventory();
     private final @Unique Inventory tankInv = MappedInventory.create(this.gearInv, 4, 5);
     private final @Unique Inventory thermalArmorInv = MappedInventory.create(this.gearInv, 0, 1, 2, 3);
     private final @Unique Inventory accessoryInv = MappedInventory.create(this.gearInv, 6, 7, 8, 9, 10, 11);
 
     @Override
-    public boolean hasUnlocked_gc(Identifier id) {
+    public boolean hasUnlockedResearch(Identifier id) {
         return unlockedResearch.contains(id);
     }
 
     @Override
-    public void setUnlocked_gc(Identifier id, boolean unlocked) {
+    public void unlockResearch(Identifier id, boolean unlocked) {
         if (unlocked) {
             if (!this.unlockedResearch.contains(id)) {
                 this.unlockedResearch.add(id);
@@ -78,12 +78,12 @@ public abstract class ServerPlayerEntityMixin implements ServerResearchAccessor,
     }
 
     @Override
-    public boolean changed_gc() {
+    public boolean isResearchDirty() {
         return !this.changes.isEmpty();
     }
 
     @Override
-    public PacketByteBuf writeResearchChanges_gc(PacketByteBuf buf) {
+    public PacketByteBuf writeResearchChanges(PacketByteBuf buf) {
         buf.writeByte(this.changes.size());
 
         for (Object2BooleanMap.Entry<Identifier> entry : this.changes.object2BooleanEntrySet()) {
@@ -95,7 +95,7 @@ public abstract class ServerPlayerEntityMixin implements ServerResearchAccessor,
     }
 
     @Override
-    public NbtCompound writeToNbt_gc(NbtCompound nbt) {
+    public NbtCompound writeResearchToNbt(NbtCompound nbt) {
         nbt.putInt("size", this.unlockedResearch.size());
         int i = 0;
         for (Identifier id : this.unlockedResearch) {
@@ -106,7 +106,7 @@ public abstract class ServerPlayerEntityMixin implements ServerResearchAccessor,
     }
 
     @Override
-    public void readFromNbt_gc(NbtCompound nbt) {
+    public void readResearchFromNbt(NbtCompound nbt) {
         this.unlockedResearch.clear();
         int size = nbt.getInt("size");
         for (int i = 0; i < size; i++) {
@@ -115,16 +115,17 @@ public abstract class ServerPlayerEntityMixin implements ServerResearchAccessor,
     }
 
     @Inject(method = "readCustomDataFromNbt", at = @At("RETURN"))
-    private void readCustomDataFromNbt_gc(NbtCompound nbt, CallbackInfo ci) {
-        this.readFromNbt_gc(nbt);
+    private void galacticraft_readCustomDataFromNbt(NbtCompound nbt, CallbackInfo ci) {
+        this.readResearchFromNbt(nbt);
     }
 
     @Inject(method = "writeCustomDataToNbt", at = @At("RETURN"))
-    private void writeCustomDataToNbt_gc(NbtCompound nbt, CallbackInfo ci) {
-        this.writeToNbt_gc(nbt);
+    private void galacticraft_writeCustomDataToNbt(NbtCompound nbt, CallbackInfo ci) {
+        this.writeResearchToNbt(nbt);
     }
 
-    private SimpleInventory createGearInv() {
+    @Unique
+    private SimpleInventory galacticraft_createGearInventory() {
         SimpleInventory inv = new SimpleInventory(12);
         inv.addListener((inventory) -> {
             PacketByteBuf buf = PacketByteBufs.create();

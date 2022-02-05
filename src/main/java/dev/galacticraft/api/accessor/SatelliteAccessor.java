@@ -30,7 +30,7 @@ import net.minecraft.util.Identifier;
 import java.util.Map;
 
 public interface SatelliteAccessor {
-    Map<Identifier, CelestialBody<SatelliteConfig, SatelliteType>> satellites();
+    Map<Identifier, CelestialBody<SatelliteConfig, SatelliteType>> getSatellites();
 
     void addSatellite(Identifier id, CelestialBody<SatelliteConfig, SatelliteType> satellite);
 

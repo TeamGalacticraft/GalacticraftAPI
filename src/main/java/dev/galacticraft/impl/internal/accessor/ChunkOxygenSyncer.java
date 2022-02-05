@@ -26,10 +26,14 @@ import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.packet.s2c.play.CustomPayloadS2CPacket;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collections;
 import java.util.List;
 
 public interface ChunkOxygenSyncer {
-    @NotNull List<@NotNull CustomPayloadS2CPacket> syncToClient_gc();
+    default @NotNull List<@NotNull CustomPayloadS2CPacket> syncOxygenPacketsToClient() {
+        return Collections.emptyList();
+    }
 
-    void readOxygenUpdate(byte b, @NotNull PacketByteBuf buf);
+    default void readOxygenUpdate(byte b, @NotNull PacketByteBuf buf) {
+    }
 }

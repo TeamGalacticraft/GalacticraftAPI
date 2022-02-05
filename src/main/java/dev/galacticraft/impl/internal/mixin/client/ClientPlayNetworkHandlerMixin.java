@@ -41,39 +41,37 @@ import java.util.Map;
 @Environment(EnvType.CLIENT)
 @Mixin(ClientPlayNetworkHandler.class)
 public abstract class ClientPlayNetworkHandlerMixin implements ClientSatelliteAccessor {
-    private final @Unique
-    Map<Identifier, CelestialBody<SatelliteConfig, SatelliteType>> satellites_gc = new HashMap<>();
-    private final @Unique
-    List<SatelliteListener> listeners_gc = new ArrayList<>();
+    private final @Unique Map<Identifier, CelestialBody<SatelliteConfig, SatelliteType>> satellites = new HashMap<>();
+    private final @Unique List<SatelliteListener> listeners = new ArrayList<>();
 
     @Override
-    public Map<Identifier, CelestialBody<SatelliteConfig, SatelliteType>> satellites() {
-        return this.satellites_gc;
+    public Map<Identifier, CelestialBody<SatelliteConfig, SatelliteType>> getSatellites() {
+        return this.satellites;
     }
 
     @Override
     public void addSatellite(Identifier id, CelestialBody<SatelliteConfig, SatelliteType> satellite) {
-        this.satellites_gc.put(id, satellite);
-        for (SatelliteListener listener : this.listeners_gc) {
+        this.satellites.put(id, satellite);
+        for (SatelliteListener listener : this.listeners) {
             listener.onSatelliteUpdated(satellite, true);
         }
     }
 
     @Override
     public void removeSatellite(Identifier id) {
-        CelestialBody<SatelliteConfig, SatelliteType> removed = this.satellites_gc.remove(id);
-        for (SatelliteListener listener : this.listeners_gc) {
+        CelestialBody<SatelliteConfig, SatelliteType> removed = this.satellites.remove(id);
+        for (SatelliteListener listener : this.listeners) {
             listener.onSatelliteUpdated(removed, false);
         }
     }
 
     @Override
     public void addListener(SatelliteListener listener) {
-        this.listeners_gc.add(listener);
+        this.listeners.add(listener);
     }
 
     @Override
     public void removeListener(SatelliteListener listener) {
-        this.listeners_gc.remove(listener);
+        this.listeners.remove(listener);
     }
 }

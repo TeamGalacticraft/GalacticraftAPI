@@ -39,16 +39,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Environment(EnvType.CLIENT)
 public abstract class ClientChunkSectionMixin implements ChunkSectionOxygenAccessorInternal {
     @Inject(method = "fromPacket", at = @At("RETURN"))
-    private void fromPacket_gc(PacketByteBuf buf, CallbackInfo ci) {
-        this.setDefaultBreathable_gc(buf.readBoolean());
-        this.setTotalChanged_gc(buf.readShort());
-        if (this.getChangedCount_gc() == 0) {
-            this.setChangedArray_gc(null);
-            return;
-        }
-        if (this.getChangedArray_gc() == null) {
-            this.setChangedArray_gc(new boolean[16 * 16 * 16]);
-        }
-        this.readData_gc(buf);
+    private void galacticraft_fromPacket(PacketByteBuf buf, CallbackInfo ci) {
+        this.readOxygenPacket(buf);
     }
 }

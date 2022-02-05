@@ -22,14 +22,17 @@
 
 package dev.galacticraft.api.gametest;
 
+import dev.galacticraft.api.accessor.ChunkOxygenAccessor;
 import dev.galacticraft.api.registry.AddonRegistry;
-import dev.galacticraft.api.universe.celestialbody.CelestialBody;
 import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.test.GameTest;
 import net.minecraft.test.TestContext;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.registry.RegistryKey;
+import net.minecraft.world.ChunkSerializer;
+import net.minecraft.world.chunk.ProtoChunk;
 
 public class GalacticraftApiTestSuite implements FabricGameTest {
     private static final String MOD_ID = "gc-api-test";
@@ -37,7 +40,8 @@ public class GalacticraftApiTestSuite implements FabricGameTest {
     @GameTest(structureName = EMPTY_STRUCTURE)
     public void testForDatapackGalaxy(TestContext context) {
         context.addInstantFinalTask(() -> {
-            if (!context.getWorld().getRegistryManager().get(AddonRegistry.GALAXY_KEY).contains(RegistryKey.of(AddonRegistry.GALAXY_KEY, new Identifier(MOD_ID, "galaxy")))) {
+            final var registry = context.getWorld().getRegistryManager().get(AddonRegistry.GALAXY_KEY);
+            if (!registry.contains(RegistryKey.of(AddonRegistry.GALAXY_KEY, new Identifier(MOD_ID, "galaxy")))) {
                 context.throwGameTestException("Expected custom datapack galaxy to be loaded!");
             }
         });
@@ -46,11 +50,32 @@ public class GalacticraftApiTestSuite implements FabricGameTest {
     @GameTest(structureName = EMPTY_STRUCTURE)
     public void testForDatapackCelestialBodies(TestContext context) {
         context.addInstantFinalTask(() -> {
-            final Registry<CelestialBody<?, ?>> registry = context.getWorld().getRegistryManager().get(AddonRegistry.CELESTIAL_BODY_KEY);
+            final var registry = context.getWorld().getRegistryManager().get(AddonRegistry.CELESTIAL_BODY_KEY);
             if (!registry.contains(RegistryKey.of(AddonRegistry.CELESTIAL_BODY_KEY, new Identifier(MOD_ID, "star")))) {
                 context.throwGameTestException("Expected custom datapack star to be loaded!");
             } else if (!registry.contains(RegistryKey.of(AddonRegistry.CELESTIAL_BODY_KEY, new Identifier(MOD_ID, "planet")))) {
                 context.throwGameTestException("Expected custom datapack planet to be loaded!");
+            }
+        });
+    }
+
+    @GameTest(structureName = EMPTY_STRUCTURE)
+    public void testOxygenSerialization(TestContext context) {
+        context.addInstantFinalTask(() -> {
+            var absolutePos = context.getAbsolutePos(BlockPos.ORIGIN);
+            var chunk = context.getWorld().getChunk(absolutePos);
+            int x = absolutePos.getX() & 15;
+            int y = absolutePos.getY() & 15;
+            int z = absolutePos.getZ() & 15;
+            ((ChunkOxygenAccessor) chunk).setBreathable(x, y, z, false);
+            if (((ChunkOxygenAccessor) chunk).isBreathable(x, y, z)) {
+                context.throwGameTestException("Expected area to become unbreathable!");
+            } else {
+                NbtCompound serialized = ChunkSerializer.serialize(context.getWorld(), chunk);
+                ProtoChunk deserialized = ChunkSerializer.deserialize(context.getWorld(), context.getWorld().getPointOfInterestStorage(), chunk.getPos(), serialized);
+                if (((ChunkOxygenAccessor) deserialized).isBreathable(x, y, z)) {
+                    context.throwGameTestException("Expected area to stay unbreathable upon deserialization!");
+                }
             }
         });
     }

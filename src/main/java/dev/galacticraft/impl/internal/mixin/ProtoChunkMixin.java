@@ -26,28 +26,34 @@ import dev.galacticraft.api.accessor.ChunkOxygenAccessor;
 import dev.galacticraft.api.accessor.ChunkSectionOxygenAccessor;
 import dev.galacticraft.impl.internal.accessor.ChunkOxygenAccessorInternal;
 import dev.galacticraft.impl.internal.accessor.ChunkOxygenSyncer;
-import net.minecraft.network.PacketByteBuf;
-import net.minecraft.network.packet.s2c.play.CustomPayloadS2CPacket;
+import net.minecraft.util.math.ChunkPos;
+import net.minecraft.util.registry.Registry;
+import net.minecraft.world.HeightLimitView;
+import net.minecraft.world.biome.Biome;
+import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.ChunkSection;
 import net.minecraft.world.chunk.ProtoChunk;
-import org.jetbrains.annotations.NotNull;
+import net.minecraft.world.chunk.UpgradeData;
+import net.minecraft.world.gen.chunk.BlendingData;
+import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
-
-import java.util.List;
 
 /**
  * @author <a href="https://github.com/TeamGalacticraft">TeamGalacticraft</a>
  */
 @Mixin(ProtoChunk.class)
-public abstract class ProtoChunkMixin implements ChunkOxygenAccessor, ChunkOxygenSyncer, ChunkOxygenAccessorInternal {
-    private @Unique
-    boolean defaultBreathable = false;
+public abstract class ProtoChunkMixin extends Chunk implements ChunkOxygenAccessor, ChunkOxygenSyncer, ChunkOxygenAccessorInternal {
+    private @Unique boolean defaultBreathable = false;
+
+    private ProtoChunkMixin(ChunkPos pos, UpgradeData upgradeData, HeightLimitView heightLimitView, Registry<Biome> biome, long inhabitedTime, @Nullable ChunkSection[] sectionArrayInitializer, @Nullable BlendingData blendingData) {
+        super(pos, upgradeData, heightLimitView, biome, inhabitedTime, sectionArrayInitializer, blendingData);
+    }
 
     @Override
     public boolean isBreathable(int x, int y, int z) {
-        if (((ProtoChunk) (Object) this).isOutOfHeightLimit(y)) return this.defaultBreathable;
-        ChunkSection section = ((ProtoChunk) (Object) this).getSection(((ProtoChunk) (Object) this).getSectionIndex(y));
+        if (this.isOutOfHeightLimit(y)) return this.defaultBreathable;
+        ChunkSection section = this.getSection(this.getSectionIndex(y));
         if (!section.isEmpty()) {
             return ((ChunkSectionOxygenAccessor) section).isBreathable(x & 15, y & 15, z & 15);
         }
@@ -56,25 +62,17 @@ public abstract class ProtoChunkMixin implements ChunkOxygenAccessor, ChunkOxyge
 
     @Override
     public void setBreathable(int x, int y, int z, boolean value) {
-        if (((ProtoChunk) (Object) this).isOutOfHeightLimit(y)) return;
-        ChunkSection section = ((ProtoChunk) (Object) this).getSection(((ProtoChunk) (Object) this).getSectionIndex(y));
-        if (!section.isEmpty()) {
-            ((ChunkSectionOxygenAccessor) section).setBreathable(x & 15, y & 15, z & 15, value);
+        if (this.isOutOfHeightLimit(y)) return;
+        ChunkSection section = this.getSection(this.getSectionIndex(y));
+        assert section != null;
+        ChunkSectionOxygenAccessor accessor = ((ChunkSectionOxygenAccessor) section);
+        if (value != accessor.isBreathable(x & 15, y & 15, z & 15)) {
+            accessor.setBreathable(x & 15, y & 15, z & 15, value);
         }
     }
 
     @Override
-    public @NotNull List<CustomPayloadS2CPacket> syncToClient_gc() {
-        throw new UnsupportedOperationException("ProtoChunks shouldn't be synced");
-    }
-
-    @Override
-    public void setDefaultBreathable_gc(boolean defaultBreathable) {
+    public void setDefaultBreathable(boolean defaultBreathable) {
         this.defaultBreathable = defaultBreathable;
-    }
-
-    @Override
-    public void readOxygenUpdate(byte b, @NotNull PacketByteBuf buf) {
-        throw new UnsupportedOperationException("ProtoChunks shouldn't be synced");
     }
 }

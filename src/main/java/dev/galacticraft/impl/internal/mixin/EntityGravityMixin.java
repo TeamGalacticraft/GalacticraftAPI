@@ -34,7 +34,7 @@ import org.spongepowered.asm.mixin.injection.ModifyConstant;
 @Mixin({ItemEntity.class, TntEntity.class, AbstractMinecartEntity.class})
 public abstract class EntityGravityMixin {
     @ModifyConstant(method = "tick", constant = @Constant(doubleValue = -0.04D))
-    private double changeEntityGravity_gc(double defaultValue) {
+    private double galacticraft_changeEntityGravity(double defaultValue) {
         return CelestialBody.getByDimension(((Entity) (Object) this).world).map(celestialBody -> celestialBody.gravity() / 1.75D * defaultValue).orElse(defaultValue);
     }
 }
