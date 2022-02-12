@@ -22,23 +22,32 @@
 
 package dev.galacticraft.api.rocket.part;
 
-import org.jetbrains.annotations.NotNull;
+import com.mojang.serialization.Codec;
+import net.minecraft.util.StringIdentifiable;
 
 import java.util.Locale;
-import net.minecraft.util.StringRepresentable;
 
-public enum RocketPartType implements StringRepresentable {
-    CONE,
-    BODY,
-    FIN,
-    BOOSTER,
-    BOTTOM,
-    UPGRADE;
+public enum RocketPartType implements StringIdentifiable {
+    CONE(RocketCone.class),
+    BODY(RocketBody.class),
+    FIN(RocketFin.class),
+    BOOSTER(RocketBooster.class),
+    BOTTOM(RocketBottom.class),
+    UPGRADE(RocketUpgrade.class);
 
-    public static final com.mojang.serialization.Codec<RocketPartType> CODEC = com.mojang.serialization.Codec.STRING.xmap(s -> RocketPartType.valueOf(s.toUpperCase(Locale.ROOT)), RocketPartType::getSerializedName);
+    public static final Codec<RocketPartType> CODEC = Codec.STRING.xmap(s -> RocketPartType.valueOf(s.toUpperCase(Locale.ROOT)), RocketPartType::asString);
+    private final Class<? extends RocketPart> clazz;
+
+    RocketPartType(Class<? extends RocketPart> clazz) {
+        this.clazz = clazz;
+    }
+
+    public boolean isOfType(RocketPart part) {
+        return clazz.isInstance(part);
+    }
 
     @Override
-    public @NotNull String getSerializedName() {
+    public String asString() {
         return this.toString().toLowerCase(Locale.ROOT);
     }
 }

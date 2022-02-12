@@ -20,14 +20,26 @@
  * SOFTWARE.
  */
 
-package dev.galacticraft.api.rocket.part;
+package dev.galacticraft.api.gametest.rocket.part;
 
+import dev.galacticraft.api.rocket.entity.Rocket;
+import dev.galacticraft.api.rocket.part.RocketUpgrade;
 import dev.galacticraft.api.rocket.recipe.RocketPartRecipe;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public sealed interface RocketPart permits RocketBody, RocketBooster, RocketBottom, RocketCone, RocketFin, RocketUpgrade {
-    @Nullable RocketPartRecipe getRecipe();
+public class ExampleRocketUpgrade extends RocketUpgrade {
+    private final @Nullable RocketPartRecipe recipe;
 
-    @NotNull RocketPartType getType();
+    public ExampleRocketUpgrade(@Nullable RocketPartRecipe recipe) {
+        this.recipe = recipe;
+    }
+
+    @Override
+    public void tick(Rocket rocket) {
+    }
+
+    @Override
+    public @Nullable RocketPartRecipe getRecipe() {
+        return this.recipe;
+    }
 }

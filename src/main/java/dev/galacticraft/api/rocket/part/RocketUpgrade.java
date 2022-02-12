@@ -22,12 +22,24 @@
 
 package dev.galacticraft.api.rocket.part;
 
+import dev.galacticraft.api.rocket.entity.Rocket;
 import dev.galacticraft.api.rocket.recipe.RocketPartRecipe;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public sealed interface RocketPart permits RocketBody, RocketBooster, RocketBottom, RocketCone, RocketFin, RocketUpgrade {
-    @Nullable RocketPartRecipe getRecipe();
+public abstract non-sealed class RocketUpgrade implements RocketPart {
+    public static final RocketUpgrade NO_UPGRADE = new RocketUpgrade() {
+        @Override
+        public void tick(Rocket rocket) {}
 
-    @NotNull RocketPartType getType();
+        @Override
+        public @Nullable RocketPartRecipe getRecipe() {return null;}
+    };
+
+    public abstract void tick(Rocket rocket);
+
+    @Override
+    public @NotNull RocketPartType getType() {
+        return RocketPartType.UPGRADE;
+    }
 }

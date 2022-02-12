@@ -20,14 +20,28 @@
  * SOFTWARE.
  */
 
-package dev.galacticraft.api.rocket.part;
+package dev.galacticraft.api.gametest.rocket.part;
 
+import dev.galacticraft.api.rocket.part.RocketFin;
 import dev.galacticraft.api.rocket.recipe.RocketPartRecipe;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public sealed interface RocketPart permits RocketBody, RocketBooster, RocketBottom, RocketCone, RocketFin, RocketUpgrade {
-    @Nullable RocketPartRecipe getRecipe();
+public class ExampleRocketFin extends RocketFin {
+    private final double maxVelocity;
+    private final @Nullable RocketPartRecipe recipe;
 
-    @NotNull RocketPartType getType();
+    public ExampleRocketFin(double maxVelocity, @Nullable RocketPartRecipe recipe) {
+        this.maxVelocity = maxVelocity;
+        this.recipe = recipe;
+    }
+
+    @Override
+    public boolean canSupportVelocity(double velocity) {
+        return velocity <= this.maxVelocity;
+    }
+
+    @Override
+    public @Nullable RocketPartRecipe getRecipe() {
+        return this.recipe;
+    }
 }

@@ -22,12 +22,20 @@
 
 package dev.galacticraft.api.rocket.part;
 
-import dev.galacticraft.api.rocket.recipe.RocketPartRecipe;
+import dev.galacticraft.api.universe.celestialbody.CelestialBody;
+import dev.galacticraft.api.universe.celestialbody.CelestialBodyConfig;
+import dev.galacticraft.api.universe.celestialbody.CelestialBodyType;
+import dev.galacticraft.api.universe.celestialbody.landable.Landable;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-public sealed interface RocketPart permits RocketBody, RocketBooster, RocketBottom, RocketCone, RocketFin, RocketUpgrade {
-    @Nullable RocketPartRecipe getRecipe();
+public abstract non-sealed class RocketCone implements RocketPart {
 
-    @NotNull RocketPartType getType();
+    public abstract boolean canSupportVelocity(double velocity);
+
+    public abstract <C extends CelestialBodyConfig, T extends CelestialBodyType<C> & Landable<C>> boolean canEscapeAtmosphere(CelestialBody<C, T> celestialBody);
+
+    @Override
+    public final @NotNull RocketPartType getType() {
+        return RocketPartType.CONE;
+    }
 }

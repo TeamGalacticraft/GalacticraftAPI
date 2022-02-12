@@ -20,14 +20,24 @@
  * SOFTWARE.
  */
 
-package dev.galacticraft.api.rocket.part;
+package dev.galacticraft.api.rocket.recipe;
 
-import dev.galacticraft.api.rocket.recipe.RocketPartRecipe;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import java.util.List;
 
-public sealed interface RocketPart permits RocketBody, RocketBooster, RocketBottom, RocketCone, RocketFin, RocketUpgrade {
-    @Nullable RocketPartRecipe getRecipe();
+public class RocketPartRecipe {
+    private final int width;
+    private final int height;
+    private final List<RocketRecipeSlot> slots;
 
-    @NotNull RocketPartType getType();
+    public RocketPartRecipe(List<RocketRecipeSlot> slots) {
+        this.slots = slots;
+        int maxX = 0;
+        int maxY = 0;
+        for (RocketRecipeSlot slot : slots) {
+            maxX = Math.max(maxX, slot.getX() + 18);
+            maxY = Math.max(maxY, slot.getY() + 18);
+        }
+        this.width = maxX;
+        this.height = maxY;
+    }
 }

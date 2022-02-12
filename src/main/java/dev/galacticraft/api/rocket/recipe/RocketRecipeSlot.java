@@ -20,14 +20,30 @@
  * SOFTWARE.
  */
 
-package dev.galacticraft.api.rocket.part;
+package dev.galacticraft.api.rocket.recipe;
 
-import dev.galacticraft.api.rocket.recipe.RocketPartRecipe;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import net.minecraft.recipe.Ingredient;
 
-public sealed interface RocketPart permits RocketBody, RocketBooster, RocketBottom, RocketCone, RocketFin, RocketUpgrade {
-    @Nullable RocketPartRecipe getRecipe();
+public class RocketRecipeSlot {
+    private final int x;
+    private final int y;
+    private final Ingredient ingredient;
 
-    @NotNull RocketPartType getType();
+    public RocketRecipeSlot(int x, int y, Ingredient ingredient) {
+        this.x = x;
+        this.y = y;
+        this.ingredient = ingredient;
+    }
+
+    public int getX() {
+        return x;
+    }
+
+    public int getY() {
+        return y;
+    }
+
+    public Ingredient getIngredient() {
+        return ingredient;
+    }
 }

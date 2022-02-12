@@ -26,12 +26,12 @@ import com.mojang.serialization.Codec;
 import dev.galacticraft.api.registry.AddonRegistry;
 import dev.galacticraft.api.universe.celestialbody.CelestialBody;
 import it.unimi.dsi.fastutil.objects.Object2BooleanFunction;
-import org.jetbrains.annotations.ApiStatus;
-
-import java.util.Locale;
 import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.StringRepresentable;
+import org.jetbrains.annotations.ApiStatus;
+
+import java.util.Locale;
 
 public abstract class TravelPredicateType<C extends TravelPredicateConfig> {
     private final Holder.Reference<TravelPredicateType<?>> reference = AddonRegistry.TRAVEL_PREDICATE.createIntrusiveHolder(this);
@@ -58,7 +58,7 @@ public abstract class TravelPredicateType<C extends TravelPredicateConfig> {
 
     public enum AccessType implements StringRepresentable {
         /**
-         * Allow other rocket parts to decide whether or not the player may visit the celestial body
+         * Allow other rocket parts to decide whether the player may visit the celestial body
          */
         PASS,
 
