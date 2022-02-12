@@ -33,34 +33,35 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.ChunkSerializer;
 import net.minecraft.world.chunk.ProtoChunk;
+import org.jetbrains.annotations.NotNull;
 
 public class GalacticraftApiTestSuite implements FabricGameTest {
     private static final String MOD_ID = "gc-api-test";
 
     @GameTest(structureName = EMPTY_STRUCTURE)
-    public void testForDatapackGalaxy(TestContext context) {
+    public void testForDatapackGalaxy(@NotNull TestContext context) {
         context.addInstantFinalTask(() -> {
             final var registry = context.getWorld().getRegistryManager().get(AddonRegistry.GALAXY_KEY);
-            if (!registry.contains(RegistryKey.of(AddonRegistry.GALAXY_KEY, new Identifier(MOD_ID, "galaxy")))) {
+            if (!registry.contains(RegistryKey.of(AddonRegistry.GALAXY_KEY, new Identifier(MOD_ID, "example_galaxy")))) {
                 context.throwGameTestException("Expected custom datapack galaxy to be loaded!");
             }
         });
     }
 
     @GameTest(structureName = EMPTY_STRUCTURE)
-    public void testForDatapackCelestialBodies(TestContext context) {
+    public void testForDatapackCelestialBodies(@NotNull TestContext context) {
         context.addInstantFinalTask(() -> {
             final var registry = context.getWorld().getRegistryManager().get(AddonRegistry.CELESTIAL_BODY_KEY);
-            if (!registry.contains(RegistryKey.of(AddonRegistry.CELESTIAL_BODY_KEY, new Identifier(MOD_ID, "star")))) {
+            if (!registry.contains(RegistryKey.of(AddonRegistry.CELESTIAL_BODY_KEY, new Identifier(MOD_ID, "example_star")))) {
                 context.throwGameTestException("Expected custom datapack star to be loaded!");
-            } else if (!registry.contains(RegistryKey.of(AddonRegistry.CELESTIAL_BODY_KEY, new Identifier(MOD_ID, "planet")))) {
+            } else if (!registry.contains(RegistryKey.of(AddonRegistry.CELESTIAL_BODY_KEY, new Identifier(MOD_ID, "example_planet")))) {
                 context.throwGameTestException("Expected custom datapack planet to be loaded!");
             }
         });
     }
 
     @GameTest(structureName = EMPTY_STRUCTURE)
-    public void testOxygenSerialization(TestContext context) {
+    public void testOxygenSerialization(@NotNull TestContext context) {
         context.addInstantFinalTask(() -> {
             var absolutePos = context.getAbsolutePos(BlockPos.ORIGIN);
             var chunk = context.getWorld().getChunk(absolutePos);

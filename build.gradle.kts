@@ -30,16 +30,20 @@ plugins {
     id("io.github.juuxel.loom-quiltflower") version("1.6.0")
 }
 
-val mc = "1.18.1"
-val yarn = "22"
-val loader = "0.12.12"
-val fabric = "0.46.3+1.18"
-val jupiter = "5.8.2"
+val modVersion      = project.property("mod.version").toString()
+val modName         = project.property("mod.name").toString()
+val modGroup        = project.property("mod.group").toString()
 
-group = "dev.galacticraft"
-version ="0.4.0-prealpha.22+$mc"
+val minecraft       = project.property("minecraft.version").toString()
+val yarn            = project.property("yarn.build").toString()
+val loader          = project.property("loader.version").toString()
+val fabric          = project.property("fabric.version").toString()
+val jupiter         = project.property("jupiter.version").toString()
 
-base.archivesName.set("GalacticraftAPI")
+group = modGroup
+version ="$modVersion+$minecraft"
+
+base.archivesName.set(modName)
 
 java {
     targetCompatibility = JavaVersion.VERSION_17
@@ -75,8 +79,8 @@ repositories {
 }
 
 dependencies {
-    minecraft("com.mojang:minecraft:$mc")
-    mappings("net.fabricmc:yarn:$mc+build.$yarn:v2")
+    minecraft("com.mojang:minecraft:$minecraft")
+    mappings("net.fabricmc:yarn:$minecraft+build.$yarn:v2")
     modImplementation("net.fabricmc:fabric-loader:$loader")
 
     listOf(
@@ -118,6 +122,7 @@ tasks.processResources {
 
 tasks.test {
     useJUnitPlatform()
+    dependsOn(tasks.getByName("runGametest"))
 }
 
 tasks.withType<JavaCompile> {

@@ -27,7 +27,7 @@
     },
     "name": "star.gc-api-test.star.name",
     "description": "star.gc-api-test.star.description",
-    "galaxy": "gc-api-test:galaxy",
+    "galaxy": "gc-api-test:example_galaxy",
     "position": {
       "config": {
         "x": 0,

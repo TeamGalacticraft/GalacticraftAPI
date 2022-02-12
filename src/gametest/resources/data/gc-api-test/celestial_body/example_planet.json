@@ -27,7 +27,7 @@
       "pressure": 1
     },
     "gravity": 1,
-    "parent": "gc-api-test:star",
+    "parent": "gc-api-test:example_star",
     "position": {
       "config": {
         "orbit_time": 1536000,
