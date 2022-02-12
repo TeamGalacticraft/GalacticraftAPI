@@ -25,6 +25,7 @@ package dev.galacticraft.api.registry;
 import com.mojang.serialization.Lifecycle;
 import dev.galacticraft.api.gas.Gas;
 import dev.galacticraft.api.rocket.part.RocketPart;
+import dev.galacticraft.api.rocket.part.RocketUpgrade;
 import dev.galacticraft.api.rocket.travelpredicate.TravelPredicateType;
 import dev.galacticraft.api.universe.celestialbody.CelestialBody;
 import dev.galacticraft.api.universe.celestialbody.CelestialBodyType;
@@ -95,7 +96,7 @@ public class AddonRegistry {
      * <i>This registry will not contain entries obtained via datapack</i>.
      */
     public static final MutableRegistry<RocketPart> ROCKET_PART = FabricRegistryBuilder.from(
-            new DefaultedRegistry<>(new Identifier(Constant.MOD_ID, "invalid").toString(),
+            new DefaultedRegistry<>(new Identifier(Constant.MOD_ID, "no_upgrade").toString(),
                     ROCKET_PART_KEY, Lifecycle.experimental())).buildAndRegister();
 
     static {
@@ -119,6 +120,6 @@ public class AddonRegistry {
         Registry.register(TRAVEL_PREDICATE, new Identifier(Constant.MOD_ID, "access_weight"), AccessWeightPredicateType.INSTANCE);
         Registry.register(TRAVEL_PREDICATE, new Identifier(Constant.MOD_ID, "constant"), ConstantTravelPredicateType.INSTANCE);
 
-        Registry.register(ROCKET_PART, new Identifier(Constant.MOD_ID, "invalid"), RocketPart.INVALID);
+        Registry.register(ROCKET_PART, new Identifier(Constant.MOD_ID, "no_upgrade"), RocketUpgrade.NO_UPGRADE);
     }
 }

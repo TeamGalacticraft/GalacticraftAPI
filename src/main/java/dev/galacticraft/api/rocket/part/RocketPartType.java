@@ -28,14 +28,23 @@ import net.minecraft.util.StringIdentifiable;
 import java.util.Locale;
 
 public enum RocketPartType implements StringIdentifiable {
-    CONE,
-    BODY,
-    FIN,
-    BOOSTER,
-    BOTTOM,
-    UPGRADE;
+    CONE(RocketCone.class),
+    BODY(RocketBody.class),
+    FIN(RocketFin.class),
+    BOOSTER(RocketBooster.class),
+    BOTTOM(RocketBottom.class),
+    UPGRADE(RocketUpgrade.class);
 
     public static final Codec<RocketPartType> CODEC = Codec.STRING.xmap(s -> RocketPartType.valueOf(s.toUpperCase(Locale.ROOT)), RocketPartType::asString);
+    private final Class<? extends RocketPart> clazz;
+
+    RocketPartType(Class<? extends RocketPart> clazz) {
+        this.clazz = clazz;
+    }
+
+    public boolean isOfType(RocketPart part) {
+        return clazz.isInstance(part);
+    }
 
     @Override
     public String asString() {

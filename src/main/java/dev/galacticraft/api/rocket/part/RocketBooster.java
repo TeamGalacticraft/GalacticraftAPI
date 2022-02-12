@@ -20,28 +20,19 @@
  * SOFTWARE.
  */
 
-package dev.galacticraft.api.client.rocket.render;
+package dev.galacticraft.api.rocket.part;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import net.minecraft.client.render.VertexConsumerProvider;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.client.world.ClientWorld;
+import org.jetbrains.annotations.NotNull;
 
-@FunctionalInterface
-@Environment(EnvType.CLIENT)
-public interface RocketPartRenderer {
-    /**
-     * Called when this rocket part is being rendered inside a gui/screen.
-     *
-     * @param world    the client world of the main player
-     * @param matrices the matrix stack containing the current transformations in the gui. All changes will not be popped out automatically
-     * @param mouseX   the x position of the mouse
-     * @param mouseY   the y position of the mouse
-     * @param delta    time in-between ticks
-     */
-    default void renderGUI(ClientWorld world, MatrixStack matrices, int mouseX, int mouseY, float delta) {
+public abstract non-sealed class RocketBooster implements RocketPart {
+    public abstract double getMaximumVelocity();
+
+    public abstract double getAccelerationPerTick();
+
+    public abstract long getFuelUsagePerTick();
+
+    @Override
+    public final @NotNull RocketPartType getType() {
+        return RocketPartType.BOOSTER;
     }
-
-    void render(ClientWorld world, MatrixStack matrices, Rocket rocket, VertexConsumerProvider vertices, float delta, int light);
 }

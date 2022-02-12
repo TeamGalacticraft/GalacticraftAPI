@@ -23,7 +23,6 @@
 package dev.galacticraft.impl.client.rocket.render;
 
 import dev.galacticraft.api.client.rocket.render.RocketPartRenderer;
-import dev.galacticraft.api.entity.Rocket;
 import dev.galacticraft.impl.Constant;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;

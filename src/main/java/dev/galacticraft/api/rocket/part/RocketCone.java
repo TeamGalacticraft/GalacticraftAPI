@@ -20,28 +20,22 @@
  * SOFTWARE.
  */
 
-package dev.galacticraft.api.client.rocket.render;
+package dev.galacticraft.api.rocket.part;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import net.minecraft.client.render.VertexConsumerProvider;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.client.world.ClientWorld;
+import dev.galacticraft.api.universe.celestialbody.CelestialBody;
+import dev.galacticraft.api.universe.celestialbody.CelestialBodyConfig;
+import dev.galacticraft.api.universe.celestialbody.CelestialBodyType;
+import dev.galacticraft.api.universe.celestialbody.landable.Landable;
+import org.jetbrains.annotations.NotNull;
 
-@FunctionalInterface
-@Environment(EnvType.CLIENT)
-public interface RocketPartRenderer {
-    /**
-     * Called when this rocket part is being rendered inside a gui/screen.
-     *
-     * @param world    the client world of the main player
-     * @param matrices the matrix stack containing the current transformations in the gui. All changes will not be popped out automatically
-     * @param mouseX   the x position of the mouse
-     * @param mouseY   the y position of the mouse
-     * @param delta    time in-between ticks
-     */
-    default void renderGUI(ClientWorld world, MatrixStack matrices, int mouseX, int mouseY, float delta) {
+public abstract non-sealed class RocketCone implements RocketPart {
+
+    public abstract boolean canSupportVelocity(double velocity);
+
+    public abstract <C extends CelestialBodyConfig, T extends CelestialBodyType<C> & Landable<C>> boolean canEscapeAtmosphere(CelestialBody<C, T> celestialBody);
+
+    @Override
+    public final @NotNull RocketPartType getType() {
+        return RocketPartType.CONE;
     }
-
-    void render(ClientWorld world, MatrixStack matrices, Rocket rocket, VertexConsumerProvider vertices, float delta, int light);
 }

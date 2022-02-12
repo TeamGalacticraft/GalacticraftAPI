@@ -20,28 +20,28 @@
  * SOFTWARE.
  */
 
-package dev.galacticraft.api.client.rocket.render;
+package dev.galacticraft.api.gametest.rocket.part;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import net.minecraft.client.render.VertexConsumerProvider;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.client.world.ClientWorld;
+import dev.galacticraft.api.rocket.part.RocketBody;
+import dev.galacticraft.api.rocket.recipe.RocketPartRecipe;
+import org.jetbrains.annotations.Nullable;
 
-@FunctionalInterface
-@Environment(EnvType.CLIENT)
-public interface RocketPartRenderer {
-    /**
-     * Called when this rocket part is being rendered inside a gui/screen.
-     *
-     * @param world    the client world of the main player
-     * @param matrices the matrix stack containing the current transformations in the gui. All changes will not be popped out automatically
-     * @param mouseX   the x position of the mouse
-     * @param mouseY   the y position of the mouse
-     * @param delta    time in-between ticks
-     */
-    default void renderGUI(ClientWorld world, MatrixStack matrices, int mouseX, int mouseY, float delta) {
+public class ExampleRocketBody extends RocketBody {
+    private final long fuelCapacity;
+    private final @Nullable RocketPartRecipe recipe;
+
+    public ExampleRocketBody(long fuelCapacity, @Nullable RocketPartRecipe recipe) {
+        this.fuelCapacity = fuelCapacity;
+        this.recipe = recipe;
     }
 
-    void render(ClientWorld world, MatrixStack matrices, Rocket rocket, VertexConsumerProvider vertices, float delta, int light);
+    @Override
+    public long getFuelCapacity() {
+        return this.fuelCapacity;
+    }
+
+    @Override
+    public @Nullable RocketPartRecipe getRecipe() {
+        return this.recipe;
+    }
 }

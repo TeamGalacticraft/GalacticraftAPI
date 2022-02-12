@@ -20,28 +20,30 @@
  * SOFTWARE.
  */
 
-package dev.galacticraft.api.client.rocket.render;
+package dev.galacticraft.api.rocket.recipe;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import net.minecraft.client.render.VertexConsumerProvider;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.client.world.ClientWorld;
+import net.minecraft.recipe.Ingredient;
 
-@FunctionalInterface
-@Environment(EnvType.CLIENT)
-public interface RocketPartRenderer {
-    /**
-     * Called when this rocket part is being rendered inside a gui/screen.
-     *
-     * @param world    the client world of the main player
-     * @param matrices the matrix stack containing the current transformations in the gui. All changes will not be popped out automatically
-     * @param mouseX   the x position of the mouse
-     * @param mouseY   the y position of the mouse
-     * @param delta    time in-between ticks
-     */
-    default void renderGUI(ClientWorld world, MatrixStack matrices, int mouseX, int mouseY, float delta) {
+public class RocketRecipeSlot {
+    private final int x;
+    private final int y;
+    private final Ingredient ingredient;
+
+    public RocketRecipeSlot(int x, int y, Ingredient ingredient) {
+        this.x = x;
+        this.y = y;
+        this.ingredient = ingredient;
     }
 
-    void render(ClientWorld world, MatrixStack matrices, Rocket rocket, VertexConsumerProvider vertices, float delta, int light);
+    public int getX() {
+        return x;
+    }
+
+    public int getY() {
+        return y;
+    }
+
+    public Ingredient getIngredient() {
+        return ingredient;
+    }
 }

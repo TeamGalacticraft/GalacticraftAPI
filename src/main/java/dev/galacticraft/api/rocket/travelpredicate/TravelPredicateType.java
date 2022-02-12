@@ -49,7 +49,7 @@ public abstract class TravelPredicateType<C extends TravelPredicateConfig> {
 
     public enum AccessType implements StringIdentifiable {
         /**
-         * Allow other rocket parts to decide whether or not the player may visit the celestial body
+         * Allow other rocket parts to decide whether the player may visit the celestial body
          */
         PASS,
 

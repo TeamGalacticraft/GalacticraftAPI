@@ -25,7 +25,6 @@ package dev.galacticraft.impl.internal.mixin;
 import com.mojang.serialization.Lifecycle;
 import dev.galacticraft.api.gas.Gas;
 import dev.galacticraft.api.registry.AddonRegistry;
-import dev.galacticraft.api.rocket.part.RocketPart;
 import dev.galacticraft.impl.universe.BuiltinObjects;
 import net.minecraft.util.registry.BuiltinRegistries;
 import net.minecraft.util.registry.MutableRegistry;
