@@ -28,11 +28,29 @@ import net.minecraft.util.StringIdentifiable;
 import java.util.Locale;
 
 public enum RocketPartType implements StringIdentifiable {
+    /**
+     * The cone of a rocket. Controls how fast the rocket can accelerate.
+     */
     CONE(RocketCone.class),
+    /**
+     * The body of a rocket. Controls the number of installable rocket upgrades and the maximum passenger count.
+     */
     BODY(RocketBody.class),
+    /**
+     * The fins of a rocket. Controls how fast the rocket can accelerate.
+     */
     FIN(RocketFin.class),
+    /**
+     * The booster of a rocket. Controls how fast the rocket accelerates, where the rocket can travel to, and how much fuel is consumed.
+     */
     BOOSTER(RocketBooster.class),
+    /**
+     * The bottom of a rocket. Controls how much fuel the rocket can hold.
+     */
     BOTTOM(RocketBottom.class),
+    /**
+     * An upgrade for a rocket.
+     */
     UPGRADE(RocketUpgrade.class);
 
     public static final Codec<RocketPartType> CODEC = Codec.STRING.xmap(s -> RocketPartType.valueOf(s.toUpperCase(Locale.ROOT)), RocketPartType::asString);
@@ -42,7 +60,13 @@ public enum RocketPartType implements StringIdentifiable {
         this.clazz = clazz;
     }
 
+    /**
+     * Tests whether a rocket part is of a given type.
+     * @param part the part to test
+     * @return whether a rocket part is of a given type.
+     */
     public boolean isOfType(RocketPart part) {
+        assert part.getType() != this || clazz.isInstance(part) : "Rocket part of mixed type was found!";
         return clazz.isInstance(part);
     }
 

@@ -22,22 +22,37 @@
 
 package dev.galacticraft.api.gametest.rocket.part;
 
+import dev.galacticraft.api.rocket.entity.Rocket;
 import dev.galacticraft.api.rocket.part.RocketBody;
 import dev.galacticraft.api.rocket.recipe.RocketPartRecipe;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class ExampleRocketBody extends RocketBody {
-    private final long fuelCapacity;
+    private final int maxPassengers;
+    private final int maxUpgrades;
+
     private final @Nullable RocketPartRecipe recipe;
 
-    public ExampleRocketBody(long fuelCapacity, @Nullable RocketPartRecipe recipe) {
-        this.fuelCapacity = fuelCapacity;
+    public ExampleRocketBody(int maxPassengers, int maxUpgrades, @Nullable RocketPartRecipe recipe) {
+        this.maxPassengers = maxPassengers;
+        this.maxUpgrades = maxUpgrades;
         this.recipe = recipe;
     }
 
     @Override
-    public long getFuelCapacity() {
-        return this.fuelCapacity;
+    public int getMaxPassengers() {
+        return maxPassengers;
+    }
+
+    @Override
+    public int getUpgradeCapacity() {
+        return this.maxUpgrades;
+    }
+
+    @Override
+    public void tick(@NotNull Rocket rocket) {
+
     }
 
     @Override

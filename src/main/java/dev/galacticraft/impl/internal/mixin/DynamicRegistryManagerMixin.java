@@ -26,7 +26,7 @@ import com.google.common.collect.ImmutableMap;
 import com.mojang.serialization.Codec;
 import dev.galacticraft.api.gas.Gas;
 import dev.galacticraft.api.registry.AddonRegistry;
-import dev.galacticraft.api.rocket.part.RocketPart;
+import dev.galacticraft.api.rocket.part.*;
 import dev.galacticraft.api.universe.celestialbody.CelestialBody;
 import dev.galacticraft.api.universe.galaxy.Galaxy;
 import net.minecraft.util.dynamic.EntryLoader;
@@ -55,7 +55,16 @@ public abstract class DynamicRegistryManagerMixin {
     @Inject(method = "method_31141", at = @At(value = "HEAD"))
     private static <E> void galacticraft_testForSyncRequirement(DynamicRegistryManager.Impl registryManager, EntryLoader.Impl entryLoader, DynamicRegistryManager.Info<E> info, CallbackInfo ci) {
         RegistryKey<? extends Registry<E>> key = info.registry();
-        override = (key.equals(AddonRegistry.GAS_KEY) || key.equals(AddonRegistry.GALAXY_KEY) || key.equals(AddonRegistry.CELESTIAL_BODY_KEY) || key.equals(AddonRegistry.ROCKET_PART_KEY));
+        override = (key.equals(AddonRegistry.GAS_KEY)
+                || key.equals(AddonRegistry.GALAXY_KEY)
+                || key.equals(AddonRegistry.CELESTIAL_BODY_KEY)
+                || key.equals(AddonRegistry.ROCKET_CONE_KEY)
+                || key.equals(AddonRegistry.ROCKET_BODY_KEY)
+                || key.equals(AddonRegistry.ROCKET_FIN_KEY)
+                || key.equals(AddonRegistry.ROCKET_BOOSTER_KEY)
+                || key.equals(AddonRegistry.ROCKET_BOTTOM_KEY)
+                || key.equals(AddonRegistry.ROCKET_UPGRADE_KEY)
+        );
     }
 
     @ModifyVariable(method = "method_31141", at = @At(value = "LOAD", ordinal = 0), name = "bl", ordinal = 0, index = 4)
@@ -69,6 +78,11 @@ public abstract class DynamicRegistryManagerMixin {
         register(builder, AddonRegistry.GAS_KEY, Gas.CODEC);
         register(builder, AddonRegistry.GALAXY_KEY, Galaxy.CODEC);
         register(builder, AddonRegistry.CELESTIAL_BODY_KEY, CelestialBody.CODEC);
-        register(builder, AddonRegistry.ROCKET_PART_KEY, RocketPart.CODEC);
+        register(builder, AddonRegistry.ROCKET_CONE_KEY, RocketCone.CODEC);
+        register(builder, AddonRegistry.ROCKET_BODY_KEY, RocketBody.CODEC);
+        register(builder, AddonRegistry.ROCKET_FIN_KEY, RocketFin.CODEC);
+        register(builder, AddonRegistry.ROCKET_BOOSTER_KEY, RocketBooster.CODEC);
+        register(builder, AddonRegistry.ROCKET_BOTTOM_KEY, RocketBottom.CODEC);
+        register(builder, AddonRegistry.ROCKET_UPGRADE_KEY, RocketUpgrade.CODEC);
     }
 }

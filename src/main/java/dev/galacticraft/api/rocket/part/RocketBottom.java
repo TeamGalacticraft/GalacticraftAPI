@@ -22,14 +22,37 @@
 
 package dev.galacticraft.api.rocket.part;
 
+import dev.galacticraft.api.rocket.entity.Rocket;
+import dev.galacticraft.api.rocket.recipe.RocketPartRecipe;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+/**
+ * The bottom of a rocket. Controls how much fuel the rocket can hold.
+ */
 public abstract non-sealed class RocketBottom implements RocketPart {
-    public abstract double getMaximumVelocity();
+    public static final RocketBottom INVALID = new RocketBottom() {
+        @Override
+        public long getFuelCapacity() {
+            return 0;
+        }
 
-    public abstract double getAccelerationPerTick();
+        @Override
+        public void tick(@NotNull Rocket rocket) {
+        }
 
-    public abstract long getFuelUsagePerTick();
+        @Override
+        public @Nullable RocketPartRecipe getRecipe() {
+            return null;
+        }
+    };
+
+    /**
+     * Returns the fuel capacity of this rocket.
+     * @return the fuel capacity of this rocket. 1 bucket = 81000.
+     * @see net.fabricmc.fabric.api.transfer.v1.fluid.FluidConstants
+     */
+    public abstract long getFuelCapacity();
 
     @Override
     public final @NotNull RocketPartType getType() {

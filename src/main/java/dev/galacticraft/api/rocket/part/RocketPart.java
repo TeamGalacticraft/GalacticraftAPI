@@ -22,12 +22,34 @@
 
 package dev.galacticraft.api.rocket.part;
 
+import dev.galacticraft.api.rocket.entity.Rocket;
 import dev.galacticraft.api.rocket.recipe.RocketPartRecipe;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+/**
+ * Base rocket part interface.
+ * To create a custom rocket part, extend {@link RocketBottom}, {@link RocketBooster}, {@link RocketBottom}, {@link RocketCone}, {@link RocketFin}, or {@link RocketUpgrade}
+ */
 public sealed interface RocketPart permits RocketBody, RocketBooster, RocketBottom, RocketCone, RocketFin, RocketUpgrade {
+    /**
+     * Called every tick when this part is applied to a placed rocket.
+     * The rocket may not have launched yet.
+     * @param rocket the rocket that this part is a part of.
+     */
+    void tick(@NotNull Rocket rocket);
+
+    /**
+     * Returns the recipe of this rocket part.
+     * @return the recipe of this rocket part. Can be null.
+     */
+    @Contract(pure = true)
     @Nullable RocketPartRecipe getRecipe();
 
+    /**
+     * Returns the type of the rocket part.
+     * @return the type of the rocket part.
+     */
     @NotNull RocketPartType getType();
 }

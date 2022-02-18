@@ -22,17 +22,41 @@
 
 package dev.galacticraft.api.rocket.part;
 
-import dev.galacticraft.api.universe.celestialbody.CelestialBody;
-import dev.galacticraft.api.universe.celestialbody.CelestialBodyConfig;
-import dev.galacticraft.api.universe.celestialbody.CelestialBodyType;
-import dev.galacticraft.api.universe.celestialbody.landable.Landable;
+import dev.galacticraft.api.rocket.entity.Rocket;
+import dev.galacticraft.api.rocket.recipe.RocketPartRecipe;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+/**
+ * The cone of a rocket. Controls how fast the rocket can accelerate.
+ */
 public abstract non-sealed class RocketCone implements RocketPart {
+    public static final RocketCone INVALID = new RocketCone() {
+        @Override
+        public boolean canSupportVelocity(double velocity) {
+            return false;
+        }
 
+        @Override
+        public void tick(@NotNull Rocket rocket) {
+        }
+
+        @Override
+        public @Nullable RocketPartRecipe getRecipe() {
+            return null;
+        }
+    };
+
+    /**
+     * Returns whether this rocket cone can sustain this velocity on a rocket.
+     * @param velocity the maximum velocity of the rocket being built.
+     * @return whether this rocket cone can sustain this velocity on a rocket.
+     */
+    @Contract(pure = true)
     public abstract boolean canSupportVelocity(double velocity);
 
-    public abstract <C extends CelestialBodyConfig, T extends CelestialBodyType<C> & Landable<C>> boolean canEscapeAtmosphere(CelestialBody<C, T> celestialBody);
+//    public abstract <C extends CelestialBodyConfig, T extends CelestialBodyType<C> & Landable<C>> boolean canEscapeAtmosphere(CelestialBody<C, T> celestialBody);
 
     @Override
     public final @NotNull RocketPartType getType() {

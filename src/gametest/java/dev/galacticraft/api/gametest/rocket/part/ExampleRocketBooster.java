@@ -22,8 +22,10 @@
 
 package dev.galacticraft.api.gametest.rocket.part;
 
+import dev.galacticraft.api.rocket.entity.Rocket;
 import dev.galacticraft.api.rocket.part.RocketBooster;
 import dev.galacticraft.api.rocket.recipe.RocketPartRecipe;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class ExampleRocketBooster extends RocketBooster {
@@ -52,6 +54,10 @@ public class ExampleRocketBooster extends RocketBooster {
     @Override
     public long getFuelUsagePerTick() {
         return this.fuelUsage;
+    }
+
+    @Override
+    public void tick(@NotNull Rocket rocket) {
     }
 
     @Override

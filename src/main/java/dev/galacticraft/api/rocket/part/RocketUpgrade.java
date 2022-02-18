@@ -27,16 +27,27 @@ import dev.galacticraft.api.rocket.recipe.RocketPartRecipe;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+/**
+ * An upgrade for a rocket.
+ */
 public abstract non-sealed class RocketUpgrade implements RocketPart {
-    public static final RocketUpgrade NO_UPGRADE = new RocketUpgrade() {
+    public static final RocketUpgrade INVALID = new RocketUpgrade() {
         @Override
-        public void tick(Rocket rocket) {}
+        public void tick(@NotNull Rocket rocket) {}
 
         @Override
         public @Nullable RocketPartRecipe getRecipe() {return null;}
     };
 
-    public abstract void tick(Rocket rocket);
+    public static final RocketUpgrade NO_UPGRADE = new RocketUpgrade() {
+        @Override
+        public void tick(@NotNull Rocket rocket) {}
+
+        @Override
+        public @NotNull RocketPartRecipe getRecipe() {
+            return RocketPartRecipe.EMPTY;
+        }
+    };
 
     @Override
     public @NotNull RocketPartType getType() {

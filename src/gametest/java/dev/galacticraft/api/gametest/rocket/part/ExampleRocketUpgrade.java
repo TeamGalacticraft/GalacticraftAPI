@@ -25,6 +25,7 @@ package dev.galacticraft.api.gametest.rocket.part;
 import dev.galacticraft.api.rocket.entity.Rocket;
 import dev.galacticraft.api.rocket.part.RocketUpgrade;
 import dev.galacticraft.api.rocket.recipe.RocketPartRecipe;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class ExampleRocketUpgrade extends RocketUpgrade {
@@ -35,7 +36,7 @@ public class ExampleRocketUpgrade extends RocketUpgrade {
     }
 
     @Override
-    public void tick(Rocket rocket) {
+    public void tick(@NotNull Rocket rocket) {
     }
 
     @Override

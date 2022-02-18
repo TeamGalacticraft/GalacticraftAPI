@@ -24,17 +24,13 @@ package dev.galacticraft.api.registry;
 
 import com.mojang.serialization.Lifecycle;
 import dev.galacticraft.api.gas.Gas;
-import dev.galacticraft.api.rocket.part.RocketPart;
-import dev.galacticraft.api.rocket.part.RocketUpgrade;
-import dev.galacticraft.api.rocket.travelpredicate.TravelPredicateType;
+import dev.galacticraft.api.rocket.part.*;
 import dev.galacticraft.api.universe.celestialbody.CelestialBody;
 import dev.galacticraft.api.universe.celestialbody.CelestialBodyType;
 import dev.galacticraft.api.universe.display.CelestialDisplayType;
 import dev.galacticraft.api.universe.galaxy.Galaxy;
 import dev.galacticraft.api.universe.position.CelestialPositionType;
 import dev.galacticraft.impl.Constant;
-import dev.galacticraft.impl.rocket.travelpredicate.type.AccessWeightPredicateType;
-import dev.galacticraft.impl.rocket.travelpredicate.type.ConstantTravelPredicateType;
 import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.DefaultedRegistry;
@@ -51,11 +47,6 @@ public class AddonRegistry {
     public static final MutableRegistry<Gas> GAS = FabricRegistryBuilder.from(
             new DefaultedRegistry<>(new Identifier(Constant.MOD_ID, "oxygen").toString(),
                     GAS_KEY, Lifecycle.experimental())).buildAndRegister();
-
-    public static final RegistryKey<Registry<TravelPredicateType<?>>> TRAVEL_PREDICATE_KEY = RegistryKey.ofRegistry(new Identifier(Constant.MOD_ID, "travel_predicate"));
-    public static final MutableRegistry<TravelPredicateType<?>> TRAVEL_PREDICATE = FabricRegistryBuilder.from(
-            new DefaultedRegistry<>(new Identifier(Constant.MOD_ID, "constant").toString(),
-                    TRAVEL_PREDICATE_KEY, Lifecycle.experimental())).buildAndRegister();
 
     public static final RegistryKey<Registry<CelestialPositionType<?>>> CELESTIAL_POSITION_TYPE_KEY = RegistryKey.ofRegistry(new Identifier(Constant.MOD_ID, "celestial_position_type"));
     public static final MutableRegistry<CelestialPositionType<?>> CELESTIAL_POSITION_TYPE = FabricRegistryBuilder.from(
@@ -90,14 +81,59 @@ public class AddonRegistry {
             new DefaultedRegistry<>(new Identifier(Constant.MOD_ID, "sol").toString(),
                     CELESTIAL_BODY_KEY, Lifecycle.experimental())).buildAndRegister();
 
-    public static final RegistryKey<Registry<RocketPart>> ROCKET_PART_KEY = RegistryKey.ofRegistry(new Identifier(Constant.MOD_ID, "rocket_part"));
+    public static final RegistryKey<Registry<RocketCone>> ROCKET_CONE_KEY = RegistryKey.ofRegistry(new Identifier(Constant.MOD_ID, "rocket_cone"));
     /**
      * <b>Warning</b>: Do not use this registry to obtain instances or ids of objects when in-world; use the {@link net.minecraft.util.registry.DynamicRegistryManager Dynamic Registry Manager} instead.
      * <i>This registry will not contain entries obtained via datapack</i>.
      */
-    public static final MutableRegistry<RocketPart> ROCKET_PART = FabricRegistryBuilder.from(
-            new DefaultedRegistry<>(new Identifier(Constant.MOD_ID, "no_upgrade").toString(),
-                    ROCKET_PART_KEY, Lifecycle.experimental())).buildAndRegister();
+    public static final MutableRegistry<RocketCone> ROCKET_CONE = FabricRegistryBuilder.from(
+            new DefaultedRegistry<>(new Identifier(Constant.MOD_ID, "invalid").toString(),
+                    ROCKET_CONE_KEY, Lifecycle.experimental())).buildAndRegister();
+
+    public static final RegistryKey<Registry<RocketBody>> ROCKET_BODY_KEY = RegistryKey.ofRegistry(new Identifier(Constant.MOD_ID, "rocket_body"));
+    /**
+     * <b>Warning</b>: Do not use this registry to obtain instances or ids of objects when in-world; use the {@link net.minecraft.util.registry.DynamicRegistryManager Dynamic Registry Manager} instead.
+     * <i>This registry will not contain entries obtained via datapack</i>.
+     */
+    public static final MutableRegistry<RocketBody> ROCKET_BODY = FabricRegistryBuilder.from(
+            new DefaultedRegistry<>(new Identifier(Constant.MOD_ID, "invalid").toString(),
+                    ROCKET_BODY_KEY, Lifecycle.experimental())).buildAndRegister();
+
+    public static final RegistryKey<Registry<RocketFin>> ROCKET_FIN_KEY = RegistryKey.ofRegistry(new Identifier(Constant.MOD_ID, "rocket_fin"));
+    /**
+     * <b>Warning</b>: Do not use this registry to obtain instances or ids of objects when in-world; use the {@link net.minecraft.util.registry.DynamicRegistryManager Dynamic Registry Manager} instead.
+     * <i>This registry will not contain entries obtained via datapack</i>.
+     */
+    public static final MutableRegistry<RocketFin> ROCKET_FIN = FabricRegistryBuilder.from(
+            new DefaultedRegistry<>(new Identifier(Constant.MOD_ID, "invalid").toString(),
+                    ROCKET_FIN_KEY, Lifecycle.experimental())).buildAndRegister();
+
+    public static final RegistryKey<Registry<RocketBooster>> ROCKET_BOOSTER_KEY = RegistryKey.ofRegistry(new Identifier(Constant.MOD_ID, "rocket_booster"));
+    /**
+     * <b>Warning</b>: Do not use this registry to obtain instances or ids of objects when in-world; use the {@link net.minecraft.util.registry.DynamicRegistryManager Dynamic Registry Manager} instead.
+     * <i>This registry will not contain entries obtained via datapack</i>.
+     */
+    public static final MutableRegistry<RocketBooster> ROCKET_BOOSTER = FabricRegistryBuilder.from(
+            new DefaultedRegistry<>(new Identifier(Constant.MOD_ID, "invalid").toString(),
+                    ROCKET_BOOSTER_KEY, Lifecycle.experimental())).buildAndRegister();
+
+    public static final RegistryKey<Registry<RocketBottom>> ROCKET_BOTTOM_KEY = RegistryKey.ofRegistry(new Identifier(Constant.MOD_ID, "rocket_bottom"));
+    /**
+     * <b>Warning</b>: Do not use this registry to obtain instances or ids of objects when in-world; use the {@link net.minecraft.util.registry.DynamicRegistryManager Dynamic Registry Manager} instead.
+     * <i>This registry will not contain entries obtained via datapack</i>.
+     */
+    public static final MutableRegistry<RocketBottom> ROCKET_BOTTOM = FabricRegistryBuilder.from(
+            new DefaultedRegistry<>(new Identifier(Constant.MOD_ID, "invalid").toString(),
+                    ROCKET_BOTTOM_KEY, Lifecycle.experimental())).buildAndRegister();
+
+    public static final RegistryKey<Registry<RocketUpgrade>> ROCKET_UPGRADE_KEY = RegistryKey.ofRegistry(new Identifier(Constant.MOD_ID, "rocket_upgrade"));
+    /**
+     * <b>Warning</b>: Do not use this registry to obtain instances or ids of objects when in-world; use the {@link net.minecraft.util.registry.DynamicRegistryManager Dynamic Registry Manager} instead.
+     * <i>This registry will not contain entries obtained via datapack</i>.
+     */
+    public static final MutableRegistry<RocketUpgrade> ROCKET_UPGRADE = FabricRegistryBuilder.from(
+            new DefaultedRegistry<>(new Identifier(Constant.MOD_ID, "invalid").toString(),
+                    ROCKET_UPGRADE_KEY, Lifecycle.experimental())).buildAndRegister();
 
     static {
         Registry.register(GAS, Gas.HYDROGEN_ID, Gas.HYDROGEN);
@@ -116,10 +152,5 @@ public class AddonRegistry {
         Registry.register(GAS, Gas.OZONE_ID, Gas.OZONE);
         Registry.register(GAS, Gas.NITROUS_DIOXIDE_ID, Gas.NITROUS_DIOXIDE);
         Registry.register(GAS, Gas.IODINE_ID, Gas.IODINE);
-
-        Registry.register(TRAVEL_PREDICATE, new Identifier(Constant.MOD_ID, "access_weight"), AccessWeightPredicateType.INSTANCE);
-        Registry.register(TRAVEL_PREDICATE, new Identifier(Constant.MOD_ID, "constant"), ConstantTravelPredicateType.INSTANCE);
-
-        Registry.register(ROCKET_PART, new Identifier(Constant.MOD_ID, "no_upgrade"), RocketUpgrade.NO_UPGRADE);
     }
 }

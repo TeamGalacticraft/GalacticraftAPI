@@ -22,9 +22,12 @@
 
 package dev.galacticraft.api.rocket.recipe;
 
+import java.util.Collections;
 import java.util.List;
 
 public class RocketPartRecipe {
+    public static final RocketPartRecipe EMPTY = new RocketPartRecipe(Collections.emptyList());
+
     private final int width;
     private final int height;
     private final List<RocketRecipeSlot> slots;

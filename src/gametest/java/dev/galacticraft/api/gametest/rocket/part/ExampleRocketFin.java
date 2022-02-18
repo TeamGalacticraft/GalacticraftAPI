@@ -22,8 +22,10 @@
 
 package dev.galacticraft.api.gametest.rocket.part;
 
+import dev.galacticraft.api.rocket.entity.Rocket;
 import dev.galacticraft.api.rocket.part.RocketFin;
 import dev.galacticraft.api.rocket.recipe.RocketPartRecipe;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class ExampleRocketFin extends RocketFin {
@@ -38,6 +40,10 @@ public class ExampleRocketFin extends RocketFin {
     @Override
     public boolean canSupportVelocity(double velocity) {
         return velocity <= this.maxVelocity;
+    }
+
+    @Override
+    public void tick(@NotNull Rocket rocket) {
     }
 
     @Override

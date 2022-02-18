@@ -23,28 +23,26 @@
 package dev.galacticraft.impl.rocket;
 
 import dev.galacticraft.api.rocket.RocketData;
-import dev.galacticraft.api.rocket.part.RocketPart;
-import dev.galacticraft.api.rocket.part.RocketPartType;
-import dev.galacticraft.api.rocket.travelpredicate.TravelPredicateType;
-import dev.galacticraft.api.universe.celestialbody.CelestialBody;
 import dev.galacticraft.impl.Constant;
-import it.unimi.dsi.fastutil.objects.Object2BooleanArrayMap;
-import it.unimi.dsi.fastutil.objects.Object2BooleanMap;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtElement;
+import net.minecraft.nbt.NbtList;
+import net.minecraft.nbt.NbtString;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.DynamicRegistryManager;
-import net.minecraft.util.registry.Registry;
 import org.jetbrains.annotations.ApiStatus;
-
-import java.util.Arrays;
 
 @ApiStatus.Internal
 public record RocketDataImpl(int color, Identifier cone, Identifier body, Identifier fin, Identifier booster,
-                             Identifier bottom, Identifier upgrade) implements RocketData {
+                             Identifier bottom, Identifier[] upgrades) implements RocketData {
     public static final RocketDataImpl EMPTY = new RocketDataImpl(0xffffffff, new Identifier(Constant.MOD_ID, "invalid"), new Identifier(Constant.MOD_ID, "invalid"), new Identifier(Constant.MOD_ID, "invalid"), new Identifier(Constant.MOD_ID, "invalid"), new Identifier(Constant.MOD_ID, "invalid"), new Identifier(Constant.MOD_ID, "invalid"));
 
     public static RocketDataImpl fromNbt(NbtCompound nbt) {
         if (nbt.getBoolean("Empty")) return empty();
+        NbtList upgradeList = nbt.getList("Upgrade", NbtElement.STRING_TYPE);
+        Identifier[] upgrades = new Identifier[upgradeList.size()];
+        for (int i = 0; i < upgradeList.size(); i++) {
+            upgrades[i] = new Identifier(upgradeList.getString(i));
+        }
         return new RocketDataImpl(
                 nbt.getInt("Color"),
                 new Identifier(nbt.getString("Cone")),
@@ -52,7 +50,7 @@ public record RocketDataImpl(int color, Identifier cone, Identifier body, Identi
                 new Identifier(nbt.getString("Fin")),
                 new Identifier(nbt.getString("Booster")),
                 new Identifier(nbt.getString("Bottom")),
-                new Identifier(nbt.getString("Upgrade"))
+                upgrades
         );
     }
 
@@ -72,66 +70,16 @@ public record RocketDataImpl(int color, Identifier cone, Identifier body, Identi
         nbt.putString("Fin", this.fin().toString());
         nbt.putString("Booster", this.booster().toString());
         nbt.putString("Bottom", this.bottom().toString());
-        nbt.putString("Upgrade", this.upgrade().toString());
+        NbtList list = new NbtList();
+        for (Identifier upgrade : this.upgrades) {
+            list.add(NbtString.of(upgrade.toString()));
+        }
+        nbt.put("Upgrades", list);
         return nbt;
-    }
-
-    @Override
-    public int red() {
-        return this.color() >> 16 & 0xFF;
-    }
-
-    @Override
-    public int green() {
-        return this.color() >> 8 & 0xFF;
-    }
-
-    @Override
-    public int blue() {
-        return this.color() & 0xFF;
-    }
-
-    @Override
-    public int alpha() {
-        return this.color() >> 24 & 0xFF;
     }
 
     @Override
     public boolean isEmpty() {
         return this == EMPTY;
-    }
-
-    @Override
-    public boolean canTravelTo(DynamicRegistryManager manager, CelestialBody<?, ?> celestialBodyType) {
-        Object2BooleanMap<RocketPart> map = new Object2BooleanArrayMap<>();
-        TravelPredicateType.AccessType type = TravelPredicateType.AccessType.PASS;
-        Registry<RocketPart> registry = RocketPart.getRegistry(manager);
-        for (Identifier part : this.parts()) {
-            RocketPart rocketPart = RocketPart.getById(registry, part);
-            map.put(rocketPart, true);
-            type = type.merge(this.travel(manager, rocketPart, celestialBodyType, map));
-        }
-        return type == TravelPredicateType.AccessType.ALLOW;
-    }
-
-    private TravelPredicateType.AccessType travel(DynamicRegistryManager manager, RocketPart part, CelestialBody<?, ?> type, Object2BooleanMap<RocketPart> map) {
-        return part.travelPredicate().canTravelTo(type, p -> map.computeBooleanIfAbsent((RocketPart) p, p1 -> {
-            if (Arrays.asList(this.parts()).contains(p1)) {
-                map.put((RocketPart) p, false);
-                return travel(manager, p1, type, map) != TravelPredicateType.AccessType.BLOCK;
-            } else {
-                return false;
-            }
-        }));
-    }
-
-    @Override
-    public Identifier getPartForType(RocketPartType type) {
-        return this.parts()[type.ordinal()];
-    }
-
-    @Override
-    public Identifier[] parts() {
-        return new Identifier[]{this.cone(), this.body(), this.fin(), this.booster(), this.bottom(), this.upgrade()};
     }
 }

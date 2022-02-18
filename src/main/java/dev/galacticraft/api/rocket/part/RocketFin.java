@@ -22,9 +22,38 @@
 
 package dev.galacticraft.api.rocket.part;
 
+import dev.galacticraft.api.rocket.entity.Rocket;
+import dev.galacticraft.api.rocket.recipe.RocketPartRecipe;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+/**
+ * The fins of a rocket. Controls how fast the rocket can accelerate.
+ */
 public abstract non-sealed class RocketFin implements RocketPart {
+    public static final RocketFin INVALID = new RocketFin() {
+        @Override
+        public boolean canSupportVelocity(double velocity) {
+            return false;
+        }
+
+        @Override
+        public void tick(@NotNull Rocket rocket) {
+        }
+
+        @Override
+        public @Nullable RocketPartRecipe getRecipe() {
+            return null;
+        }
+    };
+
+    /**
+     * Returns whether this rocket fin can sustain this velocity on a rocket.
+     * @param velocity the maximum velocity of the rocket being built.
+     * @return whether this rocket fin can sustain this velocity on a rocket.
+     */
+    @Contract(pure = true)
     public abstract boolean canSupportVelocity(double velocity);
 
     @Override

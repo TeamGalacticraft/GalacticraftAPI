@@ -22,22 +22,18 @@
 
 package dev.galacticraft.api.gametest.rocket.part;
 
+import dev.galacticraft.api.rocket.entity.Rocket;
 import dev.galacticraft.api.rocket.part.RocketCone;
 import dev.galacticraft.api.rocket.recipe.RocketPartRecipe;
-import dev.galacticraft.api.universe.celestialbody.CelestialBody;
-import dev.galacticraft.api.universe.celestialbody.CelestialBodyConfig;
-import dev.galacticraft.api.universe.celestialbody.CelestialBodyType;
-import dev.galacticraft.api.universe.celestialbody.landable.Landable;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class ExampleRocketCone extends RocketCone {
     private final double maxVelocity;
-    private final double maxGravity;
     private final @Nullable RocketPartRecipe recipe;
 
-    public ExampleRocketCone(double maxVelocity, double maxGravity, @Nullable RocketPartRecipe recipe) {
+    public ExampleRocketCone(double maxVelocity, @Nullable RocketPartRecipe recipe) {
         this.maxVelocity = maxVelocity;
-        this.maxGravity = maxGravity;
         this.recipe = recipe;
     }
 
@@ -47,8 +43,7 @@ public class ExampleRocketCone extends RocketCone {
     }
 
     @Override
-    public <C extends CelestialBodyConfig, T extends CelestialBodyType<C> & Landable<C>> boolean canEscapeAtmosphere(CelestialBody<C, T> celestialBody) {
-        return celestialBody.gravity() < this.maxGravity;
+    public void tick(@NotNull Rocket rocket) {
     }
 
     @Override

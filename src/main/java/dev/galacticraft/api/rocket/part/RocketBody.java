@@ -22,10 +22,50 @@
 
 package dev.galacticraft.api.rocket.part;
 
+import dev.galacticraft.api.rocket.entity.Rocket;
+import dev.galacticraft.api.rocket.recipe.RocketPartRecipe;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+/**
+ * The body of a rocket. Controls the number of installable rocket upgrades and the maximum passenger count.
+ */
 public abstract non-sealed class RocketBody implements RocketPart {
-    public abstract long getFuelCapacity();
+    public static final RocketBody INVALID = new RocketBody() {
+        @Override
+        public int getMaxPassengers() {
+            return 0;
+        }
+
+        @Override
+        public int getUpgradeCapacity() {
+            return 0;
+        }
+
+        @Override
+        public void tick(@NotNull Rocket rocket) {
+        }
+
+        @Override
+        public @Nullable RocketPartRecipe getRecipe() {
+            return null;
+        }
+    };
+
+    /**
+     * Returns the maximum number of passengers allowed on this rocket.
+     * @return the maximum number of passengers allowed on this rocket.
+     */
+    @Contract(pure = true)
+    public abstract int getMaxPassengers();
+
+    /**
+     * Returns the maximum number of upgrades that can be installed on this rocket.
+     * @return the maximum number of upgrades that can be installed on this rocket.
+     */
+    @Contract(pure = true)
+    public abstract int getUpgradeCapacity();
 
     @Override
     public final @NotNull RocketPartType getType() {

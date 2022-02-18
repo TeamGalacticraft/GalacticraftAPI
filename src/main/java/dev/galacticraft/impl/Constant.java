@@ -22,6 +22,7 @@
 
 package dev.galacticraft.impl;
 
+import net.minecraft.util.Identifier;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.ApiStatus;
@@ -44,5 +45,9 @@ public interface Constant {
         int SECTION_HEIGHT = 16;
         int CHUNK_SECTION_AREA = WIDTH * WIDTH * SECTION_HEIGHT;
 
+    }
+
+    interface Misc {
+        Identifier INVALID = new Identifier(MOD_ID, "invalid");
     }
 }
