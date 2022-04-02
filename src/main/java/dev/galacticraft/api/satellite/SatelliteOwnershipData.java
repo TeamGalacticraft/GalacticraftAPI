@@ -22,129 +22,57 @@
 
 package dev.galacticraft.api.satellite;
 
-import com.google.common.collect.ImmutableList;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import dev.galacticraft.impl.satellite.SatelliteOwnershipDataImpl;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.PacketByteBuf;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.PrimitiveIterator;
 import java.util.UUID;
-import java.util.stream.LongStream;
 
-public class SatelliteOwnershipData {
-    public static final Codec<SatelliteOwnershipData> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-            Codec.LONG_STREAM.fieldOf("owner").xmap(stream -> {
-                PrimitiveIterator.OfLong iterator = stream.iterator();
-                return new UUID(iterator.nextLong(), iterator.nextLong());
-            }, uuid -> LongStream.of(uuid.getMostSignificantBits(), uuid.getLeastSignificantBits())).forGetter(SatelliteOwnershipData::owner),
+public interface SatelliteOwnershipData {
+    Codec<SatelliteOwnershipData> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+            Codec.STRING.fieldOf("owner").xmap(UUID::fromString, UUID::toString).forGetter(SatelliteOwnershipData::owner),
             Codec.STRING.fieldOf("username").forGetter(SatelliteOwnershipData::username),
-            Codec.LONG_STREAM.listOf().fieldOf("owner").xmap(list -> {
-                List<UUID> uuids = new ArrayList<>(list.size());
-                for (LongStream longStream : list) {
-                    PrimitiveIterator.OfLong iterator = longStream.iterator();
-                    uuids.add(new UUID(iterator.nextLong(), iterator.nextLong()));
-                }
-                return uuids;
-            }, list -> {
-                List<LongStream> longs = new ArrayList<>(list.size());
-                for (UUID uuid : list) {
-                    longs.add(LongStream.of(uuid.getMostSignificantBits(), uuid.getLeastSignificantBits()));
-                }
-                return longs;
-            }).forGetter(SatelliteOwnershipData::trusted),
+            Codec.STRING.xmap(UUID::fromString, UUID::toString).listOf().fieldOf("trusted").forGetter(SatelliteOwnershipData::trusted),
             Codec.BOOL.fieldOf("open").forGetter(SatelliteOwnershipData::open)
-    ).apply(instance, SatelliteOwnershipData::new)); //fixme this looks terrible.
+    ).apply(instance, SatelliteOwnershipData::create));
 
-    private final UUID owner;
-    private final List<UUID> trusted;
-    private String username;
-    private final boolean open;
-
-    public SatelliteOwnershipData(@NotNull UUID owner, String username, List<UUID> trusted, boolean open) {
-        this.owner = owner;
-        this.username = username;
-        this.open = open;
-        this.trusted = trusted;
+    @Contract(value = "_, _, _, _ -> new", pure = true)
+    static @NotNull SatelliteOwnershipData create(@NotNull UUID owner, String username, List<UUID> trusted, boolean open) {
+        return new SatelliteOwnershipDataImpl(owner, username, trusted, open);
     }
 
-    public static @NotNull SatelliteOwnershipData fromNbt(@NotNull NbtCompound nbt) {
-        long[] trusted = nbt.getLongArray("trusted");
-        SatelliteOwnershipData data = new SatelliteOwnershipData(nbt.getUuid("owner"), nbt.getString("username"), new ArrayList<>(trusted.length / 2), nbt.getBoolean("open"));
-        for (int i = 0; i < trusted.length; i += 2) {
-            data.trusted.add(new UUID(trusted[i], trusted[i + 1]));
-        }
-        return data;
+    static @NotNull SatelliteOwnershipData fromNbt(@NotNull NbtCompound nbt) {
+        return SatelliteOwnershipDataImpl.fromNbt(nbt);
     }
 
-    public static @NotNull SatelliteOwnershipData fromPacket(@NotNull PacketByteBuf buf) {
-        int size = buf.readInt();
-        SatelliteOwnershipData data = new SatelliteOwnershipData(buf.readUuid(), buf.readString(), new ArrayList<>(size), buf.readBoolean());
-        for (int i = 0; i < size; i++) {
-            data.trusted.add(buf.readUuid());
-        }
-        return data;
+    static @NotNull SatelliteOwnershipData fromPacket(@NotNull PacketByteBuf buf) {
+        return SatelliteOwnershipDataImpl.fromPacket(buf);
     }
 
-    public void username(String username) {
-        this.username = username;
-    }
+    void username(String username);
 
-    public @NotNull String username() {
-        return username;
-    }
+    @NotNull String username();
 
-    public @NotNull UUID owner() {
-        return owner;
-    }
+    @NotNull UUID owner();
 
-    public boolean open() {
-        return this.open;
-    }
+    boolean open();
 
-    public @NotNull @Unmodifiable List<UUID> trusted() {
-        return ImmutableList.copyOf(trusted);
-    }
+    @NotNull @Unmodifiable List<UUID> trusted();
 
-    public void trust(UUID uuid) {
-        this.trusted.add(uuid);
-    }
+    void trust(UUID uuid);
 
-    public void distrust(UUID uuid) {
-        this.trusted.remove(uuid);
-    }
+    void distrust(UUID uuid);
 
-    public boolean canAccess(@NotNull PlayerEntity player) {
-        return player.getUuid().equals(this.owner()) || trusted.contains(player.getUuid());
-    }
+    boolean canAccess(@NotNull PlayerEntity player);
 
-    public void writePacket(@NotNull PacketByteBuf buf) {
-        buf.writeUuid(this.owner());
-        buf.writeString(this.username());
-        buf.writeBoolean(this.open());
-        buf.writeInt(this.trusted.size());
-        for (UUID uuid : this.trusted) {
-            buf.writeUuid(uuid);
-        }
-    }
+    void writePacket(@NotNull PacketByteBuf buf);
 
-    public @NotNull NbtCompound toNbt(@NotNull NbtCompound nbt) {
-        nbt.putUuid("owner", owner());
-        nbt.putString("username", username());
-        nbt.putBoolean("open", open());
-        long[] trusted = new long[this.trusted.size() * 2];
-        List<UUID> uuids = this.trusted;
-        for (int i = 0, uuidsSize = uuids.size(); i < uuidsSize; i++) {
-            UUID uuid = uuids.get(i);
-            trusted[i * 2] = uuid.getMostSignificantBits();
-            trusted[(i * 2) + 1] = uuid.getLeastSignificantBits();
-        }
-        nbt.putLongArray("trusted", trusted);
-        return nbt;
-    }
+    @NotNull NbtCompound toNbt(@NotNull NbtCompound nbt);
 }

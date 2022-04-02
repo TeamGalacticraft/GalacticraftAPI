@@ -48,7 +48,7 @@ public final class SatelliteConfig implements CelestialBodyConfig {
             Identifier.CODEC.fieldOf("galaxy").xmap(id -> RegistryKey.of(AddonRegistry.GALAXY_KEY, id), RegistryKey::getValue).forGetter(SatelliteConfig::galaxy),
             CelestialPosition.CODEC.fieldOf("position").forGetter(SatelliteConfig::position),
             CelestialDisplay.CODEC.fieldOf("display").forGetter(SatelliteConfig::display),
-            SatelliteOwnershipData.CODEC.fieldOf("ownershipData").forGetter(SatelliteConfig::ownershipData),
+            SatelliteOwnershipData.CODEC.fieldOf("ownership_data").forGetter(SatelliteConfig::ownershipData),
             Identifier.CODEC.fieldOf("world").xmap(id -> RegistryKey.of(Registry.WORLD_KEY, id), RegistryKey::getValue).forGetter(SatelliteConfig::world),
             GasComposition.CODEC.fieldOf("atmosphere").forGetter(SatelliteConfig::atmosphere),
             Codec.FLOAT.fieldOf("gravity").forGetter(SatelliteConfig::gravity),

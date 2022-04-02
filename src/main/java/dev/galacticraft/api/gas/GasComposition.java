@@ -25,47 +25,43 @@ package dev.galacticraft.api.gas;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import dev.galacticraft.impl.codec.MapCodec;
+import dev.galacticraft.impl.gas.GasCompositionImpl;
 import it.unimi.dsi.fastutil.objects.Object2DoubleArrayMap;
 import it.unimi.dsi.fastutil.objects.Object2DoubleMap;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.RegistryKey;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
-public record GasComposition(Object2DoubleMap<RegistryKey<Gas>> composition, double temperature, float pressure) {
-    private static final MapCodec<RegistryKey<Gas>, Double, Object2DoubleMap<RegistryKey<Gas>>> MAP_CODEC = MapCodec.create(Object2DoubleArrayMap::new, Identifier.CODEC.xmap(id -> RegistryKey.of(Gas.REGISTRY_KEY, id), RegistryKey::getValue), Codec.DOUBLE);
-    public static final Codec<GasComposition> CODEC = RecordCodecBuilder.create(atmosphericInfoInstance -> atmosphericInfoInstance.group(
+public interface GasComposition {
+    MapCodec<RegistryKey<Gas>, Double, Object2DoubleMap<RegistryKey<Gas>>> MAP_CODEC = MapCodec.create(Object2DoubleArrayMap::new, Identifier.CODEC.xmap(id -> RegistryKey.of(Gas.REGISTRY_KEY, id), RegistryKey::getValue), Codec.DOUBLE);
+    Codec<GasComposition> CODEC = RecordCodecBuilder.create(atmosphericInfoInstance -> atmosphericInfoInstance.group(
             MAP_CODEC.fieldOf("composition").forGetter(GasComposition::composition),
             Codec.DOUBLE.fieldOf("temperature").forGetter(GasComposition::temperature),
             Codec.FLOAT.fieldOf("pressure").forGetter(GasComposition::pressure)
-    ).apply(atmosphericInfoInstance, GasComposition::new));
+    ).apply(atmosphericInfoInstance, GasComposition::create));
 
-    public static GasComposition readPacket(PacketByteBuf buf) {
-        int size = buf.readInt();
-        Builder builder = new Builder();
-        builder.pressure(buf.readFloat());
-        builder.temperature(buf.readDouble());
-        for (int i = 0; i < size; i++) {
-            builder.gas(RegistryKey.of(Gas.REGISTRY_KEY, buf.readIdentifier()), buf.readDouble());
-        }
-        return builder.build();
+    @Contract("_, _, _ -> new")
+    static @NotNull GasComposition create(@NotNull Object2DoubleMap<RegistryKey<Gas>> composition, double temperature, float pressure) {
+        return new GasCompositionImpl(composition, temperature, pressure);
     }
 
-    public boolean breathable() {
-        double oxygen = this.composition().getOrDefault(RegistryKey.of(Gas.REGISTRY_KEY, Gases.OXYGEN_ID), 0.0);
-        return oxygen > 195000.0 && oxygen < 235000.0; //195000ppm to 235000ppm (19.5% to 23.5%)
+    static GasComposition readPacket(@NotNull PacketByteBuf buf) {
+        return GasCompositionImpl.readPacket(buf);
     }
 
-    public void writePacket(PacketByteBuf buf) {
-        buf.writeInt(this.composition.size());
-        buf.writeFloat(this.pressure);
-        buf.writeDouble(this.temperature);
-        for (Object2DoubleMap.Entry<RegistryKey<Gas>> entry : this.composition.object2DoubleEntrySet()) {
-            buf.writeIdentifier(entry.getKey().getValue());
-            buf.writeDouble(entry.getDoubleValue());
-        }
-    }
+    boolean breathable();
 
-    public static class Builder {
+    void writePacket(PacketByteBuf buf);
+
+    @NotNull Object2DoubleMap<RegistryKey<Gas>> composition();
+
+    double temperature();
+
+    float pressure();
+
+    class Builder {
         private final Object2DoubleMap<RegistryKey<Gas>> composition = new Object2DoubleArrayMap<>();
         private double temperature = 15.0;
         private float pressure = 1.0f;
@@ -90,7 +86,7 @@ public record GasComposition(Object2DoubleMap<RegistryKey<Gas>> composition, dou
         }
 
         public GasComposition build() {
-            return new GasComposition(this.composition, this.temperature, this.pressure);
+            return new GasCompositionImpl(this.composition, this.temperature, this.pressure);
         }
     }
 }

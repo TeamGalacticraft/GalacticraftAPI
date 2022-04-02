@@ -111,7 +111,7 @@ public class SatelliteType extends CelestialBodyType<SatelliteConfig> implements
         Identifier id = new Identifier(Objects.requireNonNull(server.getRegistryManager().get(AddonRegistry.CELESTIAL_BODY_KEY).getId(parent)) + "_" + player.getEntityName().toLowerCase(Locale.ROOT));
         DimensionType type = DimensionType.create(OptionalLong.empty(), true, false, false, true, 1, false, false, false, false, false, 0, 256, 256, new TagKey<>(Registry.BLOCK_KEY, new Identifier(Constant.MOD_ID, "infiniburn_space")), new Identifier(Constant.MOD_ID, "space_sky"), 0);
         DimensionOptions options = new DimensionOptions(RegistryEntry.of(type), new SatelliteChunkGenerator(server.getRegistryManager().get(Registry.STRUCTURE_SET_KEY), RegistryEntry.of(GcApiBiomes.SPACE), structure));
-        SatelliteOwnershipData ownershipData = new SatelliteOwnershipData(player.getUuid(), player.getEntityName(), new LinkedList<>(), false);
+        SatelliteOwnershipData ownershipData = SatelliteOwnershipData.create(player.getUuid(), player.getEntityName(), new LinkedList<>(), false);
         CelestialPosition<?, ?> position = new CelestialPosition<>(OrbitalCelestialPositionType.INSTANCE, new OrbitalCelestialPositionConfig(1550, 10.0f, 0.0F, false));
         CelestialDisplay<?, ?> display = new CelestialDisplay<>(IconCelestialDisplayType.INSTANCE, new IconCelestialDisplayConfig(new Identifier(Constant.MOD_ID, "satellite"), 0, 0, 16, 16, 1));
         RegistryKey<World> key = RegistryKey.of(Registry.WORLD_KEY, id);

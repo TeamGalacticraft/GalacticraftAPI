@@ -22,11 +22,10 @@
 
 package dev.galacticraft.api.universe.galaxy;
 
-import com.mojang.serialization.Codec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
 import dev.galacticraft.api.registry.AddonRegistry;
 import dev.galacticraft.api.universe.display.CelestialDisplay;
 import dev.galacticraft.api.universe.position.CelestialPosition;
+import dev.galacticraft.impl.universe.galaxy.GalaxyImpl;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.DynamicRegistryManager;
@@ -34,89 +33,37 @@ import net.minecraft.util.registry.Registry;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Objects;
-
-public final class Galaxy {
-    public static final Codec<Galaxy> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-            Codec.STRING.fieldOf("name").xmap(TranslatableText::new, TranslatableText::getKey).forGetter(Galaxy::name),
-            Codec.STRING.fieldOf("description").xmap(TranslatableText::new, TranslatableText::getKey).forGetter(Galaxy::description),
-            CelestialPosition.CODEC.fieldOf("position").forGetter(Galaxy::position),
-            CelestialDisplay.CODEC.fieldOf("display").forGetter(Galaxy::display)
-    ).apply(instance, Galaxy::new));
-
-    private final @NotNull TranslatableText name;
-    private final @NotNull TranslatableText description;
-    private final CelestialPosition<?, ?> position;
-    private final CelestialDisplay<?, ?> display;
-
-    public Galaxy(@NotNull TranslatableText name, @NotNull TranslatableText description,
-                  CelestialPosition<?, ?> position, CelestialDisplay<?, ?> display) {
-        this.name = name;
-        this.description = description;
-        this.position = position;
-        this.display = display;
+public interface Galaxy {
+    @Contract("_, _, _, _ -> new")
+    static @NotNull Galaxy create(@NotNull TranslatableText name, @NotNull TranslatableText description, CelestialPosition<?, ?> position, CelestialDisplay<?, ?> display) {
+        return new GalaxyImpl(name, description, position, display);
     }
 
-    public static Registry<Galaxy> getRegistry(@NotNull DynamicRegistryManager manager) {
+    static Registry<Galaxy> getRegistry(@NotNull DynamicRegistryManager manager) {
         return manager.get(AddonRegistry.GALAXY_KEY);
     }
 
-    public static Galaxy getById(DynamicRegistryManager manager, Identifier id) {
+    static Galaxy getById(DynamicRegistryManager manager, Identifier id) {
         return getById(getRegistry(manager), id);
     }
 
-    public static Identifier getId(DynamicRegistryManager manager, Galaxy galaxy) {
+    static Identifier getId(DynamicRegistryManager manager, Galaxy galaxy) {
         return getId(getRegistry(manager), galaxy);
     }
 
-    public static Galaxy getById(@NotNull Registry<Galaxy> registry, Identifier id) {
+    static Galaxy getById(@NotNull Registry<Galaxy> registry, Identifier id) {
         return registry.get(id);
     }
 
-    public static Identifier getId(@NotNull Registry<Galaxy> registry, Galaxy galaxy) {
+    static Identifier getId(@NotNull Registry<Galaxy> registry, Galaxy galaxy) {
         return registry.getId(galaxy);
     }
 
-    public @NotNull TranslatableText name() {
-        return this.name;
-    }
+    @NotNull TranslatableText name();
 
-    public @NotNull TranslatableText description() {
-        return this.description;
-    }
+    @NotNull TranslatableText description();
 
-    public CelestialPosition<?, ?> position() {
-        return this.position;
-    }
+    CelestialPosition<?, ?> position();
 
-    public CelestialDisplay<?, ?> display() {
-        return this.display;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (obj == this) return true;
-        if (obj == null || obj.getClass() != this.getClass()) return false;
-        var that = (Galaxy) obj;
-        return Objects.equals(this.name, that.name) &&
-                Objects.equals(this.description, that.description) &&
-                Objects.equals(this.position, that.position) &&
-                Objects.equals(this.display, that.display);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(name, description, position, display);
-    }
-
-    @Contract(pure = true)
-    @Override
-    public @NotNull String toString() {
-        return "Galaxy[" +
-                "name=" + name + ", " +
-                "description=" + description + ", " +
-                "position=" + position + ", " +
-                "display=" + display + ']';
-    }
-
+    CelestialDisplay<?, ?> display();
 }

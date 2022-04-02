@@ -40,7 +40,9 @@ import net.minecraft.util.registry.MutableRegistry;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryKey;
 
-public class AddonRegistry {
+public final class AddonRegistry {
+    private AddonRegistry() {}
+
     public static final RegistryKey<Registry<TravelPredicateType<?>>> TRAVEL_PREDICATE_KEY = RegistryKey.ofRegistry(new Identifier(Constant.MOD_ID, "travel_predicate"));
     public static final MutableRegistry<TravelPredicateType<?>> TRAVEL_PREDICATE = FabricRegistryBuilder.from(
             new DefaultedRegistry<>(new Identifier(Constant.MOD_ID, "constant").toString(),
