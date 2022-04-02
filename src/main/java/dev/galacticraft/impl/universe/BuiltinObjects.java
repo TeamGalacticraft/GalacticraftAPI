@@ -22,8 +22,8 @@
 
 package dev.galacticraft.impl.universe;
 
-import dev.galacticraft.api.gas.Gas;
 import dev.galacticraft.api.gas.GasComposition;
+import dev.galacticraft.api.gas.Gases;
 import dev.galacticraft.api.registry.AddonRegistry;
 import dev.galacticraft.api.universe.celestialbody.CelestialBody;
 import dev.galacticraft.api.universe.celestialbody.CelestialBodyType;
@@ -69,11 +69,11 @@ public class BuiltinObjects {
                     IconCelestialDisplayType.INSTANCE.configure(new IconCelestialDisplayConfig(new Identifier(Constant.MOD_ID, "textures/body_icons.png"), 0, 0, 16, 16, 1.5f)),
                     new GasComposition.Builder()
                             .pressure(28)
-                            .gas(Gas.HYDROGEN_ID, 734600.000)
-                            .gas(Gas.HELIUM_ID, 248500.000)
-                            .gas(Gas.OXYGEN_ID, 7700.000)
-                            .gas(Gas.NEON_ID, 1200.000)
-                            .gas(Gas.NITROGEN_ID, 900.000)
+                            .gas(Gases.HYDROGEN_ID, 734600.000)
+                            .gas(Gases.HELIUM_ID, 248500.000)
+                            .gas(Gases.OXYGEN_ID, 7700.000)
+                            .gas(Gases.NEON_ID, 1200.000)
+                            .gas(Gases.NITROGEN_ID, 900.000)
                             .build(),
                     28.0f,
                     1,
@@ -94,22 +94,22 @@ public class BuiltinObjects {
                     new GasComposition.Builder()
                             .pressure(1.0f)
                             .temperature(15.0f)
-                            .gas(Gas.NITROGEN_ID, 780840.000)
-                            .gas(Gas.OXYGEN_ID, 209500.000)
-                            .gas(Gas.WATER_VAPOR_ID, 25000.000)
-                            .gas(Gas.ARGON_ID, 9300.000)
-                            .gas(Gas.CARBON_DIOXIDE_ID, 399.000)
-                            .gas(Gas.NEON_ID, 18.000)
-                            .gas(Gas.HELIUM_ID, 5.420)
-                            .gas(Gas.METHANE_ID, 1.790)
-                            .gas(Gas.KRYPTON_ID, 1.140)
-                            .gas(Gas.HYDROGEN_ID, 0.550)
-                            .gas(Gas.NITROUS_OXIDE_ID, 0.325)
-                            .gas(Gas.CARBON_MONOXIDE_ID, 0.100)
-                            .gas(Gas.XENON_ID, 0.090)
-                            .gas(Gas.OZONE_ID, 0.070)
-                            .gas(Gas.NITROUS_DIOXIDE_ID, 0.020)
-                            .gas(Gas.IODINE_ID, 0.010)
+                            .gas(Gases.NITROGEN_ID, 780840.000)
+                            .gas(Gases.OXYGEN_ID, 209500.000)
+                            .gas(Gases.WATER_VAPOR_ID, 25000.000)
+                            .gas(Gases.ARGON_ID, 9300.000)
+                            .gas(Gases.CARBON_DIOXIDE_ID, 399.000)
+                            .gas(Gases.NEON_ID, 18.000)
+                            .gas(Gases.HELIUM_ID, 5.420)
+                            .gas(Gases.METHANE_ID, 1.790)
+                            .gas(Gases.KRYPTON_ID, 1.140)
+                            .gas(Gases.HYDROGEN_ID, 0.550)
+                            .gas(Gases.NITROUS_OXIDE_ID, 0.325)
+                            .gas(Gases.CARBON_MONOXIDE_ID, 0.100)
+                            .gas(Gases.XENON_ID, 0.090)
+                            .gas(Gases.OZONE_ID, 0.070)
+                            .gas(Gases.NITROUS_DIOXIDE_ID, 0.020)
+                            .gas(Gases.IODINE_ID, 0.010)
                             .build(),
                     1.0f,
                     0,

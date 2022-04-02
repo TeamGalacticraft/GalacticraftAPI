@@ -54,11 +54,13 @@ import net.minecraft.server.WorldGenerationProgressListener;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.structure.Structure;
+import net.minecraft.tag.TagKey;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.registry.Registry;
+import net.minecraft.util.registry.RegistryEntry;
 import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.source.BiomeAccess;
@@ -107,8 +109,8 @@ public class SatelliteType extends CelestialBodyType<SatelliteConfig> implements
     @ApiStatus.Internal
     public static CelestialBody<SatelliteConfig, SatelliteType> registerSatellite(@NotNull MinecraftServer server, @NotNull ServerPlayerEntity player, @NotNull CelestialBody<?, ?> parent, Structure structure) {
         Identifier id = new Identifier(Objects.requireNonNull(server.getRegistryManager().get(AddonRegistry.CELESTIAL_BODY_KEY).getId(parent)) + "_" + player.getEntityName().toLowerCase(Locale.ROOT));
-        DimensionType type = DimensionType.create(OptionalLong.empty(), true, false, false, true, 1, false, false, false, false, false, 0, 256, 256, new Identifier(Constant.MOD_ID, "infiniburn_space"), new Identifier(Constant.MOD_ID, "space_sky"), 0);
-        DimensionOptions options = new DimensionOptions(() -> type, new SatelliteChunkGenerator(GcApiBiomes.SPACE, structure));
+        DimensionType type = DimensionType.create(OptionalLong.empty(), true, false, false, true, 1, false, false, false, false, false, 0, 256, 256, new TagKey<>(Registry.BLOCK_KEY, new Identifier(Constant.MOD_ID, "infiniburn_space")), new Identifier(Constant.MOD_ID, "space_sky"), 0);
+        DimensionOptions options = new DimensionOptions(RegistryEntry.of(type), new SatelliteChunkGenerator(server.getRegistryManager().get(Registry.STRUCTURE_SET_KEY), RegistryEntry.of(GcApiBiomes.SPACE), structure));
         SatelliteOwnershipData ownershipData = new SatelliteOwnershipData(player.getUuid(), player.getEntityName(), new LinkedList<>(), false);
         CelestialPosition<?, ?> position = new CelestialPosition<>(OrbitalCelestialPositionType.INSTANCE, new OrbitalCelestialPositionConfig(1550, 10.0f, 0.0F, false));
         CelestialDisplay<?, ?> display = new CelestialDisplay<>(IconCelestialDisplayType.INSTANCE, new IconCelestialDisplayConfig(new Identifier(Constant.MOD_ID, "satellite"), 0, 0, 16, 16, 1));
@@ -129,7 +131,7 @@ public class SatelliteType extends CelestialBodyType<SatelliteConfig> implements
         ((SatelliteAccessor) server).addSatellite(id, satellite);
         Constant.LOGGER.debug("Attempting to create a world dynamically ({})", id);
 
-        DimensionType dimensionType3 = options.getDimensionType();
+        RegistryEntry<DimensionType> dimensionType3 = options.getDimensionTypeSupplier();
         ChunkGenerator chunkGenerator3 = options.getChunkGenerator();
         UnmodifiableLevelProperties unmodifiableLevelProperties = new UnmodifiableLevelProperties(server.getSaveProperties(), server.getSaveProperties().getMainWorldProperties());
         ServerWorld serverWorld2 = new ServerWorld(server, ((MinecraftServerAccessor) server).getWorkerExecutor(), ((MinecraftServerAccessor) server).getSession(), unmodifiableLevelProperties, RegistryKey.of(Registry.WORLD_KEY, id), dimensionType3, EMPTY_PROGRESS_LISTENER, chunkGenerator3, server.getSaveProperties().getGeneratorOptions().isDebugWorld(), BiomeAccess.hashSeed(server.getSaveProperties().getGeneratorOptions().getSeed()), ImmutableList.of(), false);

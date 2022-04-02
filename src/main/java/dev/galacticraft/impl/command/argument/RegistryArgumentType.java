@@ -33,25 +33,37 @@ import dev.galacticraft.api.registry.AddonRegistry;
 import net.minecraft.command.CommandSource;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.MutableRegistry;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryKey;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
 public class RegistryArgumentType<T> implements ArgumentType<Registry<T>> {
+    private static final ImmutableList<String> EXAMPLES = ImmutableList.of(
+            Registry.BLOCK_KEY.getValue().toString(),
+            Registry.ITEM_KEY.getValue().toString(),
+            Registry.ENTITY_TYPE_KEY.getValue().toString(),
+            Registry.DIMENSION_TYPE_KEY.getValue().toString(),
+            Registry.BIOME_KEY.getValue().toString(),
+            Registry.SOUND_EVENT_KEY.getValue().toString(),
+            AddonRegistry.CELESTIAL_BODY_TYPE_KEY.getValue().toString()
+    );
+
     private RegistryArgumentType() {
     }
 
-    public static <T> RegistryArgumentType<T> create() {
+    @Contract(value = " -> new", pure = true)
+    public static <T> @NotNull RegistryArgumentType<T> create() {
         return new RegistryArgumentType<>();
     }
 
-    public static <T> Registry<T> getRegistry(CommandContext<ServerCommandSource> context, String id) {
+    public static <T> @NotNull Registry<T> getRegistry(@NotNull CommandContext<ServerCommandSource> context, String id) {
         Registry<T> registry = context.getArgument(id, Registry.class);
-        Optional<MutableRegistry<T>> dynamic = context.getSource().getRegistryManager().getOptionalMutable(registry.getKey());
+        Optional<? extends Registry<T>> dynamic = context.getSource().getRegistryManager().getOptional(registry.getKey());
         return dynamic.isPresent() ? dynamic.get() : registry;
     }
 
@@ -68,10 +80,6 @@ public class RegistryArgumentType<T> implements ArgumentType<Registry<T>> {
 
     @Override
     public Collection<String> getExamples() {
-        return ImmutableList.of(
-                AddonRegistry.CELESTIAL_BODY_TYPE_KEY.getValue().toString(),
-                AddonRegistry.CELESTIAL_POSITION_TYPE_KEY.getValue().toString(),
-                AddonRegistry.GAS_KEY.getValue().toString()
-        );
+        return EXAMPLES;
     }
 }

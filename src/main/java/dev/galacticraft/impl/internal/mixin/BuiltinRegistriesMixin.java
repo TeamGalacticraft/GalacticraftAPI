@@ -23,7 +23,6 @@
 package dev.galacticraft.impl.internal.mixin;
 
 import com.mojang.serialization.Lifecycle;
-import dev.galacticraft.api.gas.Gas;
 import dev.galacticraft.api.registry.AddonRegistry;
 import dev.galacticraft.api.rocket.part.RocketPart;
 import dev.galacticraft.impl.universe.BuiltinObjects;
@@ -49,7 +48,6 @@ public abstract class BuiltinRegistriesMixin {
     @Inject(method = "<clinit>", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/registry/BuiltinRegistries;addRegistry(Lnet/minecraft/util/registry/RegistryKey;Ljava/util/function/Supplier;)Lnet/minecraft/util/registry/Registry;", ordinal = 0))
     private static void galacticraft_addDynamicRegistries(CallbackInfo ci) {
         BuiltinObjects.register();
-        addRegistry(AddonRegistry.GAS_KEY, AddonRegistry.GAS, () -> Gas.OXYGEN, Lifecycle.experimental());
         addRegistry(AddonRegistry.GALAXY_KEY, AddonRegistry.GALAXY, () -> BuiltinObjects.MILKY_WAY, Lifecycle.experimental());
         addRegistry(AddonRegistry.CELESTIAL_BODY_KEY, AddonRegistry.CELESTIAL_BODY, () -> BuiltinObjects.SOL, Lifecycle.experimental());
         addRegistry(AddonRegistry.ROCKET_PART_KEY, AddonRegistry.ROCKET_PART, () -> RocketPart.INVALID, Lifecycle.experimental());

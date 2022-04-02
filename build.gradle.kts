@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2021 Team Galacticraft
+ * Copyright (c) 2019-2022 Team Galacticraft
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -27,9 +27,10 @@ plugins {
     `maven-publish`
     id("fabric-loom") version "0.11-SNAPSHOT"
     id("org.cadixdev.licenser") version "0.6.1"
-    id("io.github.juuxel.loom-quiltflower") version("1.6.0")
+    id("io.github.juuxel.loom-quiltflower") version("1.6.1")
 }
 
+val modId           = project.property("mod.id").toString()
 val modVersion      = project.property("mod.version").toString()
 val modName         = project.property("mod.name").toString()
 val modGroup        = project.property("mod.group").toString()
@@ -38,7 +39,7 @@ val minecraft       = project.property("minecraft.version").toString()
 val yarn            = project.property("yarn.build").toString()
 val loader          = project.property("loader.version").toString()
 val fabric          = project.property("fabric.version").toString()
-val jupiter         = project.property("jupiter.version").toString()
+val machinelib      = project.property("machinelib.version").toString()
 
 group = modGroup
 version ="$modVersion+$minecraft"
@@ -59,9 +60,9 @@ val gametestSourceSet = sourceSets.create("gametest") {
 }
 
 loom {
-    accessWidenerPath.set(project.file("src/main/resources/galacticraft-api.accesswidener"))
+    accessWidenerPath.set(project.file("src/main/resources/${modId}.accesswidener"))
     mixin {
-        add(sourceSets.main.get(), "galacticraft-api.refmap.json")
+        add(sourceSets.main.get(), "${modId}.refmap.json")
     }
 
     runs {
@@ -76,6 +77,13 @@ loom {
 }
 
 repositories {
+    mavenLocal()
+    maven("https://maven.galacticraft.dev/") {
+        name = "Galacticraft Repository"
+        content {
+            includeGroup("dev.galacticraft")
+        }
+    }
 }
 
 dependencies {
@@ -98,10 +106,8 @@ dependencies {
         modImplementation(fabricApi.module(it, fabric))
     }
 
+    modImplementation("dev.galacticraft:MachineLib:$machinelib")
     modRuntimeOnly("net.fabricmc.fabric-api:fabric-api:$fabric")
-
-    testImplementation("org.junit.jupiter:junit-jupiter-api:$jupiter")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$jupiter")
 }
 
 tasks.processResources {
@@ -120,11 +126,6 @@ tasks.processResources {
     }
 }
 
-tasks.test {
-    useJUnitPlatform()
-    dependsOn(tasks.getByName("runGametest"))
-}
-
 tasks.withType<JavaCompile> {
     dependsOn(tasks.checkLicenses)
     options.encoding = "UTF-8"
@@ -135,11 +136,11 @@ tasks.jar {
     from("LICENSE")
     manifest {
         attributes(
-            "Implementation-Title"     to "GalacticraftAPI",
+            "Implementation-Title"     to modName,
             "Implementation-Version"   to "${project.version}",
             "Implementation-Vendor"    to "Team Galacticraft",
             "Implementation-Timestamp" to DateTimeFormatter.ISO_DATE_TIME,
-            "Maven-Artifact"           to "${project.group}:GalacticraftAPI:${project.version}",
+            "Maven-Artifact"           to "${project.group}:${modName}:${project.version}",
             "ModSide"                  to "BOTH"
         )
     }
@@ -149,7 +150,7 @@ publishing {
     publications {
         register("mavenJava", MavenPublication::class) {
             groupId = "dev.galacticraft"
-            artifactId = "GalacticraftAPI"
+            artifactId = modName
 
             from(components["java"])
         }

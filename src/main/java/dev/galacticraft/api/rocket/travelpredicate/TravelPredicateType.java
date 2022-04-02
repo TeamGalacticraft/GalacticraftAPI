@@ -23,14 +23,18 @@
 package dev.galacticraft.api.rocket.travelpredicate;
 
 import com.mojang.serialization.Codec;
+import dev.galacticraft.api.registry.AddonRegistry;
 import dev.galacticraft.api.universe.celestialbody.CelestialBody;
 import it.unimi.dsi.fastutil.objects.Object2BooleanFunction;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.StringIdentifiable;
+import net.minecraft.util.registry.RegistryEntry;
+import org.jetbrains.annotations.ApiStatus;
 
 import java.util.Locale;
 
 public abstract class TravelPredicateType<C extends TravelPredicateConfig> {
+    private final RegistryEntry.Reference<TravelPredicateType<?>> reference = AddonRegistry.TRAVEL_PREDICATE.createEntry(this);
     private final Codec<ConfiguredTravelPredicate<C>> codec;
 
     public TravelPredicateType(Codec<C> configCodec) {
@@ -45,6 +49,11 @@ public abstract class TravelPredicateType<C extends TravelPredicateConfig> {
 
     public Codec<ConfiguredTravelPredicate<C>> codec() {
         return this.codec;
+    }
+
+    @ApiStatus.Internal
+    public RegistryEntry.Reference<TravelPredicateType<?>> getReference() {
+        return reference;
     }
 
     public enum AccessType implements StringIdentifiable {

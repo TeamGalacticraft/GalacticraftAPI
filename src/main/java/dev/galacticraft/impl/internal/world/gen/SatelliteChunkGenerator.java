@@ -22,19 +22,25 @@
 
 package dev.galacticraft.impl.internal.world.gen;
 
+import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
-import dev.galacticraft.impl.internal.world.gen.biome.GcApiBiomes;
+import com.mojang.serialization.DataResult;
+import com.mojang.serialization.DynamicOps;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.SpawnGroup;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtElement;
+import net.minecraft.nbt.NbtOps;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.structure.Structure;
 import net.minecraft.structure.StructureManager;
+import net.minecraft.structure.StructurePlacementData;
+import net.minecraft.structure.StructureSet;
 import net.minecraft.util.collection.Pool;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
-import net.minecraft.util.registry.DynamicRegistryManager;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.util.registry.RegistryKey;
+import net.minecraft.util.registry.*;
 import net.minecraft.world.ChunkRegion;
 import net.minecraft.world.HeightLimitView;
 import net.minecraft.world.Heightmap.Type;
@@ -49,34 +55,58 @@ import net.minecraft.world.gen.GenerationStep;
 import net.minecraft.world.gen.StructureAccessor;
 import net.minecraft.world.gen.chunk.Blender;
 import net.minecraft.world.gen.chunk.ChunkGenerator;
-import net.minecraft.world.gen.chunk.StructuresConfig;
 import net.minecraft.world.gen.chunk.VerticalBlockSample;
-import net.minecraft.world.gen.feature.StructureFeature;
+import net.minecraft.world.gen.chunk.placement.ConcentricRingsStructurePlacement;
+import net.minecraft.world.gen.densityfunction.DensityFunctionTypes;
+import net.minecraft.world.gen.feature.ConfiguredStructureFeature;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
-import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 @ApiStatus.Internal
 public class SatelliteChunkGenerator extends ChunkGenerator {
-    public static final SatelliteChunkGenerator VOID_INSTANCE = new SatelliteChunkGenerator(GcApiBiomes.SPACE, new Structure());
-    public static final Codec<SatelliteChunkGenerator> CODEC = Codec.unit(VOID_INSTANCE);
-    public static final StructuresConfig STRUCTURES_CONFIG = new StructuresConfig(Optional.empty(), Collections.emptyMap());
-    private static final MultiNoiseUtil.NoiseValuePoint EMPTY_POINT = new MultiNoiseUtil.NoiseValuePoint(0, 0, 0, 0, 0, 0);
-    private static final MultiNoiseUtil.MultiNoiseSampler EMPTY_SAMPLER = (x, y, z) -> EMPTY_POINT;
-    private static final Pool<SpawnSettings.SpawnEntry> EMPTY_POOL = Pool.empty();
+    public static final Codec<Structure> STRUCTURE_CODEC = new Codec<>() {
+        @Override
+        public <T> DataResult<Pair<Structure, T>> decode(DynamicOps<T> ops, T input) {
+            Structure structure = new Structure();
+            NbtElement nbtElement = ops.convertTo(NbtOps.INSTANCE, input);
+            if (nbtElement instanceof NbtCompound compound) {
+                structure.readNbt(compound);
+                return DataResult.success(new Pair<>(structure, input));
+            } else {
+                return DataResult.error("Not a compound");
+            }
+        }
+
+        @Override
+        public <T> DataResult<T> encode(Structure input, DynamicOps<T> ops, T prefix) {
+            return DataResult.success(NbtOps.INSTANCE.convertTo(ops, input.writeNbt(new NbtCompound())));
+        }
+    };
+    public static final Codec<SatelliteChunkGenerator> CODEC = RecordCodecBuilder.create(instance -> method_41042(instance).and(instance.group(
+            Biome.REGISTRY_CODEC.fieldOf("biome").forGetter(SatelliteChunkGenerator::getBiome),
+            STRUCTURE_CODEC.fieldOf("structure").forGetter(SatelliteChunkGenerator::getStructure)
+    )).apply(instance, SatelliteChunkGenerator::new));
+
+    private static final MultiNoiseUtil.MultiNoiseSampler EMPTY_SAMPLER = new MultiNoiseUtil.MultiNoiseSampler(DensityFunctionTypes.zero(), DensityFunctionTypes.zero(), DensityFunctionTypes.zero(),DensityFunctionTypes.zero(), DensityFunctionTypes.zero(),DensityFunctionTypes.zero(), Collections.emptyList());
     private static final VerticalBlockSample EMPTY_VIEW = new VerticalBlockSample(0, new BlockState[0]);
     private final Structure structure;
-    private final Biome biome;
+    private final RegistryEntry<Biome> biome;
 
-    public SatelliteChunkGenerator(Biome biome, Structure structure) {
-        super(new FixedBiomeSource(biome), STRUCTURES_CONFIG);
+    public SatelliteChunkGenerator(Registry<StructureSet> registry, RegistryEntry<Biome> biome, Structure structure) {
+        super(registry, Optional.empty(), new FixedBiomeSource(biome));
         this.structure = structure;
         this.biome = biome;
+    }
+
+    public Structure getStructure() {
+        return structure;
     }
 
     @Override
@@ -98,12 +128,6 @@ public class SatelliteChunkGenerator extends ChunkGenerator {
     public void carve(ChunkRegion chunkRegion, long seed, BiomeAccess biomeAccess, StructureAccessor structureAccessor, Chunk chunk, GenerationStep.Carver generationStep) {
     }
 
-    @Nullable
-    @Override
-    public BlockPos locateStructure(ServerWorld world, StructureFeature<?> feature, BlockPos center, int radius, boolean skipExistingChunks) {
-        return null;
-    }
-
     @Override
     public void buildSurface(ChunkRegion region, StructureAccessor structures, Chunk chunk) {
     }
@@ -119,22 +143,15 @@ public class SatelliteChunkGenerator extends ChunkGenerator {
     }
 
     @Override
-    public Biome getBiomeForNoiseGen(int biomeX, int biomeY, int biomeZ) {
+    public RegistryEntry<Biome> getBiomeForNoiseGen(int biomeX, int biomeY, int biomeZ) {
         return this.biome;
     }
 
     @Override
     public void generateFeatures(StructureWorldAccess world, Chunk chunk, StructureAccessor structureAccessor) {
-    }
-
-    @Override
-    protected boolean testBiomeByKey(Registry<Biome> registry, Predicate<RegistryKey<Biome>> condition, Biome biome) {
-        return registry.getKey(this.biome).filter(condition).isPresent();
-    }
-
-    @Override
-    public StructuresConfig getStructuresConfig() {
-        return STRUCTURES_CONFIG;
+        if (chunk.getPos().x == 0 && chunk.getPos().z == 0) {
+            this.structure.place(world, new BlockPos(0, 60, 0), new BlockPos(0, 60, 0), new StructurePlacementData().setIgnoreEntities(true).setPlaceFluids(true).setRandom(world.getRandom()), world.getRandom(), 0);
+        }
     }
 
     @Override
@@ -145,11 +162,6 @@ public class SatelliteChunkGenerator extends ChunkGenerator {
     @Override
     public int getWorldHeight() {
         return 256;
-    }
-
-    @Override
-    public Pool<SpawnSettings.SpawnEntry> getEntitySpawnList(Biome biome, StructureAccessor accessor, SpawnGroup group, BlockPos pos) {
-        return EMPTY_POOL;
     }
 
     @Override
@@ -185,9 +197,54 @@ public class SatelliteChunkGenerator extends ChunkGenerator {
         return 0;
     }
 
+    @Nullable
     @Override
-    public boolean isStrongholdStartingChunk(ChunkPos pos) {
+    public Pair<BlockPos, RegistryEntry<ConfiguredStructureFeature<?, ?>>> locateStructure(ServerWorld serverWorld, RegistryEntryList<ConfiguredStructureFeature<?, ?>> registryEntryList, BlockPos center, int radius, boolean skipExistingChunks) {
+        return null;
+    }
+
+    @Override
+    public Stream<RegistryEntry<StructureSet>> method_41039() {
+        return Stream.empty();
+    }
+
+    @Override
+    public Optional<RegistryKey<Codec<? extends ChunkGenerator>>> getCodecKey() {
+        return super.getCodecKey();
+    }
+
+    @Override
+    public boolean method_41053(RegistryKey<StructureSet> registryKey, long l, int i, int j, int k) {
         return false;
+    }
+
+    @Override
+    public Pool<SpawnSettings.SpawnEntry> getEntitySpawnList(RegistryEntry<Biome> biome, StructureAccessor accessor, SpawnGroup group, BlockPos pos) {
+        return Pool.empty();
+    }
+
+    @Override
+    protected RegistryEntry<Biome> filterBiome(RegistryEntry<Biome> biome) {
+        return this.biome;
+    }
+
+    public RegistryEntry<Biome> getBiome() {
+        return biome;
+    }
+
+    @Override
+    public void method_41058() {
+//        super.method_41058();
+    }
+
+    @Nullable
+    @Override
+    public List<ChunkPos> getConcentricRingsStartChunks(ConcentricRingsStructurePlacement structurePlacement) {
+        return null;
+    }
+
+    @Override
+    public void getDebugHudText(List<String> text, BlockPos pos) {
     }
 
     @Override

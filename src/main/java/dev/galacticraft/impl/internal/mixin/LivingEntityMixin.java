@@ -24,12 +24,13 @@ package dev.galacticraft.impl.internal.mixin;
 
 import dev.galacticraft.api.accessor.GearInventoryProvider;
 import dev.galacticraft.api.accessor.WorldOxygenAccessor;
-import dev.galacticraft.api.attribute.GasStorage;
 import dev.galacticraft.api.entity.attribute.GcApiEntityAttributes;
-import dev.galacticraft.api.gas.Gas;
+import dev.galacticraft.api.gas.GasVariant;
+import dev.galacticraft.api.gas.Gases;
 import dev.galacticraft.api.item.Accessory;
 import dev.galacticraft.api.item.OxygenGear;
 import dev.galacticraft.api.item.OxygenMask;
+import dev.galacticraft.api.transfer.v1.gas.GasStorage;
 import dev.galacticraft.api.universe.celestialbody.CelestialBody;
 import dev.galacticraft.impl.internal.fabric.GalacticraftAPI;
 import net.fabricmc.fabric.api.transfer.v1.context.ContainerItemContext;
@@ -49,7 +50,7 @@ import net.minecraft.inventory.Inventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.tag.Tag;
+import net.minecraft.tag.TagKey;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.GameRules;
@@ -88,8 +89,8 @@ public abstract class LivingEntityMixin extends Entity implements GearInventoryP
         CelestialBody.getByDimension(this.world).ifPresent(celestialBodyType -> cir.setReturnValue((int) (MathHelper.ceil((fallDistance * celestialBodyType.gravity()) - 3.0F - ff) * damageMultiplier)));
     }
 
-    @Redirect(method = "baseTick", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;isSubmergedIn(Lnet/minecraft/tag/Tag;)Z", ordinal = 0))
-    private boolean galacticraft_testForBreathability(LivingEntity entity, Tag<Fluid> tag) {
+    @Redirect(method = "baseTick", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;isSubmergedIn(Lnet/minecraft/tag/TagKey;)Z", ordinal = 0))
+    private boolean galacticraft_testForBreathability(LivingEntity entity, TagKey<Fluid> tag) {
         //noinspection ConstantConditions
         assert ((Object) entity) == this;
         return entity.isSubmergedIn(tag) || !((WorldOxygenAccessor) this.world).isBreathable(entity.getBlockPos().offset(Direction.UP, (int) Math.floor(this.getEyeHeight(entity.getPose(), entity.getDimensions(entity.getPose())))));
@@ -129,10 +130,10 @@ public abstract class LivingEntityMixin extends Entity implements GearInventoryP
         if (mask && gear) {
             Inventory tankInv = this.getOxygenTanks();
             for (int i = 0; i < tankInv.size(); i++) {
-                Storage<Gas> storage = ContainerItemContext.withInitial(tankInv.getStack(i)).find(GasStorage.ITEM);
+                Storage<GasVariant> storage = ContainerItemContext.withInitial(tankInv.getStack(i)).find(GasStorage.ITEM);
                 if (storage != null) {
                     try (Transaction transaction = Transaction.openOuter()) {
-                        if (storage.extract(Gas.OXYGEN, 1L, transaction) > 0) {
+                        if (storage.extract(GasVariant.of(Gases.OXYGEN), 1L, transaction) > 0) {
                             transaction.commit();
                             ci.setReturnValue(this.getNextAirOnLand(air));
                             return;

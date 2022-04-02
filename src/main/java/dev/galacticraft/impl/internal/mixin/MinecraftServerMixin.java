@@ -36,6 +36,7 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.WorldSavePath;
 import net.minecraft.util.registry.Registry;
+import net.minecraft.util.registry.RegistryEntry;
 import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.SaveProperties;
 import net.minecraft.world.World;
@@ -121,7 +122,7 @@ public abstract class MinecraftServerMixin implements SatelliteAccessor {
 
                 WorldBorder worldBorder = getWorld(World.OVERWORLD).getWorldBorder();
                 for (Map.Entry<Identifier, CelestialBody<SatelliteConfig, SatelliteType>> entry : this.satellites.entrySet()) {
-                    DimensionType type = entry.getValue().config().dimensionOptions().getDimensionType();
+                    RegistryEntry<DimensionType> type = entry.getValue().config().dimensionOptions().getDimensionTypeSupplier();
                     ChunkGenerator chunkGenerator = entry.getValue().config().dimensionOptions().getChunkGenerator();
                     UnmodifiableLevelProperties unmodifiableLevelProperties = new UnmodifiableLevelProperties(getSaveProperties(), getSaveProperties().getMainWorldProperties());
                     ServerWorld world = new ServerWorld((MinecraftServer) (Object) this, workerExecutor, session, unmodifiableLevelProperties, RegistryKey.of(Registry.WORLD_KEY, entry.getKey()), type, SatelliteType.EMPTY_PROGRESS_LISTENER, chunkGenerator, getSaveProperties().getGeneratorOptions().isDebugWorld(), BiomeAccess.hashSeed(getSaveProperties().getGeneratorOptions().getSeed()), ImmutableList.of(), false);

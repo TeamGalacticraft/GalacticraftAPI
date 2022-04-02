@@ -24,49 +24,29 @@ package dev.galacticraft.impl.internal.mixin;
 
 import com.google.common.collect.ImmutableMap;
 import com.mojang.serialization.Codec;
-import dev.galacticraft.api.gas.Gas;
 import dev.galacticraft.api.registry.AddonRegistry;
 import dev.galacticraft.api.rocket.part.RocketPart;
 import dev.galacticraft.api.universe.celestialbody.CelestialBody;
 import dev.galacticraft.api.universe.galaxy.Galaxy;
-import net.minecraft.util.dynamic.EntryLoader;
 import net.minecraft.util.registry.DynamicRegistryManager;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryKey;
 import org.spongepowered.asm.mixin.Dynamic;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.ModifyVariable;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 @Mixin(DynamicRegistryManager.class)
-public abstract class DynamicRegistryManagerMixin {
+public interface DynamicRegistryManagerMixin {
     @Shadow
     private static <E> void register(ImmutableMap.Builder<RegistryKey<? extends Registry<?>>, DynamicRegistryManager.Info<?>> infosBuilder, RegistryKey<? extends Registry<E>> registryRef, Codec<E> entryCodec) {}
 
-    @Unique
-    private static boolean override = false;
-
-    @Inject(method = "method_31141", at = @At(value = "HEAD"))
-    private static <E> void galacticraft_testForSyncRequirement(DynamicRegistryManager.Impl registryManager, EntryLoader.Impl entryLoader, DynamicRegistryManager.Info<E> info, CallbackInfo ci) {
-        RegistryKey<? extends Registry<E>> key = info.registry();
-        override = (key.equals(AddonRegistry.GAS_KEY) || key.equals(AddonRegistry.GALAXY_KEY) || key.equals(AddonRegistry.CELESTIAL_BODY_KEY) || key.equals(AddonRegistry.ROCKET_PART_KEY));
-    }
-
-    @ModifyVariable(method = "method_31141", at = @At(value = "LOAD", ordinal = 0), name = "bl", ordinal = 0, index = 4)
-    private static boolean galacticraft_overrideRegistrySync(boolean bl) {
-        return bl && !override;
-    }
-
-    @Dynamic("1.18.1 synthetic method")
+    @Dynamic("1.18.2 synthetic method")
     @Inject(method = "method_30531", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/registry/DynamicRegistryManager;register(Lcom/google/common/collect/ImmutableMap$Builder;Lnet/minecraft/util/registry/RegistryKey;Lcom/mojang/serialization/Codec;Lcom/mojang/serialization/Codec;)V", ordinal = 0), locals = LocalCapture.CAPTURE_FAILHARD)
     private static void galacticraft_registerCustomRegistries(CallbackInfoReturnable<ImmutableMap<RegistryKey<? extends Registry<?>>, DynamicRegistryManager.Info<?>>> ci, ImmutableMap.Builder<RegistryKey<? extends Registry<?>>, DynamicRegistryManager.Info<?>> builder) {
-        register(builder, AddonRegistry.GAS_KEY, Gas.CODEC);
         register(builder, AddonRegistry.GALAXY_KEY, Galaxy.CODEC);
         register(builder, AddonRegistry.CELESTIAL_BODY_KEY, CelestialBody.CODEC);
         register(builder, AddonRegistry.ROCKET_PART_KEY, RocketPart.CODEC);

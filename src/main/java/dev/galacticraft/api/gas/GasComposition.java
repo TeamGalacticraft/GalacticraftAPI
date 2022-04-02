@@ -24,7 +24,6 @@ package dev.galacticraft.api.gas;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import dev.galacticraft.api.registry.AddonRegistry;
 import dev.galacticraft.impl.codec.MapCodec;
 import it.unimi.dsi.fastutil.objects.Object2DoubleArrayMap;
 import it.unimi.dsi.fastutil.objects.Object2DoubleMap;
@@ -33,7 +32,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.RegistryKey;
 
 public record GasComposition(Object2DoubleMap<RegistryKey<Gas>> composition, double temperature, float pressure) {
-    private static final MapCodec<RegistryKey<Gas>, Double, Object2DoubleMap<RegistryKey<Gas>>> MAP_CODEC = MapCodec.create(Object2DoubleArrayMap::new, Identifier.CODEC.xmap(id -> RegistryKey.of(AddonRegistry.GAS_KEY, id), RegistryKey::getValue), Codec.DOUBLE);
+    private static final MapCodec<RegistryKey<Gas>, Double, Object2DoubleMap<RegistryKey<Gas>>> MAP_CODEC = MapCodec.create(Object2DoubleArrayMap::new, Identifier.CODEC.xmap(id -> RegistryKey.of(Gas.REGISTRY_KEY, id), RegistryKey::getValue), Codec.DOUBLE);
     public static final Codec<GasComposition> CODEC = RecordCodecBuilder.create(atmosphericInfoInstance -> atmosphericInfoInstance.group(
             MAP_CODEC.fieldOf("composition").forGetter(GasComposition::composition),
             Codec.DOUBLE.fieldOf("temperature").forGetter(GasComposition::temperature),
@@ -46,13 +45,13 @@ public record GasComposition(Object2DoubleMap<RegistryKey<Gas>> composition, dou
         builder.pressure(buf.readFloat());
         builder.temperature(buf.readDouble());
         for (int i = 0; i < size; i++) {
-            builder.gas(RegistryKey.of(AddonRegistry.GAS_KEY, buf.readIdentifier()), buf.readDouble());
+            builder.gas(RegistryKey.of(Gas.REGISTRY_KEY, buf.readIdentifier()), buf.readDouble());
         }
         return builder.build();
     }
 
     public boolean breathable() {
-        double oxygen = this.composition().getOrDefault(Gas.OXYGEN_KEY, 0.0);
+        double oxygen = this.composition().getOrDefault(RegistryKey.of(Gas.REGISTRY_KEY, Gases.OXYGEN_ID), 0.0);
         return oxygen > 195000.0 && oxygen < 235000.0; //195000ppm to 235000ppm (19.5% to 23.5%)
     }
 
@@ -87,7 +86,7 @@ public record GasComposition(Object2DoubleMap<RegistryKey<Gas>> composition, dou
         }
 
         public Builder gas(Identifier gas, double ppm) {
-            return this.gas(RegistryKey.of(AddonRegistry.GAS_KEY, gas), ppm);
+            return this.gas(RegistryKey.of(Gas.REGISTRY_KEY, gas), ppm);
         }
 
         public GasComposition build() {

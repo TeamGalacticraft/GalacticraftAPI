@@ -73,7 +73,7 @@ public class SatelliteOwnershipData {
         this.trusted = trusted;
     }
 
-    public static SatelliteOwnershipData fromNbt(NbtCompound nbt) {
+    public static @NotNull SatelliteOwnershipData fromNbt(@NotNull NbtCompound nbt) {
         long[] trusted = nbt.getLongArray("trusted");
         SatelliteOwnershipData data = new SatelliteOwnershipData(nbt.getUuid("owner"), nbt.getString("username"), new ArrayList<>(trusted.length / 2), nbt.getBoolean("open"));
         for (int i = 0; i < trusted.length; i += 2) {
@@ -82,7 +82,7 @@ public class SatelliteOwnershipData {
         return data;
     }
 
-    public static SatelliteOwnershipData fromPacket(PacketByteBuf buf) {
+    public static @NotNull SatelliteOwnershipData fromPacket(@NotNull PacketByteBuf buf) {
         int size = buf.readInt();
         SatelliteOwnershipData data = new SatelliteOwnershipData(buf.readUuid(), buf.readString(), new ArrayList<>(size), buf.readBoolean());
         for (int i = 0; i < size; i++) {
@@ -119,11 +119,11 @@ public class SatelliteOwnershipData {
         this.trusted.remove(uuid);
     }
 
-    public boolean canAccess(PlayerEntity player) {
+    public boolean canAccess(@NotNull PlayerEntity player) {
         return player.getUuid().equals(this.owner()) || trusted.contains(player.getUuid());
     }
 
-    public void writePacket(PacketByteBuf buf) {
+    public void writePacket(@NotNull PacketByteBuf buf) {
         buf.writeUuid(this.owner());
         buf.writeString(this.username());
         buf.writeBoolean(this.open());
@@ -133,7 +133,7 @@ public class SatelliteOwnershipData {
         }
     }
 
-    public NbtCompound toNbt(NbtCompound nbt) {
+    public @NotNull NbtCompound toNbt(@NotNull NbtCompound nbt) {
         nbt.putUuid("owner", owner());
         nbt.putString("username", username());
         nbt.putBoolean("open", open());

@@ -28,6 +28,8 @@ import net.minecraft.entity.attribute.EntityAttribute;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
-public class GcApiEntityAttributes {
+public final class GcApiEntityAttributes {
     public static final EntityAttribute CAN_BREATHE_IN_SPACE = Registry.register(Registry.ATTRIBUTE, new Identifier(Constant.MOD_ID, "can_breathe_in_space"), (new ClampedEntityAttribute("galacticraft-api.attribute.name.generic.can_breathe_in_space", 0.0D, 0.0D, 1.0D)).setTracked(true));
+
+    private GcApiEntityAttributes() {}
 }

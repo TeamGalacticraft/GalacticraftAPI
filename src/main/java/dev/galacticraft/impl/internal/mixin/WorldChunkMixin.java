@@ -107,8 +107,8 @@ public abstract class WorldChunkMixin extends Chunk implements ChunkOxygenAccess
         ChunkSectionOxygenAccessor accessor = ((ChunkSectionOxygenAccessor) section);
         if (value != accessor.isBreathable(x & 15, y & 15, z & 15)) {
             if (!this.world.isClient) {
-                this.setShouldSave(true);
-                dirty = true;
+                this.needsSaving = true;
+                this.dirty = true;
                 sectionDirty[this.getSectionIndex(y)] = true;
             }
             accessor.setBreathable(x & 15, y & 15, z & 15, value);

@@ -31,10 +31,12 @@ import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.DynamicRegistryManager;
 import net.minecraft.util.registry.Registry;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
-public record Galaxy(@NotNull TranslatableText name, @NotNull TranslatableText description,
-                     CelestialPosition<?, ?> position, CelestialDisplay<?, ?> display) {
+import java.util.Objects;
+
+public final class Galaxy {
     public static final Codec<Galaxy> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             Codec.STRING.fieldOf("name").xmap(TranslatableText::new, TranslatableText::getKey).forGetter(Galaxy::name),
             Codec.STRING.fieldOf("description").xmap(TranslatableText::new, TranslatableText::getKey).forGetter(Galaxy::description),
@@ -42,7 +44,20 @@ public record Galaxy(@NotNull TranslatableText name, @NotNull TranslatableText d
             CelestialDisplay.CODEC.fieldOf("display").forGetter(Galaxy::display)
     ).apply(instance, Galaxy::new));
 
-    public static Registry<Galaxy> getRegistry(DynamicRegistryManager manager) {
+    private final @NotNull TranslatableText name;
+    private final @NotNull TranslatableText description;
+    private final CelestialPosition<?, ?> position;
+    private final CelestialDisplay<?, ?> display;
+
+    public Galaxy(@NotNull TranslatableText name, @NotNull TranslatableText description,
+                  CelestialPosition<?, ?> position, CelestialDisplay<?, ?> display) {
+        this.name = name;
+        this.description = description;
+        this.position = position;
+        this.display = display;
+    }
+
+    public static Registry<Galaxy> getRegistry(@NotNull DynamicRegistryManager manager) {
         return manager.get(AddonRegistry.GALAXY_KEY);
     }
 
@@ -54,11 +69,54 @@ public record Galaxy(@NotNull TranslatableText name, @NotNull TranslatableText d
         return getId(getRegistry(manager), galaxy);
     }
 
-    public static Galaxy getById(Registry<Galaxy> registry, Identifier id) {
+    public static Galaxy getById(@NotNull Registry<Galaxy> registry, Identifier id) {
         return registry.get(id);
     }
 
-    public static Identifier getId(Registry<Galaxy> registry, Galaxy galaxy) {
+    public static Identifier getId(@NotNull Registry<Galaxy> registry, Galaxy galaxy) {
         return registry.getId(galaxy);
     }
+
+    public @NotNull TranslatableText name() {
+        return this.name;
+    }
+
+    public @NotNull TranslatableText description() {
+        return this.description;
+    }
+
+    public CelestialPosition<?, ?> position() {
+        return this.position;
+    }
+
+    public CelestialDisplay<?, ?> display() {
+        return this.display;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) return true;
+        if (obj == null || obj.getClass() != this.getClass()) return false;
+        var that = (Galaxy) obj;
+        return Objects.equals(this.name, that.name) &&
+                Objects.equals(this.description, that.description) &&
+                Objects.equals(this.position, that.position) &&
+                Objects.equals(this.display, that.display);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, description, position, display);
+    }
+
+    @Contract(pure = true)
+    @Override
+    public @NotNull String toString() {
+        return "Galaxy[" +
+                "name=" + name + ", " +
+                "description=" + description + ", " +
+                "position=" + position + ", " +
+                "display=" + display + ']';
+    }
+
 }
