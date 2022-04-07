@@ -17,7 +17,7 @@ jobs:
         uses: gradle/wrapper-validation-action@v1
 
       - name: Setup JDK 17
-        uses: actions/setup-java@v2
+        uses: actions/setup-java@v3
         with:
           java-version: 17
           distribution: temurin
@@ -26,4 +26,4 @@ jobs:
         id: build
         uses: gradle/gradle-build-action@v2
         with:
-          arguments: checkLicenses build test runGametest
+          arguments: checkLicenses build runGametest

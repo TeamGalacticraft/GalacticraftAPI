@@ -22,8 +22,6 @@
 
 package dev.galacticraft.impl.universe.galaxy;
 
-import com.mojang.serialization.Codec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
 import dev.galacticraft.api.universe.display.CelestialDisplay;
 import dev.galacticraft.api.universe.galaxy.Galaxy;
 import dev.galacticraft.api.universe.position.CelestialPosition;
@@ -37,12 +35,6 @@ public record GalaxyImpl(@NotNull TranslatableText name,
                          @NotNull TranslatableText description,
                          CelestialPosition<?, ?> position,
                          CelestialDisplay<?, ?> display) implements Galaxy {
-    public static final Codec<GalaxyImpl> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-            Codec.STRING.fieldOf("name").xmap(TranslatableText::new, TranslatableText::getKey).forGetter(GalaxyImpl::name),
-            Codec.STRING.fieldOf("description").xmap(TranslatableText::new, TranslatableText::getKey).forGetter(GalaxyImpl::description),
-            CelestialPosition.CODEC.fieldOf("position").forGetter(GalaxyImpl::position),
-            CelestialDisplay.CODEC.fieldOf("display").forGetter(GalaxyImpl::display)
-    ).apply(instance, GalaxyImpl::new));
 
     @Override
     public boolean equals(Object obj) {

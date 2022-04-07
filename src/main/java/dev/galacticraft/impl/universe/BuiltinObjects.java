@@ -52,7 +52,7 @@ import java.util.Optional;
 
 public class BuiltinObjects {
     public static final RegistryKey<Galaxy> MILKY_WAY_KEY = RegistryKey.of(AddonRegistry.GALAXY_KEY, new Identifier(Constant.MOD_ID, "milky_way"));
-    public static final Galaxy MILKY_WAY = new Galaxy(
+    public static final Galaxy MILKY_WAY = Galaxy.create(
             new TranslatableText("galaxy.galacticraft-api.milky_way.name"),
             new TranslatableText("galaxy.galacticraft-api.milky_way.description"),
             StaticCelestialPositionType.INSTANCE.configure(new StaticCelestialPositionConfig(0, 0)),
