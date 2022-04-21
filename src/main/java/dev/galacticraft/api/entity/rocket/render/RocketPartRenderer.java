@@ -20,19 +20,29 @@
  * SOFTWARE.
  */
 
-package dev.galacticraft.api.client.rocket.render;
+package dev.galacticraft.api.entity.rocket.render;
 
-import dev.galacticraft.impl.client.rocket.render.RocketPartRendererRegistryImpl;
+import dev.galacticraft.api.entity.Rocket;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.util.Identifier;
-import org.jetbrains.annotations.NotNull;
+import net.minecraft.client.render.VertexConsumerProvider;
+import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.client.world.ClientWorld;
 
+@FunctionalInterface
 @Environment(EnvType.CLIENT)
-public interface RocketPartRendererRegistry {
-    RocketPartRendererRegistry INSTANCE = new RocketPartRendererRegistryImpl();
+public interface RocketPartRenderer {
+    /**
+     * Called when this rocket part is being rendered inside a gui/screen.
+     *
+     * @param world    the client world of the main player
+     * @param matrices the matrix stack containing the current transformations in the gui. All changes will not be popped out automatically
+     * @param mouseX   the x position of the mouse
+     * @param mouseY   the y position of the mouse
+     * @param delta    time in-between ticks
+     */
+    default void renderGUI(ClientWorld world, MatrixStack matrices, int mouseX, int mouseY, float delta) {
+    }
 
-    void register(@NotNull Identifier id, @NotNull RocketPartRenderer renderer);
-
-    @NotNull RocketPartRenderer getRenderer(Identifier id);
+    void render(ClientWorld world, MatrixStack matrices, Rocket rocket, VertexConsumerProvider vertices, float delta, int light);
 }

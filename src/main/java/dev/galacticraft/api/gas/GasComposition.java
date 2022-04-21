@@ -28,14 +28,16 @@ import dev.galacticraft.impl.codec.MapCodec;
 import dev.galacticraft.impl.gas.GasCompositionImpl;
 import it.unimi.dsi.fastutil.objects.Object2DoubleArrayMap;
 import it.unimi.dsi.fastutil.objects.Object2DoubleMap;
+import net.minecraft.fluid.Fluid;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryKey;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 public interface GasComposition {
-    MapCodec<RegistryKey<Gas>, Double, Object2DoubleMap<RegistryKey<Gas>>> MAP_CODEC = MapCodec.create(Object2DoubleArrayMap::new, Identifier.CODEC.xmap(id -> RegistryKey.of(Gas.REGISTRY_KEY, id), RegistryKey::getValue), Codec.DOUBLE);
+    MapCodec<RegistryKey<Fluid>, Double, Object2DoubleMap<RegistryKey<Fluid>>> MAP_CODEC = MapCodec.create(Object2DoubleArrayMap::new, Identifier.CODEC.xmap(id -> RegistryKey.of(Registry.FLUID_KEY, id), RegistryKey::getValue), Codec.DOUBLE);
     Codec<GasComposition> CODEC = RecordCodecBuilder.create(atmosphericInfoInstance -> atmosphericInfoInstance.group(
             MAP_CODEC.fieldOf("composition").forGetter(GasComposition::composition),
             Codec.DOUBLE.fieldOf("temperature").forGetter(GasComposition::temperature),
@@ -43,7 +45,7 @@ public interface GasComposition {
     ).apply(atmosphericInfoInstance, GasComposition::create));
 
     @Contract("_, _, _ -> new")
-    static @NotNull GasComposition create(@NotNull Object2DoubleMap<RegistryKey<Gas>> composition, double temperature, float pressure) {
+    static @NotNull GasComposition create(@NotNull Object2DoubleMap<RegistryKey<Fluid>> composition, double temperature, float pressure) {
         return new GasCompositionImpl(composition, temperature, pressure);
     }
 
@@ -55,14 +57,14 @@ public interface GasComposition {
 
     void writePacket(PacketByteBuf buf);
 
-    @NotNull Object2DoubleMap<RegistryKey<Gas>> composition();
+    @NotNull Object2DoubleMap<RegistryKey<Fluid>> composition();
 
     double temperature();
 
     float pressure();
 
     class Builder {
-        private final Object2DoubleMap<RegistryKey<Gas>> composition = new Object2DoubleArrayMap<>();
+        private final Object2DoubleMap<RegistryKey<Fluid>> composition = new Object2DoubleArrayMap<>();
         private double temperature = 15.0;
         private float pressure = 1.0f;
 
@@ -76,13 +78,13 @@ public interface GasComposition {
             return this;
         }
 
-        public Builder gas(RegistryKey<Gas> gas, double ppm) {
+        public Builder gas(RegistryKey<Fluid> gas, double ppm) {
             this.composition.put(gas, ppm);
             return this;
         }
 
         public Builder gas(Identifier gas, double ppm) {
-            return this.gas(RegistryKey.of(Gas.REGISTRY_KEY, gas), ppm);
+            return this.gas(RegistryKey.of(Registry.FLUID_KEY, gas), ppm);
         }
 
         public GasComposition build() {

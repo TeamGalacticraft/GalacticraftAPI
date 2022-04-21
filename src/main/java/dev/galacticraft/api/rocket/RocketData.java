@@ -29,6 +29,9 @@ import dev.galacticraft.impl.rocket.RocketDataImpl;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.DynamicRegistryManager;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Unmodifiable;
 
 public interface RocketData {
     Identifier INVALID_ID = new Identifier(Constant.MOD_ID, "invalid");
@@ -43,11 +46,12 @@ public interface RocketData {
         return new RocketDataImpl(color, cone, body, fin, booster, bottom, upgrade);
     }
 
-    static RocketData fromNbt(NbtCompound nbt) {
+    static @NotNull @Unmodifiable RocketData fromNbt(NbtCompound nbt) {
         return RocketDataImpl.fromNbt(nbt);
     }
 
-    static RocketData empty() {
+    @Contract(pure = true)
+    static @NotNull @Unmodifiable RocketData empty() {
         return RocketDataImpl.empty();
     }
 

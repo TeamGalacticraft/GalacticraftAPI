@@ -35,6 +35,8 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.DynamicRegistryManager;
 import net.minecraft.util.registry.Registry;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 
@@ -43,7 +45,7 @@ public record RocketDataImpl(int color, Identifier cone, Identifier body, Identi
                              Identifier bottom, Identifier upgrade) implements RocketData {
     public static final RocketDataImpl EMPTY = new RocketDataImpl(0xffffffff, new Identifier(Constant.MOD_ID, "invalid"), new Identifier(Constant.MOD_ID, "invalid"), new Identifier(Constant.MOD_ID, "invalid"), new Identifier(Constant.MOD_ID, "invalid"), new Identifier(Constant.MOD_ID, "invalid"), new Identifier(Constant.MOD_ID, "invalid"));
 
-    public static RocketDataImpl fromNbt(NbtCompound nbt) {
+    public static RocketDataImpl fromNbt(@NotNull NbtCompound nbt) {
         if (nbt.getBoolean("Empty")) return empty();
         return new RocketDataImpl(
                 nbt.getInt("Color"),
@@ -60,8 +62,9 @@ public record RocketDataImpl(int color, Identifier cone, Identifier body, Identi
         return EMPTY;
     }
 
+    @Contract("_ -> param1")
     @Override
-    public NbtCompound toNbt(NbtCompound nbt) {
+    public @NotNull NbtCompound toNbt(@NotNull NbtCompound nbt) {
         if (this.isEmpty()) {
             nbt.putBoolean("Empty", true);
             return nbt;
@@ -114,7 +117,7 @@ public record RocketDataImpl(int color, Identifier cone, Identifier body, Identi
         return type == TravelPredicateType.AccessType.ALLOW;
     }
 
-    private TravelPredicateType.AccessType travel(DynamicRegistryManager manager, RocketPart part, CelestialBody<?, ?> type, Object2BooleanMap<RocketPart> map) {
+    private TravelPredicateType.AccessType travel(DynamicRegistryManager manager, @NotNull RocketPart part, CelestialBody<?, ?> type, Object2BooleanMap<RocketPart> map) {
         return part.travelPredicate().canTravelTo(type, p -> map.computeBooleanIfAbsent((RocketPart) p, p1 -> {
             if (Arrays.asList(this.parts()).contains(p1)) {
                 map.put((RocketPart) p, false);
@@ -126,12 +129,13 @@ public record RocketDataImpl(int color, Identifier cone, Identifier body, Identi
     }
 
     @Override
-    public Identifier getPartForType(RocketPartType type) {
+    public Identifier getPartForType(@NotNull RocketPartType type) {
         return this.parts()[type.ordinal()];
     }
 
+    @Contract(" -> new")
     @Override
-    public Identifier[] parts() {
+    public Identifier @NotNull [] parts() {
         return new Identifier[]{this.cone(), this.body(), this.fin(), this.booster(), this.bottom(), this.upgrade()};
     }
 }

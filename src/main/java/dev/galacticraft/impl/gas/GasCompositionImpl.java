@@ -22,28 +22,29 @@
 
 package dev.galacticraft.impl.gas;
 
-import dev.galacticraft.api.gas.Gas;
 import dev.galacticraft.api.gas.GasComposition;
 import dev.galacticraft.api.gas.Gases;
 import it.unimi.dsi.fastutil.objects.Object2DoubleMap;
+import net.minecraft.fluid.Fluid;
 import net.minecraft.network.PacketByteBuf;
+import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryKey;
 import org.jetbrains.annotations.NotNull;
 
-public record GasCompositionImpl(@NotNull Object2DoubleMap<RegistryKey<Gas>> composition, double temperature, float pressure) implements GasComposition {
+public record GasCompositionImpl(@NotNull Object2DoubleMap<RegistryKey<Fluid>> composition, double temperature, float pressure) implements GasComposition {
     public static GasComposition readPacket(@NotNull PacketByteBuf buf) {
         int size = buf.readInt();
         Builder builder = new Builder();
         builder.pressure(buf.readFloat());
         builder.temperature(buf.readDouble());
         for (int i = 0; i < size; i++) {
-            builder.gas(RegistryKey.of(Gas.REGISTRY_KEY, buf.readIdentifier()), buf.readDouble());
+            builder.gas(RegistryKey.of(Registry.FLUID_KEY, buf.readIdentifier()), buf.readDouble());
         }
         return builder.build();
     }
 
     public boolean breathable() {
-        double oxygen = this.composition().getOrDefault(RegistryKey.of(Gas.REGISTRY_KEY, Gases.OXYGEN_ID), 0.0);
+        double oxygen = this.composition().getOrDefault(RegistryKey.of(Registry.FLUID_KEY, Gases.OXYGEN_ID), 0.0);
         return oxygen > 195000.0 && oxygen < 235000.0; //195000ppm to 235000ppm (19.5% to 23.5%)
     }
 
@@ -51,7 +52,7 @@ public record GasCompositionImpl(@NotNull Object2DoubleMap<RegistryKey<Gas>> com
         buf.writeInt(this.composition.size());
         buf.writeFloat(this.pressure);
         buf.writeDouble(this.temperature);
-        for (Object2DoubleMap.Entry<RegistryKey<Gas>> entry : this.composition.object2DoubleEntrySet()) {
+        for (Object2DoubleMap.Entry<RegistryKey<Fluid>> entry : this.composition.object2DoubleEntrySet()) {
             buf.writeIdentifier(entry.getKey().getValue());
             buf.writeDouble(entry.getDoubleValue());
         }

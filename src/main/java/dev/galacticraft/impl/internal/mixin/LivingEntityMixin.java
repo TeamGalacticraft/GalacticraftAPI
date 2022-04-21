@@ -25,15 +25,15 @@ package dev.galacticraft.impl.internal.mixin;
 import dev.galacticraft.api.accessor.GearInventoryProvider;
 import dev.galacticraft.api.accessor.WorldOxygenAccessor;
 import dev.galacticraft.api.entity.attribute.GcApiEntityAttributes;
-import dev.galacticraft.api.gas.GasVariant;
 import dev.galacticraft.api.gas.Gases;
 import dev.galacticraft.api.item.Accessory;
 import dev.galacticraft.api.item.OxygenGear;
 import dev.galacticraft.api.item.OxygenMask;
-import dev.galacticraft.api.transfer.v1.gas.GasStorage;
 import dev.galacticraft.api.universe.celestialbody.CelestialBody;
 import dev.galacticraft.impl.internal.fabric.GalacticraftAPI;
 import net.fabricmc.fabric.api.transfer.v1.context.ContainerItemContext;
+import net.fabricmc.fabric.api.transfer.v1.fluid.FluidStorage;
+import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
 import net.fabricmc.fabric.api.transfer.v1.storage.Storage;
 import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.minecraft.enchantment.EnchantmentHelper;
@@ -130,10 +130,10 @@ public abstract class LivingEntityMixin extends Entity implements GearInventoryP
         if (mask && gear) {
             Inventory tankInv = this.getOxygenTanks();
             for (int i = 0; i < tankInv.size(); i++) {
-                Storage<GasVariant> storage = ContainerItemContext.withInitial(tankInv.getStack(i)).find(GasStorage.ITEM);
+                Storage<FluidVariant> storage = ContainerItemContext.withInitial(tankInv.getStack(i)).find(FluidStorage.ITEM);
                 if (storage != null) {
                     try (Transaction transaction = Transaction.openOuter()) {
-                        if (storage.extract(GasVariant.of(Gases.OXYGEN), 1L, transaction) > 0) {
+                        if (storage.extract(FluidVariant.of(Gases.OXYGEN), 1L, transaction) > 0) {
                             transaction.commit();
                             ci.setReturnValue(this.getNextAirOnLand(air));
                             return;

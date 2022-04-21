@@ -24,8 +24,8 @@ package dev.galacticraft.impl.client.rocket.render;
 
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
-import dev.galacticraft.api.client.rocket.render.RocketPartRenderer;
 import dev.galacticraft.api.entity.Rocket;
+import dev.galacticraft.api.entity.rocket.render.RocketPartRenderer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;

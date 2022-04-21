@@ -24,6 +24,7 @@ package dev.galacticraft.api.rocket.part;
 
 import com.mojang.serialization.Codec;
 import net.minecraft.util.StringIdentifiable;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Locale;
 
@@ -38,7 +39,7 @@ public enum RocketPartType implements StringIdentifiable {
     public static final Codec<RocketPartType> CODEC = Codec.STRING.xmap(s -> RocketPartType.valueOf(s.toUpperCase(Locale.ROOT)), RocketPartType::asString);
 
     @Override
-    public String asString() {
+    public @NotNull String asString() {
         return this.toString().toLowerCase(Locale.ROOT);
     }
 }

@@ -22,8 +22,8 @@
 
 package dev.galacticraft.impl.client.rocket.render;
 
-import dev.galacticraft.api.client.rocket.render.RocketPartRenderer;
-import dev.galacticraft.api.client.rocket.render.RocketPartRendererRegistry;
+import dev.galacticraft.api.entity.rocket.render.RocketPartRenderer;
+import dev.galacticraft.api.entity.rocket.render.RocketPartRendererRegistry;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.util.Identifier;
