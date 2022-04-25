@@ -167,6 +167,10 @@ publishing {
     }
 }
 
+tasks.javadoc {
+    exclude("**/impl/**")
+}
+
 license {
     setHeader(project.file("LICENSE_HEADER.txt"))
     include("**/dev/galacticraft/**/*.java")
