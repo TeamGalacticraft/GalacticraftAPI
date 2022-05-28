@@ -42,6 +42,8 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
+import java.util.BitSet;
+
 /**
  * @author <a href="https://github.com/TeamGalacticraft">TeamGalacticraft</a>
  */
@@ -55,22 +57,9 @@ public abstract class ChunkSerializerMixin {
         }
         nbt.putShort(Constant.Nbt.CHANGE_COUNT, ((ChunkSectionOxygenAccessorInternal) chunkSection).getModifiedBlocks());
         if (((ChunkSectionOxygenAccessorInternal) chunkSection).getModifiedBlocks() > 0) {
-            byte[] output = new byte[(16 * 16 * 16) / 8];
-            boolean[] oxygenValues = ((ChunkSectionOxygenAccessorInternal) chunkSection).getInversionArray();
-            assert oxygenValues != null;
-            for (int p = 0; p < (16 * 16 * 16 / 8); p++) {
-                byte serialized = -128;
-                serialized += oxygenValues[(p * 8)]     ? 0b1 : 0;
-                serialized += oxygenValues[(p * 8) + 1] ? 0b10 : 0;
-                serialized += oxygenValues[(p * 8) + 2] ? 0b100 : 0;
-                serialized += oxygenValues[(p * 8) + 3] ? 0b1000 : 0;
-                serialized += oxygenValues[(p * 8) + 4] ? 0b10000 : 0;
-                serialized += oxygenValues[(p * 8) + 5] ? 0b100000 : 0;
-                serialized += oxygenValues[(p * 8) + 6] ? 0b1000000 : 0;
-                serialized += oxygenValues[(p * 8) + 7] ? 0b10000000 : 0;
-                output[p] = serialized;
-            }
-            nbt.putByteArray(Constant.Nbt.OXYGEN, output);
+            BitSet bits = ((ChunkSectionOxygenAccessorInternal) chunkSection).getInversionArray();
+            assert bits != null;
+            nbt.putLongArray(Constant.Nbt.OXYGEN, bits.toLongArray());
         }
         nbtCompound.put(Constant.Nbt.GC_API, nbt);
     }
@@ -86,20 +75,7 @@ public abstract class ChunkSerializerMixin {
         }
         ((ChunkSectionOxygenAccessorInternal) chunkSection).setModifiedBlocks(changedCount);
         if (changedCount > 0) {
-            boolean[] oxygen = new boolean[16 * 16 * 16];
-            byte[] bytes = nbtC.getByteArray(Constant.Nbt.OXYGEN);
-            for (int p = 0; p < (16 * 16 * 16) / 8; p++) {
-                short b = (short) (bytes[p] + 128);
-                oxygen[(p * 8)] = (b & 0b1) != 0;
-                oxygen[(p * 8) + 1] = (b & 0b10) != 0;
-                oxygen[(p * 8) + 2] = (b & 0b100) != 0;
-                oxygen[(p * 8) + 3] = (b & 0b1000) != 0;
-                oxygen[(p * 8) + 4] = (b & 0b10000) != 0;
-                oxygen[(p * 8) + 5] = (b & 0b100000) != 0;
-                oxygen[(p * 8) + 6] = (b & 0b1000000) != 0;
-                oxygen[(p * 8) + 7] = (b & 0b10000000) != 0;
-            }
-            ((ChunkSectionOxygenAccessorInternal) chunkSection).setInversionArray(oxygen);
+            ((ChunkSectionOxygenAccessorInternal) chunkSection).setInversionArray(BitSet.valueOf(nbtC.getLongArray(Constant.Nbt.OXYGEN)));
         }
     }
 }

@@ -36,12 +36,14 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import java.util.BitSet;
+
 /**
  * @author <a href="https://github.com/TeamGalacticraft">TeamGalacticraft</a>
  */
 @Mixin(ChunkSection.class)
 public abstract class ChunkSectionMixin implements ChunkSectionOxygenAccessor, ChunkSectionOxygenAccessorInternal {
-    private @Unique boolean @Nullable [] inverted;
+    private @Unique @Nullable BitSet inverted = null;
     private @Unique short modifiedBlocks = 0;
     private @Unique boolean defaultBreathable = false;
 
@@ -49,7 +51,7 @@ public abstract class ChunkSectionMixin implements ChunkSectionOxygenAccessor, C
     public boolean isBreathable(int x, int y, int z) {
         if (this.modifiedBlocks == 0) return this.defaultBreathable;
         assert this.inverted != null; // if modifiedBlocks > 0 inverted should not be null.
-        boolean b = this.inverted[x + (y << 4) + (z << 8)];
+        boolean b = this.inverted.get(x + (y << 4) + (z << 8));
         return (this.defaultBreathable && !b) || (!this.defaultBreathable && b);
     }
 
@@ -59,17 +61,17 @@ public abstract class ChunkSectionMixin implements ChunkSectionOxygenAccessor, C
         if (inversion) {
             if (this.inverted == null) {
                 assert this.modifiedBlocks == 0;
-                this.inverted = new boolean[16 * 16 * 16];
-                this.inverted[x + (y << 4) + (z << 8)] = true;
+                this.inverted = new BitSet(Constant.Chunk.CHUNK_SECTION_AREA);
+                this.inverted.set(x + (y << 4) + (z << 8));
                 this.modifiedBlocks = 1;
             } else {
-                if (!this.inverted[x + (y << 4) + (z << 8)]) {
-                    this.inverted[x + (y << 4) + (z << 8)] = true;
+                if (!this.inverted.get(x + (y << 4) + (z << 8))) {
+                    this.inverted.set(x + (y << 4) + (z << 8));
                     this.modifiedBlocks++;
                 }
             }
-        } else if (this.inverted != null && this.inverted[x + (y << 4) + (z << 8)]) {
-            this.inverted[x + (y << 4) + (z << 8)] = false;
+        } else if (this.inverted != null && this.inverted.get(x + (y << 4) + (z << 8))) {
+            this.inverted.clear(x + (y << 4) + (z << 8));
             if (--this.modifiedBlocks == 0) {
                 this.inverted = null;
             }
@@ -92,12 +94,12 @@ public abstract class ChunkSectionMixin implements ChunkSectionOxygenAccessor, C
     }
 
     @Override
-    public boolean @Nullable [] getInversionArray() {
+    public BitSet getInversionArray() {
         return this.inverted;
     }
 
     @Override
-    public void setInversionArray(boolean[] inverted) {
+    public void setInversionArray(BitSet inverted) {
         this.inverted = inverted;
     }
 
@@ -127,19 +129,11 @@ public abstract class ChunkSectionMixin implements ChunkSectionOxygenAccessor, C
         buf.writeShort(this.getModifiedBlocks());
 
         if (this.getModifiedBlocks() > 0) {
-            boolean[] inverted = this.getInversionArray();
-            assert inverted != null;
-            for (int p = 0; p < Constant.Chunk.CHUNK_SECTION_AREA / Byte.SIZE; p++) {
-                byte b = -128;
-                b += inverted[(p * 8)] ? 1 : 0;
-                b += inverted[(p * 8) + 1] ? 2 : 0;
-                b += inverted[(p * 8) + 2] ? 4 : 0;
-                b += inverted[(p * 8) + 3] ? 8 : 0;
-                b += inverted[(p * 8) + 4] ? 16 : 0;
-                b += inverted[(p * 8) + 5] ? 32 : 0;
-                b += inverted[(p * 8) + 6] ? 64 : 0;
-                b += inverted[(p * 8) + 7] ? 128 : 0;
-                buf.writeByte(b);
+            assert this.getInversionArray() != null;
+            long[] inverted = this.getInversionArray().toLongArray();
+            assert inverted.length == 64;
+            for (int i = 0; i < 64; i++) {
+                buf.writeLong(inverted[i]);
             }
         }
     }
@@ -149,23 +143,11 @@ public abstract class ChunkSectionMixin implements ChunkSectionOxygenAccessor, C
         this.setDefaultBreathable(buf.readBoolean());
         this.setModifiedBlocks(buf.readShort());
         if (this.getModifiedBlocks() > 0) {
-            boolean[] inverted = this.getInversionArray();
-            if (inverted == null) {
-                inverted = new boolean[Constant.Chunk.CHUNK_SECTION_AREA];
-                this.setInversionArray(inverted);
+            long[] words = new long[64];
+            for (int i = 0; i < 64; i++) {
+                words[i] = buf.readLong();
             }
-
-            for (int i = 0; i < Constant.Chunk.CHUNK_SECTION_AREA; i++) {
-                int b = ((int)buf.readByte() + 128);
-                inverted[(i * 8)] = (b & 1) != 0;
-                inverted[(i * 8) + 1] = (b & 2) != 0;
-                inverted[(i * 8) + 2] = (b & 4) != 0;
-                inverted[(i * 8) + 3] = (b & 8) != 0;
-                inverted[(i * 8) + 4] = (b & 16) != 0;
-                inverted[(i * 8) + 5] = (b & 32) != 0;
-                inverted[(i * 8) + 6] = (b & 64) != 0;
-                inverted[(i * 8) + 7] = (b & 128) != 0;
-            }
+            this.setInversionArray(BitSet.valueOf(words));
         } else {
             this.setInversionArray(null);
         }

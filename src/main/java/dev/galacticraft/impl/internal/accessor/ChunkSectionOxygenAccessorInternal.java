@@ -27,14 +27,16 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.BitSet;
+
 /**
  * @author <a href="https://github.com/TeamGalacticraft">TeamGalacticraft</a>
  */
 @ApiStatus.Internal
 public interface ChunkSectionOxygenAccessorInternal {
-    boolean @Nullable [] getInversionArray();
+    @Nullable BitSet getInversionArray();
 
-    void setInversionArray(boolean @Nullable [] inverted);
+    void setInversionArray(@Nullable BitSet inverted);
 
     short getModifiedBlocks();
 
