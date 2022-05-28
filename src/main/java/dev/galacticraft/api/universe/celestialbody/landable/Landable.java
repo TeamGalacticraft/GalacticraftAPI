@@ -39,7 +39,7 @@ public interface Landable<C extends CelestialBodyConfig> {
      * @param config the celestial body configuration to be queried
      * @return the registry key of the {@link World} this celestial body is linked to
      */
-    @NotNull RegistryKey<World> world(C config);
+    @NotNull RegistryKey<World> world(@NotNull C config);
 
     /**
      * Returns the access weight required to generically reach this celestial body, or a negative value if it cannot be accessed this way.
@@ -48,7 +48,7 @@ public interface Landable<C extends CelestialBodyConfig> {
      * @param config the celestial body configuration to be queried
      * @return the access weight required to generically reach this celestial body
      */
-    int accessWeight(C config);
+    int accessWeight(@NotNull C config);
 
     /**
      * Returns the approximate temperature on this celestial body during the day (in Celsius)
@@ -56,7 +56,7 @@ public interface Landable<C extends CelestialBodyConfig> {
      * @param config the celestial body configuration to be queried
      * @return the approximate temperature on this celestial body during the day
      */
-    int dayTemperature(C config);
+    int dayTemperature(@NotNull C config);
 
     /**
      * Returns the approximate temperature on this celestial body during the night (in Celsius)
@@ -64,5 +64,5 @@ public interface Landable<C extends CelestialBodyConfig> {
      * @param config the celestial body configuration to be queried
      * @return the approximate temperature on this celestial body during the night
      */
-    int nightTemperature(C config);
+    int nightTemperature(@NotNull C config);
 }

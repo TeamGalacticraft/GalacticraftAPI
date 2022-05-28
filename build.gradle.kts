@@ -40,6 +40,7 @@ val yarn            = project.property("yarn.build").toString()
 val loader          = project.property("loader.version").toString()
 val fabric          = project.property("fabric.version").toString()
 val machinelib      = project.property("machinelib.version").toString()
+val dynworlds       = project.property("dynworlds.version").toString()
 
 group = modGroup
 version ="$modVersion+$minecraft"
@@ -108,6 +109,7 @@ dependencies {
     }
 
     modImplementation("dev.galacticraft:MachineLib:$machinelib")
+    modImplementation("dev.galacticraft:dynworlds:$dynworlds")
     modRuntimeOnly("net.fabricmc.fabric-api:fabric-api:$fabric")
 }
 

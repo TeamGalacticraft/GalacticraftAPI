@@ -60,6 +60,7 @@ import net.minecraft.world.gen.chunk.placement.ConcentricRingsStructurePlacement
 import net.minecraft.world.gen.densityfunction.DensityFunctionTypes;
 import net.minecraft.world.gen.feature.ConfiguredStructureFeature;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
@@ -96,10 +97,10 @@ public class SatelliteChunkGenerator extends ChunkGenerator {
 
     private static final MultiNoiseUtil.MultiNoiseSampler EMPTY_SAMPLER = new MultiNoiseUtil.MultiNoiseSampler(DensityFunctionTypes.zero(), DensityFunctionTypes.zero(), DensityFunctionTypes.zero(),DensityFunctionTypes.zero(), DensityFunctionTypes.zero(),DensityFunctionTypes.zero(), Collections.emptyList());
     private static final VerticalBlockSample EMPTY_VIEW = new VerticalBlockSample(0, new BlockState[0]);
-    private final Structure structure;
-    private final RegistryEntry<Biome> biome;
+    private final @NotNull Structure structure;
+    private final @NotNull RegistryEntry<Biome> biome;
 
-    public SatelliteChunkGenerator(Registry<StructureSet> registry, RegistryEntry<Biome> biome, Structure structure) {
+    public SatelliteChunkGenerator(@NotNull Registry<StructureSet> registry, @NotNull RegistryEntry<Biome> biome, @NotNull Structure structure) {
         super(registry, Optional.empty(), new FixedBiomeSource(biome));
         this.structure = structure;
         this.biome = biome;

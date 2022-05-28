@@ -35,6 +35,8 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.WorldSavePath;
+import net.minecraft.util.dynamic.RegistryOps;
+import net.minecraft.util.registry.DynamicRegistryManager;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryEntry;
 import net.minecraft.util.registry.RegistryKey;
@@ -69,11 +71,8 @@ public abstract class MinecraftServerMixin implements SatelliteAccessor {
     @Unique private final Map<Identifier, CelestialBody<SatelliteConfig, SatelliteType>> satellites = new HashMap<>();
 
     @Shadow @Final protected LevelStorage.Session session;
-    @Shadow @Final private Executor workerExecutor;
-    @Shadow @Final private Map<RegistryKey<World>, ServerWorld> worlds;
-    @Shadow public abstract SaveProperties getSaveProperties();
 
-    @Shadow @Nullable public abstract ServerWorld getWorld(RegistryKey<World> key);
+    @Shadow public abstract DynamicRegistryManager.Immutable getRegistryManager();
 
     @Override
     public @Unmodifiable Map<Identifier, CelestialBody<SatelliteConfig, SatelliteType>> getSatellites() {
@@ -108,7 +107,7 @@ public abstract class MinecraftServerMixin implements SatelliteAccessor {
         }
     }
 
-    @Inject(method = "runServer", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/MinecraftServer;setupServer()Z", shift = At.Shift.AFTER))
+    @Inject(method = "loadWorld", at = @At(value = "HEAD"))
     private void galacticraft_loadSatellites(CallbackInfo ci) {
         File worldFile = this.session.getDirectory(WorldSavePath.ROOT).toFile();
         if (new File(worldFile, "satellites.dat").exists()) {
@@ -117,20 +116,10 @@ public abstract class MinecraftServerMixin implements SatelliteAccessor {
                 assert nbt != null : "NBT list was null";
                 for (NbtElement compound : nbt) {
                     assert compound instanceof NbtCompound : "Not a compound?!";
-                    this.satellites.put(new Identifier(((NbtCompound) compound).getString("id")), new CelestialBody<>(SatelliteType.INSTANCE, SatelliteConfig.CODEC.decode(NbtOps.INSTANCE, compound).get().orThrow().getFirst()));
-                }
-
-                WorldBorder worldBorder = getWorld(World.OVERWORLD).getWorldBorder();
-                for (Map.Entry<Identifier, CelestialBody<SatelliteConfig, SatelliteType>> entry : this.satellites.entrySet()) {
-                    RegistryEntry<DimensionType> type = entry.getValue().config().dimensionOptions().getDimensionTypeSupplier();
-                    ChunkGenerator chunkGenerator = entry.getValue().config().dimensionOptions().getChunkGenerator();
-                    UnmodifiableLevelProperties unmodifiableLevelProperties = new UnmodifiableLevelProperties(getSaveProperties(), getSaveProperties().getMainWorldProperties());
-                    ServerWorld world = new ServerWorld((MinecraftServer) (Object) this, workerExecutor, session, unmodifiableLevelProperties, RegistryKey.of(Registry.WORLD_KEY, entry.getKey()), type, SatelliteType.EMPTY_PROGRESS_LISTENER, chunkGenerator, getSaveProperties().getGeneratorOptions().isDebugWorld(), BiomeAccess.hashSeed(getSaveProperties().getGeneratorOptions().getSeed()), ImmutableList.of(), false);
-                    worldBorder.addListener(new WorldBorderListener.WorldBorderSyncer(world.getWorldBorder()));
-                    worlds.put(RegistryKey.of(Registry.WORLD_KEY, entry.getKey()), world);
+                    this.satellites.put(new Identifier(((NbtCompound) compound).getString("id")), new CelestialBody<>(SatelliteType.INSTANCE, SatelliteConfig.CODEC.decode(RegistryOps.of(NbtOps.INSTANCE, this.getRegistryManager()), compound).get().orThrow().getFirst()));
                 }
             } catch (Throwable exception) {
-                throw new RuntimeException("Failed to reade satellite data!", exception);
+                throw new RuntimeException("Failed to read satellite data!", exception);
             }
         }
     }

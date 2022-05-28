@@ -38,6 +38,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.dynamic.RegistryOps;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.Objects;
@@ -53,7 +54,7 @@ public class GalacticraftAPIClient implements ClientModInitializer {
             client.execute(() -> ((ClientResearchAccessor) Objects.requireNonNull(client.player)).readChanges(buf));
         });
         ClientPlayNetworking.registerGlobalReceiver(new Identifier(Constant.MOD_ID, "add_satellite"), (client, networkHandler, buffer, sender) -> {
-            ((SatelliteAccessor) networkHandler).addSatellite(buffer.readIdentifier(), new CelestialBody<>(SatelliteType.INSTANCE, SatelliteConfig.CODEC.decode(NbtOps.INSTANCE, buffer.readNbt()).get().orThrow().getFirst()));
+            ((SatelliteAccessor) networkHandler).addSatellite(buffer.readIdentifier(), new CelestialBody<>(SatelliteType.INSTANCE, SatelliteConfig.CODEC.decode(RegistryOps.of(NbtOps.INSTANCE, networkHandler.getRegistryManager()), buffer.readNbt()).get().orThrow().getFirst()));
         });
         ClientPlayNetworking.registerGlobalReceiver(new Identifier(Constant.MOD_ID, "remove_satellite"), (client, networkHandler, buffer, sender) -> {
             PacketByteBuf buf = new PacketByteBuf(buffer.copy());

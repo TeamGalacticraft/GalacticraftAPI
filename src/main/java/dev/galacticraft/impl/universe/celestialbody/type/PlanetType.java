@@ -77,7 +77,7 @@ public class PlanetType extends CelestialBodyType<PlanetConfig> implements Landa
     }
 
     @Override
-    public @NotNull RegistryKey<World> world(PlanetConfig config) {
+    public @NotNull RegistryKey<World> world(@NotNull PlanetConfig config) {
         return config.world();
     }
 
@@ -92,17 +92,17 @@ public class PlanetType extends CelestialBodyType<PlanetConfig> implements Landa
     }
 
     @Override
-    public int accessWeight(PlanetConfig config) {
+    public int accessWeight(@NotNull PlanetConfig config) {
         return config.accessWeight();
     }
 
     @Override
-    public int dayTemperature(PlanetConfig config) {
+    public int dayTemperature(@NotNull PlanetConfig config) {
         return config.dayTemperature();
     }
 
     @Override
-    public int nightTemperature(PlanetConfig config) {
+    public int nightTemperature(@NotNull PlanetConfig config) {
         return config.nightTemperature();
     }
 
