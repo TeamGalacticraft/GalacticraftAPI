@@ -47,7 +47,7 @@ public abstract class AdvancementRewardsMixin implements AdvancementRewardsAcces
     @NotNull
     private Identifier @Nullable [] rocketParts = null;
 
-    @Inject(method = "fromJson", at = @At("RETURN"), cancellable = true)
+    @Inject(method = "fromJson", at = @At("RETURN"))
     private static void galacticraft_parseRocketPartReward(JsonObject json, CallbackInfoReturnable<AdvancementRewards> cir) {
         if (json.has("rocket_parts")) {
             AdvancementRewards rewards = cir.getReturnValue();
