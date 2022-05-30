@@ -24,13 +24,18 @@ package dev.galacticraft.impl.internal.mixin.client;
 
 import dev.galacticraft.api.client.accessor.ClientSatelliteAccessor;
 import dev.galacticraft.api.universe.celestialbody.CelestialBody;
+import dev.galacticraft.api.universe.celestialbody.satellite.Orbitable;
 import dev.galacticraft.impl.universe.celestialbody.type.SatelliteType;
 import dev.galacticraft.impl.universe.position.config.SatelliteConfig;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.registry.DynamicRegistryManager;
+import net.minecraft.util.registry.Registry;
+import net.minecraft.util.registry.RegistryKey;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 
 import java.util.ArrayList;
@@ -41,6 +46,8 @@ import java.util.Map;
 @Environment(EnvType.CLIENT)
 @Mixin(ClientPlayNetworkHandler.class)
 public abstract class ClientPlayNetworkHandlerMixin implements ClientSatelliteAccessor {
+    @Shadow public abstract DynamicRegistryManager getRegistryManager();
+
     private final @Unique Map<Identifier, CelestialBody<SatelliteConfig, SatelliteType>> satellites = new HashMap<>();
     private final @Unique List<SatelliteListener> listeners = new ArrayList<>();
 
@@ -51,6 +58,8 @@ public abstract class ClientPlayNetworkHandlerMixin implements ClientSatelliteAc
 
     @Override
     public void addSatellite(Identifier id, CelestialBody<SatelliteConfig, SatelliteType> satellite) {
+        CelestialBody<?, ?> parent = satellite.parent(this.getRegistryManager());
+        ((Orbitable) parent.type()).registerClientWorldHooks(RegistryKey.of(Registry.WORLD_KEY, id), parent.config());
         this.satellites.put(id, satellite);
         for (SatelliteListener listener : this.listeners) {
             listener.onSatelliteUpdated(satellite, true);

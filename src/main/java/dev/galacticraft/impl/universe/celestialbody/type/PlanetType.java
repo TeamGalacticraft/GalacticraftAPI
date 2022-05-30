@@ -110,4 +110,9 @@ public class PlanetType extends CelestialBodyType<PlanetConfig> implements Landa
     public @Nullable SatelliteRecipe satelliteRecipe(PlanetConfig config) {
         return config.satelliteRecipe().orElse(null);
     }
+
+    @Override
+    public void registerClientWorldHooks(RegistryKey<World> key, PlanetConfig config) {
+
+    }
 }

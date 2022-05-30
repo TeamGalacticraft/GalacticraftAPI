@@ -23,17 +23,25 @@
 package dev.galacticraft.impl.internal.mixin;
 
 import dev.galacticraft.api.accessor.GearInventoryProvider;
+import dev.galacticraft.api.accessor.SatelliteAccessor;
 import dev.galacticraft.impl.Constant;
+import dev.galacticraft.impl.universe.position.config.SatelliteConfig;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.inventory.Inventory;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtOps;
 import net.minecraft.network.ClientConnection;
 import net.minecraft.network.PacketByteBuf;
+import net.minecraft.network.packet.s2c.play.CustomPayloadS2CPacket;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.PlayerManager;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.test.TestServer;
 import net.minecraft.util.Identifier;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -45,6 +53,8 @@ import java.util.Collection;
  */
 @Mixin(PlayerManager.class)
 public abstract class PlayerManagerMixin {
+    @Shadow public abstract MinecraftServer getServer();
+
     @Inject(method = "onPlayerConnect", at = @At("RETURN"))
     private void galacticraft_syncGearInventory(ClientConnection connection, ServerPlayerEntity player, CallbackInfo ci) {
         PacketByteBuf buf = PacketByteBufs.create();
@@ -62,5 +72,10 @@ public abstract class PlayerManagerMixin {
         for (ServerPlayerEntity pl : tracking) {
             ServerPlayNetworking.send(pl, new Identifier(Constant.MOD_ID, "gear_inv_sync"), PacketByteBufs.copy(buf));
         }
+
+        ((SatelliteAccessor) this.getServer()).getSatellites().forEach((id, satellite) -> {
+            NbtCompound compound = (NbtCompound) SatelliteConfig.CODEC.encode(satellite.config(), NbtOps.INSTANCE, new NbtCompound()).get().orThrow();
+            connection.send(new CustomPayloadS2CPacket(new Identifier(Constant.MOD_ID, "add_satellite"), PacketByteBufs.create().writeIdentifier(id).writeNbt(compound)));
+        });
     }
 }

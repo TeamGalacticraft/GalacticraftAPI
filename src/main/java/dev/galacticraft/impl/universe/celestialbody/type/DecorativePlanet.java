@@ -34,6 +34,7 @@ import dev.galacticraft.impl.universe.celestialbody.config.DecorativePlanetConfi
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryKey;
+import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -87,5 +88,10 @@ public class DecorativePlanet extends CelestialBodyType<DecorativePlanetConfig> 
     @Override
     public @Nullable SatelliteRecipe satelliteRecipe(DecorativePlanetConfig config) {
         return config.satelliteRecipe().orElse(null);
+    }
+
+    @Override
+    public void registerClientWorldHooks(RegistryKey<World> key, DecorativePlanetConfig config) {
+
     }
 }

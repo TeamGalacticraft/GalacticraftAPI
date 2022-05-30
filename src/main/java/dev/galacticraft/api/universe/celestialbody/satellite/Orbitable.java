@@ -24,6 +24,8 @@ package dev.galacticraft.api.universe.celestialbody.satellite;
 
 import dev.galacticraft.api.satellite.SatelliteRecipe;
 import dev.galacticraft.api.universe.celestialbody.CelestialBodyConfig;
+import net.minecraft.util.registry.RegistryKey;
+import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -39,4 +41,15 @@ public interface Orbitable<C extends CelestialBodyConfig> {
      * @return the {@link SatelliteRecipe stellite recipe} of this celestial body
      */
     @Nullable SatelliteRecipe satelliteRecipe(C config);
+
+
+    /**
+     * Callback to register client listeners (for example, {@link net.fabricmc.fabric.api.client.rendering.v1.DimensionRenderingRegistry.SkyRenderer sky renderers}) for this celestial body.
+     * Should only be called on the client.
+     *
+     *
+     * @param key the {@link net.minecraft.util.registry.RegistryKey} of the satellite's dimension
+     * @param config the celestial body configuration
+     */
+    void registerClientWorldHooks(RegistryKey<World> key, C config);
 }
