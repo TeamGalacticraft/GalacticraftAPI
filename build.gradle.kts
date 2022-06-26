@@ -159,12 +159,16 @@ publishing {
         }
     }
     repositories {
-        maven("https://maven.galacticraft.dev/") {
-            name = "maven"
-            credentials(PasswordCredentials::class)
-            authentication {
-                register("basic", BasicAuthentication::class)
+        if (System.getenv().containsKey("NEXUS_REPOSITORY_URL")) {
+            maven(System.getenv("NEXUS_REPOSITORY_URL")) {
+                credentials {
+                    username = System.getenv("NEXUS_USER")
+                    password = System.getenv("NEXUS_PASSWORD")
+                }
             }
+        } else {
+            println("No nexus repository url found, publishing to local maven repo")
+            mavenLocal()
         }
     }
 }
