@@ -40,7 +40,7 @@ public class EmptyCelestialDisplayType extends CelestialDisplayType<EmptyCelesti
     }
 
     @Override
-    public Vector4f render(MatrixStack matrices, BufferBuilder buffer, int size, double mouseX, double mouseY, float delta, Consumer<Supplier<Shader>> shaderSetter, EmptyCelestialDisplayConfig config) {
+    public Vector4f render(MatrixStack matrices, BufferBuilder buffer, float size, double mouseX, double mouseY, float delta, Consumer<Supplier<Shader>> shaderSetter, EmptyCelestialDisplayConfig config) {
         return NULL_VECTOR;
     }
 }

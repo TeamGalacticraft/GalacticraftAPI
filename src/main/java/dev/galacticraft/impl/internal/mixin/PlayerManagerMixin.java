@@ -33,6 +33,7 @@ import net.minecraft.inventory.Inventory;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.network.ClientConnection;
+import net.minecraft.network.Packet;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.packet.s2c.play.CustomPayloadS2CPacket;
 import net.minecraft.server.MinecraftServer;
@@ -55,6 +56,8 @@ import java.util.Collection;
 public abstract class PlayerManagerMixin {
     @Shadow public abstract MinecraftServer getServer();
 
+    @Shadow public abstract void sendToAll(Packet<?> packet);
+
     @Inject(method = "onPlayerConnect", at = @At("RETURN"))
     private void galacticraft_syncGearInventory(ClientConnection connection, ServerPlayerEntity player, CallbackInfo ci) {
         PacketByteBuf buf = PacketByteBufs.create();
@@ -65,13 +68,7 @@ public abstract class PlayerManagerMixin {
             buf.writeItemStack(inventory.getStack(i));
         }
 
-        Collection<ServerPlayerEntity> tracking = PlayerLookup.tracking(player);
-        if (!tracking.contains(player)) {
-            ServerPlayNetworking.send(player, new Identifier(Constant.MOD_ID, "gear_inv_sync"), buf);
-        }
-        for (ServerPlayerEntity pl : tracking) {
-            ServerPlayNetworking.send(pl, new Identifier(Constant.MOD_ID, "gear_inv_sync"), PacketByteBufs.copy(buf));
-        }
+        this.sendToAll(new CustomPayloadS2CPacket(new Identifier(Constant.MOD_ID, "gear_inv_sync"), buf));
 
         ((SatelliteAccessor) this.getServer()).getSatellites().forEach((id, satellite) -> {
             NbtCompound compound = (NbtCompound) SatelliteConfig.CODEC.encode(satellite.config(), NbtOps.INSTANCE, new NbtCompound()).get().orThrow();

@@ -26,7 +26,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import dev.galacticraft.api.gas.GasComposition;
 import dev.galacticraft.api.registry.AddonRegistry;
-import dev.galacticraft.api.satellite.SatelliteRecipe;
+import dev.galacticraft.api.satellite.SpaceStationRecipe;
 import dev.galacticraft.api.universe.celestialbody.CelestialBody;
 import dev.galacticraft.api.universe.celestialbody.CelestialBodyConfig;
 import dev.galacticraft.api.universe.display.CelestialDisplay;
@@ -44,7 +44,7 @@ public record DecorativePlanetConfig(@NotNull TranslatableText name, @NotNull Tr
                                      @NotNull RegistryKey<CelestialBody<?, ?>> parent,
                                      @NotNull CelestialPosition<?, ?> position, @NotNull CelestialDisplay<?, ?> display,
                                      GasComposition atmosphere, float gravity,
-                                     @NotNull Optional<SatelliteRecipe> satelliteRecipe) implements CelestialBodyConfig {
+                                     @NotNull Optional<SpaceStationRecipe> satelliteRecipe) implements CelestialBodyConfig {
     public static final Codec<DecorativePlanetConfig> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             Codec.STRING.fieldOf("name").xmap(TranslatableText::new, TranslatableText::getKey).forGetter(DecorativePlanetConfig::name),
             Codec.STRING.fieldOf("description").xmap(TranslatableText::new, TranslatableText::getKey).forGetter(DecorativePlanetConfig::description),
@@ -54,6 +54,6 @@ public record DecorativePlanetConfig(@NotNull TranslatableText name, @NotNull Tr
             CelestialDisplay.CODEC.fieldOf("display").forGetter(DecorativePlanetConfig::display),
             GasComposition.CODEC.fieldOf("atmosphere").forGetter(DecorativePlanetConfig::atmosphere),
             Codec.FLOAT.fieldOf("gravity").forGetter(DecorativePlanetConfig::gravity),
-            SatelliteRecipe.CODEC.optionalFieldOf("satellite_recipe").forGetter(DecorativePlanetConfig::satelliteRecipe)
+            SpaceStationRecipe.CODEC.optionalFieldOf("satellite_recipe").forGetter(DecorativePlanetConfig::satelliteRecipe)
     ).apply(instance, DecorativePlanetConfig::new));
 }

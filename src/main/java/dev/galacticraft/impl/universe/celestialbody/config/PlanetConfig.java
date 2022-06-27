@@ -26,7 +26,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import dev.galacticraft.api.gas.GasComposition;
 import dev.galacticraft.api.registry.AddonRegistry;
-import dev.galacticraft.api.satellite.SatelliteRecipe;
+import dev.galacticraft.api.satellite.SpaceStationRecipe;
 import dev.galacticraft.api.universe.celestialbody.CelestialBody;
 import dev.galacticraft.api.universe.celestialbody.CelestialBodyConfig;
 import dev.galacticraft.api.universe.display.CelestialDisplay;
@@ -45,7 +45,7 @@ public record PlanetConfig(@NotNull TranslatableText name, @NotNull Translatable
                            @NotNull CelestialPosition<?, ?> position, @NotNull CelestialDisplay<?, ?> display,
                            @NotNull RegistryKey<World> world, @NotNull GasComposition atmosphere, float gravity,
                            int accessWeight, int dayTemperature, int nightTemperature,
-                           @NotNull Optional<SatelliteRecipe> satelliteRecipe) implements CelestialBodyConfig {
+                           @NotNull Optional<SpaceStationRecipe> satelliteRecipe) implements CelestialBodyConfig {
     public static final Codec<PlanetConfig> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             Codec.STRING.fieldOf("name").xmap(TranslatableText::new, TranslatableText::getKey).forGetter(PlanetConfig::name),
             Codec.STRING.fieldOf("description").xmap(TranslatableText::new, TranslatableText::getKey).forGetter(PlanetConfig::description),
@@ -59,6 +59,6 @@ public record PlanetConfig(@NotNull TranslatableText name, @NotNull Translatable
             Codec.INT.fieldOf("access_weight").forGetter(PlanetConfig::accessWeight),
             Codec.INT.fieldOf("day_temperature").forGetter(PlanetConfig::dayTemperature),
             Codec.INT.fieldOf("night_temperature").forGetter(PlanetConfig::nightTemperature),
-            SatelliteRecipe.CODEC.optionalFieldOf("satellite_recipe").forGetter(PlanetConfig::satelliteRecipe)
+            SpaceStationRecipe.CODEC.optionalFieldOf("satellite_recipe").forGetter(PlanetConfig::satelliteRecipe)
     ).apply(instance, PlanetConfig::new));
 }

@@ -38,7 +38,7 @@ public record CelestialDisplay<C extends CelestialDisplayConfig, T extends Celes
     public static final Codec<CelestialDisplay<?, ?>> CODEC = AddonRegistry.CELESTIAL_DISPLAY_TYPE.getCodec().dispatch(CelestialDisplay::type, CelestialDisplayType::codec);
 
     @Environment(EnvType.CLIENT)
-    public Vector4f render(MatrixStack matrices, BufferBuilder buffer, int scale, double mouseX, double mouseY, float delta, Consumer<Supplier<Shader>> shaderSetter) {
+    public Vector4f render(MatrixStack matrices, BufferBuilder buffer, float scale, double mouseX, double mouseY, float delta, Consumer<Supplier<Shader>> shaderSetter) {
         return this.type().render(matrices, buffer, scale, mouseX, mouseY, delta, shaderSetter, this.config());
     }
 }

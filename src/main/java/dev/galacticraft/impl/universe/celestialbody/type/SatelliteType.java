@@ -36,8 +36,8 @@ import dev.galacticraft.api.universe.celestialbody.satellite.Orbitable;
 import dev.galacticraft.api.universe.display.CelestialDisplay;
 import dev.galacticraft.api.universe.galaxy.Galaxy;
 import dev.galacticraft.api.universe.position.CelestialPosition;
-import dev.galacticraft.dynworlds.api.DynamicWorldRegistry;
-import dev.galacticraft.dynworlds.api.PlayerDestroyer;
+import dev.galacticraft.dynworlds.api.DynamicLevelRegistry;
+import dev.galacticraft.dynworlds.api.PlayerRemover;
 import dev.galacticraft.impl.Constant;
 import dev.galacticraft.impl.internal.world.gen.SatelliteChunkGenerator;
 import dev.galacticraft.impl.internal.world.gen.biome.GcApiBiomes;
@@ -52,32 +52,31 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.WorldGenerationProgressListener;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.structure.Structure;
 import net.minecraft.tag.TagKey;
-import net.minecraft.test.TestServer;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryEntry;
 import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.World;
-import net.minecraft.world.chunk.ChunkStatus;
 import net.minecraft.world.dimension.DimensionOptions;
 import net.minecraft.world.dimension.DimensionType;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.LinkedList;
+import java.util.Locale;
+import java.util.Objects;
+import java.util.OptionalLong;
 
 public class SatelliteType extends CelestialBodyType<SatelliteConfig> implements Satellite<SatelliteConfig>, Landable<SatelliteConfig> {
     public static final SatelliteType INSTANCE = new SatelliteType(SatelliteConfig.CODEC);
-    private static final PlayerDestroyer PLAYER_DESTROYER = (server, player) -> {
+    private static final PlayerRemover PLAYER_REMOVER = (server, player) -> {
         CelestialBody<CelestialBodyConfig, ? extends CelestialBodyType<CelestialBodyConfig>> satellite = CelestialBody.getByDimension(server.getRegistryManager(), player.getWorld().getRegistryKey()).orElse(null);
         if (satellite != null) {
             CelestialBody<?, ?> parent = satellite.parent(server.getRegistryManager());
@@ -125,13 +124,15 @@ public class SatelliteType extends CelestialBodyType<SatelliteConfig> implements
             throw new IllegalArgumentException("Parent must be orbitable!");
         }
 
+        Constant.LOGGER.debug("Attempting to create a world dynamically ({})", id);
+        if (!((DynamicLevelRegistry) server).addDynamicLevel(id, options, options.getDimensionTypeSupplier().value())) {
+            throw new RuntimeException("Failed to create dynamic level!");
+        }
+
         SatelliteConfig config = new SatelliteConfig(RegistryKey.of(AddonRegistry.CELESTIAL_BODY_KEY, server.getRegistryManager().get(AddonRegistry.CELESTIAL_BODY_KEY).getId(parent)), parent.galaxy(), position, display, ownershipData, RegistryKey.of(Registry.WORLD_KEY, id), EMPTY_GAS_COMPOSITION, 0.0f, parent.type() instanceof Landable ? ((Landable) parent.type()).accessWeight(parent.config()) : 1, options);
         config.customName(new TranslatableText(name));
         CelestialBody<SatelliteConfig, SatelliteType> satellite = INSTANCE.configure(config);
         ((SatelliteAccessor) server).addSatellite(id, satellite);
-        Constant.LOGGER.debug("Attempting to create a world dynamically ({})", id);
-
-        ((DynamicWorldRegistry) server).addDynamicWorld(id, options, options.getDimensionTypeSupplier().value());
 
         for (ServerPlayerEntity player : server.getPlayerManager().getPlayerList()) {
             NbtCompound compound = (NbtCompound) SatelliteConfig.CODEC.encode(satellite.config(), NbtOps.INSTANCE, new NbtCompound()).get().orThrow();
@@ -141,12 +142,16 @@ public class SatelliteType extends CelestialBodyType<SatelliteConfig> implements
     }
 
     @ApiStatus.Experimental
-    public static void removeSatellite(@NotNull MinecraftServer server, Identifier id) {
-        ((DynamicWorldRegistry) server).removeDynamicWorld(id, PLAYER_DESTROYER);
-        ((SatelliteAccessor) server).removeSatellite(id);
+    public static boolean removeSatellite(@NotNull MinecraftServer server, Identifier id) {
+        if (((DynamicLevelRegistry) server).removeDynamicLevel(id, PLAYER_REMOVER)) {
+            ((SatelliteAccessor) server).removeSatellite(id);
 
-        for (ServerPlayerEntity player : server.getPlayerManager().getPlayerList()) {
-            ServerPlayNetworking.send(player, new Identifier(Constant.MOD_ID, "remove_satellite"), new PacketByteBuf(Unpooled.buffer()).writeIdentifier(id));
+            for (ServerPlayerEntity player : server.getPlayerManager().getPlayerList()) {
+                ServerPlayNetworking.send(player, new Identifier(Constant.MOD_ID, "remove_satellite"), new PacketByteBuf(Unpooled.buffer()).writeIdentifier(id));
+            }
+            return true;
+        } else {
+            return false;
         }
     }
 

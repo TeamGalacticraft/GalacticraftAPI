@@ -30,6 +30,7 @@ import dev.galacticraft.impl.universe.position.config.SatelliteConfig;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
+import net.minecraft.client.world.ClientWorld;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.DynamicRegistryManager;
 import net.minecraft.util.registry.Registry;
@@ -48,6 +49,7 @@ import java.util.Map;
 public abstract class ClientPlayNetworkHandlerMixin implements ClientSatelliteAccessor {
     @Shadow public abstract DynamicRegistryManager getRegistryManager();
 
+    @Shadow private ClientWorld world;
     private final @Unique Map<Identifier, CelestialBody<SatelliteConfig, SatelliteType>> satellites = new HashMap<>();
     private final @Unique List<SatelliteListener> listeners = new ArrayList<>();
 
@@ -59,7 +61,7 @@ public abstract class ClientPlayNetworkHandlerMixin implements ClientSatelliteAc
     @Override
     public void addSatellite(Identifier id, CelestialBody<SatelliteConfig, SatelliteType> satellite) {
         CelestialBody<?, ?> parent = satellite.parent(this.getRegistryManager());
-        ((Orbitable) parent.type()).registerClientWorldHooks(RegistryKey.of(Registry.WORLD_KEY, id), parent.config());
+        ((Orbitable) parent.type()).registerClientWorldHooks(this.getRegistryManager(), this.world, RegistryKey.of(Registry.WORLD_KEY, id), parent.config(), satellite.config());
         this.satellites.put(id, satellite);
         for (SatelliteListener listener : this.listeners) {
             listener.onSatelliteUpdated(satellite, true);

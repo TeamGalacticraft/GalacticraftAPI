@@ -93,8 +93,11 @@ public class GCApiCommands {
     }
 
     private static int removeSatellite(@NotNull CommandContext<ServerCommandSource> ctx) throws CommandSyntaxException {
-        SatelliteType.removeSatellite(ctx.getSource().getServer(), IdentifierArgumentType.getIdentifier(ctx, "id"));
-        return 1;
+        if (SatelliteType.removeSatellite(ctx.getSource().getServer(), IdentifierArgumentType.getIdentifier(ctx, "id"))) {
+            return 1;
+        } else {
+            return 0;
+        }
     }
 
     private static int addSatelliteStructured(@NotNull CommandContext<ServerCommandSource> ctx) throws CommandSyntaxException {

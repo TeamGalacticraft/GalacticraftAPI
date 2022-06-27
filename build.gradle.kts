@@ -79,7 +79,7 @@ loom {
 
 repositories {
     mavenLocal()
-    maven("https://maven.galacticraft.dev/") {
+    maven("https://maven.galacticraft.net/repository/maven-releases/") {
         name = "Galacticraft Repository"
         content {
             includeGroup("dev.galacticraft")

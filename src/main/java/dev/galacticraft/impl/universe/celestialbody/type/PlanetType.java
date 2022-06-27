@@ -23,16 +23,21 @@
 package dev.galacticraft.impl.universe.celestialbody.type;
 
 import dev.galacticraft.api.gas.GasComposition;
-import dev.galacticraft.api.satellite.SatelliteRecipe;
+import dev.galacticraft.api.satellite.SpaceStationRecipe;
 import dev.galacticraft.api.universe.celestialbody.CelestialBody;
+import dev.galacticraft.api.universe.celestialbody.CelestialBodyConfig;
 import dev.galacticraft.api.universe.celestialbody.CelestialBodyType;
 import dev.galacticraft.api.universe.celestialbody.landable.Landable;
 import dev.galacticraft.api.universe.celestialbody.satellite.Orbitable;
 import dev.galacticraft.api.universe.display.CelestialDisplay;
 import dev.galacticraft.api.universe.galaxy.Galaxy;
 import dev.galacticraft.api.universe.position.CelestialPosition;
+import dev.galacticraft.impl.internal.client.GCApiDimensionEffects;
 import dev.galacticraft.impl.universe.celestialbody.config.PlanetConfig;
+import dev.galacticraft.impl.universe.position.config.SatelliteConfig;
+import net.fabricmc.fabric.api.client.rendering.v1.DimensionRenderingRegistry;
 import net.minecraft.text.TranslatableText;
+import net.minecraft.util.registry.DynamicRegistryManager;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.World;
@@ -107,12 +112,20 @@ public class PlanetType extends CelestialBodyType<PlanetConfig> implements Landa
     }
 
     @Override
-    public @Nullable SatelliteRecipe satelliteRecipe(PlanetConfig config) {
+    public @Nullable SpaceStationRecipe getSpaceStationRecipe(@NotNull PlanetConfig config) {
         return config.satelliteRecipe().orElse(null);
     }
 
     @Override
-    public void registerClientWorldHooks(RegistryKey<World> key, PlanetConfig config) {
+    public void registerClientWorldHooks(DynamicRegistryManager manager, World world, RegistryKey<World> key, @NotNull PlanetConfig config, SatelliteConfig satelliteConfig) {
+        DimensionRenderingRegistry.registerCloudRenderer(key, GCApiDimensionEffects.NO_CLOUDS);
+        DimensionRenderingRegistry.registerWeatherRenderer(key, GCApiDimensionEffects.NO_WEATHER);
 
+        Registry<CelestialBody<?, ?>> registry = CelestialBody.getRegistry(manager);
+        CelestialBody<?, ?> celestialBody = registry.get(config.parent());
+        while (celestialBody.parent(manager) != null) {
+            celestialBody = celestialBody.parent(manager);
+        }
+        DimensionRenderingRegistry.registerSkyRenderer(key, GCApiDimensionEffects.createSpaceStationRenderer(4, 30, celestialBody.display(), config.display()));
     }
 }
