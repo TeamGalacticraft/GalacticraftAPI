@@ -42,7 +42,7 @@ import dev.galacticraft.impl.universe.position.config.OrbitalCelestialPositionCo
 import dev.galacticraft.impl.universe.position.config.StaticCelestialPositionConfig;
 import dev.galacticraft.impl.universe.position.type.OrbitalCelestialPositionType;
 import dev.galacticraft.impl.universe.position.type.StaticCelestialPositionType;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryKey;
@@ -53,8 +53,8 @@ import java.util.Optional;
 public class BuiltinObjects {
     public static final RegistryKey<Galaxy> MILKY_WAY_KEY = RegistryKey.of(AddonRegistry.GALAXY_KEY, new Identifier(Constant.MOD_ID, "milky_way"));
     public static final Galaxy MILKY_WAY = Galaxy.create(
-            new TranslatableText("galaxy.galacticraft-api.milky_way.name"),
-            new TranslatableText("galaxy.galacticraft-api.milky_way.description"),
+            Text.translatable("galaxy.galacticraft-api.milky_way.name"),
+            Text.translatable("galaxy.galacticraft-api.milky_way.description"),
             StaticCelestialPositionType.INSTANCE.configure(new StaticCelestialPositionConfig(0, 0)),
             EmptyCelestialDisplayType.INSTANCE.configure(EmptyCelestialDisplayConfig.INSTANCE)
     );
@@ -62,8 +62,8 @@ public class BuiltinObjects {
     public static final RegistryKey<CelestialBody<?, ?>> SOL_KEY = RegistryKey.of(AddonRegistry.CELESTIAL_BODY_KEY, new Identifier(Constant.MOD_ID, "sol"));
     public static final CelestialBody<StarConfig, ? extends CelestialBodyType<StarConfig>> SOL = StarType.INSTANCE.configure(
             new StarConfig(
-                    new TranslatableText("star.galacticraft-api.sol.name"),
-                    new TranslatableText("star.galacticraft-api.sol.description"),
+                    Text.translatable("star.galacticraft-api.sol.name"),
+                    Text.translatable("star.galacticraft-api.sol.description"),
                     MILKY_WAY_KEY,
                     StaticCelestialPositionType.INSTANCE.configure(new StaticCelestialPositionConfig(0, 0)),
                     IconCelestialDisplayType.INSTANCE.configure(new IconCelestialDisplayConfig(new Identifier(Constant.MOD_ID, "textures/body_icons.png"), 0, 0, 16, 16, 1.5f)),
@@ -84,8 +84,8 @@ public class BuiltinObjects {
     public static final RegistryKey<CelestialBody<?, ?>> EARTH_KEY = RegistryKey.of(AddonRegistry.CELESTIAL_BODY_KEY, new Identifier(Constant.MOD_ID, "earth"));
     public static final CelestialBody<PlanetConfig, ? extends CelestialBodyType<PlanetConfig>> EARTH = PlanetType.INSTANCE.configure(
             new PlanetConfig(
-                    new TranslatableText("planet.galacticraft-api.earth.name"),
-                    new TranslatableText("planet.galacticraft-api.earth.description"),
+                    Text.translatable("planet.galacticraft-api.earth.name"),
+                    Text.translatable("planet.galacticraft-api.earth.description"),
                     MILKY_WAY_KEY,
                     SOL_KEY,
                     OrbitalCelestialPositionType.INSTANCE.configure(new OrbitalCelestialPositionConfig(1536000.0, 1.0, 0.0F, true)),

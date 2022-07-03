@@ -32,7 +32,7 @@ import dev.galacticraft.api.universe.display.CelestialDisplay;
 import dev.galacticraft.api.universe.galaxy.Galaxy;
 import dev.galacticraft.api.universe.position.CelestialPosition;
 import dev.galacticraft.impl.universe.celestialbody.config.PlanetConfig;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.text.Text;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.World;
@@ -47,7 +47,7 @@ public class PlanetType extends CelestialBodyType<PlanetConfig> implements Landa
     }
 
     @Override
-    public @NotNull TranslatableText name(PlanetConfig config) {
+    public @NotNull Text name(PlanetConfig config) {
         return config.name();
     }
 
@@ -62,7 +62,7 @@ public class PlanetType extends CelestialBodyType<PlanetConfig> implements Landa
     }
 
     @Override
-    public @NotNull TranslatableText description(PlanetConfig config) {
+    public @NotNull Text description(PlanetConfig config) {
         return config.description();
     }
 

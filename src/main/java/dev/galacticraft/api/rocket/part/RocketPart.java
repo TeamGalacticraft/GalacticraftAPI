@@ -33,7 +33,8 @@ import dev.galacticraft.impl.Constant;
 import dev.galacticraft.impl.rocket.travelpredicate.config.AccessTypeTravelPredicateConfig;
 import dev.galacticraft.impl.rocket.travelpredicate.type.ConstantTravelPredicateType;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.text.MutableText;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.DynamicRegistryManager;
 import net.minecraft.util.registry.Registry;
@@ -41,10 +42,10 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 
-public record RocketPart(TranslatableText name, RocketPartType type, ConfiguredTravelPredicate<?> travelPredicate,
+public record RocketPart(MutableText name, RocketPartType type, ConfiguredTravelPredicate<?> travelPredicate,
                          boolean hasRecipe, Identifier research) {
     public static final Codec<RocketPart> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-            Codec.STRING.fieldOf("name").xmap(TranslatableText::new, TranslatableText::getKey).forGetter(RocketPart::name),
+            Codec.STRING.fieldOf("name").xmap(Text::translatable, Text::getString).forGetter(RocketPart::name),
             RocketPartType.CODEC.fieldOf("type").forGetter(RocketPart::type),
             ConfiguredTravelPredicate.CODEC.fieldOf("travel_predicate").forGetter(RocketPart::travelPredicate),
             Codec.BOOL.fieldOf("recipe").forGetter(RocketPart::hasRecipe),
@@ -52,14 +53,14 @@ public record RocketPart(TranslatableText name, RocketPartType type, ConfiguredT
     ).apply(instance, RocketPart::new));
 
     public static final RocketPart INVALID = Builder.create()
-            .name(new TranslatableText("tooltip.galacticraft-api.something_went_wrong"))
+            .name(Text.translatable("tooltip.galacticraft-api.something_went_wrong"))
             .type(RocketPartType.UPGRADE)
             .travelPredicate(ConstantTravelPredicateType.INSTANCE.configure(new AccessTypeTravelPredicateConfig(TravelPredicateType.AccessType.BLOCK)))
             .research(new Identifier(Constant.MOD_ID, "unobtainable"))
             .recipe(false)
             .build();
 
-    public RocketPart(@NotNull TranslatableText name, @NotNull RocketPartType type, ConfiguredTravelPredicate<?> travelPredicate, boolean hasRecipe, Identifier research) {
+    public RocketPart(@NotNull MutableText name, @NotNull RocketPartType type, ConfiguredTravelPredicate<?> travelPredicate, boolean hasRecipe, Identifier research) {
         this.type = type;
         this.name = name;
         this.travelPredicate = travelPredicate;
@@ -97,7 +98,7 @@ public record RocketPart(TranslatableText name, RocketPartType type, ConfiguredT
     }
 
     public static class Builder {
-        private TranslatableText name;
+        private MutableText name;
         private RocketPartType partType;
         private ConfiguredTravelPredicate<?> travelPredicate = ConstantTravelPredicateType.INSTANCE.configure(new AccessTypeTravelPredicateConfig(TravelPredicateType.AccessType.PASS));
         private boolean hasRecipe = true;
@@ -110,7 +111,7 @@ public record RocketPart(TranslatableText name, RocketPartType type, ConfiguredT
         }
 
 
-        public Builder name(TranslatableText name) {
+        public Builder name(MutableText name) {
             this.name = name;
             return this;
         }

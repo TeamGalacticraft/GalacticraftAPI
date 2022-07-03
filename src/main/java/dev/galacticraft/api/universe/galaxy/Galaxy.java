@@ -28,7 +28,8 @@ import dev.galacticraft.api.registry.AddonRegistry;
 import dev.galacticraft.api.universe.display.CelestialDisplay;
 import dev.galacticraft.api.universe.position.CelestialPosition;
 import dev.galacticraft.impl.universe.galaxy.GalaxyImpl;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.text.MutableText;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.DynamicRegistryManager;
 import net.minecraft.util.registry.Registry;
@@ -37,14 +38,14 @@ import org.jetbrains.annotations.NotNull;
 
 public interface Galaxy {
     Codec<Galaxy> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-            Codec.STRING.fieldOf("name").xmap(TranslatableText::new, TranslatableText::getKey).forGetter(Galaxy::name),
-            Codec.STRING.fieldOf("description").xmap(TranslatableText::new, TranslatableText::getKey).forGetter(Galaxy::description),
+            Codec.STRING.fieldOf("name").xmap(Text::translatable, Text::getString).forGetter(Galaxy::name),
+            Codec.STRING.fieldOf("description").xmap(Text::translatable, Text::getString).forGetter(Galaxy::description),
             CelestialPosition.CODEC.fieldOf("position").forGetter(Galaxy::position),
             CelestialDisplay.CODEC.fieldOf("display").forGetter(Galaxy::display)
     ).apply(instance, Galaxy::create));
 
     @Contract("_, _, _, _ -> new")
-    static @NotNull Galaxy create(@NotNull TranslatableText name, @NotNull TranslatableText description, CelestialPosition<?, ?> position, CelestialDisplay<?, ?> display) {
+    static @NotNull Galaxy create(@NotNull MutableText name, @NotNull MutableText description, CelestialPosition<?, ?> position, CelestialDisplay<?, ?> display) {
         return new GalaxyImpl(name, description, position, display);
     }
 
@@ -68,9 +69,9 @@ public interface Galaxy {
         return registry.getId(galaxy);
     }
 
-    @NotNull TranslatableText name();
+    @NotNull MutableText name();
 
-    @NotNull TranslatableText description();
+    @NotNull MutableText description();
 
     CelestialPosition<?, ?> position();
 

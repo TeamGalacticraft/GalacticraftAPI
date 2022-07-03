@@ -73,7 +73,7 @@ public abstract class TravelPredicateType<C extends TravelPredicateConfig> {
          */
         ALLOW;
 
-        public static final Codec<AccessType> CODEC = StringIdentifiable.createCodec(AccessType::values, s -> AccessType.valueOf(s.toUpperCase(Locale.ROOT)));
+        public static final Codec<AccessType> CODEC = StringIdentifiable.createCodec(AccessType::values);
 
         public AccessType merge(AccessType other) {
             if (other == PASS) return this;

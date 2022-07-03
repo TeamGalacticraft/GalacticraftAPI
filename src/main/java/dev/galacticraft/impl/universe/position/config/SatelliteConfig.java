@@ -32,7 +32,6 @@ import dev.galacticraft.api.universe.celestialbody.CelestialBodyConfig;
 import dev.galacticraft.api.universe.display.CelestialDisplay;
 import dev.galacticraft.api.universe.galaxy.Galaxy;
 import dev.galacticraft.api.universe.position.CelestialPosition;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
@@ -66,7 +65,7 @@ public final class SatelliteConfig implements CelestialBodyConfig {
     private final float gravity;
     private final int accessWeight;
     private final DimensionOptions dimensionOptions;
-    private Text customName = LiteralText.EMPTY;
+    private Text customName = Text.empty();
 
     public SatelliteConfig(RegistryKey<CelestialBody<?, ?>> parent, RegistryKey<Galaxy> galaxy, CelestialPosition<?, ?> position, CelestialDisplay<?, ?> display, SatelliteOwnershipData ownershipData, RegistryKey<World> world, GasComposition atmosphere, float gravity, int accessWeight, DimensionOptions dimensionOptions) {
         this.parent = parent;

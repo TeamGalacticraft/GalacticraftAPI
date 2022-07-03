@@ -27,7 +27,7 @@ import dev.galacticraft.api.gas.GasComposition;
 import dev.galacticraft.api.universe.display.CelestialDisplay;
 import dev.galacticraft.api.universe.galaxy.Galaxy;
 import dev.galacticraft.api.universe.position.CelestialPosition;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.text.Text;
 import net.minecraft.util.registry.DynamicRegistryManager;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryKey;
@@ -44,21 +44,21 @@ public abstract class CelestialBodyType<C extends CelestialBodyConfig> {
 
     /**
      * Returns the name of the celestial body
-     * Be sure to {@link TranslatableText#copy() copy} the returned text if you intend on stylizing it.
+     * Be sure to {@link Text#copy() copy} the returned text if you intend on stylizing it.
      *
      * @param config the celestial body configuration to be queried
      * @return the name of the celestial body
      */
-    public abstract @NotNull TranslatableText name(C config);
+    public abstract @NotNull Text name(C config);
 
     /**
      * Returns the description of the celestial body
-     * Be sure to {@link TranslatableText#copy() copy} the returned text if you intend on stylizing it.
+     * Be sure to {@link Text#copy() copy} the returned text if you intend on stylizing it.
      *
      * @param config the celestial body configuration to be queried
      * @return the description of the celestial body
      */
-    public abstract @NotNull TranslatableText description(C config);
+    public abstract @NotNull Text description(C config);
 
     /**
      * Returns the celestial body's parent, or {@code null} if it does not have one

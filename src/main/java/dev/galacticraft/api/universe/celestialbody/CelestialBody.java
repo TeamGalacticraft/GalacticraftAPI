@@ -29,7 +29,7 @@ import dev.galacticraft.api.universe.celestialbody.landable.Landable;
 import dev.galacticraft.api.universe.display.CelestialDisplay;
 import dev.galacticraft.api.universe.galaxy.Galaxy;
 import dev.galacticraft.api.universe.position.CelestialPosition;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.DynamicRegistryManager;
 import net.minecraft.util.registry.Registry;
@@ -81,21 +81,21 @@ public record CelestialBody<C extends CelestialBodyConfig, T extends CelestialBo
 
     /**
      * Returns the name of this celestial body
-     * Be sure to {@link TranslatableText#copy() copy} the returned text if you intend on stylizing it.
+     * Be sure to {@link Text#copy() copy} the returned text if you intend on stylizing it.
      *
      * @return the name of this celestial body
      */
-    public @NotNull TranslatableText name() {
+    public @NotNull Text name() {
         return this.type().name(this.config());
     }
 
     /**
      * Returns the description of this celestial body
-     * Be sure to {@link TranslatableText#copy() copy} the returned text if you intend on stylizing it.
+     * Be sure to {@link Text#copy() copy} the returned text if you intend on stylizing it.
      *
      * @return the description of this celestial body
      */
-    public @NotNull TranslatableText description() {
+    public @NotNull Text description() {
         return this.type().description(this.config());
     }
 

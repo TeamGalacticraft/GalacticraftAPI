@@ -30,18 +30,19 @@ import dev.galacticraft.api.universe.celestialbody.CelestialBodyConfig;
 import dev.galacticraft.api.universe.display.CelestialDisplay;
 import dev.galacticraft.api.universe.galaxy.Galaxy;
 import dev.galacticraft.api.universe.position.CelestialPosition;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.text.MutableText;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.RegistryKey;
 import org.jetbrains.annotations.NotNull;
 
-public record StarConfig(@NotNull TranslatableText name, @NotNull TranslatableText description,
+public record StarConfig(@NotNull MutableText name, @NotNull MutableText description,
                          @NotNull RegistryKey<Galaxy> galaxy, @NotNull CelestialPosition<?, ?> position,
                          @NotNull CelestialDisplay<?, ?> display, GasComposition photosphericComposition, float gravity,
                          double luminance, int surfaceTemperature) implements CelestialBodyConfig {
     public static final Codec<StarConfig> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-            Codec.STRING.fieldOf("name").xmap(TranslatableText::new, TranslatableText::getKey).forGetter(StarConfig::name),
-            Codec.STRING.fieldOf("description").xmap(TranslatableText::new, TranslatableText::getKey).forGetter(StarConfig::description),
+            Codec.STRING.fieldOf("name").xmap(Text::translatable, Text::getString).forGetter(StarConfig::name),
+            Codec.STRING.fieldOf("description").xmap(Text::translatable, Text::getString).forGetter(StarConfig::description),
             Identifier.CODEC.fieldOf("galaxy").xmap(id -> RegistryKey.of(AddonRegistry.GALAXY_KEY, id), RegistryKey::getValue).forGetter(StarConfig::galaxy),
             CelestialPosition.CODEC.fieldOf("position").forGetter(StarConfig::position),
             CelestialDisplay.CODEC.fieldOf("display").forGetter(StarConfig::display),

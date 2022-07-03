@@ -22,7 +22,6 @@
 
 package dev.galacticraft.api.rocket.part;
 
-import com.mojang.serialization.Codec;
 import net.minecraft.util.StringIdentifiable;
 import org.jetbrains.annotations.NotNull;
 
@@ -36,7 +35,7 @@ public enum RocketPartType implements StringIdentifiable {
     BOTTOM,
     UPGRADE;
 
-    public static final Codec<RocketPartType> CODEC = Codec.STRING.xmap(s -> RocketPartType.valueOf(s.toUpperCase(Locale.ROOT)), RocketPartType::asString);
+    public static final com.mojang.serialization.Codec<RocketPartType> CODEC = com.mojang.serialization.Codec.STRING.xmap(s -> RocketPartType.valueOf(s.toUpperCase(Locale.ROOT)), RocketPartType::asString);
 
     @Override
     public @NotNull String asString() {

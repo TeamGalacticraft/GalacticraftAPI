@@ -59,8 +59,7 @@ public class IconCelestialDisplayType extends CelestialDisplayType<IconCelestial
         buffer.vertex(positionMatrix, config.scale() * -size, config.scale() * size, 0).texture(config.u() / width, (config.v() + config.height()) / height).next();
         buffer.vertex(positionMatrix, config.scale() * size, config.scale() * size, 0).texture((config.u() + config.width()) / width, (config.v() + config.height()) / height).next();
         buffer.vertex(positionMatrix, config.scale() * size, config.scale() * -size, 0).texture((config.u() + config.width()) / width, config.v() / height).next();
-        buffer.end();
-        BufferRenderer.draw(buffer);
+        BufferRenderer.drawWithoutShader(buffer.end());
         return new Vector4f(config.scale() * -size, config.scale() * -size, (config.scale() * size) * 2, (config.scale() * size) * 2);
     }
 }

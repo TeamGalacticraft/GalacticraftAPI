@@ -31,7 +31,9 @@ import net.minecraft.nbt.NbtList;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.registry.Registry;
+import net.minecraft.util.registry.RegistryEntry;
 import net.minecraft.world.ChunkSerializer;
+import net.minecraft.world.biome.Biome;
 import net.minecraft.world.chunk.*;
 import net.minecraft.world.chunk.light.LightingProvider;
 import net.minecraft.world.gen.chunk.BlendingData;
@@ -50,7 +52,7 @@ import java.util.BitSet;
 @Mixin(ChunkSerializer.class)
 public abstract class ChunkSerializerMixin {
     @Inject(method = "serialize", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/chunk/ChunkSection;getBlockStateContainer()Lnet/minecraft/world/chunk/PalettedContainer;"), locals = LocalCapture.CAPTURE_FAILHARD)
-    private static void galacticraft_serializeOxygen(ServerWorld world, Chunk chunk, CallbackInfoReturnable<NbtCompound> cir, ChunkPos pos, NbtCompound compound, BlendingData blending, BelowZeroRetrogen retrogen, UpgradeData data, ChunkSection[] section, NbtList list, LightingProvider provider, Registry registry, Codec codec, boolean b, int i, int j, boolean bl, ChunkNibbleArray nibbleArray, ChunkNibbleArray nibbleArray2, NbtCompound nbtCompound, ChunkSection chunkSection) {
+    private static void galacticraft_serializeOxygen(ServerWorld world, Chunk chunk, CallbackInfoReturnable<NbtCompound> cir, ChunkPos chunkPos, NbtCompound nbtCompound, BlendingData blendingData, BelowZeroRetrogen belowZeroRetrogen, UpgradeData upgradeData, ChunkSection[] chunkSections, NbtList nbtList, LightingProvider lightingProvider, Registry<Biome> registry, Codec<ReadableContainer<RegistryEntry<Biome>>> codec, boolean bl, int i, int j, boolean bl2, ChunkNibbleArray chunkNibbleArray, ChunkNibbleArray chunkNibbleArray2, NbtCompound nbtCompound2, ChunkSection chunkSection) {
         NbtCompound nbt = new NbtCompound();
         if (((WorldOxygenAccessorInternal) world).getDefaultBreathable() != ((ChunkSectionOxygenAccessorInternal) chunkSection).getDefaultBreathable()) {
             nbt.putBoolean(Constant.Nbt.DEFAULT_BREATHABLE, ((ChunkSectionOxygenAccessorInternal) chunkSection).getDefaultBreathable());
@@ -65,7 +67,7 @@ public abstract class ChunkSerializerMixin {
     }
 
     @Inject(method = "deserialize", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/poi/PointOfInterestStorage;initForPalette(Lnet/minecraft/util/math/ChunkPos;Lnet/minecraft/world/chunk/ChunkSection;)V"), locals = LocalCapture.CAPTURE_FAILHARD)
-    private static void galacticraft_deserializeOxygen(ServerWorld world, PointOfInterestStorage poiStorage, ChunkPos chunkPos, NbtCompound nbt, CallbackInfoReturnable<ProtoChunk> cir, ChunkPos chunkPos2, UpgradeData upgradeData, boolean bl, NbtList nbtList, int i, ChunkSection[] chunkSections, boolean bl2, ChunkManager chunkManager, LightingProvider lightingProvider, Registry registry, Codec codec, int j, NbtCompound nbtCompound, int k, int l, PalettedContainer palettedContainer, PalettedContainer palettedContainer2, ChunkSection chunkSection) {
+    private static void galacticraft_deserializeOxygen(ServerWorld world, PointOfInterestStorage poiStorage, ChunkPos chunkPos, NbtCompound nbt, CallbackInfoReturnable<ProtoChunk> cir, ChunkPos chunkPos2, UpgradeData upgradeData, boolean bl, NbtList nbtList, int i, ChunkSection[] chunkSections, boolean bl2, ChunkManager chunkManager, LightingProvider lightingProvider, Registry<Biome> registry, Codec<ReadableContainer<RegistryEntry<Biome>>> codec, boolean bl3, int j, NbtCompound nbtCompound, int k, int l, PalettedContainer palettedContainer, ReadableContainer readableContainer, ChunkSection chunkSection) {
         NbtCompound nbtC = nbtCompound.getCompound(Constant.Nbt.GC_API);
         short changedCount = nbtC.getShort(Constant.Nbt.CHANGE_COUNT);
         if (nbtC.contains(Constant.Nbt.DEFAULT_BREATHABLE)) {

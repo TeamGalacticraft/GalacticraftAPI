@@ -23,6 +23,7 @@
 package dev.galacticraft.impl.internal.fabric;
 
 import dev.galacticraft.api.accessor.ServerResearchAccessor;
+import dev.galacticraft.api.entity.attribute.GcApiEntityAttributes;
 import dev.galacticraft.impl.Constant;
 import dev.galacticraft.impl.internal.command.GCApiCommands;
 import dev.galacticraft.impl.internal.world.gen.SatelliteChunkGenerator;
@@ -75,6 +76,7 @@ public class GalacticraftAPI implements ModInitializer {
 
         Registry.register(Registry.CHUNK_GENERATOR, new Identifier(Constant.MOD_ID, "satellite"), SatelliteChunkGenerator.CODEC);
         GcApiBiomes.register();
+        GcApiEntityAttributes.init();
         Constant.LOGGER.info("Initialization Complete. (Took {}ms).", System.currentTimeMillis() - startInitTime);
     }
 }

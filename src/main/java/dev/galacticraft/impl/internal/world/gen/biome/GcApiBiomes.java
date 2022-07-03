@@ -37,7 +37,7 @@ public class GcApiBiomes {
     public static final Biome SPACE = createSpaceBiome();
 
     private static Biome createSpaceBiome() {
-        Biome.Builder builder = new Biome.Builder().category(Biome.Category.NONE);
+        Biome.Builder builder = new Biome.Builder();
         SpawnSettings.Builder spawns = new SpawnSettings.Builder();
         GenerationSettings.Builder genSettings = new GenerationSettings.Builder();
         BiomeEffects.Builder effects = new BiomeEffects.Builder();

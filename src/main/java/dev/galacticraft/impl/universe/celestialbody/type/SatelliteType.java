@@ -53,12 +53,12 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.WorldGenerationProgressListener;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.structure.Structure;
+import net.minecraft.structure.StructureTemplate;
 import net.minecraft.tag.TagKey;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.ChunkPos;
+import net.minecraft.util.math.intprovider.UniformIntProvider;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryEntry;
 import net.minecraft.util.registry.RegistryKey;
@@ -68,7 +68,6 @@ import net.minecraft.world.border.WorldBorderListener;
 import net.minecraft.world.chunk.ChunkStatus;
 import net.minecraft.world.dimension.DimensionOptions;
 import net.minecraft.world.dimension.DimensionType;
-import net.minecraft.world.gen.chunk.ChunkGenerator;
 import net.minecraft.world.level.UnmodifiableLevelProperties;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
@@ -99,17 +98,17 @@ public class SatelliteType extends CelestialBodyType<SatelliteConfig> implements
         }
     };
     private static final GasComposition EMPTY_GAS_COMPOSITION = new GasComposition.Builder().build();
-    private static final TranslatableText NAME = new TranslatableText("ui.galacticraft-api.satellite.name");
-    private static final TranslatableText DESCRIPTION = new TranslatableText("ui.galacticraft-api.satellite.description");
+    private static final Text NAME = Text.translatable("ui.galacticraft-api.satellite.name");
+    private static final Text DESCRIPTION = Text.translatable("ui.galacticraft-api.satellite.description");
 
     protected SatelliteType(Codec<SatelliteConfig> codec) {
         super(codec);
     }
 
     @ApiStatus.Internal
-    public static CelestialBody<SatelliteConfig, SatelliteType> registerSatellite(@NotNull MinecraftServer server, @NotNull ServerPlayerEntity player, @NotNull CelestialBody<?, ?> parent, Structure structure) {
+    public static CelestialBody<SatelliteConfig, SatelliteType> registerSatellite(@NotNull MinecraftServer server, @NotNull ServerPlayerEntity player, @NotNull CelestialBody<?, ?> parent, StructureTemplate structure) {
         Identifier id = new Identifier(Objects.requireNonNull(server.getRegistryManager().get(AddonRegistry.CELESTIAL_BODY_KEY).getId(parent)) + "_" + player.getEntityName().toLowerCase(Locale.ROOT));
-        DimensionType type = DimensionType.create(OptionalLong.empty(), true, false, false, true, 1, false, false, false, false, false, 0, 256, 256, new TagKey<>(Registry.BLOCK_KEY, new Identifier(Constant.MOD_ID, "infiniburn_space")), new Identifier(Constant.MOD_ID, "space_sky"), 0);
+        DimensionType type = new DimensionType(OptionalLong.empty(), true, false, false, true, 1, false, false, 0, 256, 256, TagKey.of(Registry.BLOCK_KEY, new Identifier(Constant.MOD_ID, "infiniburn_space")), new Identifier(Constant.MOD_ID, "space_sky"), 0, new DimensionType.MonsterSettings(false, true, UniformIntProvider.create(0, 7), 0));
         DimensionOptions options = new DimensionOptions(RegistryEntry.of(type), new SatelliteChunkGenerator(server.getRegistryManager().get(Registry.STRUCTURE_SET_KEY), RegistryEntry.of(GcApiBiomes.SPACE), structure));
         SatelliteOwnershipData ownershipData = SatelliteOwnershipData.create(player.getUuid(), player.getEntityName(), new LinkedList<>(), false);
         CelestialPosition<?, ?> position = new CelestialPosition<>(OrbitalCelestialPositionType.INSTANCE, new OrbitalCelestialPositionConfig(1550, 10.0f, 0.0F, false));
@@ -126,15 +125,13 @@ public class SatelliteType extends CelestialBodyType<SatelliteConfig> implements
     public static CelestialBody<SatelliteConfig, SatelliteType> create(Identifier id, MinecraftServer server, CelestialBody<?, ?> parent, CelestialPosition<?, ?> position, CelestialDisplay<?, ?> display,
                                                                        DimensionOptions options, SatelliteOwnershipData ownershipData, String name) {
         SatelliteConfig config = new SatelliteConfig(RegistryKey.of(AddonRegistry.CELESTIAL_BODY_KEY, server.getRegistryManager().get(AddonRegistry.CELESTIAL_BODY_KEY).getId(parent)), parent.galaxy(), position, display, ownershipData, RegistryKey.of(Registry.WORLD_KEY, id), EMPTY_GAS_COMPOSITION, 0.0f, parent.type() instanceof Landable ? ((Landable) parent.type()).accessWeight(parent.config()) : 1, options);
-        config.customName(new TranslatableText(name));
+        config.customName(Text.translatable(name));
         CelestialBody<SatelliteConfig, SatelliteType> satellite = INSTANCE.configure(config);
         ((SatelliteAccessor) server).addSatellite(id, satellite);
         Constant.LOGGER.debug("Attempting to create a world dynamically ({})", id);
 
-        RegistryEntry<DimensionType> dimensionType3 = options.getDimensionTypeSupplier();
-        ChunkGenerator chunkGenerator3 = options.getChunkGenerator();
         UnmodifiableLevelProperties unmodifiableLevelProperties = new UnmodifiableLevelProperties(server.getSaveProperties(), server.getSaveProperties().getMainWorldProperties());
-        ServerWorld serverWorld2 = new ServerWorld(server, ((MinecraftServerAccessor) server).getWorkerExecutor(), ((MinecraftServerAccessor) server).getSession(), unmodifiableLevelProperties, RegistryKey.of(Registry.WORLD_KEY, id), dimensionType3, EMPTY_PROGRESS_LISTENER, chunkGenerator3, server.getSaveProperties().getGeneratorOptions().isDebugWorld(), BiomeAccess.hashSeed(server.getSaveProperties().getGeneratorOptions().getSeed()), ImmutableList.of(), false);
+        ServerWorld serverWorld2 = new ServerWorld(server, ((MinecraftServerAccessor) server).getWorkerExecutor(), ((MinecraftServerAccessor) server).getSession(), unmodifiableLevelProperties, RegistryKey.of(Registry.WORLD_KEY, id), options, EMPTY_PROGRESS_LISTENER, server.getSaveProperties().getGeneratorOptions().isDebugWorld(), BiomeAccess.hashSeed(server.getSaveProperties().getGeneratorOptions().getSeed()), ImmutableList.of(), false);
         server.getWorld(World.OVERWORLD).getWorldBorder().addListener(new WorldBorderListener.WorldBorderSyncer(serverWorld2.getWorldBorder()));
         ((MinecraftServerAccessor) server).getWorlds().put(RegistryKey.of(Registry.WORLD_KEY, id), serverWorld2);
 
@@ -146,7 +143,7 @@ public class SatelliteType extends CelestialBodyType<SatelliteConfig> implements
     }
 
     @Override
-    public @NotNull TranslatableText name(SatelliteConfig config) {
+    public @NotNull Text name(SatelliteConfig config) {
         return NAME;
     }
 
@@ -161,7 +158,7 @@ public class SatelliteType extends CelestialBodyType<SatelliteConfig> implements
     }
 
     @Override
-    public @NotNull TranslatableText description(SatelliteConfig config) {
+    public @NotNull Text description(SatelliteConfig config) {
         return DESCRIPTION;
     }
 

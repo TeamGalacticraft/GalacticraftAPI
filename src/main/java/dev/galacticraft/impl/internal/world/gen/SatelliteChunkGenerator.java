@@ -33,10 +33,7 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.structure.Structure;
-import net.minecraft.structure.StructureManager;
-import net.minecraft.structure.StructurePlacementData;
-import net.minecraft.structure.StructureSet;
+import net.minecraft.structure.*;
 import net.minecraft.util.collection.Pool;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
@@ -58,7 +55,8 @@ import net.minecraft.world.gen.chunk.ChunkGenerator;
 import net.minecraft.world.gen.chunk.VerticalBlockSample;
 import net.minecraft.world.gen.chunk.placement.ConcentricRingsStructurePlacement;
 import net.minecraft.world.gen.densityfunction.DensityFunctionTypes;
-import net.minecraft.world.gen.feature.ConfiguredStructureFeature;
+import net.minecraft.world.gen.noise.NoiseConfig;
+import net.minecraft.world.gen.structure.Structure;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
@@ -71,10 +69,10 @@ import java.util.stream.Stream;
 
 @ApiStatus.Internal
 public class SatelliteChunkGenerator extends ChunkGenerator {
-    public static final Codec<Structure> STRUCTURE_CODEC = new Codec<>() {
+    public static final Codec<StructureTemplate> STRUCTURE_CODEC = new Codec<>() {
         @Override
-        public <T> DataResult<Pair<Structure, T>> decode(DynamicOps<T> ops, T input) {
-            Structure structure = new Structure();
+        public <T> DataResult<Pair<StructureTemplate, T>> decode(DynamicOps<T> ops, T input) {
+            StructureTemplate structure = new StructureTemplate();
             NbtElement nbtElement = ops.convertTo(NbtOps.INSTANCE, input);
             if (nbtElement instanceof NbtCompound compound) {
                 structure.readNbt(compound);
@@ -85,27 +83,26 @@ public class SatelliteChunkGenerator extends ChunkGenerator {
         }
 
         @Override
-        public <T> DataResult<T> encode(Structure input, DynamicOps<T> ops, T prefix) {
+        public <T> DataResult<T> encode(StructureTemplate input, DynamicOps<T> ops, T prefix) {
             return DataResult.success(NbtOps.INSTANCE.convertTo(ops, input.writeNbt(new NbtCompound())));
         }
     };
-    public static final Codec<SatelliteChunkGenerator> CODEC = RecordCodecBuilder.create(instance -> method_41042(instance).and(instance.group(
+    public static final Codec<SatelliteChunkGenerator> CODEC = RecordCodecBuilder.create(instance -> createStructureSetRegistryGetter(instance).and(instance.group(
             Biome.REGISTRY_CODEC.fieldOf("biome").forGetter(SatelliteChunkGenerator::getBiome),
             STRUCTURE_CODEC.fieldOf("structure").forGetter(SatelliteChunkGenerator::getStructure)
     )).apply(instance, SatelliteChunkGenerator::new));
 
-    private static final MultiNoiseUtil.MultiNoiseSampler EMPTY_SAMPLER = new MultiNoiseUtil.MultiNoiseSampler(DensityFunctionTypes.zero(), DensityFunctionTypes.zero(), DensityFunctionTypes.zero(),DensityFunctionTypes.zero(), DensityFunctionTypes.zero(),DensityFunctionTypes.zero(), Collections.emptyList());
     private static final VerticalBlockSample EMPTY_VIEW = new VerticalBlockSample(0, new BlockState[0]);
-    private final Structure structure;
+    private final StructureTemplate structure;
     private final RegistryEntry<Biome> biome;
 
-    public SatelliteChunkGenerator(Registry<StructureSet> registry, RegistryEntry<Biome> biome, Structure structure) {
+    public SatelliteChunkGenerator(Registry<StructureSet> registry, RegistryEntry<Biome> biome, StructureTemplate structure) {
         super(registry, Optional.empty(), new FixedBiomeSource(biome));
         this.structure = structure;
         this.biome = biome;
     }
 
-    public Structure getStructure() {
+    public StructureTemplate getStructure() {
         return structure;
     }
 
@@ -115,21 +112,11 @@ public class SatelliteChunkGenerator extends ChunkGenerator {
     }
 
     @Override
-    public ChunkGenerator withSeed(long seed) {
-        return this;
+    public void carve(ChunkRegion chunkRegion, long seed, NoiseConfig noiseConfig, BiomeAccess biomeAccess, StructureAccessor structureAccessor, Chunk chunk, GenerationStep.Carver generationStep) {
     }
 
     @Override
-    public MultiNoiseUtil.MultiNoiseSampler getMultiNoiseSampler() {
-        return EMPTY_SAMPLER;
-    }
-
-    @Override
-    public void carve(ChunkRegion chunkRegion, long seed, BiomeAccess biomeAccess, StructureAccessor structureAccessor, Chunk chunk, GenerationStep.Carver generationStep) {
-    }
-
-    @Override
-    public void buildSurface(ChunkRegion region, StructureAccessor structures, Chunk chunk) {
+    public void buildSurface(ChunkRegion region, StructureAccessor structures, NoiseConfig noiseConfig, Chunk chunk) {
     }
 
     @Override
@@ -137,14 +124,9 @@ public class SatelliteChunkGenerator extends ChunkGenerator {
     }
 
     @Override
-    public CompletableFuture<Chunk> populateBiomes(Registry<Biome> registry, Executor executor, Blender arg, StructureAccessor structureAccessor, Chunk chunk) {
-        chunk.setBiomeIfAbsent(() -> this.biome);
+    public CompletableFuture<Chunk> populateBiomes(Registry<Biome> registry, Executor executor, NoiseConfig noiseConfig, Blender arg, StructureAccessor structureAccessor, Chunk chunk) {
+//        chunk.setBiomeIfAbsent(() -> this.biome);
         return CompletableFuture.completedFuture(chunk);
-    }
-
-    @Override
-    public RegistryEntry<Biome> getBiomeForNoiseGen(int biomeX, int biomeY, int biomeZ) {
-        return this.biome;
     }
 
     @Override
@@ -165,7 +147,7 @@ public class SatelliteChunkGenerator extends ChunkGenerator {
     }
 
     @Override
-    public void setStructureStarts(DynamicRegistryManager manager, StructureAccessor accessor, Chunk chunk, StructureManager structureManager, long worldSeed) {
+    public void setStructureStarts(DynamicRegistryManager registryManager, NoiseConfig noiseConfig, StructureAccessor structureAccessor, Chunk chunk, StructureTemplateManager structureTemplateManager, long seed) {
     }
 
     @Override
@@ -173,7 +155,7 @@ public class SatelliteChunkGenerator extends ChunkGenerator {
     }
 
     @Override
-    public CompletableFuture<Chunk> populateNoise(Executor executor, Blender arg, StructureAccessor structureAccessor, Chunk chunk) {
+    public CompletableFuture<Chunk> populateNoise(Executor executor, Blender arg, NoiseConfig noiseConfig, StructureAccessor structureAccessor, Chunk chunk) {
         return CompletableFuture.completedFuture(chunk);
     }
 
@@ -188,23 +170,23 @@ public class SatelliteChunkGenerator extends ChunkGenerator {
     }
 
     @Override
-    public int getHeightOnGround(int x, int z, Type heightmap, HeightLimitView world) {
+    public int getHeightOnGround(int x, int z, Type heightmap, HeightLimitView world, NoiseConfig noiseConfig) {
         return 0;
     }
 
     @Override
-    public int getHeightInGround(int x, int z, Type heightmap, HeightLimitView world) {
+    public int getHeightInGround(int x, int z, Type heightmap, HeightLimitView world, NoiseConfig noiseConfig) {
         return 0;
     }
 
     @Nullable
     @Override
-    public Pair<BlockPos, RegistryEntry<ConfiguredStructureFeature<?, ?>>> locateStructure(ServerWorld serverWorld, RegistryEntryList<ConfiguredStructureFeature<?, ?>> registryEntryList, BlockPos center, int radius, boolean skipExistingChunks) {
+    public Pair<BlockPos, RegistryEntry<Structure>> locateStructure(ServerWorld world, RegistryEntryList<Structure> structures, BlockPos center, int radius, boolean skipReferencedStructures) {
         return null;
     }
 
     @Override
-    public Stream<RegistryEntry<StructureSet>> method_41039() {
+    public Stream<RegistryEntry<StructureSet>> streamStructureSets() {
         return Stream.empty();
     }
 
@@ -214,7 +196,7 @@ public class SatelliteChunkGenerator extends ChunkGenerator {
     }
 
     @Override
-    public boolean method_41053(RegistryKey<StructureSet> registryKey, long l, int i, int j, int k) {
+    public boolean shouldStructureGenerateInRange(RegistryEntry<StructureSet> structureSet, NoiseConfig noiseConfig, long seed, int chunkX, int chunkZ, int chunkRange) {
         return false;
     }
 
@@ -223,37 +205,32 @@ public class SatelliteChunkGenerator extends ChunkGenerator {
         return Pool.empty();
     }
 
-    @Override
-    protected RegistryEntry<Biome> filterBiome(RegistryEntry<Biome> biome) {
-        return this.biome;
-    }
-
     public RegistryEntry<Biome> getBiome() {
         return biome;
     }
 
     @Override
-    public void method_41058() {
-//        super.method_41058();
+    public void computeStructurePlacementsIfNeeded(NoiseConfig noiseConfig) {
+//        super.computeStructurePlacementsIfNeeded();
     }
 
     @Nullable
     @Override
-    public List<ChunkPos> getConcentricRingsStartChunks(ConcentricRingsStructurePlacement structurePlacement) {
+    public List<ChunkPos> getConcentricRingsStartChunks(ConcentricRingsStructurePlacement structurePlacement, NoiseConfig noiseConfig) {
         return null;
     }
 
     @Override
-    public void getDebugHudText(List<String> text, BlockPos pos) {
+    public void getDebugHudText(List<String> text, NoiseConfig noiseConfig, BlockPos pos) {
     }
 
     @Override
-    public int getHeight(int x, int z, Type heightmap, HeightLimitView world) {
+    public int getHeight(int x, int z, Type heightmap, HeightLimitView world, NoiseConfig noiseConfig) {
         return 0;
     }
 
     @Override
-    public VerticalBlockSample getColumnSample(int x, int z, HeightLimitView world) {
+    public VerticalBlockSample getColumnSample(int x, int z, HeightLimitView world, NoiseConfig noiseConfig) {
         return EMPTY_VIEW;
     }
 }

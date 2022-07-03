@@ -30,7 +30,7 @@ import dev.galacticraft.api.universe.display.CelestialDisplay;
 import dev.galacticraft.api.universe.galaxy.Galaxy;
 import dev.galacticraft.api.universe.position.CelestialPosition;
 import dev.galacticraft.impl.universe.celestialbody.config.StarConfig;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.text.Text;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryKey;
 import org.jetbrains.annotations.NotNull;
@@ -44,7 +44,7 @@ public class StarType extends CelestialBodyType<StarConfig> implements Star<Star
     }
 
     @Override
-    public @NotNull TranslatableText name(StarConfig config) {
+    public @NotNull Text name(StarConfig config) {
         return config.name();
     }
 
@@ -66,7 +66,7 @@ public class StarType extends CelestialBodyType<StarConfig> implements Star<Star
     }
 
     @Override
-    public @NotNull TranslatableText description(StarConfig config) {
+    public @NotNull Text description(StarConfig config) {
         return config.description();
     }
 

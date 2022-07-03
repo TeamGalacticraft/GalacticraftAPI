@@ -94,7 +94,7 @@ dependencies {
     listOf(
         "fabric-api-base",
         "fabric-api-lookup-api-v1",
-        "fabric-command-api-v1",
+        "fabric-command-api-v2",
         "fabric-convention-tags-v1",
         "fabric-gametest-api-v1",
         "fabric-lifecycle-events-v1",

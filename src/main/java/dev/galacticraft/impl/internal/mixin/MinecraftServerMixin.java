@@ -122,10 +122,9 @@ public abstract class MinecraftServerMixin implements SatelliteAccessor {
 
                 WorldBorder worldBorder = getWorld(World.OVERWORLD).getWorldBorder();
                 for (Map.Entry<Identifier, CelestialBody<SatelliteConfig, SatelliteType>> entry : this.satellites.entrySet()) {
-                    RegistryEntry<DimensionType> type = entry.getValue().config().dimensionOptions().getDimensionTypeSupplier();
                     ChunkGenerator chunkGenerator = entry.getValue().config().dimensionOptions().getChunkGenerator();
                     UnmodifiableLevelProperties unmodifiableLevelProperties = new UnmodifiableLevelProperties(getSaveProperties(), getSaveProperties().getMainWorldProperties());
-                    ServerWorld world = new ServerWorld((MinecraftServer) (Object) this, workerExecutor, session, unmodifiableLevelProperties, RegistryKey.of(Registry.WORLD_KEY, entry.getKey()), type, SatelliteType.EMPTY_PROGRESS_LISTENER, chunkGenerator, getSaveProperties().getGeneratorOptions().isDebugWorld(), BiomeAccess.hashSeed(getSaveProperties().getGeneratorOptions().getSeed()), ImmutableList.of(), false);
+                    ServerWorld world = new ServerWorld((MinecraftServer) (Object) this, workerExecutor, session, unmodifiableLevelProperties, RegistryKey.of(Registry.WORLD_KEY, entry.getKey()), entry.getValue().config().dimensionOptions(), SatelliteType.EMPTY_PROGRESS_LISTENER, getSaveProperties().getGeneratorOptions().isDebugWorld(), BiomeAccess.hashSeed(getSaveProperties().getGeneratorOptions().getSeed()), ImmutableList.of(), false);
                     worldBorder.addListener(new WorldBorderListener.WorldBorderSyncer(world.getWorldBorder()));
                     worlds.put(RegistryKey.of(Registry.WORLD_KEY, entry.getKey()), world);
                 }

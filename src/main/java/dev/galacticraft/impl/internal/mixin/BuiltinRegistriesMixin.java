@@ -38,16 +38,17 @@ import java.util.function.Supplier;
 
 @Mixin(BuiltinRegistries.class)
 public abstract class BuiltinRegistriesMixin {
+
     @Shadow
-    private static <T, R extends MutableRegistry<T>> R addRegistry(RegistryKey<? extends Registry<T>> registryRef, R registry, Supplier<? extends RegistryEntry<? extends T>> defaultValueSupplier, Lifecycle lifecycle) {
+    private static <T, R extends MutableRegistry<T>> R addRegistry(RegistryKey<? extends Registry<T>> registryRef, R registry, BuiltinRegistries.Initializer<T> initializer, Lifecycle lifecycle) {
         throw new UnsupportedOperationException("Untransformed mixin");
     }
 
-    @Inject(method = "<clinit>", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/registry/BuiltinRegistries;addRegistry(Lnet/minecraft/util/registry/RegistryKey;Ljava/util/function/Supplier;)Lnet/minecraft/util/registry/Registry;", ordinal = 0))
+    @Inject(method = "<clinit>", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/registry/BuiltinRegistries;addRegistry(Lnet/minecraft/util/registry/RegistryKey;Lnet/minecraft/util/registry/BuiltinRegistries$Initializer;)Lnet/minecraft/util/registry/Registry;", ordinal = 0))
     private static void galacticraft_addDynamicRegistries(CallbackInfo ci) {
         BuiltinObjects.register();
-        addRegistry(AddonRegistry.GALAXY_KEY, AddonRegistry.GALAXY, () -> AddonRegistry.GALAXY.entryOf(BuiltinObjects.MILKY_WAY_KEY), Lifecycle.experimental());
-        addRegistry(AddonRegistry.CELESTIAL_BODY_KEY, AddonRegistry.CELESTIAL_BODY, () -> AddonRegistry.CELESTIAL_BODY.entryOf(BuiltinObjects.SOL_KEY), Lifecycle.experimental());
-        addRegistry(AddonRegistry.ROCKET_PART_KEY, AddonRegistry.ROCKET_PART, () -> AddonRegistry.ROCKET_PART.entryOf(RegistryKey.of(AddonRegistry.ROCKET_PART_KEY, new Identifier(Constant.MOD_ID, "invalid"))), Lifecycle.experimental());
+        addRegistry(AddonRegistry.GALAXY_KEY, AddonRegistry.GALAXY, (registry) -> AddonRegistry.GALAXY.entryOf(BuiltinObjects.MILKY_WAY_KEY), Lifecycle.experimental());
+        addRegistry(AddonRegistry.CELESTIAL_BODY_KEY, AddonRegistry.CELESTIAL_BODY, (registry) -> AddonRegistry.CELESTIAL_BODY.entryOf(BuiltinObjects.SOL_KEY), Lifecycle.experimental());
+        addRegistry(AddonRegistry.ROCKET_PART_KEY, AddonRegistry.ROCKET_PART, (registry) -> AddonRegistry.ROCKET_PART.entryOf(RegistryKey.of(AddonRegistry.ROCKET_PART_KEY, new Identifier(Constant.MOD_ID, "invalid"))), Lifecycle.experimental());
     }
 }

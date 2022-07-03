@@ -31,7 +31,7 @@ import dev.galacticraft.api.universe.display.CelestialDisplay;
 import dev.galacticraft.api.universe.galaxy.Galaxy;
 import dev.galacticraft.api.universe.position.CelestialPosition;
 import dev.galacticraft.impl.universe.celestialbody.config.DecorativePlanetConfig;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.text.Text;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryKey;
 import org.jetbrains.annotations.NotNull;
@@ -45,7 +45,7 @@ public class DecorativePlanet extends CelestialBodyType<DecorativePlanetConfig> 
     }
 
     @Override
-    public @NotNull TranslatableText name(DecorativePlanetConfig config) {
+    public @NotNull Text name(DecorativePlanetConfig config) {
         return config.name();
     }
 
@@ -60,7 +60,7 @@ public class DecorativePlanet extends CelestialBodyType<DecorativePlanetConfig> 
     }
 
     @Override
-    public @NotNull TranslatableText description(DecorativePlanetConfig config) {
+    public @NotNull Text description(DecorativePlanetConfig config) {
         return config.description();
     }
 

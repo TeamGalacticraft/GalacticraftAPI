@@ -32,7 +32,8 @@ import dev.galacticraft.api.universe.celestialbody.CelestialBodyConfig;
 import dev.galacticraft.api.universe.display.CelestialDisplay;
 import dev.galacticraft.api.universe.galaxy.Galaxy;
 import dev.galacticraft.api.universe.position.CelestialPosition;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.text.MutableText;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.World;
@@ -40,15 +41,15 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 
-public record PlanetConfig(@NotNull TranslatableText name, @NotNull TranslatableText description,
+public record PlanetConfig(@NotNull MutableText name, @NotNull MutableText description,
                            @NotNull RegistryKey<Galaxy> galaxy, @NotNull RegistryKey<CelestialBody<?, ?>> parent,
                            @NotNull CelestialPosition<?, ?> position, @NotNull CelestialDisplay<?, ?> display,
                            @NotNull RegistryKey<World> world, @NotNull GasComposition atmosphere, float gravity,
                            int accessWeight, int dayTemperature, int nightTemperature,
                            @NotNull Optional<SatelliteRecipe> satelliteRecipe) implements CelestialBodyConfig {
     public static final Codec<PlanetConfig> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-            Codec.STRING.fieldOf("name").xmap(TranslatableText::new, TranslatableText::getKey).forGetter(PlanetConfig::name),
-            Codec.STRING.fieldOf("description").xmap(TranslatableText::new, TranslatableText::getKey).forGetter(PlanetConfig::description),
+            Codec.STRING.fieldOf("name").xmap(Text::translatable, Text::getString).forGetter(PlanetConfig::name),
+            Codec.STRING.fieldOf("description").xmap(Text::translatable, Text::getString).forGetter(PlanetConfig::description),
             Identifier.CODEC.fieldOf("galaxy").xmap(id -> RegistryKey.of(AddonRegistry.GALAXY_KEY, id), RegistryKey::getValue).forGetter(PlanetConfig::galaxy),
             Identifier.CODEC.fieldOf("parent").xmap(id -> RegistryKey.of(AddonRegistry.CELESTIAL_BODY_KEY, id), RegistryKey::getValue).forGetter(PlanetConfig::parent),
             CelestialPosition.CODEC.fieldOf("position").forGetter(PlanetConfig::position),
