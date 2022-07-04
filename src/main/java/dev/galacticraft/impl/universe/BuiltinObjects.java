@@ -42,31 +42,30 @@ import dev.galacticraft.impl.universe.position.config.OrbitalCelestialPositionCo
 import dev.galacticraft.impl.universe.position.config.StaticCelestialPositionConfig;
 import dev.galacticraft.impl.universe.position.type.OrbitalCelestialPositionType;
 import dev.galacticraft.impl.universe.position.type.StaticCelestialPositionType;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.util.registry.RegistryKey;
-import net.minecraft.world.World;
-
 import java.util.Optional;
+import net.minecraft.core.Registry;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.Level;
 
 public class BuiltinObjects {
-    public static final RegistryKey<Galaxy> MILKY_WAY_KEY = RegistryKey.of(AddonRegistry.GALAXY_KEY, new Identifier(Constant.MOD_ID, "milky_way"));
+    public static final ResourceKey<Galaxy> MILKY_WAY_KEY = ResourceKey.create(AddonRegistry.GALAXY_KEY, new ResourceLocation(Constant.MOD_ID, "milky_way"));
     public static final Galaxy MILKY_WAY = Galaxy.create(
-            Text.translatable("galaxy.galacticraft-api.milky_way.name"),
-            Text.translatable("galaxy.galacticraft-api.milky_way.description"),
+            Component.translatable("galaxy.galacticraft-api.milky_way.name"),
+            Component.translatable("galaxy.galacticraft-api.milky_way.description"),
             StaticCelestialPositionType.INSTANCE.configure(new StaticCelestialPositionConfig(0, 0)),
             EmptyCelestialDisplayType.INSTANCE.configure(EmptyCelestialDisplayConfig.INSTANCE)
     );
 
-    public static final RegistryKey<CelestialBody<?, ?>> SOL_KEY = RegistryKey.of(AddonRegistry.CELESTIAL_BODY_KEY, new Identifier(Constant.MOD_ID, "sol"));
+    public static final ResourceKey<CelestialBody<?, ?>> SOL_KEY = ResourceKey.create(AddonRegistry.CELESTIAL_BODY_KEY, new ResourceLocation(Constant.MOD_ID, "sol"));
     public static final CelestialBody<StarConfig, ? extends CelestialBodyType<StarConfig>> SOL = StarType.INSTANCE.configure(
             new StarConfig(
-                    Text.translatable("star.galacticraft-api.sol.name"),
-                    Text.translatable("star.galacticraft-api.sol.description"),
+                    Component.translatable("star.galacticraft-api.sol.name"),
+                    Component.translatable("star.galacticraft-api.sol.description"),
                     MILKY_WAY_KEY,
                     StaticCelestialPositionType.INSTANCE.configure(new StaticCelestialPositionConfig(0, 0)),
-                    IconCelestialDisplayType.INSTANCE.configure(new IconCelestialDisplayConfig(new Identifier(Constant.MOD_ID, "textures/body_icons.png"), 0, 0, 16, 16, 1.5f)),
+                    IconCelestialDisplayType.INSTANCE.configure(new IconCelestialDisplayConfig(new ResourceLocation(Constant.MOD_ID, "textures/body_icons.png"), 0, 0, 16, 16, 1.5f)),
                     new GasComposition.Builder()
                             .pressure(28)
                             .gas(Gases.HYDROGEN_ID, 734600.000)
@@ -81,16 +80,16 @@ public class BuiltinObjects {
             )
     );
 
-    public static final RegistryKey<CelestialBody<?, ?>> EARTH_KEY = RegistryKey.of(AddonRegistry.CELESTIAL_BODY_KEY, new Identifier(Constant.MOD_ID, "earth"));
+    public static final ResourceKey<CelestialBody<?, ?>> EARTH_KEY = ResourceKey.create(AddonRegistry.CELESTIAL_BODY_KEY, new ResourceLocation(Constant.MOD_ID, "earth"));
     public static final CelestialBody<PlanetConfig, ? extends CelestialBodyType<PlanetConfig>> EARTH = PlanetType.INSTANCE.configure(
             new PlanetConfig(
-                    Text.translatable("planet.galacticraft-api.earth.name"),
-                    Text.translatable("planet.galacticraft-api.earth.description"),
+                    Component.translatable("planet.galacticraft-api.earth.name"),
+                    Component.translatable("planet.galacticraft-api.earth.description"),
                     MILKY_WAY_KEY,
                     SOL_KEY,
                     OrbitalCelestialPositionType.INSTANCE.configure(new OrbitalCelestialPositionConfig(1536000.0, 1.0, 0.0F, true)),
-                    IconCelestialDisplayType.INSTANCE.configure(new IconCelestialDisplayConfig(new Identifier(Constant.MOD_ID, "textures/body_icons.png"), 0, 16, 16, 16, 1)),
-                    World.OVERWORLD,
+                    IconCelestialDisplayType.INSTANCE.configure(new IconCelestialDisplayConfig(new ResourceLocation(Constant.MOD_ID, "textures/body_icons.png"), 0, 16, 16, 16, 1)),
+                    Level.OVERWORLD,
                     new GasComposition.Builder()
                             .pressure(1.0f)
                             .temperature(15.0f)
@@ -120,19 +119,19 @@ public class BuiltinObjects {
     );
 
     public static void register() {
-        Registry.register(AddonRegistry.CELESTIAL_POSITION_TYPE, new Identifier(Constant.MOD_ID, "static"), StaticCelestialPositionType.INSTANCE);
-        Registry.register(AddonRegistry.CELESTIAL_POSITION_TYPE, new Identifier(Constant.MOD_ID, "orbital"), OrbitalCelestialPositionType.INSTANCE);
+        Registry.register(AddonRegistry.CELESTIAL_POSITION_TYPE, new ResourceLocation(Constant.MOD_ID, "static"), StaticCelestialPositionType.INSTANCE);
+        Registry.register(AddonRegistry.CELESTIAL_POSITION_TYPE, new ResourceLocation(Constant.MOD_ID, "orbital"), OrbitalCelestialPositionType.INSTANCE);
 
-        Registry.register(AddonRegistry.CELESTIAL_DISPLAY_TYPE, new Identifier(Constant.MOD_ID, "empty"), EmptyCelestialDisplayType.INSTANCE);
-        Registry.register(AddonRegistry.CELESTIAL_DISPLAY_TYPE, new Identifier(Constant.MOD_ID, "icon"), IconCelestialDisplayType.INSTANCE);
+        Registry.register(AddonRegistry.CELESTIAL_DISPLAY_TYPE, new ResourceLocation(Constant.MOD_ID, "empty"), EmptyCelestialDisplayType.INSTANCE);
+        Registry.register(AddonRegistry.CELESTIAL_DISPLAY_TYPE, new ResourceLocation(Constant.MOD_ID, "icon"), IconCelestialDisplayType.INSTANCE);
 
-        Registry.register(AddonRegistry.GALAXY, MILKY_WAY_KEY.getValue(), MILKY_WAY);
+        Registry.register(AddonRegistry.GALAXY, MILKY_WAY_KEY.location(), MILKY_WAY);
 
-        Registry.register(AddonRegistry.CELESTIAL_BODY_TYPE, new Identifier(Constant.MOD_ID, "star"), StarType.INSTANCE);
-        Registry.register(AddonRegistry.CELESTIAL_BODY_TYPE, new Identifier(Constant.MOD_ID, "planet"), PlanetType.INSTANCE);
-        Registry.register(AddonRegistry.CELESTIAL_BODY_TYPE, new Identifier(Constant.MOD_ID, "decorative_planet"), DecorativePlanet.INSTANCE);
+        Registry.register(AddonRegistry.CELESTIAL_BODY_TYPE, new ResourceLocation(Constant.MOD_ID, "star"), StarType.INSTANCE);
+        Registry.register(AddonRegistry.CELESTIAL_BODY_TYPE, new ResourceLocation(Constant.MOD_ID, "planet"), PlanetType.INSTANCE);
+        Registry.register(AddonRegistry.CELESTIAL_BODY_TYPE, new ResourceLocation(Constant.MOD_ID, "decorative_planet"), DecorativePlanet.INSTANCE);
 
-        Registry.register(AddonRegistry.CELESTIAL_BODY, SOL_KEY.getValue(), SOL);
-        Registry.register(AddonRegistry.CELESTIAL_BODY, EARTH_KEY.getValue(), EARTH);
+        Registry.register(AddonRegistry.CELESTIAL_BODY, SOL_KEY.location(), SOL);
+        Registry.register(AddonRegistry.CELESTIAL_BODY, EARTH_KEY.location(), EARTH);
     }
 }

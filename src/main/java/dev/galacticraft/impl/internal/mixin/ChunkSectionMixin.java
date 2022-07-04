@@ -25,8 +25,6 @@ package dev.galacticraft.impl.internal.mixin;
 import dev.galacticraft.api.accessor.ChunkSectionOxygenAccessor;
 import dev.galacticraft.impl.Constant;
 import dev.galacticraft.impl.internal.accessor.ChunkSectionOxygenAccessorInternal;
-import net.minecraft.network.PacketByteBuf;
-import net.minecraft.world.chunk.ChunkSection;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
@@ -37,11 +35,13 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.BitSet;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.level.chunk.LevelChunkSection;
 
 /**
  * @author <a href="https://github.com/TeamGalacticraft">TeamGalacticraft</a>
  */
-@Mixin(ChunkSection.class)
+@Mixin(LevelChunkSection.class)
 public abstract class ChunkSectionMixin implements ChunkSectionOxygenAccessor, ChunkSectionOxygenAccessorInternal {
     private @Unique @Nullable BitSet inverted = null;
     private @Unique short modifiedBlocks = 0;
@@ -78,18 +78,18 @@ public abstract class ChunkSectionMixin implements ChunkSectionOxygenAccessor, C
         }
     }
 
-    @Inject(method = "getPacketSize", at = @At("RETURN"), cancellable = true)
+    @Inject(method = "getSerializedSize", at = @At("RETURN"), cancellable = true)
     private void galacticraft_increaseChunkPacketSize(CallbackInfoReturnable<Integer> cir) {
         cir.setReturnValue(cir.getReturnValueI() + (this.modifiedBlocks == 0 ? 0 : (Constant.Chunk.CHUNK_SECTION_AREA / Byte.SIZE)) + 2 + 1);
     }
 
-    @Inject(method = "isEmpty()Z", at = @At("RETURN"), cancellable = true)
+    @Inject(method = "hasOnlyAir()Z", at = @At("RETURN"), cancellable = true)
     private void galacticraft_verifyOxygenEmpty(CallbackInfoReturnable<Boolean> cir) {
         cir.setReturnValue(cir.getReturnValueZ() && this.modifiedBlocks == 0);
     }
 
-    @Inject(method = "toPacket", at = @At("RETURN"))
-    private void galacticraft_writeOxygenDataToPacket(PacketByteBuf buf, CallbackInfo ci) {
+    @Inject(method = "write", at = @At("RETURN"))
+    private void galacticraft_writeOxygenDataToPacket(FriendlyByteBuf buf, CallbackInfo ci) {
         this.writeOxygenPacket(buf);
     }
 
@@ -124,7 +124,7 @@ public abstract class ChunkSectionMixin implements ChunkSectionOxygenAccessor, C
     }
 
     @Override
-    public void writeOxygenPacket(@NotNull PacketByteBuf buf) {
+    public void writeOxygenPacket(@NotNull FriendlyByteBuf buf) {
         buf.writeBoolean(this.getDefaultBreathable());
         buf.writeShort(this.getModifiedBlocks());
 
@@ -139,7 +139,7 @@ public abstract class ChunkSectionMixin implements ChunkSectionOxygenAccessor, C
     }
 
     @Override
-    public void readOxygenPacket(@NotNull PacketByteBuf buf) {
+    public void readOxygenPacket(@NotNull FriendlyByteBuf buf) {
         this.setDefaultBreathable(buf.readBoolean());
         this.setModifiedBlocks(buf.readShort());
         if (this.getModifiedBlocks() > 0) {

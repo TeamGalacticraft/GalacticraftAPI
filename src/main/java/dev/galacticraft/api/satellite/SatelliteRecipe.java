@@ -28,14 +28,14 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import dev.galacticraft.impl.satellite.SatelliteRecipeImpl;
 import it.unimi.dsi.fastutil.objects.Object2IntArrayMap;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
-import net.minecraft.inventory.Inventory;
-import net.minecraft.recipe.Ingredient;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Predicate;
+import net.minecraft.world.Container;
+import net.minecraft.world.item.crafting.Ingredient;
 
-public interface SatelliteRecipe extends Predicate<Inventory> {
+public interface SatelliteRecipe extends Predicate<Container> {
     Codec<Ingredient> INGREDIENT_CODEC = new Codec<>() {
         @Override
         public <T> DataResult<T> encode(Ingredient input, DynamicOps<T> ops, T prefix) {
@@ -75,5 +75,5 @@ public interface SatelliteRecipe extends Predicate<Inventory> {
     Object2IntMap<Ingredient> ingredients();
 
     @Override
-    boolean test(@NotNull Inventory inventory);
+    boolean test(@NotNull Container inventory);
 }

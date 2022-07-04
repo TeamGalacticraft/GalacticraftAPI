@@ -22,22 +22,22 @@
 
 package dev.galacticraft.api.accessor;
 
-import net.minecraft.inventory.Inventory;
-import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.Container;
 
 /**
  * @author <a href="https://github.com/TeamGalacticraft">TeamGalacticraft</a>
  */
 public interface GearInventoryProvider {
-    Inventory getGearInv();
+    Container getGearInv();
 
-    Inventory getOxygenTanks();
+    Container getOxygenTanks();
 
-    Inventory getThermalArmor();
+    Container getThermalArmor();
 
-    Inventory getAccessories();
+    Container getAccessories();
 
-    void writeGearToNbt(NbtCompound tag);
+    void writeGearToNbt(CompoundTag tag);
 
-    void readGearFromNbt(NbtCompound tag);
+    void readGearFromNbt(CompoundTag tag);
 }

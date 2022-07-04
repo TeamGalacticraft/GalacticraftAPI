@@ -22,12 +22,12 @@
 
 package dev.galacticraft.api.entity.rocket.render;
 
+import com.mojang.blaze3d.vertex.PoseStack;
 import dev.galacticraft.api.entity.Rocket;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.render.VertexConsumerProvider;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.client.world.ClientWorld;
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.client.renderer.MultiBufferSource;
 
 @FunctionalInterface
 @Environment(EnvType.CLIENT)
@@ -41,8 +41,8 @@ public interface RocketPartRenderer {
      * @param mouseY   the y position of the mouse
      * @param delta    time in-between ticks
      */
-    default void renderGUI(ClientWorld world, MatrixStack matrices, int mouseX, int mouseY, float delta) {
+    default void renderGUI(ClientLevel world, PoseStack matrices, int mouseX, int mouseY, float delta) {
     }
 
-    void render(ClientWorld world, MatrixStack matrices, Rocket rocket, VertexConsumerProvider vertices, float delta, int light);
+    void render(ClientLevel world, PoseStack matrices, Rocket rocket, MultiBufferSource vertices, float delta, int light);
 }

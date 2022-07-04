@@ -26,9 +26,9 @@ import dev.galacticraft.api.accessor.SoundSystemAccessor;
 import dev.galacticraft.api.universe.celestialbody.CelestialBody;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.sound.SoundManager;
-import net.minecraft.client.world.ClientWorld;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.client.sounds.SoundManager;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -38,14 +38,14 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 /**
  * @author <a href="https://github.com/TeamGalacticraft">TeamGalacticraft</a>
  */
-@Mixin(MinecraftClient.class)
+@Mixin(Minecraft.class)
 @Environment(EnvType.CLIENT)
 public abstract class MinecraftClientMixin {
     @Shadow
     public abstract SoundManager getSoundManager();
 
-    @Inject(method = "setWorld", at = @At("RETURN"))
-    private void galacticraft_updateSoundMultiplier(ClientWorld world, CallbackInfo ci) {
+    @Inject(method = "setLevel", at = @At("RETURN"))
+    private void galacticraft_updateSoundMultiplier(ClientLevel world, CallbackInfo ci) {
         if (world != null) {
             ((SoundSystemAccessor) ((SoundManagerAccessor) this.getSoundManager()).getSoundSystem()).updateAtmosphericVolumeMultiplier(CelestialBody.getByDimension(world).map(body -> body.atmosphere().pressure()).orElse(1.0f));
         } else {

@@ -27,9 +27,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import dev.galacticraft.api.accessor.ServerResearchAccessor;
 import dev.galacticraft.impl.internal.accessor.AdvancementRewardsAccessor;
-import net.minecraft.advancement.AdvancementRewards;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
@@ -40,41 +37,44 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.Arrays;
+import net.minecraft.advancements.AdvancementRewards;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
 
 @Mixin(AdvancementRewards.class)
 public abstract class AdvancementRewardsMixin implements AdvancementRewardsAccessor {
     @Unique
     @NotNull
-    private Identifier @Nullable [] rocketParts = null;
+    private ResourceLocation @Nullable [] rocketParts = null;
 
-    @Inject(method = "fromJson", at = @At("RETURN"))
+    @Inject(method = "deserialize", at = @At("RETURN"))
     private static void galacticraft_parseRocketPartReward(JsonObject json, CallbackInfoReturnable<AdvancementRewards> cir) {
         if (json.has("rocket_parts")) {
             AdvancementRewards rewards = cir.getReturnValue();
             JsonArray array = json.get("rocket_parts").getAsJsonArray();
-            Identifier[] ids = new Identifier[array.size()];
+            ResourceLocation[] ids = new ResourceLocation[array.size()];
             for (int i = 0; i < array.size(); i++) {
-                ids[i] = new Identifier(array.get(i).getAsString());
+                ids[i] = new ResourceLocation(array.get(i).getAsString());
             }
             ((AdvancementRewardsAccessor) rewards).setRocketPartRewards(ids);
         }
     }
 
-    @Inject(method = "apply", at = @At("RETURN"))
-    private void galacticraft_applyRocketPartsToPlayer(ServerPlayerEntity player, CallbackInfo ci) {
+    @Inject(method = "grant", at = @At("RETURN"))
+    private void galacticraft_applyRocketPartsToPlayer(ServerPlayer player, CallbackInfo ci) {
         if (this.rocketParts != null) {
-            for (Identifier id : this.rocketParts) {
+            for (ResourceLocation id : this.rocketParts) {
                 ((ServerResearchAccessor) player).unlockResearch(id, true);
             }
         }
     }
 
-    @Inject(method = "toJson", at = @At("RETURN"), cancellable = true)
+    @Inject(method = "serializeToJson", at = @At("RETURN"), cancellable = true)
     private void galacticraft_writeRocketPartRewardsToJson(CallbackInfoReturnable<JsonElement> cir) {
         if (this.rocketParts != null) {
             JsonObject object = cir.getReturnValue().getAsJsonObject();
             JsonArray array = new JsonArray();
-            for (Identifier id : this.rocketParts) {
+            for (ResourceLocation id : this.rocketParts) {
                 array.add(id.toString());
             }
             object.add("rocket_parts", array);
@@ -89,7 +89,7 @@ public abstract class AdvancementRewardsMixin implements AdvancementRewardsAcces
     }
 
     @Override
-    public void setRocketPartRewards(@NotNull Identifier @Nullable [] parts) {
+    public void setRocketPartRewards(@NotNull ResourceLocation @Nullable [] parts) {
         this.rocketParts = parts;
     }
 }

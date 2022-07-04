@@ -30,23 +30,21 @@ import dev.galacticraft.impl.Constant;
 import dev.galacticraft.impl.universe.celestialbody.type.SatelliteType;
 import dev.galacticraft.impl.universe.position.config.SatelliteConfig;
 import net.fabricmc.fabric.api.util.NbtType;
+import net.minecraft.core.Registry;
 import net.minecraft.nbt.*;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.WorldSavePath;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.util.registry.RegistryEntry;
-import net.minecraft.util.registry.RegistryKey;
-import net.minecraft.world.SaveProperties;
-import net.minecraft.world.World;
-import net.minecraft.world.biome.source.BiomeAccess;
-import net.minecraft.world.border.WorldBorder;
-import net.minecraft.world.border.WorldBorderListener;
-import net.minecraft.world.dimension.DimensionType;
-import net.minecraft.world.gen.chunk.ChunkGenerator;
-import net.minecraft.world.level.UnmodifiableLevelProperties;
-import net.minecraft.world.level.storage.LevelStorage;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.biome.BiomeManager;
+import net.minecraft.world.level.border.BorderChangeListener;
+import net.minecraft.world.level.border.WorldBorder;
+import net.minecraft.world.level.chunk.ChunkGenerator;
+import net.minecraft.world.level.storage.DerivedLevelData;
+import net.minecraft.world.level.storage.LevelResource;
+import net.minecraft.world.level.storage.LevelStorageSource;
+import net.minecraft.world.level.storage.WorldData;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
 import org.spongepowered.asm.mixin.Final;
@@ -66,40 +64,40 @@ import java.util.concurrent.Executor;
 
 @Mixin(MinecraftServer.class)
 public abstract class MinecraftServerMixin implements SatelliteAccessor {
-    @Unique private final Map<Identifier, CelestialBody<SatelliteConfig, SatelliteType>> satellites = new HashMap<>();
+    @Unique private final Map<ResourceLocation, CelestialBody<SatelliteConfig, SatelliteType>> satellites = new HashMap<>();
 
-    @Shadow @Final protected LevelStorage.Session session;
-    @Shadow @Final private Executor workerExecutor;
-    @Shadow @Final private Map<RegistryKey<World>, ServerWorld> worlds;
-    @Shadow public abstract SaveProperties getSaveProperties();
+    @Shadow @Final protected LevelStorageSource.LevelStorageAccess storageSource;
+    @Shadow @Final private Executor executor;
+    @Shadow @Final private Map<ResourceKey<Level>, ServerLevel> levels;
+    @Shadow public abstract WorldData getWorldData();
 
-    @Shadow @Nullable public abstract ServerWorld getWorld(RegistryKey<World> key);
+    @Shadow @Nullable public abstract ServerLevel getLevel(ResourceKey<Level> key);
 
     @Override
-    public @Unmodifiable Map<Identifier, CelestialBody<SatelliteConfig, SatelliteType>> getSatellites() {
+    public @Unmodifiable Map<ResourceLocation, CelestialBody<SatelliteConfig, SatelliteType>> getSatellites() {
         return ImmutableMap.copyOf(this.satellites);
     }
 
     @Override
-    public void addSatellite(Identifier id, CelestialBody<SatelliteConfig, SatelliteType> satellite) {
+    public void addSatellite(ResourceLocation id, CelestialBody<SatelliteConfig, SatelliteType> satellite) {
         this.satellites.put(id, satellite);
     }
 
     @Override
-    public void removeSatellite(Identifier id) {
+    public void removeSatellite(ResourceLocation id) {
         this.satellites.remove(id);
     }
 
-    @Inject(method = "save", at = @At("RETURN"))
+    @Inject(method = "saveEverything", at = @At("RETURN"))
     private void galacticraft_saveSatellites(boolean suppressLogs, boolean bl, boolean bl2, CallbackInfoReturnable<Boolean> cir) {
-        Path path = this.session.getDirectory(WorldSavePath.ROOT);
-        NbtList nbt = new NbtList();
-        for (Map.Entry<Identifier, CelestialBody<SatelliteConfig, SatelliteType>> entry : this.satellites.entrySet()) {
-            NbtCompound compound = (NbtCompound) SatelliteConfig.CODEC.encode(entry.getValue().config(), NbtOps.INSTANCE, new NbtCompound()).get().orThrow();
+        Path path = this.storageSource.getLevelPath(LevelResource.ROOT);
+        ListTag nbt = new ListTag();
+        for (Map.Entry<ResourceLocation, CelestialBody<SatelliteConfig, SatelliteType>> entry : this.satellites.entrySet()) {
+            CompoundTag compound = (CompoundTag) SatelliteConfig.CODEC.encode(entry.getValue().config(), NbtOps.INSTANCE, new CompoundTag()).get().orThrow();
             compound.putString("id", entry.getKey().toString());
             nbt.add(compound);
         }
-        NbtCompound compound = new NbtCompound();
+        CompoundTag compound = new CompoundTag();
         compound.put("satellites", nbt);
         try {
             NbtIo.writeCompressed(compound, new File(path.toFile(), "satellites.dat"));
@@ -108,25 +106,25 @@ public abstract class MinecraftServerMixin implements SatelliteAccessor {
         }
     }
 
-    @Inject(method = "runServer", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/MinecraftServer;setupServer()Z", shift = At.Shift.AFTER))
+    @Inject(method = "runServer", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/MinecraftServer;initServer()Z", shift = At.Shift.AFTER))
     private void galacticraft_loadSatellites(CallbackInfo ci) {
-        File worldFile = this.session.getDirectory(WorldSavePath.ROOT).toFile();
+        File worldFile = this.storageSource.getLevelPath(LevelResource.ROOT).toFile();
         if (new File(worldFile, "satellites.dat").exists()) {
             try {
-                NbtList nbt = NbtIo.readCompressed(new File(worldFile, "satellites.dat")).getList("satellites", NbtType.COMPOUND);
+                ListTag nbt = NbtIo.readCompressed(new File(worldFile, "satellites.dat")).getList("satellites", NbtType.COMPOUND);
                 assert nbt != null : "NBT list was null";
-                for (NbtElement compound : nbt) {
-                    assert compound instanceof NbtCompound : "Not a compound?!";
-                    this.satellites.put(new Identifier(((NbtCompound) compound).getString("id")), new CelestialBody<>(SatelliteType.INSTANCE, SatelliteConfig.CODEC.decode(NbtOps.INSTANCE, compound).get().orThrow().getFirst()));
+                for (Tag compound : nbt) {
+                    assert compound instanceof CompoundTag : "Not a compound?!";
+                    this.satellites.put(new ResourceLocation(((CompoundTag) compound).getString("id")), new CelestialBody<>(SatelliteType.INSTANCE, SatelliteConfig.CODEC.decode(NbtOps.INSTANCE, compound).get().orThrow().getFirst()));
                 }
 
-                WorldBorder worldBorder = getWorld(World.OVERWORLD).getWorldBorder();
-                for (Map.Entry<Identifier, CelestialBody<SatelliteConfig, SatelliteType>> entry : this.satellites.entrySet()) {
-                    ChunkGenerator chunkGenerator = entry.getValue().config().dimensionOptions().getChunkGenerator();
-                    UnmodifiableLevelProperties unmodifiableLevelProperties = new UnmodifiableLevelProperties(getSaveProperties(), getSaveProperties().getMainWorldProperties());
-                    ServerWorld world = new ServerWorld((MinecraftServer) (Object) this, workerExecutor, session, unmodifiableLevelProperties, RegistryKey.of(Registry.WORLD_KEY, entry.getKey()), entry.getValue().config().dimensionOptions(), SatelliteType.EMPTY_PROGRESS_LISTENER, getSaveProperties().getGeneratorOptions().isDebugWorld(), BiomeAccess.hashSeed(getSaveProperties().getGeneratorOptions().getSeed()), ImmutableList.of(), false);
-                    worldBorder.addListener(new WorldBorderListener.WorldBorderSyncer(world.getWorldBorder()));
-                    worlds.put(RegistryKey.of(Registry.WORLD_KEY, entry.getKey()), world);
+                WorldBorder worldBorder = getLevel(Level.OVERWORLD).getWorldBorder();
+                for (Map.Entry<ResourceLocation, CelestialBody<SatelliteConfig, SatelliteType>> entry : this.satellites.entrySet()) {
+                    ChunkGenerator chunkGenerator = entry.getValue().config().dimensionOptions().generator();
+                    DerivedLevelData unmodifiableLevelProperties = new DerivedLevelData(getWorldData(), getWorldData().overworldData());
+                    ServerLevel world = new ServerLevel((MinecraftServer) (Object) this, executor, storageSource, unmodifiableLevelProperties, ResourceKey.create(Registry.DIMENSION_REGISTRY, entry.getKey()), entry.getValue().config().dimensionOptions(), SatelliteType.EMPTY_PROGRESS_LISTENER, getWorldData().worldGenSettings().isDebug(), BiomeManager.obfuscateSeed(getWorldData().worldGenSettings().seed()), ImmutableList.of(), false);
+                    worldBorder.addListener(new BorderChangeListener.DelegateBorderChangeListener(world.getWorldBorder()));
+                    levels.put(ResourceKey.create(Registry.DIMENSION_REGISTRY, entry.getKey()), world);
                 }
             } catch (Throwable exception) {
                 throw new RuntimeException("Failed to reade satellite data!", exception);

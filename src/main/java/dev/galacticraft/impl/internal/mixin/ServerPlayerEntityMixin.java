@@ -31,13 +31,13 @@ import it.unimi.dsi.fastutil.objects.Object2BooleanMap;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import net.minecraft.inventory.Inventory;
-import net.minecraft.inventory.SimpleInventory;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtElement;
-import net.minecraft.network.PacketByteBuf;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.Identifier;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.Container;
+import net.minecraft.world.SimpleContainer;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -48,23 +48,23 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-@Mixin(ServerPlayerEntity.class)
+@Mixin(ServerPlayer.class)
 public abstract class ServerPlayerEntityMixin implements ServerResearchAccessor, GearInventoryProvider {
-    private final @Unique List<Identifier> unlockedResearch = new ArrayList<>();
-    private final @Unique Object2BooleanMap<Identifier> changes = new Object2BooleanArrayMap<>();
+    private final @Unique List<ResourceLocation> unlockedResearch = new ArrayList<>();
+    private final @Unique Object2BooleanMap<ResourceLocation> changes = new Object2BooleanArrayMap<>();
 
-    private final @Unique SimpleInventory gearInv = this.galacticraft_createGearInventory();
-    private final @Unique Inventory tankInv = MappedInventory.create(this.gearInv, 4, 5);
-    private final @Unique Inventory thermalArmorInv = MappedInventory.create(this.gearInv, 0, 1, 2, 3);
-    private final @Unique Inventory accessoryInv = MappedInventory.create(this.gearInv, 6, 7, 8, 9, 10, 11);
+    private final @Unique SimpleContainer gearInv = this.galacticraft_createGearInventory();
+    private final @Unique Container tankInv = MappedInventory.create(this.gearInv, 4, 5);
+    private final @Unique Container thermalArmorInv = MappedInventory.create(this.gearInv, 0, 1, 2, 3);
+    private final @Unique Container accessoryInv = MappedInventory.create(this.gearInv, 6, 7, 8, 9, 10, 11);
 
     @Override
-    public boolean hasUnlockedResearch(Identifier id) {
+    public boolean hasUnlockedResearch(ResourceLocation id) {
         return unlockedResearch.contains(id);
     }
 
     @Override
-    public void unlockResearch(Identifier id, boolean unlocked) {
+    public void unlockResearch(ResourceLocation id, boolean unlocked) {
         if (unlocked) {
             if (!this.unlockedResearch.contains(id)) {
                 this.unlockedResearch.add(id);
@@ -83,22 +83,22 @@ public abstract class ServerPlayerEntityMixin implements ServerResearchAccessor,
     }
 
     @Override
-    public PacketByteBuf writeResearchChanges(PacketByteBuf buf) {
+    public FriendlyByteBuf writeResearchChanges(FriendlyByteBuf buf) {
         buf.writeByte(this.changes.size());
 
-        for (Object2BooleanMap.Entry<Identifier> entry : this.changes.object2BooleanEntrySet()) {
+        for (Object2BooleanMap.Entry<ResourceLocation> entry : this.changes.object2BooleanEntrySet()) {
             buf.writeBoolean(entry.getBooleanValue());
-            buf.writeString(entry.getKey().toString());
+            buf.writeUtf(entry.getKey().toString());
         }
         this.changes.clear();
         return buf;
     }
 
     @Override
-    public NbtCompound writeResearchToNbt(NbtCompound nbt) {
+    public CompoundTag writeResearchToNbt(CompoundTag nbt) {
         nbt.putInt("size", this.unlockedResearch.size());
         int i = 0;
-        for (Identifier id : this.unlockedResearch) {
+        for (ResourceLocation id : this.unlockedResearch) {
             nbt.putString("id_" + i, id.toString());
             i++;
         }
@@ -106,74 +106,74 @@ public abstract class ServerPlayerEntityMixin implements ServerResearchAccessor,
     }
 
     @Override
-    public void readResearchFromNbt(NbtCompound nbt) {
+    public void readResearchFromNbt(CompoundTag nbt) {
         this.unlockedResearch.clear();
         int size = nbt.getInt("size");
         for (int i = 0; i < size; i++) {
-            this.unlockedResearch.add(new Identifier(nbt.getString("id_" + i)));
+            this.unlockedResearch.add(new ResourceLocation(nbt.getString("id_" + i)));
         }
     }
 
-    @Inject(method = "readCustomDataFromNbt", at = @At("RETURN"))
-    private void galacticraft_readCustomDataFromNbt(NbtCompound nbt, CallbackInfo ci) {
+    @Inject(method = "readAdditionalSaveData", at = @At("RETURN"))
+    private void galacticraft_readCustomDataFromNbt(CompoundTag nbt, CallbackInfo ci) {
         this.readResearchFromNbt(nbt);
     }
 
-    @Inject(method = "writeCustomDataToNbt", at = @At("RETURN"))
-    private void galacticraft_writeCustomDataToNbt(NbtCompound nbt, CallbackInfo ci) {
+    @Inject(method = "addAdditionalSaveData", at = @At("RETURN"))
+    private void galacticraft_writeCustomDataToNbt(CompoundTag nbt, CallbackInfo ci) {
         this.writeResearchToNbt(nbt);
     }
 
     @Unique
-    private SimpleInventory galacticraft_createGearInventory() {
-        SimpleInventory inv = new SimpleInventory(12);
+    private SimpleContainer galacticraft_createGearInventory() {
+        SimpleContainer inv = new SimpleContainer(12);
         inv.addListener((inventory) -> {
-            PacketByteBuf buf = PacketByteBufs.create();
-            buf.writeInt(((ServerPlayerEntity) (Object) this).getId());
-            buf.writeInt(inventory.size());
-            for (int i = 0; i < inventory.size(); i++) {
-                buf.writeItemStack(inventory.getStack(i));
+            FriendlyByteBuf buf = PacketByteBufs.create();
+            buf.writeInt(((ServerPlayer) (Object) this).getId());
+            buf.writeInt(inventory.getContainerSize());
+            for (int i = 0; i < inventory.getContainerSize(); i++) {
+                buf.writeItem(inventory.getItem(i));
             }
 
-            Collection<ServerPlayerEntity> tracking = PlayerLookup.tracking(((ServerPlayerEntity) (Object) this));
+            Collection<ServerPlayer> tracking = PlayerLookup.tracking(((ServerPlayer) (Object) this));
             //noinspection SuspiciousMethodCalls
             if (!tracking.contains(this)) {
-                ServerPlayNetworking.send(((ServerPlayerEntity) (Object) this), new Identifier(Constant.MOD_ID, "gear_inv_sync"), buf);
+                ServerPlayNetworking.send(((ServerPlayer) (Object) this), new ResourceLocation(Constant.MOD_ID, "gear_inv_sync"), buf);
             }
-            for (ServerPlayerEntity player : tracking) {
-                ServerPlayNetworking.send(player, new Identifier(Constant.MOD_ID, "gear_inv_sync"), PacketByteBufs.copy(buf));
+            for (ServerPlayer player : tracking) {
+                ServerPlayNetworking.send(player, new ResourceLocation(Constant.MOD_ID, "gear_inv_sync"), PacketByteBufs.copy(buf));
             }
         });
         return inv;
     }
 
     @Override
-    public SimpleInventory getGearInv() {
+    public SimpleContainer getGearInv() {
         return this.gearInv;
     }
 
     @Override
-    public Inventory getOxygenTanks() {
+    public Container getOxygenTanks() {
         return this.tankInv;
     }
 
     @Override
-    public Inventory getThermalArmor() {
+    public Container getThermalArmor() {
         return this.thermalArmorInv;
     }
 
     @Override
-    public Inventory getAccessories() {
+    public Container getAccessories() {
         return this.accessoryInv;
     }
 
     @Override
-    public void writeGearToNbt(NbtCompound tag) {
-        tag.put(Constant.Nbt.GEAR_INV, this.getGearInv().toNbtList());
+    public void writeGearToNbt(CompoundTag tag) {
+        tag.put(Constant.Nbt.GEAR_INV, this.getGearInv().createTag());
     }
 
     @Override
-    public void readGearFromNbt(NbtCompound tag) {
-        this.getGearInv().readNbtList(tag.getList(Constant.Nbt.GEAR_INV, NbtElement.COMPOUND_TYPE));
+    public void readGearFromNbt(CompoundTag tag) {
+        this.getGearInv().fromTag(tag.getList(Constant.Nbt.GEAR_INV, Tag.TAG_COMPOUND));
     }
 }

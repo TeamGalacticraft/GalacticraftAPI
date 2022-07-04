@@ -26,15 +26,15 @@ import com.mojang.serialization.Codec;
 import dev.galacticraft.api.registry.AddonRegistry;
 import dev.galacticraft.api.universe.celestialbody.CelestialBody;
 import it.unimi.dsi.fastutil.objects.Object2BooleanFunction;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.StringIdentifiable;
-import net.minecraft.util.registry.RegistryEntry;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.Locale;
+import net.minecraft.core.Holder;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.StringRepresentable;
 
 public abstract class TravelPredicateType<C extends TravelPredicateConfig> {
-    private final RegistryEntry.Reference<TravelPredicateType<?>> reference = AddonRegistry.TRAVEL_PREDICATE.createEntry(this);
+    private final Holder.Reference<TravelPredicateType<?>> reference = AddonRegistry.TRAVEL_PREDICATE.createIntrusiveHolder(this);
     private final Codec<ConfiguredTravelPredicate<C>> codec;
 
     public TravelPredicateType(Codec<C> configCodec) {
@@ -45,18 +45,18 @@ public abstract class TravelPredicateType<C extends TravelPredicateConfig> {
         return new ConfiguredTravelPredicate<>(config, this);
     }
 
-    public abstract AccessType canTravelTo(CelestialBody<?, ?> type, Object2BooleanFunction<Identifier> parts, C config);
+    public abstract AccessType canTravelTo(CelestialBody<?, ?> type, Object2BooleanFunction<ResourceLocation> parts, C config);
 
     public Codec<ConfiguredTravelPredicate<C>> codec() {
         return this.codec;
     }
 
     @ApiStatus.Internal
-    public RegistryEntry.Reference<TravelPredicateType<?>> getReference() {
+    public Holder.Reference<TravelPredicateType<?>> getReference() {
         return reference;
     }
 
-    public enum AccessType implements StringIdentifiable {
+    public enum AccessType implements StringRepresentable {
         /**
          * Allow other rocket parts to decide whether or not the player may visit the celestial body
          */
@@ -73,7 +73,7 @@ public abstract class TravelPredicateType<C extends TravelPredicateConfig> {
          */
         ALLOW;
 
-        public static final Codec<AccessType> CODEC = StringIdentifiable.createCodec(AccessType::values);
+        public static final EnumCodec<AccessType> CODEC = StringRepresentable.fromEnum(AccessType::values);
 
         public AccessType merge(AccessType other) {
             if (other == PASS) return this;
@@ -82,7 +82,7 @@ public abstract class TravelPredicateType<C extends TravelPredicateConfig> {
         }
 
         @Override
-        public String asString() {
+        public String getSerializedName() {
             return this.name().toLowerCase(Locale.ROOT);
         }
     }

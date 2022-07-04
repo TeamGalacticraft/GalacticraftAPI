@@ -32,16 +32,16 @@ import io.netty.buffer.Unpooled;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import net.minecraft.inventory.SimpleInventory;
-import net.minecraft.network.PacketByteBuf;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.core.Registry;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.SimpleContainer;
 import org.jetbrains.annotations.ApiStatus;
 
 @ApiStatus.Internal
 public class GalacticraftAPI implements ModInitializer {
-    public static final SimpleInventory EMPTY_INV = new SimpleInventory(0);
+    public static final SimpleContainer EMPTY_INV = new SimpleContainer(0);
 
     @Override
     public void onInitialize() {
@@ -49,14 +49,14 @@ public class GalacticraftAPI implements ModInitializer {
         Constant.LOGGER.info("Initializing...");
         GCApiCommands.register();
         ServerTickEvents.END_SERVER_TICK.register(server -> {
-            for (ServerPlayerEntity player : server.getPlayerManager().getPlayerList()) {
+            for (ServerPlayer player : server.getPlayerList().getPlayers()) {
                 if (((ServerResearchAccessor) player).isResearchDirty()) {
-                    ServerPlayNetworking.send(player, new Identifier(Constant.MOD_ID, "research_update"), ((ServerResearchAccessor) player).writeResearchChanges(new PacketByteBuf(Unpooled.buffer())));
+                    ServerPlayNetworking.send(player, new ResourceLocation(Constant.MOD_ID, "research_update"), ((ServerResearchAccessor) player).writeResearchChanges(new FriendlyByteBuf(Unpooled.buffer())));
                 }
             }
         });
-        ServerPlayNetworking.registerGlobalReceiver(new Identifier(Constant.MOD_ID, "flag_data"), (server, player, handler, buf, responseSender) -> {
-            int[] array = buf.readIntArray();
+        ServerPlayNetworking.registerGlobalReceiver(new ResourceLocation(Constant.MOD_ID, "flag_data"), (server, player, handler, buf, responseSender) -> {
+            int[] array = buf.readVarIntArray();
             for (int i = 0; i < array.length; i++) {
                 array[i] &= 0x00FFFFFF;
             }
@@ -66,15 +66,15 @@ public class GalacticraftAPI implements ModInitializer {
                 //todo: teams
             });
         });
-        ServerPlayNetworking.registerGlobalReceiver(new Identifier(Constant.MOD_ID, "team_name"), (server, player, handler, buf, responseSender) -> {
-            String s = buf.readString();
+        ServerPlayNetworking.registerGlobalReceiver(new ResourceLocation(Constant.MOD_ID, "team_name"), (server, player, handler, buf, responseSender) -> {
+            String s = buf.readUtf();
 
             server.execute(() -> {
                 //todo: teams
             });
         });
 
-        Registry.register(Registry.CHUNK_GENERATOR, new Identifier(Constant.MOD_ID, "satellite"), SatelliteChunkGenerator.CODEC);
+        Registry.register(Registry.CHUNK_GENERATOR, new ResourceLocation(Constant.MOD_ID, "satellite"), SatelliteChunkGenerator.CODEC);
         GcApiBiomes.register();
         GcApiEntityAttributes.init();
         Constant.LOGGER.info("Initialization Complete. (Took {}ms).", System.currentTimeMillis() - startInitTime);

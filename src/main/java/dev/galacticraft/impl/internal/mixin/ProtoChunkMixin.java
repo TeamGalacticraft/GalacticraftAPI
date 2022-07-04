@@ -26,15 +26,15 @@ import dev.galacticraft.api.accessor.ChunkOxygenAccessor;
 import dev.galacticraft.api.accessor.ChunkSectionOxygenAccessor;
 import dev.galacticraft.impl.internal.accessor.ChunkOxygenAccessorInternal;
 import dev.galacticraft.impl.internal.accessor.ChunkOxygenSyncer;
-import net.minecraft.util.math.ChunkPos;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.world.HeightLimitView;
-import net.minecraft.world.biome.Biome;
-import net.minecraft.world.chunk.Chunk;
-import net.minecraft.world.chunk.ChunkSection;
-import net.minecraft.world.chunk.ProtoChunk;
-import net.minecraft.world.chunk.UpgradeData;
-import net.minecraft.world.gen.chunk.BlendingData;
+import net.minecraft.core.Registry;
+import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.LevelHeightAccessor;
+import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.chunk.ChunkAccess;
+import net.minecraft.world.level.chunk.LevelChunkSection;
+import net.minecraft.world.level.chunk.ProtoChunk;
+import net.minecraft.world.level.chunk.UpgradeData;
+import net.minecraft.world.level.levelgen.blending.BlendingData;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -43,18 +43,18 @@ import org.spongepowered.asm.mixin.Unique;
  * @author <a href="https://github.com/TeamGalacticraft">TeamGalacticraft</a>
  */
 @Mixin(ProtoChunk.class)
-public abstract class ProtoChunkMixin extends Chunk implements ChunkOxygenAccessor, ChunkOxygenSyncer, ChunkOxygenAccessorInternal {
+public abstract class ProtoChunkMixin extends ChunkAccess implements ChunkOxygenAccessor, ChunkOxygenSyncer, ChunkOxygenAccessorInternal {
     private @Unique boolean defaultBreathable = false;
 
-    private ProtoChunkMixin(ChunkPos pos, UpgradeData upgradeData, HeightLimitView heightLimitView, Registry<Biome> biome, long inhabitedTime, @Nullable ChunkSection[] sectionArrayInitializer, @Nullable BlendingData blendingData) {
+    private ProtoChunkMixin(ChunkPos pos, UpgradeData upgradeData, LevelHeightAccessor heightLimitView, Registry<Biome> biome, long inhabitedTime, @Nullable LevelChunkSection[] sectionArrayInitializer, @Nullable BlendingData blendingData) {
         super(pos, upgradeData, heightLimitView, biome, inhabitedTime, sectionArrayInitializer, blendingData);
     }
 
     @Override
     public boolean isBreathable(int x, int y, int z) {
-        if (this.isOutOfHeightLimit(y)) return this.defaultBreathable;
-        ChunkSection section = this.getSection(this.getSectionIndex(y));
-        if (!section.isEmpty()) {
+        if (this.isOutsideBuildHeight(y)) return this.defaultBreathable;
+        LevelChunkSection section = this.getSection(this.getSectionIndex(y));
+        if (!section.hasOnlyAir()) {
             return ((ChunkSectionOxygenAccessor) section).isBreathable(x & 15, y & 15, z & 15);
         }
         return this.defaultBreathable;
@@ -62,8 +62,8 @@ public abstract class ProtoChunkMixin extends Chunk implements ChunkOxygenAccess
 
     @Override
     public void setBreathable(int x, int y, int z, boolean value) {
-        if (this.isOutOfHeightLimit(y)) return;
-        ChunkSection section = this.getSection(this.getSectionIndex(y));
+        if (this.isOutsideBuildHeight(y)) return;
+        LevelChunkSection section = this.getSection(this.getSectionIndex(y));
         assert section != null;
         ChunkSectionOxygenAccessor accessor = ((ChunkSectionOxygenAccessor) section);
         if (value != accessor.isBreathable(x & 15, y & 15, z & 15)) {

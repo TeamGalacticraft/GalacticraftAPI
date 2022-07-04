@@ -25,15 +25,14 @@ package dev.galacticraft.impl.universe.galaxy;
 import dev.galacticraft.api.universe.display.CelestialDisplay;
 import dev.galacticraft.api.universe.galaxy.Galaxy;
 import dev.galacticraft.api.universe.position.CelestialPosition;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Text;
+import net.minecraft.network.chat.MutableComponent;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
-public record GalaxyImpl(@NotNull MutableText name,
-                         @NotNull MutableText description,
+public record GalaxyImpl(@NotNull MutableComponent name,
+                         @NotNull MutableComponent description,
                          CelestialPosition<?, ?> position,
                          CelestialDisplay<?, ?> display) implements Galaxy {
 

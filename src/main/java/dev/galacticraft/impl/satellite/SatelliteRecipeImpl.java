@@ -26,9 +26,9 @@ import dev.galacticraft.api.satellite.SatelliteRecipe;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
-import net.minecraft.inventory.Inventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.recipe.Ingredient;
+import net.minecraft.world.Container;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Ingredient;
 import org.jetbrains.annotations.NotNull;
 
 public class SatelliteRecipeImpl implements SatelliteRecipe {
@@ -44,13 +44,13 @@ public class SatelliteRecipeImpl implements SatelliteRecipe {
     }
 
     @Override
-    public boolean test(@NotNull Inventory inventory) {
-        IntList slotModifiers = new IntArrayList(inventory.size());
+    public boolean test(@NotNull Container inventory) {
+        IntList slotModifiers = new IntArrayList(inventory.getContainerSize());
 
         for (Object2IntMap.Entry<Ingredient> ingredient : this.ingredients.object2IntEntrySet()) {
             int amount = ingredient.getIntValue();
-            for (int i = 0; i < inventory.size(); i++) {
-                ItemStack stack = inventory.getStack(i);
+            for (int i = 0; i < inventory.getContainerSize(); i++) {
+                ItemStack stack = inventory.getItem(i);
                 if (ingredient.getKey().test(stack)) {
                     amount -= (stack.getCount() - slotModifiers.getInt(i));
                     slotModifiers.set(i, slotModifiers.getInt(i) + (stack.getCount() - slotModifiers.getInt(i)) - Math.min(amount, 0));

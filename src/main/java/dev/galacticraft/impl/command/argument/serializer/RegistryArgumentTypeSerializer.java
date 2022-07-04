@@ -24,41 +24,41 @@ package dev.galacticraft.impl.command.argument.serializer;
 
 import com.google.gson.JsonObject;
 import dev.galacticraft.impl.command.argument.RegistryArgumentType;
-import net.minecraft.command.CommandRegistryAccess;
-import net.minecraft.command.argument.serialize.ArgumentSerializer;
-import net.minecraft.network.PacketByteBuf;
+import net.minecraft.commands.CommandBuildContext;
+import net.minecraft.commands.synchronization.ArgumentTypeInfo;
+import net.minecraft.network.FriendlyByteBuf;
 
-public class RegistryArgumentTypeSerializer implements ArgumentSerializer<RegistryArgumentType<?>, RegistryArgumentTypeSerializer.RegistryArgumentProperties> {
+public class RegistryArgumentTypeSerializer implements ArgumentTypeInfo<RegistryArgumentType<?>, RegistryArgumentTypeSerializer.RegistryArgumentProperties> {
 
     @Override
-    public void writePacket(RegistryArgumentProperties properties, PacketByteBuf buf) {
+    public void serializeToNetwork(RegistryArgumentProperties properties, FriendlyByteBuf buf) {
 
     }
 
     @Override
-    public RegistryArgumentProperties fromPacket(PacketByteBuf buf) {
+    public RegistryArgumentProperties deserializeFromNetwork(FriendlyByteBuf buf) {
         return null;
     }
 
     @Override
-    public void writeJson(RegistryArgumentProperties properties, JsonObject json) {
+    public void serializeToJson(RegistryArgumentProperties properties, JsonObject json) {
 
     }
 
     @Override
-    public RegistryArgumentProperties getArgumentTypeProperties(RegistryArgumentType argumentType) {
+    public RegistryArgumentProperties unpack(RegistryArgumentType argumentType) {
         return new RegistryArgumentProperties();
     }
 
-    public final class RegistryArgumentProperties implements ArgumentTypeProperties<RegistryArgumentType<?>> {
+    public final class RegistryArgumentProperties implements Template<RegistryArgumentType<?>> {
 
         @Override
-        public RegistryArgumentType<?> createType(CommandRegistryAccess commandRegistryAccess) {
+        public RegistryArgumentType<?> instantiate(CommandBuildContext commandRegistryAccess) {
             return null;
         }
 
         @Override
-        public ArgumentSerializer<RegistryArgumentType<?>, ?> getSerializer() {
+        public ArgumentTypeInfo<RegistryArgumentType<?>, ?> type() {
             return RegistryArgumentTypeSerializer.this;
         }
     }

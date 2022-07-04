@@ -32,10 +32,10 @@ import dev.galacticraft.api.universe.display.CelestialDisplay;
 import dev.galacticraft.api.universe.galaxy.Galaxy;
 import dev.galacticraft.api.universe.position.CelestialPosition;
 import dev.galacticraft.impl.universe.celestialbody.config.PlanetConfig;
-import net.minecraft.text.Text;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.util.registry.RegistryKey;
-import net.minecraft.world.World;
+import net.minecraft.core.Registry;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -47,7 +47,7 @@ public class PlanetType extends CelestialBodyType<PlanetConfig> implements Landa
     }
 
     @Override
-    public @NotNull Text name(PlanetConfig config) {
+    public @NotNull Component name(PlanetConfig config) {
         return config.name();
     }
 
@@ -57,12 +57,12 @@ public class PlanetType extends CelestialBodyType<PlanetConfig> implements Landa
     }
 
     @Override
-    public @NotNull RegistryKey<Galaxy> galaxy(PlanetConfig config) {
+    public @NotNull ResourceKey<Galaxy> galaxy(PlanetConfig config) {
         return config.galaxy();
     }
 
     @Override
-    public @NotNull Text description(PlanetConfig config) {
+    public @NotNull Component description(PlanetConfig config) {
         return config.description();
     }
 
@@ -77,7 +77,7 @@ public class PlanetType extends CelestialBodyType<PlanetConfig> implements Landa
     }
 
     @Override
-    public @NotNull RegistryKey<World> world(PlanetConfig config) {
+    public @NotNull ResourceKey<Level> world(PlanetConfig config) {
         return config.world();
     }
 

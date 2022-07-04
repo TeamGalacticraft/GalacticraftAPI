@@ -25,9 +25,9 @@ package dev.galacticraft.api.client.accessor;
 import dev.galacticraft.api.accessor.ResearchAccessor;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.network.PacketByteBuf;
+import net.minecraft.network.FriendlyByteBuf;
 
 @Environment(EnvType.CLIENT)
 public interface ClientResearchAccessor extends ResearchAccessor {
-    void readChanges(PacketByteBuf buf);
+    void readChanges(FriendlyByteBuf buf);
 }

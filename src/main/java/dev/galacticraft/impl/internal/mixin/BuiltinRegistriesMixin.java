@@ -26,29 +26,30 @@ import com.mojang.serialization.Lifecycle;
 import dev.galacticraft.api.registry.AddonRegistry;
 import dev.galacticraft.impl.Constant;
 import dev.galacticraft.impl.universe.BuiltinObjects;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.*;
+import net.minecraft.core.Registry;
+import net.minecraft.core.WritableRegistry;
+import net.minecraft.data.BuiltinRegistries;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import java.util.function.Supplier;
-
 @Mixin(BuiltinRegistries.class)
 public abstract class BuiltinRegistriesMixin {
 
     @Shadow
-    private static <T, R extends MutableRegistry<T>> R addRegistry(RegistryKey<? extends Registry<T>> registryRef, R registry, BuiltinRegistries.Initializer<T> initializer, Lifecycle lifecycle) {
+    private static <T, R extends WritableRegistry<T>> R internalRegister(ResourceKey<? extends Registry<T>> registryRef, R registry, BuiltinRegistries.RegistryBootstrap<T> initializer, Lifecycle lifecycle) {
         throw new UnsupportedOperationException("Untransformed mixin");
     }
 
-    @Inject(method = "<clinit>", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/registry/BuiltinRegistries;addRegistry(Lnet/minecraft/util/registry/RegistryKey;Lnet/minecraft/util/registry/BuiltinRegistries$Initializer;)Lnet/minecraft/util/registry/Registry;", ordinal = 0))
+    @Inject(method = "<clinit>", at = @At(value = "INVOKE", target = "Lnet/minecraft/data/BuiltinRegistries;registerSimple(Lnet/minecraft/resources/ResourceKey;Lnet/minecraft/data/BuiltinRegistries$RegistryBootstrap;)Lnet/minecraft/core/Registry;", ordinal = 0))
     private static void galacticraft_addDynamicRegistries(CallbackInfo ci) {
         BuiltinObjects.register();
-        addRegistry(AddonRegistry.GALAXY_KEY, AddonRegistry.GALAXY, (registry) -> AddonRegistry.GALAXY.entryOf(BuiltinObjects.MILKY_WAY_KEY), Lifecycle.experimental());
-        addRegistry(AddonRegistry.CELESTIAL_BODY_KEY, AddonRegistry.CELESTIAL_BODY, (registry) -> AddonRegistry.CELESTIAL_BODY.entryOf(BuiltinObjects.SOL_KEY), Lifecycle.experimental());
-        addRegistry(AddonRegistry.ROCKET_PART_KEY, AddonRegistry.ROCKET_PART, (registry) -> AddonRegistry.ROCKET_PART.entryOf(RegistryKey.of(AddonRegistry.ROCKET_PART_KEY, new Identifier(Constant.MOD_ID, "invalid"))), Lifecycle.experimental());
+        internalRegister(AddonRegistry.GALAXY_KEY, AddonRegistry.GALAXY, (registry) -> AddonRegistry.GALAXY.getHolderOrThrow(BuiltinObjects.MILKY_WAY_KEY), Lifecycle.experimental());
+        internalRegister(AddonRegistry.CELESTIAL_BODY_KEY, AddonRegistry.CELESTIAL_BODY, (registry) -> AddonRegistry.CELESTIAL_BODY.getHolderOrThrow(BuiltinObjects.SOL_KEY), Lifecycle.experimental());
+        internalRegister(AddonRegistry.ROCKET_PART_KEY, AddonRegistry.ROCKET_PART, (registry) -> AddonRegistry.ROCKET_PART.getHolderOrThrow(ResourceKey.create(AddonRegistry.ROCKET_PART_KEY, new ResourceLocation(Constant.MOD_ID, "invalid"))), Lifecycle.experimental());
     }
 }

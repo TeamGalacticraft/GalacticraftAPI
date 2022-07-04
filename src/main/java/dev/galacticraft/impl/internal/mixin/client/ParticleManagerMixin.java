@@ -25,23 +25,23 @@ package dev.galacticraft.impl.internal.mixin.client;
 import dev.galacticraft.api.universe.celestialbody.CelestialBody;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.Particle;
-import net.minecraft.client.particle.ParticleManager;
-import net.minecraft.client.world.ClientWorld;
+import net.minecraft.client.particle.ParticleEngine;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(ParticleManager.class)
+@Mixin(ParticleEngine.class)
 @Environment(EnvType.CLIENT)
 public abstract class ParticleManagerMixin {
     @Shadow
-    protected ClientWorld world;
+    protected ClientLevel level;
 
-    @Inject(method = "addParticle(Lnet/minecraft/client/particle/Particle;)V", at = @At("RETURN"))
+    @Inject(method = "add(Lnet/minecraft/client/particle/Particle;)V", at = @At("RETURN"))
     protected void galacticraft_overrideGravity(Particle particle, CallbackInfo ci) {
-        CelestialBody.getByDimension(this.world).ifPresent(celestialBodyType -> ((ParticleAccessor) particle).setGravityStrength(((ParticleAccessor) particle).getGravityStrength() * celestialBodyType.gravity()));
+        CelestialBody.getByDimension(this.level).ifPresent(celestialBodyType -> ((ParticleAccessor) particle).setGravityStrength(((ParticleAccessor) particle).getGravityStrength() * celestialBodyType.gravity()));
     }
 }

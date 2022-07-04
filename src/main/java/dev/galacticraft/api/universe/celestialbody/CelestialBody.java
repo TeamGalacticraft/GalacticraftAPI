@@ -29,49 +29,49 @@ import dev.galacticraft.api.universe.celestialbody.landable.Landable;
 import dev.galacticraft.api.universe.display.CelestialDisplay;
 import dev.galacticraft.api.universe.galaxy.Galaxy;
 import dev.galacticraft.api.universe.position.CelestialPosition;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.DynamicRegistryManager;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.util.registry.RegistryKey;
-import net.minecraft.world.World;
+import net.minecraft.core.Registry;
+import net.minecraft.core.RegistryAccess;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 
 public record CelestialBody<C extends CelestialBodyConfig, T extends CelestialBodyType<C>>(T type, C config) {
-    public static final Codec<CelestialBody<?, ?>> CODEC = AddonRegistry.CELESTIAL_BODY_TYPE.getCodec().dispatch(CelestialBody::type, CelestialBodyType::codec);
+    public static final Codec<CelestialBody<?, ?>> CODEC = AddonRegistry.CELESTIAL_BODY_TYPE.byNameCodec().dispatch(CelestialBody::type, CelestialBodyType::codec);
 
-    public static Registry<CelestialBody<?, ?>> getRegistry(DynamicRegistryManager manager) {
-        return manager.get(AddonRegistry.CELESTIAL_BODY_KEY);
+    public static Registry<CelestialBody<?, ?>> getRegistry(RegistryAccess manager) {
+        return manager.registryOrThrow(AddonRegistry.CELESTIAL_BODY_KEY);
     }
 
-    public static CelestialBody<?, ?> getById(DynamicRegistryManager manager, Identifier id) {
+    public static CelestialBody<?, ?> getById(RegistryAccess manager, ResourceLocation id) {
         return getById(getRegistry(manager), id);
     }
 
-    public static Identifier getId(DynamicRegistryManager manager, CelestialBody<?, ?> celestialBody) {
+    public static ResourceLocation getId(RegistryAccess manager, CelestialBody<?, ?> celestialBody) {
         return getId(getRegistry(manager), celestialBody);
     }
 
-    public static <C extends CelestialBodyConfig, T extends CelestialBodyType<C> & Landable<C>> Optional<CelestialBody<C, T>> getByDimension(DynamicRegistryManager manager, RegistryKey<World> key) {
+    public static <C extends CelestialBodyConfig, T extends CelestialBodyType<C> & Landable<C>> Optional<CelestialBody<C, T>> getByDimension(RegistryAccess manager, ResourceKey<Level> key) {
         return getByDimension(getRegistry(manager), key);
     }
 
-    public static <C extends CelestialBodyConfig, T extends CelestialBodyType<C> & Landable<C>> Optional<CelestialBody<C, T>> getByDimension(World world) {
-        return getByDimension(world.getRegistryManager(), world.getRegistryKey());
+    public static <C extends CelestialBodyConfig, T extends CelestialBodyType<C> & Landable<C>> Optional<CelestialBody<C, T>> getByDimension(Level world) {
+        return getByDimension(world.registryAccess(), world.dimension());
     }
 
-    public static CelestialBody<?, ?> getById(Registry<CelestialBody<?, ?>> registry, Identifier id) {
+    public static CelestialBody<?, ?> getById(Registry<CelestialBody<?, ?>> registry, ResourceLocation id) {
         return registry.get(id);
     }
 
-    public static Identifier getId(Registry<CelestialBody<?, ?>> registry, CelestialBody<?, ?> celestialBody) {
-        return registry.getId(celestialBody);
+    public static ResourceLocation getId(Registry<CelestialBody<?, ?>> registry, CelestialBody<?, ?> celestialBody) {
+        return registry.getKey(celestialBody);
     }
 
-    public static <C extends CelestialBodyConfig, T extends CelestialBodyType<C> & Landable<C>> Optional<CelestialBody<C, T>> getByDimension(Registry<CelestialBody<?, ?>> registry, RegistryKey<World> key) {
+    public static <C extends CelestialBodyConfig, T extends CelestialBodyType<C> & Landable<C>> Optional<CelestialBody<C, T>> getByDimension(Registry<CelestialBody<?, ?>> registry, ResourceKey<Level> key) {
         for (CelestialBody<?, ?> body : registry) {
             if (body.type() instanceof Landable landable && landable.world(body.config()).equals(key))
                 return Optional.of((CelestialBody<C, T>) body);
@@ -81,21 +81,21 @@ public record CelestialBody<C extends CelestialBodyConfig, T extends CelestialBo
 
     /**
      * Returns the name of this celestial body
-     * Be sure to {@link Text#copy() copy} the returned text if you intend on stylizing it.
+     * Be sure to {@link Component#copy() copy} the returned text if you intend on stylizing it.
      *
      * @return the name of this celestial body
      */
-    public @NotNull Text name() {
+    public @NotNull Component name() {
         return this.type().name(this.config());
     }
 
     /**
      * Returns the description of this celestial body
-     * Be sure to {@link Text#copy() copy} the returned text if you intend on stylizing it.
+     * Be sure to {@link Component#copy() copy} the returned text if you intend on stylizing it.
      *
      * @return the description of this celestial body
      */
-    public @NotNull Text description() {
+    public @NotNull Component description() {
         return this.type().description(this.config());
     }
 
@@ -116,7 +116,7 @@ public record CelestialBody<C extends CelestialBodyConfig, T extends CelestialBo
      * @return this celestial body's parent
      * @see #parent(Registry)
      */
-    public @Nullable CelestialBody<?, ?> parent(DynamicRegistryManager manager) {
+    public @Nullable CelestialBody<?, ?> parent(RegistryAccess manager) {
         return this.type().parent(manager, this.config());
     }
 
@@ -125,7 +125,7 @@ public record CelestialBody<C extends CelestialBodyConfig, T extends CelestialBo
      *
      * @return this celestial body's parent galaxy's id
      */
-    public @NotNull RegistryKey<Galaxy> galaxy() {
+    public @NotNull ResourceKey<Galaxy> galaxy() {
         return this.type().galaxy(this.config());
     }
 

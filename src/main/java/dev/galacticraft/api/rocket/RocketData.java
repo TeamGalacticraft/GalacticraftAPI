@@ -26,17 +26,17 @@ import dev.galacticraft.api.rocket.part.RocketPartType;
 import dev.galacticraft.api.universe.celestialbody.CelestialBody;
 import dev.galacticraft.impl.Constant;
 import dev.galacticraft.impl.rocket.RocketDataImpl;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.DynamicRegistryManager;
+import net.minecraft.core.RegistryAccess;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
 
 public interface RocketData {
-    Identifier INVALID_ID = new Identifier(Constant.MOD_ID, "invalid");
+    ResourceLocation INVALID_ID = new ResourceLocation(Constant.MOD_ID, "invalid");
 
-    static RocketData create(int color, Identifier cone, Identifier body, Identifier fin, Identifier booster, Identifier bottom, Identifier upgrade) {
+    static RocketData create(int color, ResourceLocation cone, ResourceLocation body, ResourceLocation fin, ResourceLocation booster, ResourceLocation bottom, ResourceLocation upgrade) {
         if (cone == INVALID_ID
                 || body == INVALID_ID
                 || fin == INVALID_ID
@@ -46,7 +46,7 @@ public interface RocketData {
         return new RocketDataImpl(color, cone, body, fin, booster, bottom, upgrade);
     }
 
-    static @NotNull @Unmodifiable RocketData fromNbt(NbtCompound nbt) {
+    static @NotNull @Unmodifiable RocketData fromNbt(CompoundTag nbt) {
         return RocketDataImpl.fromNbt(nbt);
     }
 
@@ -55,7 +55,7 @@ public interface RocketData {
         return RocketDataImpl.empty();
     }
 
-    NbtCompound toNbt(NbtCompound nbt);
+    CompoundTag toNbt(CompoundTag nbt);
 
     int color();
 
@@ -67,23 +67,23 @@ public interface RocketData {
 
     int alpha();
 
-    Identifier cone();
+    ResourceLocation cone();
 
-    Identifier body();
+    ResourceLocation body();
 
-    Identifier fin();
+    ResourceLocation fin();
 
-    Identifier booster();
+    ResourceLocation booster();
 
-    Identifier bottom();
+    ResourceLocation bottom();
 
-    Identifier upgrade();
+    ResourceLocation upgrade();
 
     boolean isEmpty();
 
-    boolean canTravelTo(DynamicRegistryManager manager, CelestialBody<?, ?> celestialBodyType);
+    boolean canTravelTo(RegistryAccess manager, CelestialBody<?, ?> celestialBodyType);
 
-    Identifier getPartForType(RocketPartType type);
+    ResourceLocation getPartForType(RocketPartType type);
 
-    Identifier[] parts();
+    ResourceLocation[] parts();
 }

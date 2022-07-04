@@ -22,10 +22,10 @@
 
 package dev.galacticraft.impl.internal.accessor;
 
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public interface AdvancementRewardsAccessor {
-    void setRocketPartRewards(@NotNull Identifier @Nullable [] parts);
+    void setRocketPartRewards(@NotNull ResourceLocation @Nullable [] parts);
 }

@@ -27,11 +27,11 @@ import dev.galacticraft.api.gas.GasComposition;
 import dev.galacticraft.api.universe.display.CelestialDisplay;
 import dev.galacticraft.api.universe.galaxy.Galaxy;
 import dev.galacticraft.api.universe.position.CelestialPosition;
-import net.minecraft.text.Text;
-import net.minecraft.util.registry.DynamicRegistryManager;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.util.registry.RegistryKey;
-import net.minecraft.world.World;
+import net.minecraft.core.Registry;
+import net.minecraft.core.RegistryAccess;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -44,21 +44,21 @@ public abstract class CelestialBodyType<C extends CelestialBodyConfig> {
 
     /**
      * Returns the name of the celestial body
-     * Be sure to {@link Text#copy() copy} the returned text if you intend on stylizing it.
+     * Be sure to {@link Component#copy() copy} the returned text if you intend on stylizing it.
      *
      * @param config the celestial body configuration to be queried
      * @return the name of the celestial body
      */
-    public abstract @NotNull Text name(C config);
+    public abstract @NotNull Component name(C config);
 
     /**
      * Returns the description of the celestial body
-     * Be sure to {@link Text#copy() copy} the returned text if you intend on stylizing it.
+     * Be sure to {@link Component#copy() copy} the returned text if you intend on stylizing it.
      *
      * @param config the celestial body configuration to be queried
      * @return the description of the celestial body
      */
-    public abstract @NotNull Text description(C config);
+    public abstract @NotNull Component description(C config);
 
     /**
      * Returns the celestial body's parent, or {@code null} if it does not have one
@@ -75,7 +75,7 @@ public abstract class CelestialBodyType<C extends CelestialBodyConfig> {
      * @param config the celestial body configuration to be queried
      * @return the celestial body's parent galaxy's id
      */
-    public abstract @NotNull RegistryKey<Galaxy> galaxy(C config);
+    public abstract @NotNull ResourceKey<Galaxy> galaxy(C config);
 
     /**
      * Returns the celestial body's position provider
@@ -103,7 +103,7 @@ public abstract class CelestialBodyType<C extends CelestialBodyConfig> {
      * @return the celestial body's parent
      * @see #parent(Registry, CelestialBodyConfig)
      */
-    public @Nullable CelestialBody<?, ?> parent(DynamicRegistryManager manager, C config) {
+    public @Nullable CelestialBody<?, ?> parent(RegistryAccess manager, C config) {
         return this.parent(CelestialBody.getRegistry(manager), config);
     }
 
@@ -111,7 +111,7 @@ public abstract class CelestialBodyType<C extends CelestialBodyConfig> {
      * Returns the {@link GasComposition atmospheric information} of this celestial body
      *
      * @param config the celestial body configuration to be queried
-     * @return the registry key of the {@link World} this celestial body is linked to
+     * @return the registry key of the {@link Level} this celestial body is linked to
      * @see GasComposition#breathable() to see the requirements for a celestial body to be considered breatheable
      */
     public abstract @NotNull GasComposition atmosphere(C config);

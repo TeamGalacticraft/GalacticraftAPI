@@ -22,14 +22,14 @@
 
 package dev.galacticraft.impl.client.rocket.render;
 
+import com.mojang.blaze3d.vertex.PoseStack;
 import dev.galacticraft.api.entity.Rocket;
 import dev.galacticraft.api.entity.rocket.render.RocketPartRenderer;
 import dev.galacticraft.impl.Constant;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.render.VertexConsumerProvider;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.client.world.ClientWorld;
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.client.renderer.MultiBufferSource;
 
 @Environment(EnvType.CLIENT)
 public enum EmptyRocketPartRenderer implements RocketPartRenderer {
@@ -37,7 +37,7 @@ public enum EmptyRocketPartRenderer implements RocketPartRenderer {
     private static boolean hasWarned = false;
 
     @Override
-    public void renderGUI(ClientWorld world, MatrixStack matrices, int mouseX, int mouseY, float delta) {
+    public void renderGUI(ClientLevel world, PoseStack matrices, int mouseX, int mouseY, float delta) {
         if (!hasWarned) {
             hasWarned = true;
             Constant.LOGGER.warn("EmptyRocketPartRenderer renderer is in use! RocketPartRenderer wasn't registered?");
@@ -45,7 +45,7 @@ public enum EmptyRocketPartRenderer implements RocketPartRenderer {
     }
 
     @Override
-    public void render(ClientWorld world, MatrixStack matrices, Rocket rocket, VertexConsumerProvider vertices, float delta, int light) {
+    public void render(ClientLevel world, PoseStack matrices, Rocket rocket, MultiBufferSource vertices, float delta, int light) {
         if (!hasWarned) {
             hasWarned = true;
             Constant.LOGGER.warn("EmptyRocketPartRenderer renderer is in use! RocketPartRenderer wasn't registered?");
