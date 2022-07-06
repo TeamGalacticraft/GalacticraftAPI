@@ -23,13 +23,15 @@
 package dev.galacticraft.api.universe.celestialbody.star;
 
 import dev.galacticraft.api.universe.celestialbody.CelestialBodyConfig;
+import dev.galacticraft.api.universe.celestialbody.landable.Landable;
 
 /**
  * Represents a {@link dev.galacticraft.api.universe.celestialbody.CelestialBodyType<C> celestial body type} that is a star.
  *
  * @param <C> the type of configuration
  */
-public interface Star<C extends CelestialBodyConfig> {
+public interface Star<C extends CelestialBodyConfig>
+{
     /**
      * Returns the solar luminosity of this star (1.0 is the Sun's luminance)
      *

@@ -23,8 +23,11 @@
 package dev.galacticraft.impl.universe.celestialbody.type;
 
 import dev.galacticraft.api.gas.GasComposition;
+import dev.galacticraft.api.satellite.SatelliteRecipe;
 import dev.galacticraft.api.universe.celestialbody.CelestialBody;
 import dev.galacticraft.api.universe.celestialbody.CelestialBodyType;
+import dev.galacticraft.api.universe.celestialbody.landable.Landable;
+import dev.galacticraft.api.universe.celestialbody.satellite.Orbitable;
 import dev.galacticraft.api.universe.celestialbody.star.Star;
 import dev.galacticraft.api.universe.display.CelestialDisplay;
 import dev.galacticraft.api.universe.galaxy.Galaxy;
@@ -33,10 +36,12 @@ import dev.galacticraft.impl.universe.celestialbody.config.StarConfig;
 import net.minecraft.core.Registry;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class StarType extends CelestialBodyType<StarConfig> implements Star<StarConfig> {
+public class StarType extends CelestialBodyType<StarConfig> implements Star<StarConfig>, Orbitable<StarConfig>, Landable<StarConfig>
+{
     public static final StarType INSTANCE = new StarType();
 
     protected StarType() {
@@ -102,5 +107,23 @@ public class StarType extends CelestialBodyType<StarConfig> implements Star<Star
     @Override
     public int surfaceTemperature(StarConfig config) {
         return config.surfaceTemperature();
+    }
+
+    @Override
+    public @NotNull ResourceKey<Level> world(StarConfig config)
+    {
+        return config.world();
+    }
+
+    @Override
+    public int accessWeight(StarConfig config)
+    {
+        return config.accessWeight();
+    }
+
+    @Override
+    public @Nullable SatelliteRecipe satelliteRecipe(StarConfig config)
+    {
+        return config.satelliteRecipe().orElse(null);
     }
 }

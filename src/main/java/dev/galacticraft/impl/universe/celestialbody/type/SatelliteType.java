@@ -29,9 +29,12 @@ import dev.galacticraft.api.gas.GasComposition;
 import dev.galacticraft.api.registry.AddonRegistry;
 import dev.galacticraft.api.satellite.Satellite;
 import dev.galacticraft.api.satellite.SatelliteOwnershipData;
+import dev.galacticraft.api.satellite.SatelliteRecipe;
 import dev.galacticraft.api.universe.celestialbody.CelestialBody;
 import dev.galacticraft.api.universe.celestialbody.CelestialBodyType;
 import dev.galacticraft.api.universe.celestialbody.landable.Landable;
+import dev.galacticraft.api.universe.celestialbody.satellite.Orbitable;
+import dev.galacticraft.api.universe.celestialbody.orbits.Orbits;
 import dev.galacticraft.api.universe.display.CelestialDisplay;
 import dev.galacticraft.api.universe.galaxy.Galaxy;
 import dev.galacticraft.api.universe.position.CelestialPosition;
@@ -78,7 +81,8 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.OptionalLong;
 
-public class SatelliteType extends CelestialBodyType<SatelliteConfig> implements Satellite<SatelliteConfig>, Landable<SatelliteConfig> {
+public class SatelliteType extends CelestialBodyType<SatelliteConfig> implements Satellite<SatelliteConfig>,
+        Orbitable<SatelliteConfig>, Orbits<SatelliteConfig>, Landable<SatelliteConfig> {
     public static final SatelliteType INSTANCE = new SatelliteType(SatelliteConfig.CODEC);
     public static final ChunkProgressListener EMPTY_PROGRESS_LISTENER = new ChunkProgressListener() {
         @Override
@@ -220,5 +224,11 @@ public class SatelliteType extends CelestialBodyType<SatelliteConfig> implements
     @Override
     public CelestialBody<SatelliteConfig, SatelliteType> configure(SatelliteConfig config) {
         return new CelestialBody<>(this, config);
+    }
+
+    @Override
+    public @Nullable SatelliteRecipe satelliteRecipe(SatelliteConfig config)
+    {
+        return null;
     }
 }

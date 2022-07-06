@@ -49,20 +49,4 @@ public interface Landable<C extends CelestialBodyConfig> {
      * @return the access weight required to generically reach this celestial body
      */
     int accessWeight(C config);
-
-    /**
-     * Returns the approximate temperature on this celestial body during the day (in Celsius)
-     *
-     * @param config the celestial body configuration to be queried
-     * @return the approximate temperature on this celestial body during the day
-     */
-    int dayTemperature(C config);
-
-    /**
-     * Returns the approximate temperature on this celestial body during the night (in Celsius)
-     *
-     * @param config the celestial body configuration to be queried
-     * @return the approximate temperature on this celestial body during the night
-     */
-    int nightTemperature(C config);
 }

@@ -20,25 +20,32 @@
  * SOFTWARE.
  */
 
-package dev.galacticraft.api.universe.celestialbody.satellite;
+package dev.galacticraft.api.universe.celestialbody.orbits;
 
-import dev.galacticraft.api.satellite.SatelliteRecipe;
 import dev.galacticraft.api.universe.celestialbody.CelestialBodyConfig;
-import org.jetbrains.annotations.Nullable;
 
 /**
- * Represents a {@link dev.galacticraft.api.universe.celestialbody.CelestialBodyType<C> celestial body type} that can potentially allow player-made objects to orbit itself.
+ * Represents a {@link dev.galacticraft.api.universe.celestialbody.CelestialBodyType<C> celestial body type} that orbits a celestial boy.
  *
  * @param <C> the type of configuration
  */
-public interface Orbitable<C extends CelestialBodyConfig> {
-    /**
-     * Returns the {@link SatelliteRecipe stellite recipe} of this celestial body, or {@code null} if satellites should not be allowed to be created
-     *
-     * @param config the celestial body configuration to be queried
-     * @return the {@link SatelliteRecipe stellite recipe} of this celestial body
-     */
-    @Nullable SatelliteRecipe satelliteRecipe(C config);
+public interface Orbits<C extends CelestialBodyConfig>
+{
+	/**
+	 * Returns the approximate temperature on this celestial body during the day (in Celsius)
+	 *
+	 * @param config the celestial body configuration to be queried
+	 * @return the approximate temperature on this celestial body during the day
+	 */
+	int dayTemperature(C config);
+
+	/**
+	 * Returns the approximate temperature on this celestial body during the night (in Celsius)
+	 *
+	 * @param config the celestial body configuration to be queried
+	 * @return the approximate temperature on this celestial body during the night
+	 */
+	int nightTemperature(C config);
 
 
 }
