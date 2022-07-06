@@ -27,7 +27,6 @@ import dev.galacticraft.api.satellite.SatelliteRecipe;
 import dev.galacticraft.api.universe.celestialbody.CelestialBody;
 import dev.galacticraft.api.universe.celestialbody.CelestialBodyType;
 import dev.galacticraft.api.universe.celestialbody.landable.Landable;
-import dev.galacticraft.api.universe.celestialbody.planet.Planet;
 import dev.galacticraft.api.universe.celestialbody.satellite.Orbitable;
 import dev.galacticraft.api.universe.celestialbody.orbits.Orbits;
 import dev.galacticraft.api.universe.display.CelestialDisplay;

@@ -45,7 +45,7 @@ public record PlanetConfig(@NotNull MutableComponent name, @NotNull MutableCompo
                            @NotNull ResourceKey<Galaxy> galaxy, @NotNull ResourceKey<CelestialBody<?, ?>> parent,
                            @NotNull CelestialPosition<?, ?> position, @NotNull CelestialDisplay<?, ?> display,
                            ResourceKey<Level> world, @NotNull GasComposition atmosphere, float gravity,
-                           int accessWeight, int dayTemperature, int nightTemperature, boolean isDecorative,
+                           int accessWeight, int dayTemperature, int nightTemperature,
                            @NotNull Optional<SatelliteRecipe> satelliteRecipe) implements CelestialBodyConfig {
     public static final Codec<PlanetConfig> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             Codec.STRING.fieldOf("name").xmap(Component::translatable, Component::getString).forGetter(PlanetConfig::name),
@@ -60,7 +60,6 @@ public record PlanetConfig(@NotNull MutableComponent name, @NotNull MutableCompo
             Codec.INT.fieldOf("access_weight").forGetter(PlanetConfig::accessWeight),
             Codec.INT.fieldOf("day_temperature").forGetter(PlanetConfig::dayTemperature),
             Codec.INT.fieldOf("night_temperature").forGetter(PlanetConfig::nightTemperature),
-            Codec.BOOL.fieldOf("is_decorative").forGetter(PlanetConfig::isDecorative),
             SatelliteRecipe.CODEC.optionalFieldOf("satellite_recipe").forGetter(PlanetConfig::satelliteRecipe)
     ).apply(instance, PlanetConfig::new));
 }

@@ -31,7 +31,6 @@ import dev.galacticraft.api.universe.galaxy.Galaxy;
 import dev.galacticraft.impl.Constant;
 import dev.galacticraft.impl.universe.celestialbody.config.PlanetConfig;
 import dev.galacticraft.impl.universe.celestialbody.config.StarConfig;
-import dev.galacticraft.impl.universe.celestialbody.type.DecorativePlanet;
 import dev.galacticraft.impl.universe.celestialbody.type.PlanetType;
 import dev.galacticraft.impl.universe.celestialbody.type.StarType;
 import dev.galacticraft.impl.universe.display.config.EmptyCelestialDisplayConfig;
@@ -66,6 +65,7 @@ public class BuiltinObjects {
                     MILKY_WAY_KEY,
                     StaticCelestialPositionType.INSTANCE.configure(new StaticCelestialPositionConfig(0, 0)),
                     IconCelestialDisplayType.INSTANCE.configure(new IconCelestialDisplayConfig(new ResourceLocation(Constant.MOD_ID, "textures/body_icons.png"), 0, 0, 16, 16, 1.5f)),
+                    null,
                     new GasComposition.Builder()
                             .pressure(28)
                             .gas(Gases.HYDROGEN_ID, 734600.000)
@@ -76,7 +76,9 @@ public class BuiltinObjects {
                             .build(),
                     28.0f,
                     1,
-                    5772
+                    -1,
+                    5772,
+                    Optional.empty()
             )
     );
 
@@ -129,7 +131,6 @@ public class BuiltinObjects {
 
         Registry.register(AddonRegistry.CELESTIAL_BODY_TYPE, new ResourceLocation(Constant.MOD_ID, "star"), StarType.INSTANCE);
         Registry.register(AddonRegistry.CELESTIAL_BODY_TYPE, new ResourceLocation(Constant.MOD_ID, "planet"), PlanetType.INSTANCE);
-        Registry.register(AddonRegistry.CELESTIAL_BODY_TYPE, new ResourceLocation(Constant.MOD_ID, "decorative_planet"), DecorativePlanet.INSTANCE);
 
         Registry.register(AddonRegistry.CELESTIAL_BODY, SOL_KEY.location(), SOL);
         Registry.register(AddonRegistry.CELESTIAL_BODY, EARTH_KEY.location(), EARTH);

@@ -42,7 +42,7 @@ import java.util.Optional;
 
 public record StarConfig(@NotNull MutableComponent name, @NotNull MutableComponent description,
                          @NotNull ResourceKey<Galaxy> galaxy, @NotNull CelestialPosition<?, ?> position,
-                         @NotNull CelestialDisplay<?, ?> display, @NotNull ResourceKey<Level> world,
+                         @NotNull CelestialDisplay<?, ?> display, ResourceKey<Level> world,
                          GasComposition photosphericComposition, float gravity,
                          double luminance, int accessWeight, int surfaceTemperature,
                          @NotNull Optional<SatelliteRecipe> satelliteRecipe) implements CelestialBodyConfig {
