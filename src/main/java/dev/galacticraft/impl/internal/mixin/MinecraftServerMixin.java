@@ -120,11 +120,14 @@ public abstract class MinecraftServerMixin implements SatelliteAccessor {
 
                 WorldBorder worldBorder = getLevel(Level.OVERWORLD).getWorldBorder();
                 for (Map.Entry<ResourceLocation, CelestialBody<SatelliteConfig, SatelliteType>> entry : this.satellites.entrySet()) {
-                    ChunkGenerator chunkGenerator = entry.getValue().config().dimensionOptions().generator();
-                    DerivedLevelData unmodifiableLevelProperties = new DerivedLevelData(getWorldData(), getWorldData().overworldData());
-                    ServerLevel world = new ServerLevel((MinecraftServer) (Object) this, executor, storageSource, unmodifiableLevelProperties, ResourceKey.create(Registry.DIMENSION_REGISTRY, entry.getKey()), entry.getValue().config().dimensionOptions(), SatelliteType.EMPTY_PROGRESS_LISTENER, getWorldData().worldGenSettings().isDebug(), BiomeManager.obfuscateSeed(getWorldData().worldGenSettings().seed()), ImmutableList.of(), false);
-                    worldBorder.addListener(new BorderChangeListener.DelegateBorderChangeListener(world.getWorldBorder()));
-                    levels.put(ResourceKey.create(Registry.DIMENSION_REGISTRY, entry.getKey()), world);
+                    if (entry.getValue().config().dimensionOptions().isPresent())
+                    {
+                        ChunkGenerator chunkGenerator = entry.getValue().config().dimensionOptions().get().generator();
+                        DerivedLevelData unmodifiableLevelProperties = new DerivedLevelData(getWorldData(), getWorldData().overworldData());
+                        ServerLevel world = new ServerLevel((MinecraftServer) (Object) this, executor, storageSource, unmodifiableLevelProperties, ResourceKey.create(Registry.DIMENSION_REGISTRY, entry.getKey()), entry.getValue().config().dimensionOptions().get(), SatelliteType.EMPTY_PROGRESS_LISTENER, getWorldData().worldGenSettings().isDebug(), BiomeManager.obfuscateSeed(getWorldData().worldGenSettings().seed()), ImmutableList.of(), false);
+                        worldBorder.addListener(new BorderChangeListener.DelegateBorderChangeListener(world.getWorldBorder()));
+                        levels.put(ResourceKey.create(Registry.DIMENSION_REGISTRY, entry.getKey()), world);
+                    }
                 }
             } catch (Throwable exception) {
                 throw new RuntimeException("Failed to reade satellite data!", exception);

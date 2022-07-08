@@ -73,7 +73,7 @@ public record CelestialBody<C extends CelestialBodyConfig, T extends CelestialBo
 
     public static <C extends CelestialBodyConfig, T extends CelestialBodyType<C> & Landable<C>> Optional<CelestialBody<C, T>> getByDimension(Registry<CelestialBody<?, ?>> registry, ResourceKey<Level> key) {
         for (CelestialBody<?, ?> body : registry) {
-            if (body.type() instanceof Landable landable && landable.world(body.config()).equals(key))
+            if (body.type() instanceof Landable landable && landable.hasLinkedWorld(body.config()) && landable.world(body.config()).equals(key))
                 return Optional.of((CelestialBody<C, T>) body);
         }
         return Optional.empty();
@@ -125,7 +125,7 @@ public record CelestialBody<C extends CelestialBodyConfig, T extends CelestialBo
      *
      * @return this celestial body's parent galaxy's id
      */
-    public @NotNull ResourceKey<Galaxy> galaxy() {
+    public @Nullable ResourceKey<Galaxy> galaxy() {
         return this.type().galaxy(this.config());
     }
 

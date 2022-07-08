@@ -75,7 +75,7 @@ public abstract class CelestialBodyType<C extends CelestialBodyConfig> {
      * @param config the celestial body configuration to be queried
      * @return the celestial body's parent galaxy's id
      */
-    public abstract @NotNull ResourceKey<Galaxy> galaxy(C config);
+    public abstract @Nullable ResourceKey<Galaxy> galaxy(C config);
 
     /**
      * Returns the celestial body's position provider

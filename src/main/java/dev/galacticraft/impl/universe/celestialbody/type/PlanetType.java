@@ -55,12 +55,12 @@ public class PlanetType extends CelestialBodyType<PlanetConfig> implements Landa
 
     @Override
     public @Nullable CelestialBody<?, ?> parent(Registry<CelestialBody<?, ?>> registry, PlanetConfig config) {
-        return registry.get(config.parent());
+        return registry.get(config.parent().orElse(null));
     }
 
     @Override
-    public @NotNull ResourceKey<Galaxy> galaxy(PlanetConfig config) {
-        return config.galaxy();
+    public @Nullable ResourceKey<Galaxy> galaxy(PlanetConfig config) {
+        return config.galaxy().orElse(null);
     }
 
     @Override
@@ -79,8 +79,8 @@ public class PlanetType extends CelestialBodyType<PlanetConfig> implements Landa
     }
 
     @Override
-    public @NotNull ResourceKey<Level> world(PlanetConfig config) {
-        return config.world();
+    public @Nullable ResourceKey<Level> world(PlanetConfig config) {
+        return config.world().orElse(null);
     }
 
     @Override
@@ -94,8 +94,8 @@ public class PlanetType extends CelestialBodyType<PlanetConfig> implements Landa
     }
 
     @Override
-    public int accessWeight(PlanetConfig config) {
-        return config.accessWeight();
+    public @Nullable Integer accessWeight(PlanetConfig config) {
+        return config.accessWeight().orElse(null);
     }
 
     @Override

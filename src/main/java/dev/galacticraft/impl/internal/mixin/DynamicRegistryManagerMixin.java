@@ -44,7 +44,7 @@ public interface DynamicRegistryManagerMixin {
     @Shadow
     private static <E> void put(ImmutableMap.Builder<ResourceKey<? extends Registry<?>>, RegistryAccess.RegistryData<?>> infosBuilder, ResourceKey<? extends Registry<E>> registryRef, Codec<E> entryCodec) {}
 
-    @Dynamic("1.18.2 synthetic method")
+    @Dynamic("1.19.1 synthetic method")
     @Inject(method = "method_30531", at = @At(value = "INVOKE", target = "Lnet/minecraft/core/RegistryAccess;put(Lcom/google/common/collect/ImmutableMap$Builder;Lnet/minecraft/resources/ResourceKey;Lcom/mojang/serialization/Codec;Lcom/mojang/serialization/Codec;)V", ordinal = 0), locals = LocalCapture.CAPTURE_FAILHARD)
     private static void galacticraft_registerCustomRegistries(CallbackInfoReturnable<ImmutableMap<ResourceKey<? extends Registry<?>>, RegistryAccess.RegistryData<?>>> ci, ImmutableMap.Builder<ResourceKey<? extends Registry<?>>, RegistryAccess.RegistryData<?>> builder) {
         put(builder, AddonRegistry.GALAXY_KEY, Galaxy.CODEC);

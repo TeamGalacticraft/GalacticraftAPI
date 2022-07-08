@@ -27,10 +27,12 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import dev.galacticraft.api.gas.GasComposition;
 import dev.galacticraft.api.registry.AddonRegistry;
 import dev.galacticraft.api.satellite.SatelliteRecipe;
+import dev.galacticraft.api.universe.celestialbody.CelestialBody;
 import dev.galacticraft.api.universe.celestialbody.CelestialBodyConfig;
 import dev.galacticraft.api.universe.display.CelestialDisplay;
 import dev.galacticraft.api.universe.galaxy.Galaxy;
 import dev.galacticraft.api.universe.position.CelestialPosition;
+import net.minecraft.core.Registry;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceKey;
@@ -41,22 +43,23 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Optional;
 
 public record StarConfig(@NotNull MutableComponent name, @NotNull MutableComponent description,
-                         @NotNull ResourceKey<Galaxy> galaxy, @NotNull CelestialPosition<?, ?> position,
-                         @NotNull CelestialDisplay<?, ?> display, ResourceKey<Level> world,
-                         GasComposition photosphericComposition, float gravity,
-                         double luminance, int accessWeight, int surfaceTemperature,
+                         @NotNull Optional<ResourceKey<Galaxy>> galaxy, Optional<ResourceKey<CelestialBody<?, ?>>> parent,
+                         @NotNull CelestialPosition<?, ?> position, @NotNull CelestialDisplay<?, ?> display,
+                         @NotNull Optional<ResourceKey<Level>> world, GasComposition photosphericComposition, float gravity,
+                         double luminance, @NotNull Optional<Integer> accessWeight, int surfaceTemperature,
                          @NotNull Optional<SatelliteRecipe> satelliteRecipe) implements CelestialBodyConfig {
     public static final Codec<StarConfig> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             Codec.STRING.fieldOf("name").xmap(Component::translatable, Component::getString).forGetter(StarConfig::name),
             Codec.STRING.fieldOf("description").xmap(Component::translatable, Component::getString).forGetter(StarConfig::description),
-            ResourceLocation.CODEC.fieldOf("galaxy").xmap(id -> ResourceKey.create(AddonRegistry.GALAXY_KEY, id), ResourceKey::location).forGetter(StarConfig::galaxy),
+            ResourceLocation.CODEC.optionalFieldOf("galaxy").xmap(id -> id.map(resourceLocation -> ResourceKey.create(AddonRegistry.GALAXY_KEY, resourceLocation)), key -> key.map(ResourceKey::location)).forGetter(StarConfig::galaxy),
+            ResourceLocation.CODEC.optionalFieldOf("parent").xmap(id -> id.map(resourceLocation -> ResourceKey.create(AddonRegistry.CELESTIAL_BODY_KEY, resourceLocation)), key -> key.map(ResourceKey::location)).forGetter(StarConfig::parent),
             CelestialPosition.CODEC.fieldOf("position").forGetter(StarConfig::position),
             CelestialDisplay.CODEC.fieldOf("display").forGetter(StarConfig::display),
-            Level.RESOURCE_KEY_CODEC.fieldOf("world").forGetter(StarConfig::world),
+            Level.RESOURCE_KEY_CODEC.optionalFieldOf("world").forGetter(StarConfig::world),
             GasComposition.CODEC.fieldOf("photospheric_composition").forGetter(StarConfig::photosphericComposition),
             Codec.FLOAT.fieldOf("gravity").forGetter(StarConfig::gravity),
             Codec.DOUBLE.fieldOf("luminance").forGetter(StarConfig::luminance),
-            Codec.INT.fieldOf("access_weight").forGetter(StarConfig::accessWeight),
+            Codec.INT.optionalFieldOf("access_weight").forGetter(StarConfig::accessWeight),
             Codec.INT.fieldOf("surface_temperature").forGetter(StarConfig::surfaceTemperature),
             SatelliteRecipe.CODEC.optionalFieldOf("satellite_recipe").forGetter(StarConfig::satelliteRecipe)
     ).apply(instance, StarConfig::new));

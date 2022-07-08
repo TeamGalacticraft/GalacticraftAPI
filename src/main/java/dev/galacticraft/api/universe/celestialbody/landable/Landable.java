@@ -26,27 +26,34 @@ import dev.galacticraft.api.universe.celestialbody.CelestialBodyConfig;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.Optional;
 
 /**
- * Represents a {@link dev.galacticraft.api.universe.celestialbody.CelestialBodyType<C> celestial body type} that has a {@link Level} linked to itself.
+ * Represents a {@link dev.galacticraft.api.universe.celestialbody.CelestialBodyType<C> celestial body type} that can potentially have a {@link Level} linked to itself.
  *
  * @param <C> the type of configuration
  */
 public interface Landable<C extends CelestialBodyConfig> {
+    default boolean hasLinkedWorld(C config) {
+        return world(config) != null;
+    }
+
     /**
-     * Returns the registry key of the {@link Level} this celestial body is linked to
+     * Returns the registry key of the {@link Level} this celestial body is linked to, or {@code null} if it does not exist (say, if it's a decorated planet)
      *
      * @param config the celestial body configuration to be queried
      * @return the registry key of the {@link Level} this celestial body is linked to
      */
-    @NotNull ResourceKey<Level> world(C config);
+    @Nullable ResourceKey<Level> world(C config);
 
     /**
-     * Returns the access weight required to generically reach this celestial body, or a negative value if it cannot be accessed this way.
+     * Returns the access weight required to generically reach this celestial body, a negative value if it cannot be accessed this way, or {@code null} if it cannot be accessed at all.
      * For more advanced access requirements see {@link dev.galacticraft.api.rocket.travelpredicate.TravelPredicateType}
      *
      * @param config the celestial body configuration to be queried
      * @return the access weight required to generically reach this celestial body
      */
-    int accessWeight(C config);
+    @Nullable Integer accessWeight(C config);
 }

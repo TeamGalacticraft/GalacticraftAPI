@@ -66,8 +66,8 @@ public class StarType extends CelestialBodyType<StarConfig> implements Star<Star
     }
 
     @Override
-    public @NotNull ResourceKey<Galaxy> galaxy(StarConfig config) {
-        return config.galaxy();
+    public @Nullable ResourceKey<Galaxy> galaxy(StarConfig config) {
+        return config.galaxy().orElse(null);
     }
 
     @Override
@@ -110,15 +110,15 @@ public class StarType extends CelestialBodyType<StarConfig> implements Star<Star
     }
 
     @Override
-    public @NotNull ResourceKey<Level> world(StarConfig config)
+    public @Nullable ResourceKey<Level> world(StarConfig config)
     {
-        return config.world();
+        return config.world().orElse(null);
     }
 
     @Override
-    public int accessWeight(StarConfig config)
+    public @Nullable Integer accessWeight(StarConfig config)
     {
-        return config.accessWeight();
+        return config.accessWeight().orElse(null);
     }
 
     @Override

@@ -33,40 +33,46 @@ import dev.galacticraft.api.universe.display.CelestialDisplay;
 import dev.galacticraft.api.universe.galaxy.Galaxy;
 import dev.galacticraft.api.universe.position.CelestialPosition;
 import java.util.Objects;
+import java.util.Optional;
+
+import dev.galacticraft.impl.universe.celestialbody.config.StarConfig;
 import net.minecraft.core.Registry;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.ComponentContents;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.dimension.LevelStem;
+import org.jetbrains.annotations.NotNull;
 
 public final class SatelliteConfig implements CelestialBodyConfig {
     public static final Codec<SatelliteConfig> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-            ResourceLocation.CODEC.fieldOf("parent").xmap(id -> ResourceKey.create(AddonRegistry.CELESTIAL_BODY_KEY, id), ResourceKey::location).forGetter(SatelliteConfig::parent),
-            ResourceLocation.CODEC.fieldOf("galaxy").xmap(id -> ResourceKey.create(AddonRegistry.GALAXY_KEY, id), ResourceKey::location).forGetter(SatelliteConfig::galaxy),
+            ResourceLocation.CODEC.optionalFieldOf("parent").xmap(id -> id.map(resourceLocation -> ResourceKey.create(AddonRegistry.CELESTIAL_BODY_KEY, resourceLocation)), key -> key.map(ResourceKey::location)).forGetter(SatelliteConfig::parent),
+            ResourceLocation.CODEC.optionalFieldOf("galaxy").xmap(id -> id.map(resourceLocation -> ResourceKey.create(AddonRegistry.GALAXY_KEY, resourceLocation)), key -> key.map(ResourceKey::location)).forGetter(SatelliteConfig::galaxy),
             CelestialPosition.CODEC.fieldOf("position").forGetter(SatelliteConfig::position),
             CelestialDisplay.CODEC.fieldOf("display").forGetter(SatelliteConfig::display),
             SatelliteOwnershipData.CODEC.fieldOf("ownership_data").forGetter(SatelliteConfig::ownershipData),
-            ResourceLocation.CODEC.fieldOf("world").xmap(id -> ResourceKey.create(Registry.DIMENSION_REGISTRY, id), ResourceKey::location).forGetter(SatelliteConfig::world),
+            Level.RESOURCE_KEY_CODEC.optionalFieldOf("world").forGetter(SatelliteConfig::world),
             GasComposition.CODEC.fieldOf("atmosphere").forGetter(SatelliteConfig::atmosphere),
             Codec.FLOAT.fieldOf("gravity").forGetter(SatelliteConfig::gravity),
-            Codec.INT.fieldOf("accessWeight").forGetter(SatelliteConfig::accessWeight),
-            LevelStem.CODEC.fieldOf("dimension_options").forGetter(SatelliteConfig::dimensionOptions)
+            Codec.INT.optionalFieldOf("accessWeight").forGetter(SatelliteConfig::accessWeight),
+            LevelStem.CODEC.optionalFieldOf("dimension_options").forGetter(SatelliteConfig::dimensionOptions)
     ).apply(instance, SatelliteConfig::new));
 
-    private final ResourceKey<CelestialBody<?, ?>> parent;
-    private final ResourceKey<Galaxy> galaxy;
-    private final CelestialPosition<?, ?> position;
-    private final CelestialDisplay<?, ?> display;
-    private final SatelliteOwnershipData ownershipData;
-    private final ResourceKey<Level> world;
-    private final GasComposition atmosphere;
+    @NotNull private final Optional<ResourceKey<CelestialBody<?, ?>>> parent;
+    @NotNull private final Optional<ResourceKey<Galaxy>> galaxy;
+    @NotNull private final CelestialPosition<?, ?> position;
+    @NotNull private final CelestialDisplay<?, ?> display;
+    @NotNull private final SatelliteOwnershipData ownershipData;
+    @NotNull private final Optional<ResourceKey<Level>> world;
+    @NotNull private final GasComposition atmosphere;
     private final float gravity;
-    private final int accessWeight;
-    private final LevelStem dimensionOptions;
-    private Component customName = Component.empty();
+    @NotNull private final Optional<Integer> accessWeight;
+    @NotNull private final Optional<LevelStem> dimensionOptions;
+    @NotNull private Component customName = Component.empty();
 
-    public SatelliteConfig(ResourceKey<CelestialBody<?, ?>> parent, ResourceKey<Galaxy> galaxy, CelestialPosition<?, ?> position, CelestialDisplay<?, ?> display, SatelliteOwnershipData ownershipData, ResourceKey<Level> world, GasComposition atmosphere, float gravity, int accessWeight, LevelStem dimensionOptions) {
+    public SatelliteConfig(Optional<ResourceKey<CelestialBody<?, ?>>> parent, Optional<ResourceKey<Galaxy>> galaxy, CelestialPosition<?, ?> position, CelestialDisplay<?, ?> display, SatelliteOwnershipData ownershipData, Optional<ResourceKey<Level>> world, GasComposition atmosphere, float gravity, Optional<Integer> accessWeight, Optional<LevelStem> dimensionOptions) {
         this.parent = parent;
         this.galaxy = galaxy;
         this.position = position;
@@ -79,9 +85,9 @@ public final class SatelliteConfig implements CelestialBodyConfig {
         this.dimensionOptions = dimensionOptions;
     }
 
-    public ResourceKey<CelestialBody<?, ?>> parent() {return parent;}
+    public Optional<ResourceKey<CelestialBody<?, ?>>> parent() {return parent;}
 
-    public ResourceKey<Galaxy> galaxy() {return galaxy;}
+    public Optional<ResourceKey<Galaxy>> galaxy() {return galaxy;}
 
     public CelestialPosition<?, ?> position() {return position;}
 
@@ -91,17 +97,19 @@ public final class SatelliteConfig implements CelestialBodyConfig {
 
     public Component customName() {return customName;}
 
-    public void customName(Component name) {this.customName = name;}
+    public void customName(Component name) {
+        this.customName = name;
+    }
 
-    public ResourceKey<Level> world() {return world;}
+    public Optional<ResourceKey<Level>> world() {return world;}
 
     public GasComposition atmosphere() {return atmosphere;}
 
     public float gravity() {return gravity;}
 
-    public int accessWeight() {return accessWeight;}
+    @NotNull public Optional<Integer> accessWeight() {return accessWeight;}
 
-    public LevelStem dimensionOptions() {
+    public Optional<LevelStem> dimensionOptions() {
         return this.dimensionOptions;
     }
 

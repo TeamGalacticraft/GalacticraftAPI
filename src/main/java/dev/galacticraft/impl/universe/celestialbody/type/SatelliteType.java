@@ -76,10 +76,7 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.LinkedList;
-import java.util.Locale;
-import java.util.Objects;
-import java.util.OptionalLong;
+import java.util.*;
 
 public class SatelliteType extends CelestialBodyType<SatelliteConfig> implements Satellite<SatelliteConfig>,
         Orbitable<SatelliteConfig>, Orbits<SatelliteConfig>, Landable<SatelliteConfig> {
@@ -128,7 +125,10 @@ public class SatelliteType extends CelestialBodyType<SatelliteConfig> implements
     @ApiStatus.Internal
     public static CelestialBody<SatelliteConfig, SatelliteType> create(ResourceLocation id, MinecraftServer server, CelestialBody<?, ?> parent, CelestialPosition<?, ?> position, CelestialDisplay<?, ?> display,
                                                                        LevelStem options, SatelliteOwnershipData ownershipData, String name) {
-        SatelliteConfig config = new SatelliteConfig(ResourceKey.create(AddonRegistry.CELESTIAL_BODY_KEY, server.registryAccess().registryOrThrow(AddonRegistry.CELESTIAL_BODY_KEY).getKey(parent)), parent.galaxy(), position, display, ownershipData, ResourceKey.create(Registry.DIMENSION_REGISTRY, id), EMPTY_GAS_COMPOSITION, 0.0f, parent.type() instanceof Landable ? ((Landable) parent.type()).accessWeight(parent.config()) : 1, options);
+
+        ResourceLocation location = server.registryAccess().registryOrThrow(AddonRegistry.CELESTIAL_BODY_KEY).getKey(parent);
+        SatelliteConfig config = new SatelliteConfig(location == null ? Optional.empty() : Optional.of(ResourceKey.create(AddonRegistry.CELESTIAL_BODY_KEY, location)),
+                Optional.ofNullable(parent.galaxy()), position, display, ownershipData, Optional.of(ResourceKey.create(Registry.DIMENSION_REGISTRY, id)), EMPTY_GAS_COMPOSITION, 0.0f, Optional.of(parent.type() instanceof Landable ? ((Landable) parent.type()).accessWeight(parent.config()) : -1), Optional.of(options));
         config.customName(Component.translatable(name));
         CelestialBody<SatelliteConfig, SatelliteType> satellite = INSTANCE.configure(config);
         ((SatelliteAccessor) server).addSatellite(id, satellite);
@@ -153,12 +153,12 @@ public class SatelliteType extends CelestialBodyType<SatelliteConfig> implements
 
     @Override
     public @Nullable CelestialBody<?, ?> parent(Registry<CelestialBody<?, ?>> registry, SatelliteConfig config) {
-        return registry.get(config.parent());
+        return registry.get(config.parent().orElse(null));
     }
 
     @Override
-    public @NotNull ResourceKey<Galaxy> galaxy(SatelliteConfig config) {
-        return config.galaxy();
+    public @Nullable ResourceKey<Galaxy> galaxy(SatelliteConfig config) {
+        return config.galaxy().orElse(null);
     }
 
     @Override
@@ -192,8 +192,8 @@ public class SatelliteType extends CelestialBodyType<SatelliteConfig> implements
     }
 
     @Override
-    public @NotNull ResourceKey<Level> world(SatelliteConfig config) {
-        return config.world();
+    public @Nullable ResourceKey<Level> world(SatelliteConfig config) {
+        return config.world().orElse(null);
     }
 
     @Override
@@ -207,8 +207,8 @@ public class SatelliteType extends CelestialBodyType<SatelliteConfig> implements
     }
 
     @Override
-    public int accessWeight(SatelliteConfig config) {
-        return config.accessWeight();
+    public Integer accessWeight(SatelliteConfig config) {
+        return config.accessWeight().orElse(null);
     }
 
     @Override

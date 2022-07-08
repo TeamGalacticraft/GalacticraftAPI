@@ -62,10 +62,11 @@ public class BuiltinObjects {
             new StarConfig(
                     Component.translatable("star.galacticraft-api.sol.name"),
                     Component.translatable("star.galacticraft-api.sol.description"),
-                    MILKY_WAY_KEY,
+                    Optional.of(MILKY_WAY_KEY),
+                    Optional.empty(),
                     StaticCelestialPositionType.INSTANCE.configure(new StaticCelestialPositionConfig(0, 0)),
                     IconCelestialDisplayType.INSTANCE.configure(new IconCelestialDisplayConfig(new ResourceLocation(Constant.MOD_ID, "textures/body_icons.png"), 0, 0, 16, 16, 1.5f)),
-                    null,
+                    Optional.empty(),
                     new GasComposition.Builder()
                             .pressure(28)
                             .gas(Gases.HYDROGEN_ID, 734600.000)
@@ -76,7 +77,7 @@ public class BuiltinObjects {
                             .build(),
                     28.0f,
                     1,
-                    -1,
+                    Optional.empty(),
                     5772,
                     Optional.empty()
             )
@@ -87,11 +88,11 @@ public class BuiltinObjects {
             new PlanetConfig(
                     Component.translatable("planet.galacticraft-api.earth.name"),
                     Component.translatable("planet.galacticraft-api.earth.description"),
-                    MILKY_WAY_KEY,
-                    SOL_KEY,
+                    Optional.of(MILKY_WAY_KEY),
+                    Optional.of(SOL_KEY),
                     OrbitalCelestialPositionType.INSTANCE.configure(new OrbitalCelestialPositionConfig(1536000.0, 1.0, 0.0F, true)),
                     IconCelestialDisplayType.INSTANCE.configure(new IconCelestialDisplayConfig(new ResourceLocation(Constant.MOD_ID, "textures/body_icons.png"), 0, 16, 16, 16, 1)),
-                    Level.OVERWORLD,
+                    Optional.of(Level.OVERWORLD),
                     new GasComposition.Builder()
                             .pressure(1.0f)
                             .temperature(15.0f)
@@ -113,7 +114,7 @@ public class BuiltinObjects {
                             .gas(Gases.IODINE_ID, 0.010)
                             .build(),
                     1.0f,
-                    0,
+                    Optional.of(0),
                     21, //todo
                     15, //todo
                     Optional.empty() //todo

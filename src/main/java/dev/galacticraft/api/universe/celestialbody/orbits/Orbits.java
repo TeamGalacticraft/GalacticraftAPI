@@ -25,12 +25,13 @@ package dev.galacticraft.api.universe.celestialbody.orbits;
 import dev.galacticraft.api.universe.celestialbody.CelestialBodyConfig;
 
 /**
- * Represents a {@link dev.galacticraft.api.universe.celestialbody.CelestialBodyType<C> celestial body type} that orbits a celestial boy.
+ * Represents a {@link dev.galacticraft.api.universe.celestialbody.CelestialBodyType<C> celestial body type} that orbits a celestial body.
  *
  * @param <C> the type of configuration
  */
 public interface Orbits<C extends CelestialBodyConfig>
 {
+	// todo: implement more accurate temperature cycles
 	/**
 	 * Returns the approximate temperature on this celestial body during the day (in Celsius)
 	 *
