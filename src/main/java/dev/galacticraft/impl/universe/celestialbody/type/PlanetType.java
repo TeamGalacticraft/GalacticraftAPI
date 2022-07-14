@@ -33,6 +33,7 @@ import dev.galacticraft.api.universe.galaxy.Galaxy;
 import dev.galacticraft.api.universe.position.CelestialPosition;
 import dev.galacticraft.impl.universe.celestialbody.config.PlanetConfig;
 import net.minecraft.core.Registry;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.Level;
@@ -97,13 +98,8 @@ public class PlanetType extends CelestialBodyType<PlanetConfig> implements Landa
     }
 
     @Override
-    public int dayTemperature(PlanetConfig config) {
-        return config.dayTemperature();
-    }
-
-    @Override
-    public int nightTemperature(PlanetConfig config) {
-        return config.nightTemperature();
+    public int temperature(RegistryAccess access, long time, PlanetConfig config) {
+        return time % 24000 < 12000 ? config.dayTemperature() : config.nightTemperature(); //todo: temperature providers?
     }
 
     @Override

@@ -39,7 +39,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(BuiltinRegistries.class)
 public abstract class BuiltinRegistriesMixin {
-
     @Shadow
     private static <T, R extends WritableRegistry<T>> R internalRegister(ResourceKey<? extends Registry<T>> registryRef, R registry, BuiltinRegistries.RegistryBootstrap<T> initializer, Lifecycle lifecycle) {
         throw new UnsupportedOperationException("Untransformed mixin");

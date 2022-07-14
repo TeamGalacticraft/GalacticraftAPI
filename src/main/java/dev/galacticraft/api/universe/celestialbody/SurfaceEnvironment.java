@@ -20,23 +20,18 @@
  * SOFTWARE.
  */
 
-package dev.galacticraft.api.universe.celestialbody.satellite;
+package dev.galacticraft.api.universe.celestialbody;
 
-import dev.galacticraft.api.satellite.SatelliteRecipe;
-import dev.galacticraft.api.universe.celestialbody.CelestialBodyConfig;
-import org.jetbrains.annotations.Nullable;
+import net.minecraft.core.RegistryAccess;
 
-/**
- * Represents a {@link dev.galacticraft.api.universe.celestialbody.CelestialBodyType<C> celestial body type} that can potentially allow player-made objects to orbit itself.
- *
- * @param <C> the type of configuration
- */
-public interface Orbitable<C extends CelestialBodyConfig> {
+public interface SurfaceEnvironment<C extends CelestialBodyConfig> {
     /**
-     * Returns the {@link SatelliteRecipe stellite recipe} of this celestial body, or {@code null} if satellites should not be allowed to be created
+     * Returns the approximate temperature on this celestial body
      *
+     * @param access the registry access
+     * @param time the current world time
      * @param config the celestial body configuration to be queried
-     * @return the {@link SatelliteRecipe satellite recipe} of this celestial body
+     * @return the approximate temperature on this celestial body
      */
-    @Nullable SatelliteRecipe satelliteRecipe(C config);
+    int temperature(RegistryAccess access, long time, C config);
 }

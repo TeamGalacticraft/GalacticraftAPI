@@ -25,9 +25,9 @@ import java.time.format.DateTimeFormatter
 plugins {
     java
     `maven-publish`
-    id("fabric-loom") version "0.11-SNAPSHOT"
+    id("fabric-loom") version "0.12-SNAPSHOT"
     id("org.cadixdev.licenser") version "0.6.1"
-    id("io.github.juuxel.loom-quiltflower") version("1.7.1")
+    id("io.github.juuxel.loom-quiltflower") version("1.7.3")
 }
 
 val modId           = project.property("mod.id").toString()
@@ -36,7 +36,6 @@ val modName         = project.property("mod.name").toString()
 val modGroup        = project.property("mod.group").toString()
 
 val minecraft       = project.property("minecraft.version").toString()
-val yarn            = project.property("yarn.build").toString()
 val loader          = project.property("loader.version").toString()
 val fabric          = project.property("fabric.version").toString()
 val machinelib      = project.property("machinelib.version").toString()
@@ -50,13 +49,18 @@ java {
     targetCompatibility = JavaVersion.VERSION_17
     sourceCompatibility = JavaVersion.VERSION_17
 
-    withSourcesJar()
     withJavadocJar()
 }
 
-val gametestSourceSet = sourceSets.create("gametest") {
-    java.srcDir("src/gametest/java")
-    resources.srcDir("src/gametest/resources")
+sourceSets {
+    create("gametest") {
+        java {
+            srcDir("src/gametest/java")
+        }
+        resources {
+            srcDir("src/gametest/resources")
+        }
+    }
 }
 
 loom {
@@ -69,7 +73,14 @@ loom {
         register("gametest") {
             server()
             name("Game Test")
-            source(gametestSourceSet)
+            source(sourceSets.getByName("gametest"))
+            property("fabric.log.level", "debug")
+            vmArgs("-Dfabric-api.gametest", "-Dfabric-api.gametest.report-file=${project.buildDir}/junit.xml", "-ea")
+        }
+        register("gametestClient") {
+            server()
+            name("Game Test Client")
+            source(sourceSets.getByName("gametest"))
             property("fabric.log.level", "debug")
             vmArgs("-Dfabric-api.gametest", "-Dfabric-api.gametest.report-file=${project.buildDir}/junit.xml", "-ea")
         }
@@ -78,7 +89,7 @@ loom {
 
 repositories {
     mavenLocal()
-    maven("https://maven.galacticraft.dev/") {
+    maven("https://maven.galacticraft.net/maven-releases/") {
         name = "Galacticraft Repository"
         content {
             includeGroup("dev.galacticraft")
@@ -109,6 +120,8 @@ dependencies {
 
     modImplementation("dev.galacticraft:MachineLib:$machinelib")
     modRuntimeOnly("net.fabricmc.fabric-api:fabric-api:$fabric")
+    "gametestImplementation"(sourceSets.main.get().output)
+    "gametestImplementation"(sourceSets.main.get().compileClasspath)
 }
 
 tasks.processResources {
@@ -190,5 +203,3 @@ tasks.named<ProcessResources>("processGametestResources") {
 }
 
 tasks.getByName("gametestClasses").dependsOn("classes")
-gametestSourceSet.compileClasspath += sourceSets.main.get().compileClasspath + sourceSets.main.get().output
-gametestSourceSet.runtimeClasspath += sourceSets.main.get().runtimeClasspath + sourceSets.main.get().output

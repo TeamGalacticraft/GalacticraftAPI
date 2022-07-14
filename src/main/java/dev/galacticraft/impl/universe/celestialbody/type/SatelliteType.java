@@ -208,7 +208,7 @@ public class SatelliteType extends CelestialBodyType<SatelliteConfig> implements
     }
 
     @Override
-    public int dayTemperature(SatelliteConfig config) {
+    public int temperature(SatelliteConfig config) {
         return 121;
     }
 

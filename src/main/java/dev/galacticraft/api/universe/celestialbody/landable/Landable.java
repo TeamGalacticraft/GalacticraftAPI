@@ -23,6 +23,7 @@
 package dev.galacticraft.api.universe.celestialbody.landable;
 
 import dev.galacticraft.api.universe.celestialbody.CelestialBodyConfig;
+import dev.galacticraft.api.universe.celestialbody.SurfaceEnvironment;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
@@ -32,7 +33,7 @@ import org.jetbrains.annotations.NotNull;
  *
  * @param <C> the type of configuration
  */
-public interface Landable<C extends CelestialBodyConfig> {
+public interface Landable<C extends CelestialBodyConfig> extends SurfaceEnvironment<C> {
     /**
      * Returns the registry key of the {@link Level} this celestial body is linked to
      *
@@ -42,27 +43,11 @@ public interface Landable<C extends CelestialBodyConfig> {
     @NotNull ResourceKey<Level> world(C config);
 
     /**
-     * Returns the access weight required to generically reach this celestial body, or a negative value if it cannot be accessed this way.
+     * Returns the access weight required to generically reach this celestial body or a negative value if it cannot be accessed this way.
      * For more advanced access requirements see {@link dev.galacticraft.api.rocket.travelpredicate.TravelPredicateType}
      *
      * @param config the celestial body configuration to be queried
      * @return the access weight required to generically reach this celestial body
      */
     int accessWeight(C config);
-
-    /**
-     * Returns the approximate temperature on this celestial body during the day (in Celsius)
-     *
-     * @param config the celestial body configuration to be queried
-     * @return the approximate temperature on this celestial body during the day
-     */
-    int dayTemperature(C config);
-
-    /**
-     * Returns the approximate temperature on this celestial body during the night (in Celsius)
-     *
-     * @param config the celestial body configuration to be queried
-     * @return the approximate temperature on this celestial body during the night
-     */
-    int nightTemperature(C config);
 }
