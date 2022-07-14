@@ -36,9 +36,9 @@ import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.util.dynamic.RegistryOps;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.Objects;
@@ -54,7 +54,7 @@ public class GalacticraftAPIClient implements ClientModInitializer {
             client.execute(() -> ((ClientResearchAccessor) Objects.requireNonNull(client.player)).readChanges(buf));
         });
         ClientPlayNetworking.registerGlobalReceiver(new ResourceLocation(Constant.MOD_ID, "add_satellite"), (client, networkHandler, buffer, sender) -> {
-            ((SatelliteAccessor) networkHandler).addSatellite(buffer.readResourceLocation(), new CelestialBody<>(SatelliteType.INSTANCE, SatelliteConfig.CODEC.decode(RegistryOps.of(NbtOps.INSTANCE, networkHandler.getRegistryManager()), buffer.readNbt()).get().orThrow().getFirst()));
+            ((SatelliteAccessor) networkHandler).addSatellite(buffer.readResourceLocation(), new CelestialBody<>(SatelliteType.INSTANCE, SatelliteConfig.CODEC.decode(RegistryOps.create(NbtOps.INSTANCE, networkHandler.registryAccess()), buffer.readNbt()).get().orThrow().getFirst()));
         });
         ClientPlayNetworking.registerGlobalReceiver(new ResourceLocation(Constant.MOD_ID, "remove_satellite"), (client, networkHandler, buffer, sender) -> {
             FriendlyByteBuf buf = new FriendlyByteBuf(buffer.copy());

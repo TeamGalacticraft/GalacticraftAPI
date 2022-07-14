@@ -27,33 +27,22 @@ import dev.galacticraft.api.accessor.SatelliteAccessor;
 import dev.galacticraft.impl.Constant;
 import dev.galacticraft.impl.universe.position.config.SatelliteConfig;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
-import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
-import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtOps;
 import net.minecraft.network.Connection;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientboundCustomPayloadPacket;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.players.PlayerList;
 import net.minecraft.world.Container;
-import net.minecraft.inventory.Inventory;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtOps;
-import net.minecraft.network.ClientConnection;
-import net.minecraft.network.Packet;
-import net.minecraft.network.PacketByteBuf;
-import net.minecraft.network.packet.s2c.play.CustomPayloadS2CPacket;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.PlayerManager;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.test.TestServer;
-import net.minecraft.util.Identifier;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-
-import java.util.Collection;
 
 /**
  * @author <a href="https://github.com/TeamGalacticraft">TeamGalacticraft</a>
@@ -62,7 +51,7 @@ import java.util.Collection;
 public abstract class PlayerManagerMixin {
     @Shadow public abstract MinecraftServer getServer();
 
-    @Shadow public abstract void sendToAll(Packet<?> packet);
+    @Shadow public abstract void broadcastAll(Packet<?> packet);
 
     @Inject(method = "placeNewPlayer", at = @At("RETURN"))
     private void galacticraft_syncGearInventory(Connection connection, ServerPlayer player, CallbackInfo ci) {
@@ -74,11 +63,11 @@ public abstract class PlayerManagerMixin {
             buf.writeItem(inventory.getItem(i));
         }
 
-        this.sendToAll(new CustomPayloadS2CPacket(new Identifier(Constant.MOD_ID, "gear_inv_sync"), buf));
+        this.broadcastAll(new ClientboundCustomPayloadPacket(new ResourceLocation(Constant.MOD_ID, "gear_inv_sync"), buf));
 
         ((SatelliteAccessor) this.getServer()).getSatellites().forEach((id, satellite) -> {
-            NbtCompound compound = (NbtCompound) SatelliteConfig.CODEC.encode(satellite.config(), NbtOps.INSTANCE, new NbtCompound()).get().orThrow();
-            connection.send(new CustomPayloadS2CPacket(new Identifier(Constant.MOD_ID, "add_satellite"), PacketByteBufs.create().writeIdentifier(id).writeNbt(compound)));
+            CompoundTag compound = (CompoundTag) SatelliteConfig.CODEC.encode(satellite.config(), NbtOps.INSTANCE, new CompoundTag()).get().orThrow();
+            connection.send(new ClientboundCustomPayloadPacket(new ResourceLocation(Constant.MOD_ID, "add_satellite"), PacketByteBufs.create().writeResourceLocation(id).writeNbt(compound)));
         });
     }
 }

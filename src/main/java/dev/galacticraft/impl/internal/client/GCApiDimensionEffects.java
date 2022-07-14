@@ -22,17 +22,17 @@
 
 package dev.galacticraft.impl.internal.client;
 
+import com.mojang.authlib.minecraft.client.MinecraftClient;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.*;
+import com.mojang.math.Vector3f;
 import dev.galacticraft.api.universe.display.CelestialDisplay;
 import net.fabricmc.fabric.api.client.rendering.v1.DimensionRenderingRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gl.VertexBuffer;
-import net.minecraft.client.render.*;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3f;
-import net.minecraft.world.World;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.util.Mth;
+import net.minecraft.world.level.Level;
 
 import java.util.Random;
 
@@ -57,9 +57,9 @@ public final class GCApiDimensionEffects {
             this.starDisplay = starDisplay;
             this.planetDisplay = planetDisplay;
             final Random random = new Random(27893L);
-            final BufferBuilder buffer = Tessellator.getInstance().getBuffer();
+            final BufferBuilder buffer = Tesselator.getInstance().getBuilder();
             RenderSystem.setShader(GameRenderer::getPositionShader);
-            buffer.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION);
+            buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION);
             for (int i = 0; i < 12000; ++i) {
                 double j = random.nextFloat() * 2.0F - 1.0F;
                 double k = random.nextFloat() * 2.0F - 1.0F;
@@ -95,12 +95,13 @@ public final class GCApiDimensionEffects {
                         double h = b * v - e * w;
                         double aa = h * s - f * t;
                         double ab = f * s + h * t;
-                        buffer.vertex((o + aa) * (i > 6000 ? -1 : 1), (p + g) * (i > 6000 ? -1 : 1), (q + ab) * (i > 6000 ? -1 : 1)).next();
+                        buffer.vertex((o + aa) * (i > 6000 ? -1 : 1), (p + g) * (i > 6000 ? -1 : 1), (q + ab) * (i > 6000 ? -1 : 1)).endVertex();
                     }
                 }
             }
-            buffer.end();
-            starBuffer.upload(buffer);
+            starBuffer.bind();
+            starBuffer.upload(buffer.end());
+            VertexBuffer.unbind();
         }
 
         @Override
@@ -110,55 +111,54 @@ public final class GCApiDimensionEffects {
             RenderSystem.disableBlend();
             RenderSystem.depthMask(false);
 
-            final MatrixStack matrices = context.matrixStack();
-            final BufferBuilder buffer = Tessellator.getInstance().getBuffer();
+            final PoseStack matrices = context.matrixStack();
+            final BufferBuilder buffer = Tesselator.getInstance().getBuilder();
             float starBrightness = this.getStarBrightness(context.world(), context.tickDelta());
 
             context.profiler().push("stars");
-            matrices.push();
-            matrices.multiply(Vec3f.POSITIVE_Y.getDegreesQuaternion(-90.0F));
-            matrices.multiply(Vec3f.POSITIVE_X.getDegreesQuaternion(context.world().getSkyAngle(context.tickDelta()) * 360.0f));
-            matrices.multiply(Vec3f.POSITIVE_Y.getDegreesQuaternion(-19.0F));
+            matrices.pushPose();
+            matrices.mulPose(Vector3f.YP.rotationDegrees(-90.0F));
+            matrices.mulPose(Vector3f.XP.rotationDegrees(context.world().getSunAngle(context.tickDelta()) * 360.0f));
+            matrices.mulPose(Vector3f.YP.rotationDegrees(-19.0F));
             RenderSystem.setShaderColor(1.0F, 0.95F, 0.9F, starBrightness);
             RenderSystem.disableTexture();
-            this.starBuffer.setShader(matrices.peek().getPositionMatrix(), context.projectionMatrix(), GameRenderer.getPositionShader());
             this.starBuffer.bind();
-            this.starBuffer.drawVertices();
+            this.starBuffer.drawWithShader(matrices.last().pose(), context.projectionMatrix(), GameRenderer.getPositionShader());
             VertexBuffer.unbind();
 
-            matrices.pop();
+            matrices.popPose();
             context.profiler().pop();
 
             context.profiler().push("sun");
-            matrices.push();
+            matrices.pushPose();
 
-            matrices.multiply(Vec3f.POSITIVE_Y.getDegreesQuaternion(-90.0F));
-            matrices.multiply(Vec3f.POSITIVE_X.getDegreesQuaternion(context.world().getSkyAngle(context.tickDelta()) * 360.0f));
+            matrices.mulPose(Vector3f.YP.rotationDegrees(-90.0F));
+            matrices.mulPose(Vector3f.XP.rotationDegrees(context.world().getSunAngle(context.tickDelta()) * 360.0f));
             matrices.translate(0.0, -100.0, 0.0);
             RenderSystem.enableTexture();
             RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 
             starDisplay.render(matrices, buffer, starSize, Float.MAX_VALUE / 3, Float.MAX_VALUE / 3, context.tickDelta(), RenderSystem::setShader);
 
-            matrices.pop();
-            context.profiler().swap("planet");
-            matrices.push();
+            matrices.popPose();
+            context.profiler().popPush("planet");
+            matrices.pushPose();
 
-            matrices.multiply(Vec3f.POSITIVE_X.getDegreesQuaternion((context.world().getSkyAngle(context.tickDelta()) * 360.0F) * 0.001F + ((float) (context.world().getSpawnPos().getZ() - MinecraftClient.getInstance().player.getZ()) * 0.01F) + 200.0F));
+            matrices.mulPose(Vector3f.XP.rotationDegrees((context.world().getSunAngle(context.tickDelta()) * 360.0F) * 0.001F + ((float) (context.world().getSharedSpawnPos().getZ() - Minecraft.getInstance().player.getZ()) * 0.01F) + 200.0F));
             matrices.scale(0.6F, 0.6F, 0.6F);
             planetDisplay.render(matrices, buffer, planetSize, Float.MAX_VALUE / 3, Float.MAX_VALUE / 3, context.tickDelta(), RenderSystem::setShader);
 
             context.profiler().pop();
-            matrices.pop();
+            matrices.popPose();
 
             RenderSystem.disableTexture();
             RenderSystem.depthMask(true);
             context.profiler().pop();
         }
 
-        private float getStarBrightness(World world, float delta) {
-            final float skyAngle = world.getSkyAngle(delta);
-            float brightness = 1.0F - (MathHelper.cos((float) (skyAngle * Math.PI * 2.0D) * 2.0F + 0.25F));
+        private float getStarBrightness(Level world, float delta) {
+            final float skyAngle = world.getSunAngle(delta);
+            float brightness = 1.0F - (Mth.cos((float) (skyAngle * Math.PI * 2.0D) * 2.0F + 0.25F));
 
             if (brightness < 0.0F) {
                 brightness = 0.0F;

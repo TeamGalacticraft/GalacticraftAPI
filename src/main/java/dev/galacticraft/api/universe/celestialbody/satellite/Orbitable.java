@@ -25,9 +25,9 @@ package dev.galacticraft.api.universe.celestialbody.satellite;
 import dev.galacticraft.api.satellite.SpaceStationRecipe;
 import dev.galacticraft.api.universe.celestialbody.CelestialBodyConfig;
 import dev.galacticraft.impl.universe.position.config.SatelliteConfig;
-import net.minecraft.util.registry.DynamicRegistryManager;
-import net.minecraft.util.registry.RegistryKey;
-import net.minecraft.world.World;
+import net.minecraft.core.RegistryAccess;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -50,9 +50,9 @@ public interface Orbitable<C extends CelestialBodyConfig> {
      * Should only be called on the client.
      *
      * @param world
-     * @param key             the {@link RegistryKey} of the satellite's dimension
+     * @param key             the {@link ResourceKey} of the satellite's dimension
      * @param config          the celestial body configuration
      * @param satelliteConfig
      */
-    void registerClientWorldHooks(DynamicRegistryManager manager, /*Client*/World world, RegistryKey<World> key, C config, SatelliteConfig satelliteConfig);
+    void registerClientWorldHooks(RegistryAccess manager, /*Client*/Level world, ResourceKey<Level> key, C config, SatelliteConfig satelliteConfig);
 }

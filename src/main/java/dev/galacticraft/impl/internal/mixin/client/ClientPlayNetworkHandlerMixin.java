@@ -29,12 +29,12 @@ import dev.galacticraft.impl.universe.celestialbody.type.SatelliteType;
 import dev.galacticraft.impl.universe.position.config.SatelliteConfig;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.multiplayer.ClientPacketListener;
-import net.minecraft.client.world.ClientWorld;
+import net.minecraft.core.Registry;
+import net.minecraft.core.RegistryAccess;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.registry.DynamicRegistryManager;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.util.registry.RegistryKey;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -47,9 +47,9 @@ import java.util.Map;
 @Environment(EnvType.CLIENT)
 @Mixin(ClientPacketListener.class)
 public abstract class ClientPlayNetworkHandlerMixin implements ClientSatelliteAccessor {
-    @Shadow public abstract DynamicRegistryManager getRegistryManager();
+    @Shadow public abstract RegistryAccess registryAccess();
 
-    @Shadow private ClientWorld world;
+    @Shadow private ClientLevel level;
     private final @Unique Map<ResourceLocation, CelestialBody<SatelliteConfig, SatelliteType>> satellites = new HashMap<>();
     private final @Unique List<SatelliteListener> listeners = new ArrayList<>();
 
@@ -60,8 +60,8 @@ public abstract class ClientPlayNetworkHandlerMixin implements ClientSatelliteAc
 
     @Override
     public void addSatellite(ResourceLocation id, CelestialBody<SatelliteConfig, SatelliteType> satellite) {
-        CelestialBody<?, ?> parent = satellite.parent(this.getRegistryManager());
-        ((Orbitable) parent.type()).registerClientWorldHooks(this.getRegistryManager(), this.world, RegistryKey.of(Registry.WORLD_KEY, id), parent.config(), satellite.config());
+        CelestialBody<?, ?> parent = satellite.parent(this.registryAccess());
+        ((Orbitable) parent.type()).registerClientWorldHooks(this.registryAccess(), this.level, ResourceKey.create(Registry.DIMENSION_REGISTRY, id), parent.config(), satellite.config());
         this.satellites.put(id, satellite);
         for (SatelliteListener listener : this.listeners) {
             listener.onSatelliteUpdated(satellite, true);

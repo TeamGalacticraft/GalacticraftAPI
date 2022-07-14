@@ -24,7 +24,6 @@ package dev.galacticraft.impl.internal.command;
 
 import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
-import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import dev.galacticraft.api.accessor.WorldOxygenAccessor;
@@ -32,20 +31,7 @@ import dev.galacticraft.api.registry.AddonRegistry;
 import dev.galacticraft.impl.Constant;
 import dev.galacticraft.impl.command.argument.RegistryArgumentType;
 import dev.galacticraft.impl.universe.celestialbody.type.SatelliteType;
-import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
-import net.minecraft.command.argument.BlockPosArgumentType;
-import net.minecraft.command.argument.IdentifierArgumentType;
-import net.minecraft.server.command.Commands;
-import net.minecraft.server.command.ServerCommandSource;
-import net.minecraft.structure.Structure;
-import net.minecraft.text.LiteralText;
-import net.minecraft.text.TranslatableText;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.math.BlockBox;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.registry.Registry;
 import dev.galacticraft.impl.command.argument.serializer.RegistryArgumentTypeSerializer;
-import net.fabricmc.fabric.api.command.v2.ArgumentTypeRegistry;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.mixin.command.ArgumentTypesAccessor;
 import net.minecraft.commands.CommandSourceStack;
@@ -57,6 +43,7 @@ import net.minecraft.core.Registry;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
+import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
@@ -67,62 +54,62 @@ public class GCApiCommands {
     public static void register() {
         RegistryArgumentTypeSerializer serializer = new RegistryArgumentTypeSerializer();
         ArgumentTypesAccessor.fabric_getClassMap().put( RegistryArgumentType.class, serializer);
-        CommandRegistrationCallback.EVENT.register((dispatcher, server) -> {
+        CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, commandSelection) -> {
             dispatcher.register(Commands.literal(Constant.MOD_ID + ":debug")
-                            .requires(serverCommandSource -> serverCommandSource.hasPermissionLevel(2)).then(Commands.literal("registry").then(Commands.argument("registry", RegistryArgumentType.create())
+                            .requires(serverCommandSource -> serverCommandSource.hasPermission(2)).then(Commands.literal("registry").then(Commands.argument("registry", RegistryArgumentType.create())
                     .then(Commands.literal("dump_ids").executes(GCApiCommands::dumpRegistries))
                     .then(Commands.literal("get")
-                            .then(Commands.argument("id", IdentifierArgumentType.identifier())
+                            .then(Commands.argument("id", ResourceLocationArgument.id())
                                     .executes(GCApiCommands::getRegistryValue)))
                     .then(Commands.literal("get_raw")
                             .then(Commands.argument("id", IntegerArgumentType.integer())
                                     .executes(GCApiCommands::getRegistryValueFromRawId)))
                     .then(Commands.literal("to_raw")
-                            .then(Commands.argument("id", IdentifierArgumentType.identifier())
+                            .then(Commands.argument("id", ResourceLocationArgument.id())
                                     .executes(GCApiCommands::getRegistryRawId)))
                     .then(Commands.literal("dump_values")
-                            .then(Commands.argument("id", IdentifierArgumentType.identifier())
+                            .then(Commands.argument("id", ResourceLocationArgument.id())
                                     .executes(GCApiCommands::dumpRegistryValues))))));
 
-            dispatcher.register(Commands.literal(Constant.MOD_ID + ":oxygen").requires(source -> source.hasPermissionLevel(3))
-                    .then(Commands.literal("get").then(Commands.argument("start_pos", BlockPosArgumentType.blockPos())
+            dispatcher.register(Commands.literal(Constant.MOD_ID + ":oxygen").requires(source -> source.hasPermission(3))
+                    .then(Commands.literal("get").then(Commands.argument("start_pos", BlockPosArgument.blockPos())
                             .executes(GCApiCommands::getOxygen)
-                            .then(Commands.argument("end_pos", BlockPosArgumentType.blockPos())
+                            .then(Commands.argument("end_pos", BlockPosArgument.blockPos())
                                     .executes(GCApiCommands::getOxygenArea))))
                     .then(Commands.literal("set")
-                            .then(Commands.argument("start_pos", BlockPosArgumentType.blockPos())
+                            .then(Commands.argument("start_pos", BlockPosArgument.blockPos())
                                     .then(Commands.argument("oxygen", BoolArgumentType.bool())
                                             .executes(GCApiCommands::setOxygen))
-                                    .then(Commands.argument("end_pos", BlockPosArgumentType.blockPos())
+                                    .then(Commands.argument("end_pos", BlockPosArgument.blockPos())
                                             .then(Commands.argument("oxygen", BoolArgumentType.bool())
                                                     .executes(GCApiCommands::setOxygenArea))))));
 
-            dispatcher.register(Commands.literal(Constant.MOD_ID + ":satellite").requires(source -> source.hasPermissionLevel(3))
-                    .then(Commands.literal("add").then(Commands.argument("world", IdentifierArgumentType.identifier())
+            dispatcher.register(Commands.literal(Constant.MOD_ID + ":satellite").requires(source -> source.hasPermission(3))
+                    .then(Commands.literal("add").then(Commands.argument("world", ResourceLocationArgument.id())
                             .executes(GCApiCommands::addSatellite)
-                            .then(Commands.argument("structure", IdentifierArgumentType.identifier())
+                            .then(Commands.argument("structure", ResourceLocationArgument.id())
                                     .executes(GCApiCommands::addSatelliteStructured))))
-                    .then(Commands.literal("remove").then(Commands.argument("id", IdentifierArgumentType.identifier())
+                    .then(Commands.literal("remove").then(Commands.argument("id", ResourceLocationArgument.id())
                             .executes(GCApiCommands::removeSatellite))));
         });
     }
 
-    private static int removeSatellite(@NotNull CommandContext<ServerCommandSource> ctx) throws CommandSyntaxException {
-        if (SatelliteType.removeSatellite(ctx.getSource().getServer(), IdentifierArgumentType.getIdentifier(ctx, "id"))) {
+    private static int removeSatellite(@NotNull CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        if (SatelliteType.removeSatellite(ctx.getSource().getServer(), ResourceLocationArgument.getId(ctx, "id"))) {
             return 1;
         } else {
             return 0;
         }
     }
 
-    private static int addSatelliteStructured(@NotNull CommandContext<ServerCommandSource> ctx) throws CommandSyntaxException {
-        Structure structure = ctx.getSource().getServer().getStructureManager().getStructure(IdentifierArgumentType.getIdentifier(ctx, "structure")).orElseThrow();
-        SatelliteType.registerSatellite(ctx.getSource().getServer(), ctx.getSource().getPlayer(), Objects.requireNonNull(ctx.getSource().getRegistryManager().get(AddonRegistry.CELESTIAL_BODY_KEY).get(IdentifierArgumentType.getIdentifier(ctx, "world"))), structure);
+    private static int addSatelliteStructured(@NotNull CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        StructureTemplate structure = ctx.getSource().getServer().getStructureManager().get(ResourceLocationArgument.getId(ctx, "structure")).orElseThrow();
+        SatelliteType.registerSpaceStation(ctx.getSource().getServer(), ctx.getSource().getPlayer(), Objects.requireNonNull(ctx.getSource().registryAccess().registryOrThrow(AddonRegistry.CELESTIAL_BODY_KEY).get(ResourceLocationArgument.getId(ctx, "world"))), structure);
         return 1;
     }
 
-    private static int addSatellite(@NotNull CommandContext<ServerCommandSource> ctx) throws CommandSyntaxException {
-        SatelliteType.registerSatellite(ctx.getSource().getServer(), ctx.getSource().getPlayer(), Objects.requireNonNull(ctx.getSource().getRegistryManager().get(AddonRegistry.CELESTIAL_BODY_KEY).get(IdentifierArgumentType.getIdentifier(ctx, "world"))), new Structure());
+    private static int addSatellite(@NotNull CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+        SatelliteType.registerSpaceStation(ctx.getSource().getServer(), ctx.getSource().getPlayer(), Objects.requireNonNull(ctx.getSource().registryAccess().registryOrThrow(AddonRegistry.CELESTIAL_BODY_KEY).get(ResourceLocationArgument.getId(ctx, "world"))), new StructureTemplate());
         return 1;
     }
 
@@ -191,42 +178,42 @@ public class GCApiCommands {
         return 1;
     }
 
-    private static int getRegistryValue(CommandContext<ServerCommandSource> context) {
+    private static int getRegistryValue(CommandContext<CommandSourceStack> context) {
         Registry<?> registry = RegistryArgumentType.getRegistry(context, "registry");
-        context.getSource().sendFeedback(new TranslatableText("command.galacticraft-api.debug.registry.id", registry.getKey().getValue(), registry.get(IdentifierArgumentType.getIdentifier(context, "id"))), true);
+        context.getSource().sendSuccess(Component.translatable("command.galacticraft-api.debug.registry.id", registry.key().location(), registry.get(ResourceLocationArgument.getId(context, "id"))), true);
         return 1;
     }
 
-    private static int getRegistryRawId(CommandContext<ServerCommandSource> context) {
+    private static int getRegistryRawId(CommandContext<CommandSourceStack> context) {
         Registry<? super Object> registry = RegistryArgumentType.getRegistry(context, "registry");
-        Object o = registry.get(IdentifierArgumentType.getIdentifier(context, "id"));
-        context.getSource().sendFeedback(new TranslatableText("command.galacticraft-api.debug.registry.id", registry.getKey().getValue(), registry.getRawId(o)), true);
+        Object o = registry.get(ResourceLocationArgument.getId(context, "id"));
+        context.getSource().sendSuccess(Component.translatable("command.galacticraft-api.debug.registry.id", registry.key().location(), registry.getId(o)), true);
         return 1;
     }
 
-    private static int dumpRegistryValues(CommandContext<ServerCommandSource> context) {
-        ServerCommandSource source = context.getSource();
+    private static int dumpRegistryValues(CommandContext<CommandSourceStack> context) {
+        CommandSourceStack source = context.getSource();
         Registry<?> registry = RegistryArgumentType.getRegistry(context, "registry");
-        source.sendFeedback(new TranslatableText("command.galacticraft-api.debug.registry.dump", registry.getKey().getValue().toString()), true);
-        for (Identifier id : registry.getIds()) {
-            source.sendFeedback(new LiteralText(id.toString() + " - " + registry.get(id)), false);
+        source.sendSuccess(Component.translatable("command.galacticraft-api.debug.registry.dump", registry.key().location().toString()), true);
+        for (ResourceLocation id : registry.keySet()) {
+            source.sendSuccess(Component.literal(id.toString() + " - " + registry.get(id)), false);
         }
         return 1;
     }
 
-    private static int dumpRegistries(CommandContext<ServerCommandSource> context) {
-        ServerCommandSource source = context.getSource();
+    private static int dumpRegistries(CommandContext<CommandSourceStack> context) {
+        CommandSourceStack source = context.getSource();
         Registry<?> registry = RegistryArgumentType.getRegistry(context, "registry");
-        source.sendFeedback(new TranslatableText("command.galacticraft-api.debug.registry.dump", registry.getKey().getValue().toString()), true);
-        for (Identifier id : registry.getIds()) {
-            source.sendFeedback(new LiteralText(id.toString()), false);
+        source.sendSuccess(Component.translatable("command.galacticraft-api.debug.registry.dump", registry.key().location().toString()), true);
+        for (ResourceLocation id : registry.keySet()) {
+            source.sendSuccess(Component.literal(id.toString()), false);
         }
         return 1;
     }
 
-    private static int getRegistryValueFromRawId(CommandContext<ServerCommandSource> context) {
+    private static int getRegistryValueFromRawId(CommandContext<CommandSourceStack> context) {
         Registry<?> registry = RegistryArgumentType.getRegistry(context, "registry");
-        context.getSource().sendFeedback(new TranslatableText("command.galacticraft-api.debug.registry.id", registry.getKey().getValue(), registry.get(IntegerArgumentType.getInteger(context, "id"))), true);
+        context.getSource().sendSuccess(Component.translatable("command.galacticraft-api.debug.registry.id", registry.key().location(), registry.byId(IntegerArgumentType.getInteger(context, "id"))), true);
         return 1;
     }
 }

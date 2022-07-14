@@ -50,6 +50,7 @@ import io.netty.buffer.Unpooled;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.network.FriendlyByteBuf;
@@ -59,31 +60,12 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.server.level.progress.ChunkProgressListener;
 import net.minecraft.tags.TagKey;
-import net.minecraft.util.valueproviders.UniformInt;
-import net.minecraft.world.level.ChunkPos;
+import net.minecraft.util.valueproviders.ConstantInt;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.biome.BiomeManager;
-import net.minecraft.world.level.border.BorderChangeListener;
-import net.minecraft.world.level.chunk.ChunkStatus;
 import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.world.level.dimension.LevelStem;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
-import net.minecraft.world.level.storage.DerivedLevelData;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.structure.Structure;
-import net.minecraft.tag.TagKey;
-import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.util.registry.RegistryEntry;
-import net.minecraft.util.registry.RegistryKey;
-import net.minecraft.world.World;
-import net.minecraft.world.dimension.DimensionOptions;
-import net.minecraft.world.dimension.DimensionType;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -96,21 +78,21 @@ import java.util.OptionalLong;
 public class SatelliteType extends CelestialBodyType<SatelliteConfig> implements Satellite<SatelliteConfig>, Landable<SatelliteConfig> {
     public static final SatelliteType INSTANCE = new SatelliteType(SatelliteConfig.CODEC);
     private static final PlayerRemover PLAYER_REMOVER = (server, player) -> {
-        CelestialBody<CelestialBodyConfig, ? extends CelestialBodyType<CelestialBodyConfig>> satellite = CelestialBody.getByDimension(server.getRegistryManager(), player.getWorld().getRegistryKey()).orElse(null);
+        CelestialBody<CelestialBodyConfig, ? extends CelestialBodyType<CelestialBodyConfig>> satellite = CelestialBody.getByDimension(server.registryAccess(), player.getLevel().dimension()).orElse(null);
         if (satellite != null) {
-            CelestialBody<?, ?> parent = satellite.parent(server.getRegistryManager());
+            CelestialBody<?, ?> parent = satellite.parent(server.registryAccess());
             if (parent != null) {
                 if (parent.type() instanceof Landable landable) {
-                    ServerWorld world = server.getWorld(landable.world(parent.config()));
-                    player.teleport(world, player.getX(), world.getTopY() * 2, player.getZ(), player.getYaw(), player.getPitch());
-                    player.setVelocity((world.random.nextDouble() - 0.5) * 10.0, world.random.nextDouble() * 12.5, (world.random.nextDouble() - 0.5) * 10.0);
+                    ServerLevel level = server.getLevel(landable.world(parent.config()));
+                    player.teleportTo(level, player.getX(), level.getMaxBuildHeight() * 2, player.getZ(), player.getYRot(), player.getXRot());
+                    player.setDeltaMovement((level.random.nextDouble() - 0.5) * 10.0, level.random.nextDouble() * 12.5, (level.random.nextDouble() - 0.5) * 10.0);
                     return;
                 }
             }
         }
-        ServerWorld overworld = server.getOverworld();
-        player.teleport(overworld, 0, 1000, 0, player.getYaw(), player.getPitch());
-        player.setVelocity((overworld.random.nextDouble() - 0.5) * 10.0, overworld.random.nextDouble() * 20.0, (overworld.random.nextDouble() - 0.5) * 10.0);
+        ServerLevel overworld = server.overworld();
+        player.teleportTo(overworld, 0, 1000, 0, player.getYRot(), player.getXRot());
+        player.setDeltaMovement((overworld.random.nextDouble() - 0.5) * 10.0, overworld.random.nextDouble() * 20.0, (overworld.random.nextDouble() - 0.5) * 10.0);
     };
     private static final GasComposition EMPTY_GAS_COMPOSITION = new GasComposition.Builder().build();
     private static final Component NAME = Component.translatable("ui.galacticraft-api.satellite.name");
@@ -121,18 +103,18 @@ public class SatelliteType extends CelestialBodyType<SatelliteConfig> implements
     }
 
     @ApiStatus.Experimental
-    public static CelestialBody<SatelliteConfig, SatelliteType> registerSatellite(@NotNull MinecraftServer server, @NotNull ServerPlayerEntity player, @NotNull CelestialBody<?, ?> parent, @NotNull Structure structure) {
-        Identifier identifier = Objects.requireNonNull(server.getRegistryManager().get(AddonRegistry.CELESTIAL_BODY_KEY).getId(parent));
-        Identifier id = new Identifier(identifier.getNamespace(), "sat_" + identifier.getPath() + "_" + player.getGameProfile().getName().toLowerCase(Locale.ROOT));
-        DimensionType type = DimensionType.create(OptionalLong.empty(), true, false, false, true, 1, false, false, false, false, false, 0, 256, 256, new TagKey<>(Registry.BLOCK_KEY, new Identifier(Constant.MOD_ID, "infiniburn_space")), new Identifier(Constant.MOD_ID, "space_sky"), 0);
-        DimensionOptions options = new DimensionOptions(RegistryEntry.of(type), new SatelliteChunkGenerator(server.getRegistryManager().get(Registry.STRUCTURE_SET_KEY), RegistryEntry.of(GcApiBiomes.SPACE), structure));
-        SatelliteOwnershipData ownershipData = SatelliteOwnershipData.create(player.getUuid(), player.getEntityName(), new LinkedList<>(), false);
+    public static CelestialBody<SatelliteConfig, SatelliteType> registerSpaceStation(@NotNull MinecraftServer server, @NotNull ServerPlayer player, @NotNull CelestialBody<?, ?> parent, @NotNull StructureTemplate structure) {
+        ResourceLocation identifier = Objects.requireNonNull(server.registryAccess().registryOrThrow(AddonRegistry.CELESTIAL_BODY_KEY).getKey(parent));
+        ResourceLocation id = new ResourceLocation(identifier.getNamespace(), "sat_" + identifier.getPath() + "_" + player.getGameProfile().getName().toLowerCase(Locale.ROOT));
+        DimensionType type = new DimensionType(OptionalLong.empty(), true, false, false, true, 1, false, false, 0, 256, 256, TagKey.create(Registry.BLOCK_REGISTRY, new ResourceLocation(Constant.MOD_ID, "infiniburn_space")), new ResourceLocation(Constant.MOD_ID, "space_sky"), 1, new DimensionType.MonsterSettings(false, false, ConstantInt.of(-1), 0));
+        LevelStem options = new LevelStem(Holder.direct(type), new SatelliteChunkGenerator(server.registryAccess().registryOrThrow(Registry.STRUCTURE_SET_REGISTRY), Holder.direct(GcApiBiomes.SPACE), structure));
+        SatelliteOwnershipData ownershipData = SatelliteOwnershipData.create(player.getUUID(), player.getScoreboardName(), new LinkedList<>(), false);
         CelestialPosition<?, ?> position = new CelestialPosition<>(OrbitalCelestialPositionType.INSTANCE, new OrbitalCelestialPositionConfig(1550, 10.0f, 0.0F, false));
-        CelestialDisplay<?, ?> display = new CelestialDisplay<>(IconCelestialDisplayType.INSTANCE, new IconCelestialDisplayConfig(new Identifier(Constant.MOD_ID, "satellite"), 0, 0, 16, 16, 1));
-        RegistryKey<World> key = RegistryKey.of(Registry.WORLD_KEY, id);
-        RegistryKey<DimensionType> key2 = RegistryKey.of(Registry.DIMENSION_TYPE_KEY, id);
-        assert server.getWorld(key) == null : "World already registered?!";
-        assert server.getRegistryManager().get(Registry.DIMENSION_TYPE_KEY).get(key2) == null : "Dimension Type already registered?!";
+        CelestialDisplay<?, ?> display = new CelestialDisplay<>(IconCelestialDisplayType.INSTANCE, new IconCelestialDisplayConfig(new ResourceLocation(Constant.MOD_ID, "satellite"), 0, 0, 16, 16, 1));
+        ResourceKey<Level> key = ResourceKey.create(Registry.DIMENSION_REGISTRY, id);
+        ResourceKey<DimensionType> key2 = ResourceKey.create(Registry.DIMENSION_TYPE_REGISTRY, id);
+        assert server.getLevel(key) == null : "Level already registered?!";
+        assert server.registryAccess().registryOrThrow(Registry.DIMENSION_TYPE_REGISTRY).get(key2) == null : "Dimension Type already registered?!";
         return create(id, server, parent, position, display, options, ownershipData, player.getGameProfile().getName() + "'s Space Station");
     }
 
@@ -143,8 +125,8 @@ public class SatelliteType extends CelestialBodyType<SatelliteConfig> implements
             throw new IllegalArgumentException("Parent must be orbitable!");
         }
 
-        Constant.LOGGER.debug("Attempting to create a world dynamically ({})", id);
-        if (!((DynamicLevelRegistry) server).addDynamicLevel(id, options, options.getDimensionTypeSupplier().value())) {
+        Constant.LOGGER.debug("Attempting to create a level dynamically ({})", id);
+        if (!((DynamicLevelRegistry) server).addDynamicLevel(id, options, options.typeHolder().value())) {
             throw new RuntimeException("Failed to create dynamic level!");
         }
 
@@ -161,12 +143,12 @@ public class SatelliteType extends CelestialBodyType<SatelliteConfig> implements
     }
 
     @ApiStatus.Experimental
-    public static boolean removeSatellite(@NotNull MinecraftServer server, Identifier id) {
+    public static boolean removeSatellite(@NotNull MinecraftServer server, ResourceLocation id) {
         if (((DynamicLevelRegistry) server).removeDynamicLevel(id, PLAYER_REMOVER)) {
             ((SatelliteAccessor) server).removeSatellite(id);
 
-            for (ServerPlayerEntity player : server.getPlayerManager().getPlayerList()) {
-                ServerPlayNetworking.send(player, new Identifier(Constant.MOD_ID, "remove_satellite"), new PacketByteBuf(Unpooled.buffer()).writeIdentifier(id));
+            for (ServerPlayer player : server.getPlayerList().getPlayers()) {
+                ServerPlayNetworking.send(player, new ResourceLocation(Constant.MOD_ID, "remove_satellite"), new FriendlyByteBuf(Unpooled.buffer()).writeResourceLocation(id));
             }
             return true;
         } else {
@@ -240,13 +222,8 @@ public class SatelliteType extends CelestialBodyType<SatelliteConfig> implements
     }
 
     @Override
-    public int temperature(@NotNull SatelliteConfig config) {
-        return 121;
-    }
-
-    @Override
-    public int nightTemperature(@NotNull SatelliteConfig config) {
-        return -157;
+    public int temperature(RegistryAccess access, long time, SatelliteConfig config) {
+        return time % 24000 < 12000 ? 395 : 116; //todo: temperature providers?
     }
 
     @Override

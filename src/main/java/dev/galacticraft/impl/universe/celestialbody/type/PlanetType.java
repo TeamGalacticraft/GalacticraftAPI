@@ -36,11 +36,6 @@ import dev.galacticraft.impl.internal.client.GCApiDimensionEffects;
 import dev.galacticraft.impl.universe.celestialbody.config.PlanetConfig;
 import dev.galacticraft.impl.universe.position.config.SatelliteConfig;
 import net.fabricmc.fabric.api.client.rendering.v1.DimensionRenderingRegistry;
-import net.minecraft.text.TranslatableText;
-import net.minecraft.util.registry.DynamicRegistryManager;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.util.registry.RegistryKey;
-import net.minecraft.world.World;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.chat.Component;
@@ -117,7 +112,7 @@ public class PlanetType extends CelestialBodyType<PlanetConfig> implements Landa
     }
 
     @Override
-    public void registerClientWorldHooks(DynamicRegistryManager manager, World world, RegistryKey<World> key, @NotNull PlanetConfig config, SatelliteConfig satelliteConfig) {
+    public void registerClientWorldHooks(RegistryAccess manager, Level world, ResourceKey<Level> key, @NotNull PlanetConfig config, SatelliteConfig satelliteConfig) {
         DimensionRenderingRegistry.registerCloudRenderer(key, GCApiDimensionEffects.NO_CLOUDS);
         DimensionRenderingRegistry.registerWeatherRenderer(key, GCApiDimensionEffects.NO_WEATHER);
 

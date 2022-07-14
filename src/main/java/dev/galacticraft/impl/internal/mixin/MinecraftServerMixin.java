@@ -22,7 +22,6 @@
 
 package dev.galacticraft.impl.internal.mixin;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import dev.galacticraft.api.accessor.SatelliteAccessor;
 import dev.galacticraft.api.universe.celestialbody.CelestialBody;
@@ -30,39 +29,13 @@ import dev.galacticraft.impl.Constant;
 import dev.galacticraft.impl.universe.celestialbody.type.SatelliteType;
 import dev.galacticraft.impl.universe.position.config.SatelliteConfig;
 import net.fabricmc.fabric.api.util.NbtType;
-import net.minecraft.core.Registry;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.nbt.*;
-import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.WorldSavePath;
-import net.minecraft.util.dynamic.RegistryOps;
-import net.minecraft.util.registry.DynamicRegistryManager;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.util.registry.RegistryEntry;
-import net.minecraft.util.registry.RegistryKey;
-import net.minecraft.world.SaveProperties;
-import net.minecraft.world.World;
-import net.minecraft.world.biome.source.BiomeAccess;
-import net.minecraft.world.border.WorldBorder;
-import net.minecraft.world.border.WorldBorderListener;
-import net.minecraft.world.dimension.DimensionType;
-import net.minecraft.world.gen.chunk.ChunkGenerator;
-import net.minecraft.world.level.UnmodifiableLevelProperties;
-import net.minecraft.world.level.storage.LevelStorage;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.biome.BiomeManager;
-import net.minecraft.world.level.border.BorderChangeListener;
-import net.minecraft.world.level.border.WorldBorder;
-import net.minecraft.world.level.chunk.ChunkGenerator;
-import net.minecraft.world.level.storage.DerivedLevelData;
 import net.minecraft.world.level.storage.LevelResource;
 import net.minecraft.world.level.storage.LevelStorageSource;
-import net.minecraft.world.level.storage.WorldData;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -77,7 +50,6 @@ import java.io.File;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.Executor;
 
 @Mixin(MinecraftServer.class)
 public abstract class MinecraftServerMixin implements SatelliteAccessor {
@@ -85,7 +57,7 @@ public abstract class MinecraftServerMixin implements SatelliteAccessor {
 
     @Shadow @Final protected LevelStorageSource.LevelStorageAccess storageSource;
 
-    @Shadow public abstract DynamicRegistryManager.Immutable getRegistryManager();
+    @Shadow public abstract RegistryAccess.Frozen registryAccess();
 
     @Override
     public @Unmodifiable Map<ResourceLocation, CelestialBody<SatelliteConfig, SatelliteType>> getSatellites() {
@@ -120,16 +92,16 @@ public abstract class MinecraftServerMixin implements SatelliteAccessor {
         }
     }
 
-    @Inject(method = "loadWorld", at = @At(value = "HEAD"))
+    @Inject(method = "loadLevel", at = @At(value = "HEAD"))
     private void galacticraft_loadSatellites(CallbackInfo ci) {
         File worldFile = this.storageSource.getLevelPath(LevelResource.ROOT).toFile();
         if (new File(worldFile, "satellites.dat").exists()) {
             try {
                 ListTag nbt = NbtIo.readCompressed(new File(worldFile, "satellites.dat")).getList("satellites", NbtType.COMPOUND);
                 assert nbt != null : "NBT list was null";
-                for (NbtElement compound : nbt) {
-                    assert compound instanceof NbtCompound : "Not a compound?!";
-                    this.satellites.put(new Identifier(((NbtCompound) compound).getString("id")), new CelestialBody<>(SatelliteType.INSTANCE, SatelliteConfig.CODEC.decode(RegistryOps.of(NbtOps.INSTANCE, this.getRegistryManager()), compound).get().orThrow().getFirst()));
+                for (Tag compound : nbt) {
+                    assert compound instanceof CompoundTag : "Not a compound?!";
+                    this.satellites.put(new ResourceLocation(((CompoundTag) compound).getString("id")), new CelestialBody<>(SatelliteType.INSTANCE, SatelliteConfig.CODEC.decode(RegistryOps.create(NbtOps.INSTANCE, this.registryAccess()), compound).get().orThrow().getFirst()));
                 }
             } catch (Throwable exception) {
                 throw new RuntimeException("Failed to read satellite data!", exception);
