@@ -34,10 +34,10 @@ import dev.galacticraft.impl.internal.client.GCApiDimensionEffects;
 import dev.galacticraft.impl.universe.celestialbody.config.DecorativePlanetConfig;
 import dev.galacticraft.impl.universe.position.config.SatelliteConfig;
 import net.fabricmc.fabric.api.client.rendering.v1.DimensionRenderingRegistry;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.core.Registry;
 import net.minecraft.util.registry.DynamicRegistryManager;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.util.registry.RegistryKey;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -50,7 +50,7 @@ public class DecorativePlanet extends CelestialBodyType<DecorativePlanetConfig> 
     }
 
     @Override
-    public @NotNull TranslatableText name(DecorativePlanetConfig config) {
+    public @NotNull Component name(DecorativePlanetConfig config) {
         return config.name();
     }
 
@@ -60,12 +60,12 @@ public class DecorativePlanet extends CelestialBodyType<DecorativePlanetConfig> 
     }
 
     @Override
-    public @NotNull RegistryKey<Galaxy> galaxy(DecorativePlanetConfig config) {
+    public @NotNull ResourceKey<Galaxy> galaxy(DecorativePlanetConfig config) {
         return config.galaxy();
     }
 
     @Override
-    public @NotNull TranslatableText description(DecorativePlanetConfig config) {
+    public @NotNull Component description(DecorativePlanetConfig config) {
         return config.description();
     }
 

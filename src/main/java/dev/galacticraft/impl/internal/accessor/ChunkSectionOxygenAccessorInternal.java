@@ -22,12 +22,12 @@
 
 package dev.galacticraft.impl.internal.accessor;
 
-import net.minecraft.network.PacketByteBuf;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.BitSet;
+import net.minecraft.network.FriendlyByteBuf;
 
 /**
  * @author <a href="https://github.com/TeamGalacticraft">TeamGalacticraft</a>
@@ -42,9 +42,9 @@ public interface ChunkSectionOxygenAccessorInternal {
 
     void setModifiedBlocks(short amount);
 
-    void writeOxygenPacket(@NotNull PacketByteBuf buf);
+    void writeOxygenPacket(@NotNull FriendlyByteBuf buf);
 
-    void readOxygenPacket(@NotNull PacketByteBuf buf);
+    void readOxygenPacket(@NotNull FriendlyByteBuf buf);
 
     boolean getDefaultBreathable();
 

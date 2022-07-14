@@ -30,24 +30,6 @@ import dev.galacticraft.impl.internal.accessor.ChunkOxygenSyncer;
 import dev.galacticraft.impl.internal.accessor.ChunkSectionOxygenAccessorInternal;
 import dev.galacticraft.impl.internal.accessor.WorldOxygenAccessorInternal;
 import io.netty.buffer.Unpooled;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.fluid.Fluid;
-import net.minecraft.network.PacketByteBuf;
-import net.minecraft.network.packet.s2c.play.CustomPayloadS2CPacket;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.ChunkPos;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.world.HeightLimitView;
-import net.minecraft.world.World;
-import net.minecraft.world.biome.Biome;
-import net.minecraft.world.chunk.Chunk;
-import net.minecraft.world.chunk.ChunkSection;
-import net.minecraft.world.chunk.UpgradeData;
-import net.minecraft.world.chunk.WorldChunk;
-import net.minecraft.world.gen.chunk.BlendingData;
-import net.minecraft.world.tick.ChunkTickScheduler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
@@ -63,26 +45,44 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Registry;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.protocol.game.ClientboundCustomPayloadPacket;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelHeightAccessor;
+import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.chunk.ChunkAccess;
+import net.minecraft.world.level.chunk.LevelChunk;
+import net.minecraft.world.level.chunk.LevelChunkSection;
+import net.minecraft.world.level.chunk.UpgradeData;
+import net.minecraft.world.level.levelgen.blending.BlendingData;
+import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.ticks.LevelChunkTicks;
 
 /**
  * @author <a href="https://github.com/TeamGalacticraft">TeamGalacticraft</a>
  */
-@Mixin(WorldChunk.class)
-public abstract class WorldChunkMixin extends Chunk implements ChunkOxygenAccessor, ChunkOxygenSyncer, ChunkOxygenAccessorInternal {
-    @Shadow @Final World world;
+@Mixin(LevelChunk.class)
+public abstract class WorldChunkMixin extends ChunkAccess implements ChunkOxygenAccessor, ChunkOxygenSyncer, ChunkOxygenAccessorInternal {
+    @Shadow @Final Level level;
     private @Unique boolean /*@NotNull*/ [] sectionDirty;
     private @Unique boolean defaultBreathable = false;
     private @Unique boolean dirty = false;
 
-    private WorldChunkMixin(ChunkPos pos, UpgradeData upgradeData, HeightLimitView heightLimitView, Registry<Biome> biome, long inhabitedTime, @Nullable ChunkSection[] sectionArrayInitializer, @Nullable BlendingData blendingData) {
+    private WorldChunkMixin(ChunkPos pos, UpgradeData upgradeData, LevelHeightAccessor heightLimitView, Registry<Biome> biome, long inhabitedTime, @Nullable LevelChunkSection[] sectionArrayInitializer, @Nullable BlendingData blendingData) {
         super(pos, upgradeData, heightLimitView, biome, inhabitedTime, sectionArrayInitializer, blendingData);
     }
 
-    @Inject(method = "<init>(Lnet/minecraft/world/World;Lnet/minecraft/util/math/ChunkPos;Lnet/minecraft/world/chunk/UpgradeData;Lnet/minecraft/world/tick/ChunkTickScheduler;Lnet/minecraft/world/tick/ChunkTickScheduler;J[Lnet/minecraft/world/chunk/ChunkSection;Lnet/minecraft/world/chunk/WorldChunk$EntityLoader;Lnet/minecraft/world/gen/chunk/BlendingData;)V", at = @At("RETURN"))
-    private void galacticraft_init(@NotNull World world, ChunkPos pos, UpgradeData upgradeData, ChunkTickScheduler<Block> blockTickScheduler, ChunkTickScheduler<Fluid> fluidTickScheduler, long inhabitedTime, ChunkSection[] sectionArrayInitializer, WorldChunk.EntityLoader entityLoader, BlendingData blendingData, CallbackInfo ci) {
-        this.sectionDirty = new boolean[world.countVerticalSections()];
+    @Inject(method = "<init>(Lnet/minecraft/world/level/Level;Lnet/minecraft/world/level/ChunkPos;Lnet/minecraft/world/level/chunk/UpgradeData;Lnet/minecraft/world/ticks/LevelChunkTicks;Lnet/minecraft/world/ticks/LevelChunkTicks;J[Lnet/minecraft/world/level/chunk/LevelChunkSection;Lnet/minecraft/world/level/chunk/LevelChunk$PostLoadProcessor;Lnet/minecraft/world/level/levelgen/blending/BlendingData;)V", at = @At("RETURN"))
+    private void galacticraft_init(@NotNull Level world, ChunkPos pos, UpgradeData upgradeData, LevelChunkTicks<Block> blockTickScheduler, LevelChunkTicks<Fluid> fluidTickScheduler, long inhabitedTime, LevelChunkSection[] sectionArrayInitializer, LevelChunk.PostLoadProcessor entityLoader, BlendingData blendingData, CallbackInfo ci) {
+        this.sectionDirty = new boolean[world.getSectionsCount()];
         this.defaultBreathable = ((WorldOxygenAccessorInternal) world).getDefaultBreathable();
-        for (ChunkSection section : this.getSectionArray()) {
+        for (LevelChunkSection section : this.getSections()) {
             assert section != null;
             ((ChunkSectionOxygenAccessorInternal) section).setDefaultBreathable(this.defaultBreathable);
         }
@@ -91,9 +91,9 @@ public abstract class WorldChunkMixin extends Chunk implements ChunkOxygenAccess
 
     @Override
     public boolean isBreathable(int x, int y, int z) {
-        if (this.isOutOfHeightLimit(y)) return this.defaultBreathable;
-        ChunkSection section = this.getSection(this.getSectionIndex(y));
-        if (!section.isEmpty()) {
+        if (this.isOutsideBuildHeight(y)) return this.defaultBreathable;
+        LevelChunkSection section = this.getSection(this.getSectionIndex(y));
+        if (!section.hasOnlyAir()) {
             return ((ChunkSectionOxygenAccessor) section).isBreathable(x & 15, y & 15, z & 15);
         }
         return this.defaultBreathable;
@@ -101,13 +101,13 @@ public abstract class WorldChunkMixin extends Chunk implements ChunkOxygenAccess
 
     @Override
     public void setBreathable(int x, int y, int z, boolean value) {
-        if (this.isOutOfHeightLimit(y)) return;
-        ChunkSection section = this.getSection(this.getSectionIndex(y));
+        if (this.isOutsideBuildHeight(y)) return;
+        LevelChunkSection section = this.getSection(this.getSectionIndex(y));
         assert section != null;
         ChunkSectionOxygenAccessor accessor = ((ChunkSectionOxygenAccessor) section);
         if (value != accessor.isBreathable(x & 15, y & 15, z & 15)) {
-            if (!this.world.isClient) {
-                this.needsSaving = true;
+            if (!this.level.isClientSide) {
+                this.unsaved = true;
                 this.dirty = true;
                 sectionDirty[this.getSectionIndex(y)] = true;
             }
@@ -116,20 +116,20 @@ public abstract class WorldChunkMixin extends Chunk implements ChunkOxygenAccess
     }
 
     @Override
-    public @NotNull List<CustomPayloadS2CPacket> syncOxygenPacketsToClient() {
-        if (dirty && !world.isClient) {
+    public @NotNull List<ClientboundCustomPayloadPacket> syncOxygenPacketsToClient() {
+        if (dirty && !level.isClientSide) {
             dirty = false;
-            List<CustomPayloadS2CPacket> list = new LinkedList<>();
+            List<ClientboundCustomPayloadPacket> list = new LinkedList<>();
             for (int i = 0; i < sectionDirty.length; i++) {
                 if (sectionDirty[i]) {
                     sectionDirty[i] = false;
                     ChunkPos pos = this.getPos();
                     ChunkSectionOxygenAccessorInternal accessor = (ChunkSectionOxygenAccessorInternal) this.getSection(i);
                     int size = 1 + ((Integer.SIZE / Byte.SIZE) * 2) + (1 + (Short.SIZE / Byte.SIZE) + accessor.getModifiedBlocks() > 0 ? (Constant.Chunk.CHUNK_SECTION_AREA / Byte.SIZE) : 0);
-                    PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer(size, size)
+                    FriendlyByteBuf buf = new FriendlyByteBuf(Unpooled.buffer(size, size)
                             .writeByte(i).writeInt(pos.x).writeInt(pos.z));
                     accessor.writeOxygenPacket(buf);
-                    list.add(new CustomPayloadS2CPacket(new Identifier(Constant.MOD_ID, "oxygen_update"), buf));
+                    list.add(new ClientboundCustomPayloadPacket(new ResourceLocation(Constant.MOD_ID, "oxygen_update"), buf));
                 }
             }
             return list;
@@ -148,14 +148,14 @@ public abstract class WorldChunkMixin extends Chunk implements ChunkOxygenAccess
     }
 
     @Override
-    public void readOxygenUpdate(byte b, @NotNull PacketByteBuf buf) {
-        ChunkSection section = this.getSection(b);
+    public void readOxygenUpdate(byte b, @NotNull FriendlyByteBuf buf) {
+        LevelChunkSection section = this.getSection(b);
         assert section != null;
         ((ChunkSectionOxygenAccessorInternal) section).readOxygenPacket(buf);
     }
 
-    @Inject(method = "setBlockState", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/chunk/ChunkSection;isEmpty()Z", ordinal = 0), locals = LocalCapture.CAPTURE_FAILHARD)
-    private void galacticraft_passDefaultValue(BlockPos pos, BlockState state, boolean moved, CallbackInfoReturnable<BlockState> cir, int i, ChunkSection chunkSection) {
+    @Inject(method = "setBlockState", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/chunk/LevelChunkSection;hasOnlyAir()Z", ordinal = 0), locals = LocalCapture.CAPTURE_FAILHARD)
+    private void galacticraft_passDefaultValue(BlockPos pos, BlockState state, boolean moved, CallbackInfoReturnable<BlockState> cir, int i, LevelChunkSection chunkSection) {
         this.setBreathable(pos.getX(), pos.getY(), pos.getZ(), this.defaultBreathable);
     }
 }

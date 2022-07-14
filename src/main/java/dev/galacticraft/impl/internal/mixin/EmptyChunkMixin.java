@@ -25,13 +25,13 @@ package dev.galacticraft.impl.internal.mixin;
 import dev.galacticraft.api.accessor.ChunkOxygenAccessor;
 import dev.galacticraft.impl.internal.accessor.ChunkOxygenAccessorInternal;
 import dev.galacticraft.impl.internal.accessor.ChunkOxygenSyncer;
-import net.minecraft.world.chunk.EmptyChunk;
+import net.minecraft.world.level.chunk.EmptyLevelChunk;
 import org.spongepowered.asm.mixin.Mixin;
 
 /**
  * @author <a href="https://github.com/TeamGalacticraft">TeamGalacticraft</a>
  */
-@Mixin(EmptyChunk.class)
+@Mixin(EmptyLevelChunk.class)
 public abstract class EmptyChunkMixin implements ChunkOxygenAccessor, ChunkOxygenSyncer, ChunkOxygenAccessorInternal {
     @Override
     public boolean isBreathable(int x, int y, int z) {

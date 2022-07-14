@@ -24,10 +24,10 @@ package dev.galacticraft.impl.internal.mixin;
 
 import dev.galacticraft.api.accessor.ChunkOxygenAccessor;
 import dev.galacticraft.impl.internal.accessor.ChunkOxygenAccessorInternal;
-import net.minecraft.world.chunk.ReadOnlyChunk;
+import net.minecraft.world.level.chunk.ImposterProtoChunk;
 import org.spongepowered.asm.mixin.Mixin;
 
-@Mixin(ReadOnlyChunk.class)
+@Mixin(ImposterProtoChunk.class)
 public abstract class ReadOnlyChunkMixin implements ChunkOxygenAccessor, ChunkOxygenAccessorInternal {
     @Override
     public void setBreathable(int x, int y, int z, boolean value) {

@@ -29,9 +29,9 @@ import dev.galacticraft.impl.universe.celestialbody.type.SatelliteType;
 import dev.galacticraft.impl.universe.position.config.SatelliteConfig;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.network.ClientPlayNetworkHandler;
+import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.client.world.ClientWorld;
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.registry.DynamicRegistryManager;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryKey;
@@ -45,21 +45,21 @@ import java.util.List;
 import java.util.Map;
 
 @Environment(EnvType.CLIENT)
-@Mixin(ClientPlayNetworkHandler.class)
+@Mixin(ClientPacketListener.class)
 public abstract class ClientPlayNetworkHandlerMixin implements ClientSatelliteAccessor {
     @Shadow public abstract DynamicRegistryManager getRegistryManager();
 
     @Shadow private ClientWorld world;
-    private final @Unique Map<Identifier, CelestialBody<SatelliteConfig, SatelliteType>> satellites = new HashMap<>();
+    private final @Unique Map<ResourceLocation, CelestialBody<SatelliteConfig, SatelliteType>> satellites = new HashMap<>();
     private final @Unique List<SatelliteListener> listeners = new ArrayList<>();
 
     @Override
-    public Map<Identifier, CelestialBody<SatelliteConfig, SatelliteType>> getSatellites() {
+    public Map<ResourceLocation, CelestialBody<SatelliteConfig, SatelliteType>> getSatellites() {
         return this.satellites;
     }
 
     @Override
-    public void addSatellite(Identifier id, CelestialBody<SatelliteConfig, SatelliteType> satellite) {
+    public void addSatellite(ResourceLocation id, CelestialBody<SatelliteConfig, SatelliteType> satellite) {
         CelestialBody<?, ?> parent = satellite.parent(this.getRegistryManager());
         ((Orbitable) parent.type()).registerClientWorldHooks(this.getRegistryManager(), this.world, RegistryKey.of(Registry.WORLD_KEY, id), parent.config(), satellite.config());
         this.satellites.put(id, satellite);
@@ -69,7 +69,7 @@ public abstract class ClientPlayNetworkHandlerMixin implements ClientSatelliteAc
     }
 
     @Override
-    public void removeSatellite(Identifier id) {
+    public void removeSatellite(ResourceLocation id) {
         CelestialBody<SatelliteConfig, SatelliteType> removed = this.satellites.remove(id);
         for (SatelliteListener listener : this.listeners) {
             listener.onSatelliteUpdated(removed, false);

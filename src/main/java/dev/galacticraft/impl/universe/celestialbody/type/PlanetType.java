@@ -41,6 +41,11 @@ import net.minecraft.util.registry.DynamicRegistryManager;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.World;
+import net.minecraft.core.Registry;
+import net.minecraft.core.RegistryAccess;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -52,7 +57,7 @@ public class PlanetType extends CelestialBodyType<PlanetConfig> implements Landa
     }
 
     @Override
-    public @NotNull TranslatableText name(PlanetConfig config) {
+    public @NotNull Component name(PlanetConfig config) {
         return config.name();
     }
 
@@ -62,12 +67,12 @@ public class PlanetType extends CelestialBodyType<PlanetConfig> implements Landa
     }
 
     @Override
-    public @NotNull RegistryKey<Galaxy> galaxy(PlanetConfig config) {
+    public @NotNull ResourceKey<Galaxy> galaxy(PlanetConfig config) {
         return config.galaxy();
     }
 
     @Override
-    public @NotNull TranslatableText description(PlanetConfig config) {
+    public @NotNull Component description(PlanetConfig config) {
         return config.description();
     }
 
@@ -82,7 +87,7 @@ public class PlanetType extends CelestialBodyType<PlanetConfig> implements Landa
     }
 
     @Override
-    public @NotNull RegistryKey<World> world(@NotNull PlanetConfig config) {
+    public @NotNull ResourceKey<Level> world(@NotNull PlanetConfig config) {
         return config.world();
     }
 
@@ -102,13 +107,8 @@ public class PlanetType extends CelestialBodyType<PlanetConfig> implements Landa
     }
 
     @Override
-    public int dayTemperature(@NotNull PlanetConfig config) {
-        return config.dayTemperature();
-    }
-
-    @Override
-    public int nightTemperature(@NotNull PlanetConfig config) {
-        return config.nightTemperature();
+    public int temperature(RegistryAccess access, long time, PlanetConfig config) {
+        return time % 24000 < 12000 ? config.dayTemperature() : config.nightTemperature(); //todo: temperature providers?
     }
 
     @Override

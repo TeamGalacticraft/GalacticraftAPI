@@ -22,7 +22,7 @@
 
 package dev.galacticraft.api.accessor;
 
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.ResourceLocation;
 
 public interface ResearchAccessor {
     /**
@@ -31,5 +31,5 @@ public interface ResearchAccessor {
      * @param id The ID of the rocket part to test for
      * @return whether the supplied rocket part is unlocked for the player
      */
-    boolean hasUnlockedResearch(Identifier id);
+    boolean hasUnlockedResearch(ResourceLocation id);
 }

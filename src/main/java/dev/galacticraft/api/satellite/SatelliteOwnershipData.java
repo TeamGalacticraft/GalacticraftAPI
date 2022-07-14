@@ -25,15 +25,15 @@ package dev.galacticraft.api.satellite;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import dev.galacticraft.impl.satellite.SatelliteOwnershipDataImpl;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.network.PacketByteBuf;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
 
 import java.util.List;
 import java.util.UUID;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.entity.player.Player;
 
 public interface SatelliteOwnershipData {
     Codec<SatelliteOwnershipData> CODEC = RecordCodecBuilder.create(instance -> instance.group(
@@ -48,11 +48,11 @@ public interface SatelliteOwnershipData {
         return new SatelliteOwnershipDataImpl(owner, username, trusted, open);
     }
 
-    static @NotNull SatelliteOwnershipData fromNbt(@NotNull NbtCompound nbt) {
+    static @NotNull SatelliteOwnershipData fromNbt(@NotNull CompoundTag nbt) {
         return SatelliteOwnershipDataImpl.fromNbt(nbt);
     }
 
-    static @NotNull SatelliteOwnershipData fromPacket(@NotNull PacketByteBuf buf) {
+    static @NotNull SatelliteOwnershipData fromPacket(@NotNull FriendlyByteBuf buf) {
         return SatelliteOwnershipDataImpl.fromPacket(buf);
     }
 
@@ -70,9 +70,9 @@ public interface SatelliteOwnershipData {
 
     void distrust(UUID uuid);
 
-    boolean canAccess(@NotNull PlayerEntity player);
+    boolean canAccess(@NotNull Player player);
 
-    void writePacket(@NotNull PacketByteBuf buf);
+    void writePacket(@NotNull FriendlyByteBuf buf);
 
-    @NotNull NbtCompound toNbt(@NotNull NbtCompound nbt);
+    @NotNull CompoundTag toNbt(@NotNull CompoundTag nbt);
 }

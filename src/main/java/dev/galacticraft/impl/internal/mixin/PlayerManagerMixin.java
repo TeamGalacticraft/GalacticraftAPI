@@ -29,6 +29,12 @@ import dev.galacticraft.impl.universe.position.config.SatelliteConfig;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.minecraft.network.Connection;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.players.PlayerList;
+import net.minecraft.world.Container;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtOps;
@@ -52,20 +58,20 @@ import java.util.Collection;
 /**
  * @author <a href="https://github.com/TeamGalacticraft">TeamGalacticraft</a>
  */
-@Mixin(PlayerManager.class)
+@Mixin(PlayerList.class)
 public abstract class PlayerManagerMixin {
     @Shadow public abstract MinecraftServer getServer();
 
     @Shadow public abstract void sendToAll(Packet<?> packet);
 
-    @Inject(method = "onPlayerConnect", at = @At("RETURN"))
-    private void galacticraft_syncGearInventory(ClientConnection connection, ServerPlayerEntity player, CallbackInfo ci) {
-        PacketByteBuf buf = PacketByteBufs.create();
-        Inventory inventory = ((GearInventoryProvider) player).getGearInv();
+    @Inject(method = "placeNewPlayer", at = @At("RETURN"))
+    private void galacticraft_syncGearInventory(Connection connection, ServerPlayer player, CallbackInfo ci) {
+        FriendlyByteBuf buf = PacketByteBufs.create();
+        Container inventory = ((GearInventoryProvider) player).getGearInv();
         buf.writeInt(player.getId());
-        buf.writeInt(inventory.size());
-        for (int i = 0; i < inventory.size(); i++) {
-            buf.writeItemStack(inventory.getStack(i));
+        buf.writeInt(inventory.getContainerSize());
+        for (int i = 0; i < inventory.getContainerSize(); i++) {
+            buf.writeItem(inventory.getItem(i));
         }
 
         this.sendToAll(new CustomPayloadS2CPacket(new Identifier(Constant.MOD_ID, "gear_inv_sync"), buf));

@@ -22,107 +22,107 @@
 
 package dev.galacticraft.impl.internal.inventory;
 
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.Inventory;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.Container;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 
 import java.util.Set;
 
-public record MappedInventory(Inventory inventory, int... slots) implements Inventory {
+public record MappedInventory(Container inventory, int... slots) implements Container {
     // apparently mixin does not like IASTORE opcodes, so this is the alternative.
-    public static MappedInventory create(Inventory inventory, int i1) {
+    public static MappedInventory create(Container inventory, int i1) {
         return new MappedInventory(inventory, i1);
     }
 
-    public static MappedInventory create(Inventory inventory, int i1, int i2) {
+    public static MappedInventory create(Container inventory, int i1, int i2) {
         return new MappedInventory(inventory, i1, i2);
     }
 
-    public static MappedInventory create(Inventory inventory, int i1, int i2, int i3) {
+    public static MappedInventory create(Container inventory, int i1, int i2, int i3) {
         return new MappedInventory(inventory, i1, i2, i3);
     }
 
-    public static MappedInventory create(Inventory inventory, int i1, int i2, int i3, int i4) {
+    public static MappedInventory create(Container inventory, int i1, int i2, int i3, int i4) {
         return new MappedInventory(inventory, i1, i2, i3, i4);
     }
 
-    public static MappedInventory create(Inventory inventory, int i1, int i2, int i3, int i4, int i5) {
+    public static MappedInventory create(Container inventory, int i1, int i2, int i3, int i4, int i5) {
         return new MappedInventory(inventory, i1, i2, i3, i4, i5);
     }
 
-    public static MappedInventory create(Inventory inventory, int i1, int i2, int i3, int i4, int i5, int i6) {
+    public static MappedInventory create(Container inventory, int i1, int i2, int i3, int i4, int i5, int i6) {
         return new MappedInventory(inventory, i1, i2, i3, i4, i5, i6);
     }
 
     @Override
-    public int size() {
+    public int getContainerSize() {
         return this.slots.length;
     }
 
     @Override
     public boolean isEmpty() {
         for (int slot : slots) {
-            if (!inventory.getStack(slot).isEmpty()) return false;
+            if (!inventory.getItem(slot).isEmpty()) return false;
         }
         return true;
     }
 
     @Override
-    public ItemStack getStack(int slot) {
-        return this.inventory.getStack(this.slots[slot]);
+    public ItemStack getItem(int slot) {
+        return this.inventory.getItem(this.slots[slot]);
     }
 
     @Override
-    public ItemStack removeStack(int slot, int amount) {
-        return this.inventory.removeStack(this.slots[slot], amount);
+    public ItemStack removeItem(int slot, int amount) {
+        return this.inventory.removeItem(this.slots[slot], amount);
     }
 
     @Override
-    public ItemStack removeStack(int slot) {
-        return this.inventory.removeStack(this.slots[slot]);
+    public ItemStack removeItemNoUpdate(int slot) {
+        return this.inventory.removeItemNoUpdate(this.slots[slot]);
     }
 
     @Override
-    public void setStack(int slot, ItemStack stack) {
-        this.inventory.setStack(this.slots[slot], stack);
+    public void setItem(int slot, ItemStack stack) {
+        this.inventory.setItem(this.slots[slot], stack);
     }
 
     @Override
-    public int getMaxCountPerStack() {
-        return this.inventory.getMaxCountPerStack();
+    public int getMaxStackSize() {
+        return this.inventory.getMaxStackSize();
     }
 
     @Override
-    public void markDirty() {
-        this.inventory.markDirty();
+    public void setChanged() {
+        this.inventory.setChanged();
     }
 
     @Override
-    public boolean canPlayerUse(PlayerEntity player) {
-        return this.inventory.canPlayerUse(player);
+    public boolean stillValid(Player player) {
+        return this.inventory.stillValid(player);
     }
 
     @Override
-    public void onOpen(PlayerEntity player) {
-        this.inventory.onOpen(player);
+    public void startOpen(Player player) {
+        this.inventory.startOpen(player);
     }
 
     @Override
-    public void onClose(PlayerEntity player) {
-        this.inventory.onClose(player);
+    public void stopOpen(Player player) {
+        this.inventory.stopOpen(player);
     }
 
     @Override
-    public boolean isValid(int slot, ItemStack stack) {
-        return this.inventory.isValid(this.slots[slot], stack);
+    public boolean canPlaceItem(int slot, ItemStack stack) {
+        return this.inventory.canPlaceItem(this.slots[slot], stack);
     }
 
     @Override
-    public int count(Item item) {
+    public int countItem(Item item) {
         int count = 0;
         for (int slot : this.slots) {
-            ItemStack stack = this.inventory.getStack(slot);
+            ItemStack stack = this.inventory.getItem(slot);
             if (stack.getItem() == item) {
                 count += stack.getCount();
             }
@@ -131,9 +131,9 @@ public record MappedInventory(Inventory inventory, int... slots) implements Inve
     }
 
     @Override
-    public boolean containsAny(Set<Item> items) {
+    public boolean hasAnyOf(Set<Item> items) {
         for (int slot : this.slots) {
-            ItemStack stack = this.inventory.getStack(slot);
+            ItemStack stack = this.inventory.getItem(slot);
             if (items.contains(stack.getItem())) {
                 return true;
             }
@@ -142,9 +142,9 @@ public record MappedInventory(Inventory inventory, int... slots) implements Inve
     }
 
     @Override
-    public void clear() {
+    public void clearContent() {
         for (int slot : this.slots) {
-            this.inventory.setStack(slot, ItemStack.EMPTY);
+            this.inventory.setItem(slot, ItemStack.EMPTY);
         }
     }
 }

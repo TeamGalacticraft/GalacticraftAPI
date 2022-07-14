@@ -30,27 +30,27 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import dev.galacticraft.api.registry.AddonRegistry;
-import net.minecraft.command.CommandSource;
-import net.minecraft.server.command.ServerCommandSource;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.util.registry.RegistryKey;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.SharedSuggestionProvider;
+import net.minecraft.core.Registry;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 
 public class RegistryArgumentType<T> implements ArgumentType<Registry<T>> {
     private static final ImmutableList<String> EXAMPLES = ImmutableList.of(
-            Registry.BLOCK_KEY.getValue().toString(),
-            Registry.ITEM_KEY.getValue().toString(),
-            Registry.ENTITY_TYPE_KEY.getValue().toString(),
-            Registry.DIMENSION_TYPE_KEY.getValue().toString(),
-            Registry.BIOME_KEY.getValue().toString(),
-            Registry.SOUND_EVENT_KEY.getValue().toString(),
-            AddonRegistry.CELESTIAL_BODY_TYPE_KEY.getValue().toString()
+            Registry.BLOCK_REGISTRY.location().toString(),
+            Registry.ITEM_REGISTRY.location().toString(),
+            Registry.ENTITY_TYPE_REGISTRY.location().toString(),
+            Registry.DIMENSION_TYPE_REGISTRY.location().toString(),
+            Registry.BIOME_REGISTRY.location().toString(),
+            Registry.SOUND_EVENT_REGISTRY.location().toString(),
+            AddonRegistry.CELESTIAL_BODY_TYPE_KEY.location().toString()
     );
 
     private RegistryArgumentType() {
@@ -61,21 +61,21 @@ public class RegistryArgumentType<T> implements ArgumentType<Registry<T>> {
         return new RegistryArgumentType<>();
     }
 
-    public static <T> @NotNull Registry<T> getRegistry(@NotNull CommandContext<ServerCommandSource> context, String id) {
+    public static <T> @NotNull Registry<T> getRegistry(@NotNull CommandContext<CommandSourceStack> context, String id) {
         Registry<T> registry = context.getArgument(id, Registry.class);
-        Optional<? extends Registry<T>> dynamic = context.getSource().getRegistryManager().getOptional(registry.getKey());
+        Optional<? extends Registry<T>> dynamic = context.getSource().registryAccess().registry(registry.key());
         return dynamic.isPresent() ? dynamic.get() : registry;
     }
 
     @Override
     public Registry<T> parse(StringReader reader) throws CommandSyntaxException {
-        RegistryKey<Registry<T>> key = RegistryKey.ofRegistry(Identifier.fromCommandInput(reader));
-        return ((Registry<Registry<T>>) Registry.REGISTRIES).get(key);
+        ResourceKey<Registry<T>> key = ResourceKey.createRegistryKey(ResourceLocation.read(reader));
+        return ((Registry<Registry<T>>) Registry.REGISTRY).get(key);
     }
 
     @Override
     public <S> CompletableFuture<Suggestions> listSuggestions(CommandContext<S> context, SuggestionsBuilder builder) {
-        return CommandSource.suggestIdentifiers(Registry.REGISTRIES.getIds().stream(), builder);
+        return SharedSuggestionProvider.suggestResource(Registry.REGISTRY.keySet().stream(), builder);
     }
 
     @Override

@@ -48,10 +48,29 @@ import dev.galacticraft.impl.universe.position.config.SatelliteConfig;
 import dev.galacticraft.impl.universe.position.type.OrbitalCelestialPositionType;
 import io.netty.buffer.Unpooled;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import net.minecraft.nbt.NbtCompound;
+import net.minecraft.core.Holder;
+import net.minecraft.core.Registry;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
-import net.minecraft.network.PacketByteBuf;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.level.progress.ChunkProgressListener;
+import net.minecraft.tags.TagKey;
+import net.minecraft.util.valueproviders.UniformInt;
+import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.biome.BiomeManager;
+import net.minecraft.world.level.border.BorderChangeListener;
+import net.minecraft.world.level.chunk.ChunkStatus;
+import net.minecraft.world.level.dimension.DimensionType;
+import net.minecraft.world.level.dimension.LevelStem;
+import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
+import net.minecraft.world.level.storage.DerivedLevelData;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.structure.Structure;
@@ -94,8 +113,8 @@ public class SatelliteType extends CelestialBodyType<SatelliteConfig> implements
         player.setVelocity((overworld.random.nextDouble() - 0.5) * 10.0, overworld.random.nextDouble() * 20.0, (overworld.random.nextDouble() - 0.5) * 10.0);
     };
     private static final GasComposition EMPTY_GAS_COMPOSITION = new GasComposition.Builder().build();
-    private static final TranslatableText NAME = new TranslatableText("ui.galacticraft-api.satellite.name");
-    private static final TranslatableText DESCRIPTION = new TranslatableText("ui.galacticraft-api.satellite.description");
+    private static final Component NAME = Component.translatable("ui.galacticraft-api.satellite.name");
+    private static final Component DESCRIPTION = Component.translatable("ui.galacticraft-api.satellite.description");
 
     protected SatelliteType(Codec<SatelliteConfig> codec) {
         super(codec);
@@ -118,8 +137,8 @@ public class SatelliteType extends CelestialBodyType<SatelliteConfig> implements
     }
 
     @ApiStatus.Experimental
-    public static CelestialBody<SatelliteConfig, SatelliteType> create(Identifier id, @NotNull MinecraftServer server, CelestialBody<?, ?> parent, CelestialPosition<?, ?> position, CelestialDisplay<?, ?> display,
-                                                                       DimensionOptions options, SatelliteOwnershipData ownershipData, String name) {
+    public static CelestialBody<SatelliteConfig, SatelliteType> create(ResourceLocation id, @NotNull MinecraftServer server, CelestialBody<?, ?> parent, CelestialPosition<?, ?> position, CelestialDisplay<?, ?> display,
+                                                                       LevelStem options, SatelliteOwnershipData ownershipData, String name) {
         if (!(parent.type() instanceof Orbitable)) {
             throw new IllegalArgumentException("Parent must be orbitable!");
         }
@@ -129,14 +148,14 @@ public class SatelliteType extends CelestialBodyType<SatelliteConfig> implements
             throw new RuntimeException("Failed to create dynamic level!");
         }
 
-        SatelliteConfig config = new SatelliteConfig(RegistryKey.of(AddonRegistry.CELESTIAL_BODY_KEY, server.getRegistryManager().get(AddonRegistry.CELESTIAL_BODY_KEY).getId(parent)), parent.galaxy(), position, display, ownershipData, RegistryKey.of(Registry.WORLD_KEY, id), EMPTY_GAS_COMPOSITION, 0.0f, parent.type() instanceof Landable ? ((Landable) parent.type()).accessWeight(parent.config()) : 1, options);
-        config.customName(new TranslatableText(name));
+        SatelliteConfig config = new SatelliteConfig(ResourceKey.create(AddonRegistry.CELESTIAL_BODY_KEY, server.registryAccess().registryOrThrow(AddonRegistry.CELESTIAL_BODY_KEY).getKey(parent)), parent.galaxy(), position, display, ownershipData, ResourceKey.create(Registry.DIMENSION_REGISTRY, id), EMPTY_GAS_COMPOSITION, 0.0f, parent.type() instanceof Landable ? ((Landable) parent.type()).accessWeight(parent.config()) : 1, options);
+        config.customName(Component.translatable(name));
         CelestialBody<SatelliteConfig, SatelliteType> satellite = INSTANCE.configure(config);
         ((SatelliteAccessor) server).addSatellite(id, satellite);
 
-        for (ServerPlayerEntity player : server.getPlayerManager().getPlayerList()) {
-            NbtCompound compound = (NbtCompound) SatelliteConfig.CODEC.encode(satellite.config(), NbtOps.INSTANCE, new NbtCompound()).get().orThrow();
-            ServerPlayNetworking.send(player, new Identifier(Constant.MOD_ID, "add_satellite"), new PacketByteBuf(Unpooled.buffer()).writeIdentifier(id).writeNbt(compound));
+        for (ServerPlayer player : server.getPlayerList().getPlayers()) {
+            CompoundTag compound = (CompoundTag) SatelliteConfig.CODEC.encode(satellite.config(), NbtOps.INSTANCE, new CompoundTag()).get().orThrow();
+            ServerPlayNetworking.send(player, new ResourceLocation(Constant.MOD_ID, "add_satellite"), new FriendlyByteBuf(Unpooled.buffer()).writeResourceLocation(id).writeNbt(compound));
         }
         return satellite;
     }
@@ -156,7 +175,7 @@ public class SatelliteType extends CelestialBodyType<SatelliteConfig> implements
     }
 
     @Override
-    public @NotNull TranslatableText name(SatelliteConfig config) {
+    public @NotNull Component name(SatelliteConfig config) {
         return NAME;
     }
 
@@ -166,12 +185,12 @@ public class SatelliteType extends CelestialBodyType<SatelliteConfig> implements
     }
 
     @Override
-    public @NotNull RegistryKey<Galaxy> galaxy(@NotNull SatelliteConfig config) {
+    public @NotNull ResourceKey<Galaxy> galaxy(@NotNull SatelliteConfig config) {
         return config.galaxy();
     }
 
     @Override
-    public @NotNull TranslatableText description(SatelliteConfig config) {
+    public @NotNull Component description(SatelliteConfig config) {
         return DESCRIPTION;
     }
 
@@ -191,17 +210,17 @@ public class SatelliteType extends CelestialBodyType<SatelliteConfig> implements
     }
 
     @Override
-    public void setCustomName(@NotNull Text text, @NotNull SatelliteConfig config) {
+    public void setCustomName(@NotNull Component text, @NotNull SatelliteConfig config) {
         config.customName(text);
     }
 
     @Override
-    public @NotNull Text getCustomName(@NotNull SatelliteConfig config) {
+    public @NotNull Component getCustomName(@NotNull SatelliteConfig config) {
         return config.customName();
     }
 
     @Override
-    public @NotNull RegistryKey<World> world(@NotNull SatelliteConfig config) {
+    public @NotNull ResourceKey<Level> world(@NotNull SatelliteConfig config) {
         return config.world();
     }
 
@@ -221,7 +240,7 @@ public class SatelliteType extends CelestialBodyType<SatelliteConfig> implements
     }
 
     @Override
-    public int dayTemperature(@NotNull SatelliteConfig config) {
+    public int temperature(@NotNull SatelliteConfig config) {
         return 121;
     }
 

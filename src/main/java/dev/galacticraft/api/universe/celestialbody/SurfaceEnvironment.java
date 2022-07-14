@@ -20,19 +20,18 @@
  * SOFTWARE.
  */
 
-package dev.galacticraft.api.entity.rocket.render;
+package dev.galacticraft.api.universe.celestialbody;
 
-import dev.galacticraft.impl.client.rocket.render.RocketPartRendererRegistryImpl;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import net.minecraft.resources.ResourceLocation;
-import org.jetbrains.annotations.NotNull;
+import net.minecraft.core.RegistryAccess;
 
-@Environment(EnvType.CLIENT)
-public interface RocketPartRendererRegistry {
-    RocketPartRendererRegistry INSTANCE = new RocketPartRendererRegistryImpl();
-
-    void register(@NotNull ResourceLocation id, @NotNull RocketPartRenderer renderer);
-
-    @NotNull RocketPartRenderer getRenderer(ResourceLocation id);
+public interface SurfaceEnvironment<C extends CelestialBodyConfig> {
+    /**
+     * Returns the approximate temperature on this celestial body
+     *
+     * @param access the registry access
+     * @param time the current world time
+     * @param config the celestial body configuration to be queried
+     * @return the approximate temperature on this celestial body
+     */
+    int temperature(RegistryAccess access, long time, C config);
 }

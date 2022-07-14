@@ -24,15 +24,15 @@ package dev.galacticraft.impl.satellite;
 
 import com.google.common.collect.ImmutableList;
 import dev.galacticraft.api.satellite.SatelliteOwnershipData;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.network.PacketByteBuf;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.entity.player.Player;
 
 public class SatelliteOwnershipDataImpl implements SatelliteOwnershipData {
     private final UUID owner;
@@ -47,20 +47,20 @@ public class SatelliteOwnershipDataImpl implements SatelliteOwnershipData {
         this.trusted = trusted;
     }
 
-    public static @NotNull SatelliteOwnershipDataImpl fromNbt(@NotNull NbtCompound nbt) {
+    public static @NotNull SatelliteOwnershipDataImpl fromNbt(@NotNull CompoundTag nbt) {
         long[] trusted = nbt.getLongArray("trusted");
-        SatelliteOwnershipDataImpl data = new SatelliteOwnershipDataImpl(nbt.getUuid("owner"), nbt.getString("username"), new ArrayList<>(trusted.length / 2), nbt.getBoolean("open"));
+        SatelliteOwnershipDataImpl data = new SatelliteOwnershipDataImpl(nbt.getUUID("owner"), nbt.getString("username"), new ArrayList<>(trusted.length / 2), nbt.getBoolean("open"));
         for (int i = 0; i < trusted.length; i += 2) {
             data.trusted.add(new UUID(trusted[i], trusted[i + 1]));
         }
         return data;
     }
 
-    public static @NotNull SatelliteOwnershipDataImpl fromPacket(@NotNull PacketByteBuf buf) {
+    public static @NotNull SatelliteOwnershipDataImpl fromPacket(@NotNull FriendlyByteBuf buf) {
         int size = buf.readInt();
-        SatelliteOwnershipDataImpl data = new SatelliteOwnershipDataImpl(buf.readUuid(), buf.readString(), new ArrayList<>(size), buf.readBoolean());
+        SatelliteOwnershipDataImpl data = new SatelliteOwnershipDataImpl(buf.readUUID(), buf.readUtf(), new ArrayList<>(size), buf.readBoolean());
         for (int i = 0; i < size; i++) {
-            data.trusted.add(buf.readUuid());
+            data.trusted.add(buf.readUUID());
         }
         return data;
     }
@@ -101,24 +101,24 @@ public class SatelliteOwnershipDataImpl implements SatelliteOwnershipData {
     }
 
     @Override
-    public boolean canAccess(@NotNull PlayerEntity player) {
-        return player.getUuid().equals(this.owner()) || trusted.contains(player.getUuid());
+    public boolean canAccess(@NotNull Player player) {
+        return player.getUUID().equals(this.owner()) || trusted.contains(player.getUUID());
     }
 
     @Override
-    public void writePacket(@NotNull PacketByteBuf buf) {
-        buf.writeUuid(this.owner());
-        buf.writeString(this.username());
+    public void writePacket(@NotNull FriendlyByteBuf buf) {
+        buf.writeUUID(this.owner());
+        buf.writeUtf(this.username());
         buf.writeBoolean(this.open());
         buf.writeInt(this.trusted.size());
         for (UUID uuid : this.trusted) {
-            buf.writeUuid(uuid);
+            buf.writeUUID(uuid);
         }
     }
 
     @Override
-    public @NotNull NbtCompound toNbt(@NotNull NbtCompound nbt) {
-        nbt.putUuid("owner", owner());
+    public @NotNull CompoundTag toNbt(@NotNull CompoundTag nbt) {
+        nbt.putUUID("owner", owner());
         nbt.putString("username", username());
         nbt.putBoolean("open", open());
         long[] trusted = new long[this.trusted.size() * 2];

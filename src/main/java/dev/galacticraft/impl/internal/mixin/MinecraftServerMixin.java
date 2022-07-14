@@ -30,7 +30,10 @@ import dev.galacticraft.impl.Constant;
 import dev.galacticraft.impl.universe.celestialbody.type.SatelliteType;
 import dev.galacticraft.impl.universe.position.config.SatelliteConfig;
 import net.fabricmc.fabric.api.util.NbtType;
+import net.minecraft.core.Registry;
 import net.minecraft.nbt.*;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Identifier;
@@ -49,6 +52,16 @@ import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.world.gen.chunk.ChunkGenerator;
 import net.minecraft.world.level.UnmodifiableLevelProperties;
 import net.minecraft.world.level.storage.LevelStorage;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.biome.BiomeManager;
+import net.minecraft.world.level.border.BorderChangeListener;
+import net.minecraft.world.level.border.WorldBorder;
+import net.minecraft.world.level.chunk.ChunkGenerator;
+import net.minecraft.world.level.storage.DerivedLevelData;
+import net.minecraft.world.level.storage.LevelResource;
+import net.minecraft.world.level.storage.LevelStorageSource;
+import net.minecraft.world.level.storage.WorldData;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
 import org.spongepowered.asm.mixin.Final;
@@ -68,37 +81,37 @@ import java.util.concurrent.Executor;
 
 @Mixin(MinecraftServer.class)
 public abstract class MinecraftServerMixin implements SatelliteAccessor {
-    @Unique private final Map<Identifier, CelestialBody<SatelliteConfig, SatelliteType>> satellites = new HashMap<>();
+    @Unique private final Map<ResourceLocation, CelestialBody<SatelliteConfig, SatelliteType>> satellites = new HashMap<>();
 
-    @Shadow @Final protected LevelStorage.Session session;
+    @Shadow @Final protected LevelStorageSource.LevelStorageAccess storageSource;
 
     @Shadow public abstract DynamicRegistryManager.Immutable getRegistryManager();
 
     @Override
-    public @Unmodifiable Map<Identifier, CelestialBody<SatelliteConfig, SatelliteType>> getSatellites() {
+    public @Unmodifiable Map<ResourceLocation, CelestialBody<SatelliteConfig, SatelliteType>> getSatellites() {
         return ImmutableMap.copyOf(this.satellites);
     }
 
     @Override
-    public void addSatellite(Identifier id, CelestialBody<SatelliteConfig, SatelliteType> satellite) {
+    public void addSatellite(ResourceLocation id, CelestialBody<SatelliteConfig, SatelliteType> satellite) {
         this.satellites.put(id, satellite);
     }
 
     @Override
-    public void removeSatellite(Identifier id) {
+    public void removeSatellite(ResourceLocation id) {
         this.satellites.remove(id);
     }
 
-    @Inject(method = "save", at = @At("RETURN"))
+    @Inject(method = "saveEverything", at = @At("RETURN"))
     private void galacticraft_saveSatellites(boolean suppressLogs, boolean bl, boolean bl2, CallbackInfoReturnable<Boolean> cir) {
-        Path path = this.session.getDirectory(WorldSavePath.ROOT);
-        NbtList nbt = new NbtList();
-        for (Map.Entry<Identifier, CelestialBody<SatelliteConfig, SatelliteType>> entry : this.satellites.entrySet()) {
-            NbtCompound compound = (NbtCompound) SatelliteConfig.CODEC.encode(entry.getValue().config(), NbtOps.INSTANCE, new NbtCompound()).get().orThrow();
+        Path path = this.storageSource.getLevelPath(LevelResource.ROOT);
+        ListTag nbt = new ListTag();
+        for (Map.Entry<ResourceLocation, CelestialBody<SatelliteConfig, SatelliteType>> entry : this.satellites.entrySet()) {
+            CompoundTag compound = (CompoundTag) SatelliteConfig.CODEC.encode(entry.getValue().config(), NbtOps.INSTANCE, new CompoundTag()).get().orThrow();
             compound.putString("id", entry.getKey().toString());
             nbt.add(compound);
         }
-        NbtCompound compound = new NbtCompound();
+        CompoundTag compound = new CompoundTag();
         compound.put("satellites", nbt);
         try {
             NbtIo.writeCompressed(compound, new File(path.toFile(), "satellites.dat"));
@@ -109,10 +122,10 @@ public abstract class MinecraftServerMixin implements SatelliteAccessor {
 
     @Inject(method = "loadWorld", at = @At(value = "HEAD"))
     private void galacticraft_loadSatellites(CallbackInfo ci) {
-        File worldFile = this.session.getDirectory(WorldSavePath.ROOT).toFile();
+        File worldFile = this.storageSource.getLevelPath(LevelResource.ROOT).toFile();
         if (new File(worldFile, "satellites.dat").exists()) {
             try {
-                NbtList nbt = NbtIo.readCompressed(new File(worldFile, "satellites.dat")).getList("satellites", NbtType.COMPOUND);
+                ListTag nbt = NbtIo.readCompressed(new File(worldFile, "satellites.dat")).getList("satellites", NbtType.COMPOUND);
                 assert nbt != null : "NBT list was null";
                 for (NbtElement compound : nbt) {
                     assert compound instanceof NbtCompound : "Not a compound?!";

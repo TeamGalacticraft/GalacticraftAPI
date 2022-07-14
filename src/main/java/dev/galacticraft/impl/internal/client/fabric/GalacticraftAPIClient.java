@@ -34,10 +34,10 @@ import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtOps;
-import net.minecraft.network.PacketByteBuf;
-import net.minecraft.util.Identifier;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.util.dynamic.RegistryOps;
 import org.jetbrains.annotations.ApiStatus;
 
@@ -49,32 +49,32 @@ public class GalacticraftAPIClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
         Constant.LOGGER.info("Loaded client module");
-        ClientPlayNetworking.registerGlobalReceiver(new Identifier(Constant.MOD_ID, "research_update"), (client, networkHandler, buffer, sender) -> {
-            PacketByteBuf buf = new PacketByteBuf(buffer.copy());
+        ClientPlayNetworking.registerGlobalReceiver(new ResourceLocation(Constant.MOD_ID, "research_update"), (client, networkHandler, buffer, sender) -> {
+            FriendlyByteBuf buf = new FriendlyByteBuf(buffer.copy());
             client.execute(() -> ((ClientResearchAccessor) Objects.requireNonNull(client.player)).readChanges(buf));
         });
-        ClientPlayNetworking.registerGlobalReceiver(new Identifier(Constant.MOD_ID, "add_satellite"), (client, networkHandler, buffer, sender) -> {
-            ((SatelliteAccessor) networkHandler).addSatellite(buffer.readIdentifier(), new CelestialBody<>(SatelliteType.INSTANCE, SatelliteConfig.CODEC.decode(RegistryOps.of(NbtOps.INSTANCE, networkHandler.getRegistryManager()), buffer.readNbt()).get().orThrow().getFirst()));
+        ClientPlayNetworking.registerGlobalReceiver(new ResourceLocation(Constant.MOD_ID, "add_satellite"), (client, networkHandler, buffer, sender) -> {
+            ((SatelliteAccessor) networkHandler).addSatellite(buffer.readResourceLocation(), new CelestialBody<>(SatelliteType.INSTANCE, SatelliteConfig.CODEC.decode(RegistryOps.of(NbtOps.INSTANCE, networkHandler.getRegistryManager()), buffer.readNbt()).get().orThrow().getFirst()));
         });
-        ClientPlayNetworking.registerGlobalReceiver(new Identifier(Constant.MOD_ID, "remove_satellite"), (client, networkHandler, buffer, sender) -> {
-            PacketByteBuf buf = new PacketByteBuf(buffer.copy());
-            ((SatelliteAccessor) networkHandler).removeSatellite(buf.readIdentifier());
+        ClientPlayNetworking.registerGlobalReceiver(new ResourceLocation(Constant.MOD_ID, "remove_satellite"), (client, networkHandler, buffer, sender) -> {
+            FriendlyByteBuf buf = new FriendlyByteBuf(buffer.copy());
+            ((SatelliteAccessor) networkHandler).removeSatellite(buf.readResourceLocation());
         });
-        ClientPlayNetworking.registerGlobalReceiver(new Identifier(Constant.MOD_ID, "oxygen_update"), (client, handler, buf, responseSender) -> {
+        ClientPlayNetworking.registerGlobalReceiver(new ResourceLocation(Constant.MOD_ID, "oxygen_update"), (client, handler, buf, responseSender) -> {
             byte b = buf.readByte();
-            ChunkOxygenSyncer syncer = ((ChunkOxygenSyncer) handler.getWorld().getChunk(buf.readInt(), buf.readInt()));
+            ChunkOxygenSyncer syncer = ((ChunkOxygenSyncer) handler.getLevel().getChunk(buf.readInt(), buf.readInt()));
             syncer.readOxygenUpdate(b, buf);
         });
 
-        ClientPlayNetworking.registerGlobalReceiver(new Identifier(Constant.MOD_ID, "gear_inv_sync"), (client, handler, buf, responseSender) -> {
+        ClientPlayNetworking.registerGlobalReceiver(new ResourceLocation(Constant.MOD_ID, "gear_inv_sync"), (client, handler, buf, responseSender) -> {
             int entity = buf.readInt();
             ItemStack[] stacks = new ItemStack[buf.readInt()];
             for (int i = 0; i < stacks.length; i++) {
-                stacks[i] = buf.readItemStack();
+                stacks[i] = buf.readItem();
             }
             client.execute(() -> {
                 for (int i = 0; i < stacks.length; i++) {
-                    ((GearInventoryProvider) Objects.requireNonNull(client.world.getEntityById(entity))).getGearInv().setStack(i, stacks[i]);
+                    ((GearInventoryProvider) Objects.requireNonNull(client.level.getEntity(entity))).getGearInv().setItem(i, stacks[i]);
                 }
             });
         });

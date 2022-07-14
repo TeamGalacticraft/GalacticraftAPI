@@ -22,18 +22,18 @@
 
 package dev.galacticraft.api.accessor;
 
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.network.PacketByteBuf;
-import net.minecraft.util.Identifier;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
 
 public interface ServerResearchAccessor extends ResearchAccessor {
-    void unlockResearch(Identifier id, boolean unlocked);
+    void unlockResearch(ResourceLocation id, boolean unlocked);
 
     boolean isResearchDirty();
 
-    PacketByteBuf writeResearchChanges(PacketByteBuf buf);
+    FriendlyByteBuf writeResearchChanges(FriendlyByteBuf buf);
 
-    NbtCompound writeResearchToNbt(NbtCompound nbt);
+    CompoundTag writeResearchToNbt(CompoundTag nbt);
 
-    void readResearchFromNbt(NbtCompound nbt);
+    void readResearchFromNbt(CompoundTag nbt);
 }

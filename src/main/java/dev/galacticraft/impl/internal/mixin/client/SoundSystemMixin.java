@@ -22,14 +22,14 @@
 
 package dev.galacticraft.impl.internal.mixin.client;
 
+import com.mojang.blaze3d.audio.Listener;
 import dev.galacticraft.api.accessor.SoundSystemAccessor;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.sound.SoundInstance;
-import net.minecraft.client.sound.SoundListener;
-import net.minecraft.client.sound.SoundSystem;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.client.resources.sounds.SoundInstance;
+import net.minecraft.client.sounds.SoundEngine;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.Mth;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -42,32 +42,32 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 /**
  * @author <a href="https://github.com/TeamGalacticraft">TeamGalacticraft</a>
  */
-@Mixin(SoundSystem.class)
+@Mixin(SoundEngine.class)
 @Environment(EnvType.CLIENT)
 public abstract class SoundSystemMixin implements SoundSystemAccessor {
-    @Shadow @Final private SoundListener listener;
+    @Shadow @Final private Listener listener;
     @Unique private float multiplier = 1.0f;
 
-    @Shadow public abstract void updateSoundVolume(SoundCategory soundCategory, float volume);
+    @Shadow public abstract void updateCategoryVolume(SoundSource soundCategory, float volume);
 
-    @Inject(method = "getAdjustedVolume", at = @At("RETURN"), cancellable = true)
+    @Inject(method = "calculateVolume(Lnet/minecraft/client/resources/sounds/SoundInstance;)F", at = @At("RETURN"), cancellable = true)
     private void galacticraft_adjustVolumeToAtmosphere(SoundInstance soundInstance, CallbackInfoReturnable<Float> cir) {
         if (multiplier != 1.0f) {
-            cir.setReturnValue(MathHelper.clamp(cir.getReturnValueF() * this.multiplier, 0.0f, 2.0f));
+            cir.setReturnValue(Mth.clamp(cir.getReturnValueF() * this.multiplier, 0.0f, 2.0f));
         }
     }
 
-    @Redirect(method = "play(Lnet/minecraft/client/sound/SoundInstance;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/sound/SoundInstance;shouldAlwaysPlay()Z", ordinal = 0))
+    @Redirect(method = "play", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/resources/sounds/SoundInstance;canStartSilent()Z", ordinal = 0))
     private boolean galacticraft_shouldAlwaysPlay(SoundInstance soundInstance) {
         if (this.multiplier != 1.0f) {
             return true;
         }
-        return soundInstance.shouldAlwaysPlay();
+        return soundInstance.canStartSilent();
     }
 
     @Override
     public void updateAtmosphericVolumeMultiplier(float multiplier) {
         this.multiplier = multiplier;
-        this.updateSoundVolume(null, this.listener.getVolume());
+        this.updateCategoryVolume(null, this.listener.getGain());
     }
 }

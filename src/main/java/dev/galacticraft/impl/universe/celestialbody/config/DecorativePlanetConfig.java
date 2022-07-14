@@ -32,24 +32,25 @@ import dev.galacticraft.api.universe.celestialbody.CelestialBodyConfig;
 import dev.galacticraft.api.universe.display.CelestialDisplay;
 import dev.galacticraft.api.universe.galaxy.Galaxy;
 import dev.galacticraft.api.universe.position.CelestialPosition;
-import net.minecraft.text.TranslatableText;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.RegistryKey;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 
-public record DecorativePlanetConfig(@NotNull TranslatableText name, @NotNull TranslatableText description,
-                                     @NotNull RegistryKey<Galaxy> galaxy,
-                                     @NotNull RegistryKey<CelestialBody<?, ?>> parent,
+public record DecorativePlanetConfig(@NotNull MutableComponent name, @NotNull MutableComponent description,
+                                     @NotNull ResourceKey<Galaxy> galaxy,
+                                     @NotNull ResourceKey<CelestialBody<?, ?>> parent,
                                      @NotNull CelestialPosition<?, ?> position, @NotNull CelestialDisplay<?, ?> display,
                                      GasComposition atmosphere, float gravity,
                                      @NotNull Optional<SpaceStationRecipe> satelliteRecipe) implements CelestialBodyConfig {
     public static final Codec<DecorativePlanetConfig> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-            Codec.STRING.fieldOf("name").xmap(TranslatableText::new, TranslatableText::getKey).forGetter(DecorativePlanetConfig::name),
-            Codec.STRING.fieldOf("description").xmap(TranslatableText::new, TranslatableText::getKey).forGetter(DecorativePlanetConfig::description),
-            Identifier.CODEC.fieldOf("galaxy").xmap(id -> RegistryKey.of(AddonRegistry.GALAXY_KEY, id), RegistryKey::getValue).forGetter(DecorativePlanetConfig::galaxy),
-            Identifier.CODEC.fieldOf("parent").xmap(id -> RegistryKey.of(AddonRegistry.CELESTIAL_BODY_KEY, id), RegistryKey::getValue).forGetter(DecorativePlanetConfig::parent),
+            Codec.STRING.fieldOf("name").xmap(Component::translatable, Component::getString).forGetter(DecorativePlanetConfig::name),
+            Codec.STRING.fieldOf("description").xmap(Component::translatable, Component::getString).forGetter(DecorativePlanetConfig::description),
+            ResourceLocation.CODEC.fieldOf("galaxy").xmap(id -> ResourceKey.create(AddonRegistry.GALAXY_KEY, id), ResourceKey::location).forGetter(DecorativePlanetConfig::galaxy),
+            ResourceLocation.CODEC.fieldOf("parent").xmap(id -> ResourceKey.create(AddonRegistry.CELESTIAL_BODY_KEY, id), ResourceKey::location).forGetter(DecorativePlanetConfig::parent),
             CelestialPosition.CODEC.fieldOf("position").forGetter(DecorativePlanetConfig::position),
             CelestialDisplay.CODEC.fieldOf("display").forGetter(DecorativePlanetConfig::display),
             GasComposition.CODEC.fieldOf("atmosphere").forGetter(DecorativePlanetConfig::atmosphere),

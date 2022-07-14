@@ -29,16 +29,6 @@ import dev.galacticraft.api.item.Accessory;
 import dev.galacticraft.api.universe.celestialbody.CelestialBody;
 import dev.galacticraft.impl.Constant;
 import dev.galacticraft.impl.internal.inventory.MappedInventory;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.AbstractClientPlayerEntity;
-import net.minecraft.client.world.ClientWorld;
-import net.minecraft.inventory.Inventory;
-import net.minecraft.inventory.SimpleInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtElement;
-import net.minecraft.network.PacketByteBuf;
-import net.minecraft.util.Identifier;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -46,86 +36,96 @@ import org.spongepowered.asm.mixin.Unique;
 
 import java.util.ArrayList;
 import java.util.List;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.client.player.AbstractClientPlayer;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.Container;
+import net.minecraft.world.SimpleContainer;
+import net.minecraft.world.item.ItemStack;
 
-@Mixin(AbstractClientPlayerEntity.class)
+@Mixin(AbstractClientPlayer.class)
 public abstract class AbstractClientPlayerEntityMixin implements ClientResearchAccessor, GearInventoryProvider {
-    @Unique private final List<Identifier> unlockedResearch = new ArrayList<>();
-    @Shadow @Final public ClientWorld clientWorld;
+    @Unique private final List<ResourceLocation> unlockedResearch = new ArrayList<>();
+    @Shadow @Final public ClientLevel clientLevel;
 
-    private final @Unique SimpleInventory gearInv = galacticraft_createGearInventory();
-    private final @Unique Inventory tankInv = MappedInventory.create(this.gearInv, 4, 5);
-    private final @Unique Inventory thermalArmorInv = MappedInventory.create(this.gearInv, 0, 1, 2, 3);
-    private final @Unique Inventory accessoryInv = MappedInventory.create(this.gearInv, 6, 7, 8, 9, 10, 11);
+    private final @Unique SimpleContainer gearInv = galacticraft_createGearInventory();
+    private final @Unique Container tankInv = MappedInventory.create(this.gearInv, 4, 5);
+    private final @Unique Container thermalArmorInv = MappedInventory.create(this.gearInv, 0, 1, 2, 3);
+    private final @Unique Container accessoryInv = MappedInventory.create(this.gearInv, 6, 7, 8, 9, 10, 11);
 
     @Unique
-    private SimpleInventory galacticraft_createGearInventory() {
-        SimpleInventory inv = new SimpleInventory(12);
+    private SimpleContainer galacticraft_createGearInventory() {
+        SimpleContainer inv = new SimpleContainer(12);
         inv.addListener((inventory) -> {
-            float pressure = CelestialBody.getByDimension(this.clientWorld).map(body -> body.atmosphere().pressure()).orElse(1.0f);
+            float pressure = CelestialBody.getByDimension(this.clientLevel).map(body -> body.atmosphere().pressure()).orElse(1.0f);
             if (pressure != 1.0f) {
-                for (int i = 0; i < inventory.size(); i++) {
-                    ItemStack stack = inventory.getStack(i);
+                for (int i = 0; i < inventory.getContainerSize(); i++) {
+                    ItemStack stack = inventory.getItem(i);
                     if (stack.getItem() instanceof Accessory accessory && accessory.enablesHearing()) {
-                        ((SoundSystemAccessor) ((SoundManagerAccessor) MinecraftClient.getInstance().getSoundManager()).getSoundSystem())
+                        ((SoundSystemAccessor) ((SoundManagerAccessor) Minecraft.getInstance().getSoundManager()).getSoundSystem())
                                 .updateAtmosphericVolumeMultiplier(1.0f);
                         return;
                     } else {
-                        ((SoundSystemAccessor) ((SoundManagerAccessor) MinecraftClient.getInstance().getSoundManager()).getSoundSystem())
+                        ((SoundSystemAccessor) ((SoundManagerAccessor) Minecraft.getInstance().getSoundManager()).getSoundSystem())
                                 .updateAtmosphericVolumeMultiplier(pressure);
                     }
                 }
             } else {
-                ((SoundSystemAccessor) ((SoundManagerAccessor) MinecraftClient.getInstance().getSoundManager()).getSoundSystem()).updateAtmosphericVolumeMultiplier(pressure);
+                ((SoundSystemAccessor) ((SoundManagerAccessor) Minecraft.getInstance().getSoundManager()).getSoundSystem()).updateAtmosphericVolumeMultiplier(pressure);
             }
         });
         return inv;
     }
 
     @Override
-    public void readChanges(PacketByteBuf buf) {
+    public void readChanges(FriendlyByteBuf buf) {
         byte size = buf.readByte();
 
         for (byte i = 0; i < size; i++) {
             if (buf.readBoolean()) {
-                this.unlockedResearch.add(new Identifier(buf.readString()));
+                this.unlockedResearch.add(new ResourceLocation(buf.readUtf()));
             } else {
-                this.unlockedResearch.remove(new Identifier(buf.readString()));
+                this.unlockedResearch.remove(new ResourceLocation(buf.readUtf()));
             }
         }
     }
 
     @Override
-    public boolean hasUnlockedResearch(Identifier id) {
+    public boolean hasUnlockedResearch(ResourceLocation id) {
         return this.unlockedResearch.contains(id);
     }
 
     @Override
-    public SimpleInventory getGearInv() {
+    public SimpleContainer getGearInv() {
         return this.gearInv;
     }
 
     @Override
-    public Inventory getOxygenTanks() {
+    public Container getOxygenTanks() {
         return this.tankInv;
     }
 
     @Override
-    public Inventory getThermalArmor() {
+    public Container getThermalArmor() {
         return this.thermalArmorInv;
     }
 
     @Override
-    public Inventory getAccessories() {
+    public Container getAccessories() {
         return this.accessoryInv;
     }
 
     @Override
-    public void writeGearToNbt(NbtCompound tag) {
-        tag.put(Constant.Nbt.GEAR_INV, this.getGearInv().toNbtList());
+    public void writeGearToNbt(CompoundTag tag) {
+        tag.put(Constant.Nbt.GEAR_INV, this.getGearInv().createTag());
     }
 
     @Override
-    public void readGearFromNbt(NbtCompound tag) {
-        this.getGearInv().readNbtList(tag.getList(Constant.Nbt.GEAR_INV, NbtElement.COMPOUND_TYPE));
+    public void readGearFromNbt(CompoundTag tag) {
+        this.getGearInv().fromTag(tag.getList(Constant.Nbt.GEAR_INV, Tag.TAG_COMPOUND));
     }
 }

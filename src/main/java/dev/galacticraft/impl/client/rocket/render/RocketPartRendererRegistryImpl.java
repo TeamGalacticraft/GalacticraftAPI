@@ -26,7 +26,7 @@ import dev.galacticraft.api.entity.rocket.render.RocketPartRenderer;
 import dev.galacticraft.api.entity.rocket.render.RocketPartRendererRegistry;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -34,17 +34,17 @@ import java.util.Map;
 
 @Environment(EnvType.CLIENT)
 public class RocketPartRendererRegistryImpl implements RocketPartRendererRegistry {
-    private final Map<Identifier, RocketPartRenderer> renderers = new HashMap<>();
+    private final Map<ResourceLocation, RocketPartRenderer> renderers = new HashMap<>();
 
     public RocketPartRendererRegistryImpl() {}
 
     @Override
-    public void register(@NotNull Identifier id, @NotNull RocketPartRenderer renderer) {
+    public void register(@NotNull ResourceLocation id, @NotNull RocketPartRenderer renderer) {
         this.renderers.put(id, renderer);
     }
 
     @Override
-    public @NotNull RocketPartRenderer getRenderer(Identifier part) {
+    public @NotNull RocketPartRenderer getRenderer(ResourceLocation part) {
         return this.renderers.getOrDefault(part, EmptyRocketPartRenderer.INSTANCE);
     }
 }

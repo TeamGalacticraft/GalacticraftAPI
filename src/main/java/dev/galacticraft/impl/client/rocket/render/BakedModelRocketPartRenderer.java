@@ -23,21 +23,28 @@
 package dev.galacticraft.impl.client.rocket.render;
 
 import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.math.Vector3f;
 import dev.galacticraft.api.entity.Rocket;
 import dev.galacticraft.api.entity.rocket.render.RocketPartRenderer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.render.*;
-import net.minecraft.client.render.model.BakedModel;
-import net.minecraft.client.render.model.BakedQuad;
-import net.minecraft.client.render.model.json.ModelTransformation;
-import net.minecraft.client.texture.SpriteAtlasTexture;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.client.world.ClientWorld;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.Vec3f;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.Sheets;
+import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.renderer.block.model.ItemTransforms;
+import net.minecraft.client.renderer.entity.layers.RenderLayer;
+import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.client.renderer.texture.TextureAtlas;
+import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.core.Direction;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -45,82 +52,82 @@ import java.util.function.Supplier;
 
 @Environment(EnvType.CLIENT)
 public record BakedModelRocketPartRenderer(Supplier<BakedModel> model,
-                                           Supplier<RenderLayer> layer) implements RocketPartRenderer {
+                                           Supplier<RenderType> layer) implements RocketPartRenderer {
     private static final Direction[] DIRECTIONS_AND_NULL = new Direction[]{null, Direction.DOWN, Direction.UP, Direction.NORTH, Direction.SOUTH, Direction.WEST, Direction.EAST};
 
     public BakedModelRocketPartRenderer(Supplier<BakedModel> model) {
-        this(model, () -> RenderLayer.getEntityTranslucent(model.get().getParticleSprite().getId(), true));
+        this(model, () -> RenderType.entityTranslucent(model.get().getParticleIcon().getName(), true));
     }
 
     @Override
-    public void renderGUI(ClientWorld world, MatrixStack matrices, int mouseX, int mouseY, float delta) {
+    public void renderGUI(ClientLevel world, PoseStack matrices, int mouseX, int mouseY, float delta) {
         RenderSystem.setShader(GameRenderer::getPositionColorTexShader);
         matrices.translate(0, 0, 150);
         matrices.translate(8, 8, 8);
-        model.get().getTransformation().getTransformation(ModelTransformation.Mode.GUI).apply(false, matrices);
-        matrices.multiply(Vec3f.NEGATIVE_X.getDegreesQuaternion(35));
-        matrices.multiply(Vec3f.POSITIVE_Y.getDegreesQuaternion(225));
-        matrices.multiply(Vec3f.POSITIVE_Z.getDegreesQuaternion(180));
+        model.get().getTransforms().getTransform(ItemTransforms.TransformType.GUI).apply(false, matrices);
+        matrices.mulPose(Vector3f.XN.rotationDegrees(35));
+        matrices.mulPose(Vector3f.YP.rotationDegrees(225));
+        matrices.mulPose(Vector3f.ZP.rotationDegrees(180));
         matrices.scale(16, 16, 16);
 
-        MatrixStack.Entry entry = matrices.peek();
+        PoseStack.Pose entry = matrices.last();
         List<BakedQuad> quads = new LinkedList<>();
         for (Direction direction : DIRECTIONS_AND_NULL) {
             quads.addAll(this.model.get().getQuads(null, direction, world.random));
         }
-        MinecraftClient.getInstance().getTextureManager().getTexture(SpriteAtlasTexture.BLOCK_ATLAS_TEXTURE).setFilter(false, false);
-        RenderSystem.setShaderTexture(0, SpriteAtlasTexture.BLOCK_ATLAS_TEXTURE);
+        Minecraft.getInstance().getTextureManager().getTexture(TextureAtlas.LOCATION_BLOCKS).setFilter(false, false);
+        RenderSystem.setShaderTexture(0, TextureAtlas.LOCATION_BLOCKS);
         RenderSystem.enableTexture();
-        RenderSystem.setShaderTexture(0, this.model.get().getParticleSprite().getAtlas().getGlId());
+        RenderSystem.setShaderTexture(0, this.model.get().getParticleIcon().atlas().getId());
         RenderSystem.enableBlend();
-        RenderSystem.blendFunc(GlStateManager.SrcFactor.SRC_ALPHA, GlStateManager.DstFactor.ONE_MINUS_SRC_ALPHA);
+        RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
         RenderSystem.disableDepthTest();
         RenderSystem.disableCull();
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-        if (model.get().isSideLit()) {
-            DiffuseLighting.enableGuiDepthLighting();
+        if (model.get().usesBlockLight()) {
+            Lighting.setupFor3DItems();
         } else {
-            DiffuseLighting.disableGuiDepthLighting();
+            Lighting.setupFor3DItems();
         }
 
         if (!quads.isEmpty()) {
-            VertexConsumerProvider.Immediate entityVertexConsumers = MinecraftClient.getInstance().getBufferBuilders().getEntityVertexConsumers();
-            VertexConsumer itemGlintConsumer = entityVertexConsumers.getBuffer(TexturedRenderLayers.getEntityCutout());
+            MultiBufferSource.BufferSource entityVertexConsumers = Minecraft.getInstance().renderBuffers().bufferSource();
+            VertexConsumer itemGlintConsumer = entityVertexConsumers.getBuffer(Sheets.cutoutBlockSheet());
             for (BakedQuad quad : quads) {
-                itemGlintConsumer.quad(
+                itemGlintConsumer.putBulkData(
                         entry,
                         quad,
                         1,
                         1,
                         1,
                         15728880,
-                        OverlayTexture.DEFAULT_UV
+                        OverlayTexture.NO_OVERLAY
                 );
             }
-            entityVertexConsumers.draw();
+            entityVertexConsumers.endBatch();
         }
 
-        if (model.get().isSideLit()) {
-            DiffuseLighting.enableGuiDepthLighting();
+        if (model.get().usesBlockLight()) {
+            Lighting.setupFor3DItems();
         }
     }
 
     @Override
-    public void render(ClientWorld world, MatrixStack matrices, Rocket rocket, VertexConsumerProvider vertices, float delta, int light) {
+    public void render(ClientLevel world, PoseStack matrices, Rocket rocket, MultiBufferSource vertices, float delta, int light) {
         RenderSystem.setShaderColor((((rocket.getColor() >> 16) & 0xFF) / 255f), (((rocket.getColor() >> 8) & 0xFF) / 255f), ((rocket.getColor() & 0xFF) / 255f), (((rocket.getColor() >> 24) & 0xFF) / 255f));
         matrices.translate(0.5D, 0.5D, 0.5D);
-        MatrixStack.Entry entry = matrices.peek();
+        PoseStack.Pose entry = matrices.last();
         VertexConsumer vertexConsumer = vertices.getBuffer(layer.get());
         for (Direction direction : DIRECTIONS_AND_NULL) {
             for (BakedQuad quad : this.model.get().getQuads(null, direction, world.random)) {
-                vertexConsumer.quad(
+                vertexConsumer.putBulkData(
                         entry,
                         quad,
                         1,
                         1,
                         1,
                         light,
-                        OverlayTexture.DEFAULT_UV
+                        OverlayTexture.NO_OVERLAY
                 );
             }
         }

@@ -20,19 +20,27 @@
  * SOFTWARE.
  */
 
-package dev.galacticraft.api.entity.rocket.render;
+package dev.galacticraft.impl.internal.mixin;
 
-import dev.galacticraft.impl.client.rocket.render.RocketPartRendererRegistryImpl;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import net.minecraft.resources.ResourceLocation;
-import org.jetbrains.annotations.NotNull;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.storage.LevelStorageSource;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.gen.Accessor;
 
-@Environment(EnvType.CLIENT)
-public interface RocketPartRendererRegistry {
-    RocketPartRendererRegistry INSTANCE = new RocketPartRendererRegistryImpl();
+import java.util.Map;
+import java.util.concurrent.Executor;
 
-    void register(@NotNull ResourceLocation id, @NotNull RocketPartRenderer renderer);
+@Mixin(MinecraftServer.class)
+public interface MinecraftServerAccessor {
+    @Accessor("executor")
+    Executor getWorkerExecutor();
 
-    @NotNull RocketPartRenderer getRenderer(ResourceLocation id);
+    @Accessor("storageSource")
+    LevelStorageSource.LevelStorageAccess getSession();
+
+    @Accessor("levels")
+    Map<ResourceKey<Level>, ServerLevel> getWorlds();
 }

@@ -22,13 +22,12 @@
 
 package dev.galacticraft.api.rocket.part;
 
-import com.mojang.serialization.Codec;
-import net.minecraft.util.StringIdentifiable;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Locale;
+import net.minecraft.util.StringRepresentable;
 
-public enum RocketPartType implements StringIdentifiable {
+public enum RocketPartType implements StringRepresentable {
     CONE,
     BODY,
     FIN,
@@ -36,10 +35,10 @@ public enum RocketPartType implements StringIdentifiable {
     BOTTOM,
     UPGRADE;
 
-    public static final Codec<RocketPartType> CODEC = Codec.STRING.xmap(s -> RocketPartType.valueOf(s.toUpperCase(Locale.ROOT)), RocketPartType::asString);
+    public static final com.mojang.serialization.Codec<RocketPartType> CODEC = com.mojang.serialization.Codec.STRING.xmap(s -> RocketPartType.valueOf(s.toUpperCase(Locale.ROOT)), RocketPartType::getSerializedName);
 
     @Override
-    public @NotNull String asString() {
+    public @NotNull String getSerializedName() {
         return this.toString().toLowerCase(Locale.ROOT);
     }
 }

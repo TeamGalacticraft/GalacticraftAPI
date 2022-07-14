@@ -23,18 +23,18 @@
 package dev.galacticraft.impl.internal.mixin;
 
 import dev.galacticraft.api.universe.celestialbody.CelestialBody;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.ItemEntity;
-import net.minecraft.entity.TntEntity;
-import net.minecraft.entity.vehicle.AbstractMinecartEntity;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.item.PrimedTnt;
+import net.minecraft.world.entity.vehicle.AbstractMinecart;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.Constant;
 import org.spongepowered.asm.mixin.injection.ModifyConstant;
 
-@Mixin({ItemEntity.class, TntEntity.class, AbstractMinecartEntity.class})
+@Mixin({ItemEntity.class, PrimedTnt.class, AbstractMinecart.class})
 public abstract class EntityGravityMixin {
     @ModifyConstant(method = "tick", constant = @Constant(doubleValue = -0.04D))
     private double galacticraft_changeEntityGravity(double defaultValue) {
-        return CelestialBody.getByDimension(((Entity) (Object) this).world).map(celestialBody -> celestialBody.gravity() / 1.75D * defaultValue).orElse(defaultValue);
+        return CelestialBody.getByDimension(((Entity) (Object) this).level).map(celestialBody -> celestialBody.gravity() / 1.75D * defaultValue).orElse(defaultValue);
     }
 }

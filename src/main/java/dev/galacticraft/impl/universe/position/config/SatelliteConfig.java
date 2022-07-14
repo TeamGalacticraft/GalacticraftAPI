@@ -32,43 +32,41 @@ import dev.galacticraft.api.universe.celestialbody.CelestialBodyConfig;
 import dev.galacticraft.api.universe.display.CelestialDisplay;
 import dev.galacticraft.api.universe.galaxy.Galaxy;
 import dev.galacticraft.api.universe.position.CelestialPosition;
-import net.minecraft.text.LiteralText;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.util.registry.RegistryKey;
-import net.minecraft.world.World;
-import net.minecraft.world.dimension.DimensionOptions;
-
 import java.util.Objects;
+import net.minecraft.core.Registry;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.dimension.LevelStem;
 
 public final class SatelliteConfig implements CelestialBodyConfig {
     public static final Codec<SatelliteConfig> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-            Identifier.CODEC.fieldOf("parent").xmap(id -> RegistryKey.of(AddonRegistry.CELESTIAL_BODY_KEY, id), RegistryKey::getValue).forGetter(SatelliteConfig::parent),
-            Identifier.CODEC.fieldOf("galaxy").xmap(id -> RegistryKey.of(AddonRegistry.GALAXY_KEY, id), RegistryKey::getValue).forGetter(SatelliteConfig::galaxy),
+            ResourceLocation.CODEC.fieldOf("parent").xmap(id -> ResourceKey.create(AddonRegistry.CELESTIAL_BODY_KEY, id), ResourceKey::location).forGetter(SatelliteConfig::parent),
+            ResourceLocation.CODEC.fieldOf("galaxy").xmap(id -> ResourceKey.create(AddonRegistry.GALAXY_KEY, id), ResourceKey::location).forGetter(SatelliteConfig::galaxy),
             CelestialPosition.CODEC.fieldOf("position").forGetter(SatelliteConfig::position),
             CelestialDisplay.CODEC.fieldOf("display").forGetter(SatelliteConfig::display),
             SatelliteOwnershipData.CODEC.fieldOf("ownership_data").forGetter(SatelliteConfig::ownershipData),
-            Identifier.CODEC.fieldOf("world").xmap(id -> RegistryKey.of(Registry.WORLD_KEY, id), RegistryKey::getValue).forGetter(SatelliteConfig::world),
+            ResourceLocation.CODEC.fieldOf("world").xmap(id -> ResourceKey.create(Registry.DIMENSION_REGISTRY, id), ResourceKey::location).forGetter(SatelliteConfig::world),
             GasComposition.CODEC.fieldOf("atmosphere").forGetter(SatelliteConfig::atmosphere),
             Codec.FLOAT.fieldOf("gravity").forGetter(SatelliteConfig::gravity),
             Codec.INT.fieldOf("accessWeight").forGetter(SatelliteConfig::accessWeight),
-            DimensionOptions.CODEC.fieldOf("dimension_options").forGetter(SatelliteConfig::dimensionOptions)
+            LevelStem.CODEC.fieldOf("dimension_options").forGetter(SatelliteConfig::dimensionOptions)
     ).apply(instance, SatelliteConfig::new));
 
-    private final RegistryKey<CelestialBody<?, ?>> parent;
-    private final RegistryKey<Galaxy> galaxy;
+    private final ResourceKey<CelestialBody<?, ?>> parent;
+    private final ResourceKey<Galaxy> galaxy;
     private final CelestialPosition<?, ?> position;
     private final CelestialDisplay<?, ?> display;
     private final SatelliteOwnershipData ownershipData;
-    private final RegistryKey<World> world;
+    private final ResourceKey<Level> world;
     private final GasComposition atmosphere;
     private final float gravity;
     private final int accessWeight;
-    private final DimensionOptions dimensionOptions;
-    private Text customName = LiteralText.EMPTY;
+    private final LevelStem dimensionOptions;
+    private Component customName = Component.empty();
 
-    public SatelliteConfig(RegistryKey<CelestialBody<?, ?>> parent, RegistryKey<Galaxy> galaxy, CelestialPosition<?, ?> position, CelestialDisplay<?, ?> display, SatelliteOwnershipData ownershipData, RegistryKey<World> world, GasComposition atmosphere, float gravity, int accessWeight, DimensionOptions dimensionOptions) {
+    public SatelliteConfig(ResourceKey<CelestialBody<?, ?>> parent, ResourceKey<Galaxy> galaxy, CelestialPosition<?, ?> position, CelestialDisplay<?, ?> display, SatelliteOwnershipData ownershipData, ResourceKey<Level> world, GasComposition atmosphere, float gravity, int accessWeight, LevelStem dimensionOptions) {
         this.parent = parent;
         this.galaxy = galaxy;
         this.position = position;
@@ -81,9 +79,9 @@ public final class SatelliteConfig implements CelestialBodyConfig {
         this.dimensionOptions = dimensionOptions;
     }
 
-    public RegistryKey<CelestialBody<?, ?>> parent() {return parent;}
+    public ResourceKey<CelestialBody<?, ?>> parent() {return parent;}
 
-    public RegistryKey<Galaxy> galaxy() {return galaxy;}
+    public ResourceKey<Galaxy> galaxy() {return galaxy;}
 
     public CelestialPosition<?, ?> position() {return position;}
 
@@ -91,11 +89,11 @@ public final class SatelliteConfig implements CelestialBodyConfig {
 
     public SatelliteOwnershipData ownershipData() {return ownershipData;}
 
-    public Text customName() {return customName;}
+    public Component customName() {return customName;}
 
-    public void customName(Text name) {this.customName = name;}
+    public void customName(Component name) {this.customName = name;}
 
-    public RegistryKey<World> world() {return world;}
+    public ResourceKey<Level> world() {return world;}
 
     public GasComposition atmosphere() {return atmosphere;}
 
@@ -103,7 +101,7 @@ public final class SatelliteConfig implements CelestialBodyConfig {
 
     public int accessWeight() {return accessWeight;}
 
-    public DimensionOptions dimensionOptions() {
+    public LevelStem dimensionOptions() {
         return this.dimensionOptions;
     }
 

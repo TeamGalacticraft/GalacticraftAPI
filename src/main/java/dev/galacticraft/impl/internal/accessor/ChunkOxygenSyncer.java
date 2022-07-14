@@ -22,18 +22,18 @@
 
 package dev.galacticraft.impl.internal.accessor;
 
-import net.minecraft.network.PacketByteBuf;
-import net.minecraft.network.packet.s2c.play.CustomPayloadS2CPacket;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.List;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.protocol.game.ClientboundCustomPayloadPacket;
 
 public interface ChunkOxygenSyncer {
-    default @NotNull List<@NotNull CustomPayloadS2CPacket> syncOxygenPacketsToClient() {
+    default @NotNull List<@NotNull ClientboundCustomPayloadPacket> syncOxygenPacketsToClient() {
         return Collections.emptyList();
     }
 
-    default void readOxygenUpdate(byte b, @NotNull PacketByteBuf buf) {
+    default void readOxygenUpdate(byte b, @NotNull FriendlyByteBuf buf) {
     }
 }

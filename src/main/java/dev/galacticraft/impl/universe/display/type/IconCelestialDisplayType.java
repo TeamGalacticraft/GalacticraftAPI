@@ -24,15 +24,20 @@ package dev.galacticraft.impl.universe.display.type;
 
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.BufferBuilder;
+import com.mojang.blaze3d.vertex.BufferUploader;
+import com.mojang.blaze3d.vertex.DefaultVertexFormat;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexFormat;
+import com.mojang.math.Matrix4f;
+import com.mojang.math.Vector4f;
 import com.mojang.serialization.Codec;
 import dev.galacticraft.api.universe.display.CelestialDisplayType;
 import dev.galacticraft.impl.universe.display.config.IconCelestialDisplayConfig;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.render.*;
-import net.minecraft.client.texture.AbstractTexture;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.util.math.Matrix4f;
-import net.minecraft.util.math.Vector4f;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.client.renderer.ShaderInstance;
+import net.minecraft.client.renderer.texture.AbstractTexture;
 import org.lwjgl.opengl.GL32C;
 
 import java.util.function.Consumer;
@@ -46,21 +51,20 @@ public class IconCelestialDisplayType extends CelestialDisplayType<IconCelestial
     }
 
     @Override
-    public Vector4f render(MatrixStack matrices, BufferBuilder buffer, float size, double mouseX, double mouseY, float delta, Consumer<Supplier<Shader>> shaderSetter, IconCelestialDisplayConfig config) {
+    public Vector4f render(PoseStack matrices, BufferBuilder buffer, float size, double mouseX, double mouseY, float delta, Consumer<Supplier<ShaderInstance>> shaderSetter, IconCelestialDisplayConfig config) {
         shaderSetter.accept(GameRenderer::getPositionTexShader);
-        Matrix4f positionMatrix = matrices.peek().getPositionMatrix();
-        AbstractTexture texture = MinecraftClient.getInstance().getTextureManager().getTexture(config.texture());
-        RenderSystem.setShaderTexture(0, texture.getGlId());
-        texture.bindTexture();
+        Matrix4f positionMatrix = matrices.last().pose();
+        AbstractTexture texture = Minecraft.getInstance().getTextureManager().getTexture(config.texture());
+        RenderSystem.setShaderTexture(0, texture.getId());
+        texture.bind();
         float width = GlStateManager._getTexLevelParameter(GL32C.GL_TEXTURE_2D, 0, GL32C.GL_TEXTURE_WIDTH);
         float height = GlStateManager._getTexLevelParameter(GL32C.GL_TEXTURE_2D, 0, GL32C.GL_TEXTURE_HEIGHT);
-        buffer.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_TEXTURE);
-        buffer.vertex(positionMatrix, config.scale() * -size, config.scale() * -size, 0).texture(config.u() / width, config.v() / height).next();
-        buffer.vertex(positionMatrix, config.scale() * -size, config.scale() * size, 0).texture(config.u() / width, (config.v() + config.height()) / height).next();
-        buffer.vertex(positionMatrix, config.scale() * size, config.scale() * size, 0).texture((config.u() + config.width()) / width, (config.v() + config.height()) / height).next();
-        buffer.vertex(positionMatrix, config.scale() * size, config.scale() * -size, 0).texture((config.u() + config.width()) / width, config.v() / height).next();
-        buffer.end();
-        BufferRenderer.draw(buffer);
+        buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
+        buffer.vertex(positionMatrix, config.scale() * -size, config.scale() * -size, 0).uv(config.u() / width, config.v() / height).endVertex();
+        buffer.vertex(positionMatrix, config.scale() * -size, config.scale() * size, 0).uv(config.u() / width, (config.v() + config.height()) / height).endVertex();
+        buffer.vertex(positionMatrix, config.scale() * size, config.scale() * size, 0).uv((config.u() + config.width()) / width, (config.v() + config.height()) / height).endVertex();
+        buffer.vertex(positionMatrix, config.scale() * size, config.scale() * -size, 0).uv((config.u() + config.width()) / width, config.v() / height).endVertex();
+        BufferUploader.draw(buffer.end());
         return new Vector4f(config.scale() * -size, config.scale() * -size, (config.scale() * size) * 2, (config.scale() * size) * 2);
     }
 }

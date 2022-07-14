@@ -23,7 +23,7 @@
 package dev.galacticraft.api.satellite;
 
 import dev.galacticraft.api.universe.celestialbody.CelestialBodyConfig;
-import net.minecraft.text.Text;
+import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -48,7 +48,7 @@ public interface Satellite<C extends CelestialBodyConfig> {
      * @param config the satellite configuration to be queried
      * @return the custom name of this satellite
      */
-    @NotNull Text getCustomName(C config);
+    @NotNull Component getCustomName(C config);
 
     /**
      * Sets the custom name of this satellite
@@ -56,5 +56,5 @@ public interface Satellite<C extends CelestialBodyConfig> {
      * @param text   the text to set
      * @param config the satellite configuration to be set
      */
-    void setCustomName(@NotNull Text text, @NotNull C config);
+    void setCustomName(@NotNull Component text, @NotNull C config);
 }

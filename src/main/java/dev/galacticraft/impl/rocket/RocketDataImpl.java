@@ -30,10 +30,10 @@ import dev.galacticraft.api.universe.celestialbody.CelestialBody;
 import dev.galacticraft.impl.Constant;
 import it.unimi.dsi.fastutil.objects.Object2BooleanArrayMap;
 import it.unimi.dsi.fastutil.objects.Object2BooleanMap;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.DynamicRegistryManager;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.core.Registry;
+import net.minecraft.core.RegistryAccess;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -41,20 +41,20 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Arrays;
 
 @ApiStatus.Internal
-public record RocketDataImpl(int color, Identifier cone, Identifier body, Identifier fin, Identifier booster,
-                             Identifier bottom, Identifier upgrade) implements RocketData {
-    public static final RocketDataImpl EMPTY = new RocketDataImpl(0xffffffff, new Identifier(Constant.MOD_ID, "invalid"), new Identifier(Constant.MOD_ID, "invalid"), new Identifier(Constant.MOD_ID, "invalid"), new Identifier(Constant.MOD_ID, "invalid"), new Identifier(Constant.MOD_ID, "invalid"), new Identifier(Constant.MOD_ID, "invalid"));
+public record RocketDataImpl(int color, ResourceLocation cone, ResourceLocation body, ResourceLocation fin, ResourceLocation booster,
+                             ResourceLocation bottom, ResourceLocation upgrade) implements RocketData {
+    public static final RocketDataImpl EMPTY = new RocketDataImpl(0xffffffff, new ResourceLocation(Constant.MOD_ID, "invalid"), new ResourceLocation(Constant.MOD_ID, "invalid"), new ResourceLocation(Constant.MOD_ID, "invalid"), new ResourceLocation(Constant.MOD_ID, "invalid"), new ResourceLocation(Constant.MOD_ID, "invalid"), new ResourceLocation(Constant.MOD_ID, "invalid"));
 
-    public static RocketDataImpl fromNbt(@NotNull NbtCompound nbt) {
+    public static RocketDataImpl fromNbt(@NotNull CompoundTag nbt) {
         if (nbt.getBoolean("Empty")) return empty();
         return new RocketDataImpl(
                 nbt.getInt("Color"),
-                new Identifier(nbt.getString("Cone")),
-                new Identifier(nbt.getString("Body")),
-                new Identifier(nbt.getString("Fin")),
-                new Identifier(nbt.getString("Booster")),
-                new Identifier(nbt.getString("Bottom")),
-                new Identifier(nbt.getString("Upgrade"))
+                new ResourceLocation(nbt.getString("Cone")),
+                new ResourceLocation(nbt.getString("Body")),
+                new ResourceLocation(nbt.getString("Fin")),
+                new ResourceLocation(nbt.getString("Booster")),
+                new ResourceLocation(nbt.getString("Bottom")),
+                new ResourceLocation(nbt.getString("Upgrade"))
         );
     }
 
@@ -64,7 +64,7 @@ public record RocketDataImpl(int color, Identifier cone, Identifier body, Identi
 
     @Contract("_ -> param1")
     @Override
-    public @NotNull NbtCompound toNbt(@NotNull NbtCompound nbt) {
+    public @NotNull CompoundTag toNbt(@NotNull CompoundTag nbt) {
         if (this.isEmpty()) {
             nbt.putBoolean("Empty", true);
             return nbt;
@@ -105,11 +105,11 @@ public record RocketDataImpl(int color, Identifier cone, Identifier body, Identi
     }
 
     @Override
-    public boolean canTravelTo(DynamicRegistryManager manager, CelestialBody<?, ?> celestialBodyType) {
+    public boolean canTravelTo(RegistryAccess manager, CelestialBody<?, ?> celestialBodyType) {
         Object2BooleanMap<RocketPart> map = new Object2BooleanArrayMap<>();
         TravelPredicateType.AccessType type = TravelPredicateType.AccessType.PASS;
         Registry<RocketPart> registry = RocketPart.getRegistry(manager);
-        for (Identifier part : this.parts()) {
+        for (ResourceLocation part : this.parts()) {
             RocketPart rocketPart = RocketPart.getById(registry, part);
             map.put(rocketPart, true);
             type = type.merge(this.travel(manager, rocketPart, celestialBodyType, map));
@@ -117,7 +117,7 @@ public record RocketDataImpl(int color, Identifier cone, Identifier body, Identi
         return type == TravelPredicateType.AccessType.ALLOW;
     }
 
-    private TravelPredicateType.AccessType travel(DynamicRegistryManager manager, @NotNull RocketPart part, CelestialBody<?, ?> type, Object2BooleanMap<RocketPart> map) {
+    private TravelPredicateType.AccessType travel(RegistryAccess manager, @NotNull RocketPart part, CelestialBody<?, ?> type, Object2BooleanMap<RocketPart> map) {
         return part.travelPredicate().canTravelTo(type, p -> map.computeBooleanIfAbsent((RocketPart) p, p1 -> {
             if (Arrays.asList(this.parts()).contains(p1)) {
                 map.put((RocketPart) p, false);
@@ -129,13 +129,13 @@ public record RocketDataImpl(int color, Identifier cone, Identifier body, Identi
     }
 
     @Override
-    public Identifier getPartForType(@NotNull RocketPartType type) {
+    public ResourceLocation getPartForType(@NotNull RocketPartType type) {
         return this.parts()[type.ordinal()];
     }
 
     @Contract(" -> new")
     @Override
-    public Identifier @NotNull [] parts() {
-        return new Identifier[]{this.cone(), this.body(), this.fin(), this.booster(), this.bottom(), this.upgrade()};
+    public ResourceLocation @NotNull [] parts() {
+        return new ResourceLocation[]{this.cone(), this.body(), this.fin(), this.booster(), this.bottom(), this.upgrade()};
     }
 }

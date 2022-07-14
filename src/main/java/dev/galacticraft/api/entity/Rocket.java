@@ -25,9 +25,9 @@ package dev.galacticraft.api.entity;
 import dev.galacticraft.api.rocket.LaunchStage;
 import dev.galacticraft.api.rocket.part.RocketPartType;
 import dev.galacticraft.api.universe.celestialbody.CelestialBody;
-import net.minecraft.entity.damage.DamageSource;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.BlockPos;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.damagesource.DamageSource;
 import org.jetbrains.annotations.NotNull;
 
 public interface Rocket {
@@ -64,10 +64,10 @@ public interface Rocket {
      *
      * @return all parts applied to this rocket
      */
-    Identifier[/*6*/] getPartIds();
+    ResourceLocation[/*6*/] getPartIds();
 
     /**
-     * Returns the rocket launch pad linked to this rocket or {@link BlockPos#ORIGIN} if it is not linked to one
+     * Returns the rocket launch pad linked to this rocket or {@link BlockPos#ZERO} if it is not linked to one
      *
      * @return the rocket launch pad linked to this rocket
      */
@@ -75,7 +75,7 @@ public interface Rocket {
 
     /**
      * Sets the rocket launch pad linked to this rocket
-     * If the rocket is not linked to a launchpad, use {@link BlockPos#ORIGIN}
+     * If the rocket is not linked to a launchpad, use {@link BlockPos#ZERO}
      *
      * @param linkedPad the launchpad to link this rocket with
      */
@@ -131,7 +131,7 @@ public interface Rocket {
      * @param type the type of rocket part to swap
      * @throws AssertionError {@code if (part.type != type) } and assertions are enabled
      */
-    void setPart(Identifier part, RocketPartType type);
+    void setPart(ResourceLocation part, RocketPartType type);
 
     /**
      * Replaces all the current parts of this rocket with new ones.
@@ -139,7 +139,7 @@ public interface Rocket {
      *
      * @param parts the parts to put in
      */
-    void setParts(Identifier[/*6*/] parts);
+    void setParts(ResourceLocation[/*6*/] parts);
 
     /**
      * Returns the id of the rocket part applied to this rocket of this {@code type}
@@ -147,5 +147,5 @@ public interface Rocket {
      * @param type the type of part to return
      * @return the id of the rocket part applied to this rocket of this {@code type}
      */
-    Identifier getPartForType(RocketPartType type);
+    ResourceLocation getPartForType(RocketPartType type);
 }

@@ -25,57 +25,57 @@ package dev.galacticraft.api.gametest;
 import dev.galacticraft.api.accessor.ChunkOxygenAccessor;
 import dev.galacticraft.api.registry.AddonRegistry;
 import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.test.GameTest;
-import net.minecraft.test.TestContext;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.registry.RegistryKey;
-import net.minecraft.world.ChunkSerializer;
-import net.minecraft.world.chunk.ProtoChunk;
+import net.minecraft.core.BlockPos;
+import net.minecraft.gametest.framework.GameTest;
+import net.minecraft.gametest.framework.GameTestHelper;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.chunk.ProtoChunk;
+import net.minecraft.world.level.chunk.storage.ChunkSerializer;
 import org.jetbrains.annotations.NotNull;
 
 public class GalacticraftApiTestSuite implements FabricGameTest {
     private static final String MOD_ID = "gc-api-test";
 
-    @GameTest(structureName = EMPTY_STRUCTURE)
-    public void testForDatapackGalaxy(@NotNull TestContext context) {
-        context.addInstantFinalTask(() -> {
-            final var registry = context.getWorld().getRegistryManager().get(AddonRegistry.GALAXY_KEY);
-            if (!registry.contains(RegistryKey.of(AddonRegistry.GALAXY_KEY, new Identifier(MOD_ID, "example_galaxy")))) {
-                context.throwGameTestException("Expected custom datapack galaxy to be loaded!");
+    @GameTest(template = EMPTY_STRUCTURE)
+    public void testForDatapackGalaxy(@NotNull GameTestHelper context) {
+        context.succeedWhen(() -> {
+            final var registry = context.getLevel().registryAccess().registryOrThrow(AddonRegistry.GALAXY_KEY);
+            if (!registry.containsKey(ResourceKey.create(AddonRegistry.GALAXY_KEY, new ResourceLocation(MOD_ID, "example_galaxy")))) {
+                context.fail("Expected custom datapack galaxy to be loaded!");
             }
         });
     }
 
-    @GameTest(structureName = EMPTY_STRUCTURE)
-    public void testForDatapackCelestialBodies(@NotNull TestContext context) {
-        context.addInstantFinalTask(() -> {
-            final var registry = context.getWorld().getRegistryManager().get(AddonRegistry.CELESTIAL_BODY_KEY);
-            if (!registry.contains(RegistryKey.of(AddonRegistry.CELESTIAL_BODY_KEY, new Identifier(MOD_ID, "example_star")))) {
-                context.throwGameTestException("Expected custom datapack star to be loaded!");
-            } else if (!registry.contains(RegistryKey.of(AddonRegistry.CELESTIAL_BODY_KEY, new Identifier(MOD_ID, "example_planet")))) {
-                context.throwGameTestException("Expected custom datapack planet to be loaded!");
+    @GameTest(template = EMPTY_STRUCTURE)
+    public void testForDatapackCelestialBodies(@NotNull GameTestHelper context) {
+        context.succeedWhen(() -> {
+            final var registry = context.getLevel().registryAccess().registryOrThrow(AddonRegistry.CELESTIAL_BODY_KEY);
+            if (!registry.containsKey(ResourceKey.create(AddonRegistry.CELESTIAL_BODY_KEY, new ResourceLocation(MOD_ID, "example_star")))) {
+                context.fail("Expected custom datapack star to be loaded!");
+            } else if (!registry.containsKey(ResourceKey.create(AddonRegistry.CELESTIAL_BODY_KEY, new ResourceLocation(MOD_ID, "example_planet")))) {
+                context.fail("Expected custom datapack planet to be loaded!");
             }
         });
     }
 
-    @GameTest(structureName = EMPTY_STRUCTURE)
-    public void testOxygenSerialization(@NotNull TestContext context) {
-        context.addInstantFinalTask(() -> {
-            var absolutePos = context.getAbsolutePos(BlockPos.ORIGIN);
-            var chunk = context.getWorld().getChunk(absolutePos);
+    @GameTest(template = EMPTY_STRUCTURE)
+    public void testOxygenSerialization(@NotNull GameTestHelper context) {
+        context.succeedWhen(() -> {
+            var absolutePos = context.absolutePos(BlockPos.ZERO);
+            var chunk = context.getLevel().getChunk(absolutePos);
             int x = absolutePos.getX() & 15;
             int y = absolutePos.getY() & 15;
             int z = absolutePos.getZ() & 15;
             ((ChunkOxygenAccessor) chunk).setBreathable(x, y, z, false);
             if (((ChunkOxygenAccessor) chunk).isBreathable(x, y, z)) {
-                context.throwGameTestException("Expected area to become unbreathable!");
+                context.fail("Expected area to become unbreathable!");
             } else {
-                NbtCompound serialized = ChunkSerializer.serialize(context.getWorld(), chunk);
-                ProtoChunk deserialized = ChunkSerializer.deserialize(context.getWorld(), context.getWorld().getPointOfInterestStorage(), chunk.getPos(), serialized);
+                CompoundTag serialized = ChunkSerializer.write(context.getLevel(), chunk);
+                ProtoChunk deserialized = ChunkSerializer.read(context.getLevel(), context.getLevel().getPoiManager(), chunk.getPos(), serialized);
                 if (((ChunkOxygenAccessor) deserialized).isBreathable(x, y, z)) {
-                    context.throwGameTestException("Expected area to stay unbreathable upon deserialization!");
+                    context.fail("Expected area to stay unbreathable upon deserialization!");
                 }
             }
         });

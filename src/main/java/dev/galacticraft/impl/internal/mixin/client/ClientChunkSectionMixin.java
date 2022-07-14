@@ -25,8 +25,8 @@ package dev.galacticraft.impl.internal.mixin.client;
 import dev.galacticraft.impl.internal.accessor.ChunkSectionOxygenAccessorInternal;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.network.PacketByteBuf;
-import net.minecraft.world.chunk.ChunkSection;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.level.chunk.LevelChunkSection;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -35,11 +35,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 /**
  * @author <a href="https://github.com/TeamGalacticraft">TeamGalacticraft</a>
  */
-@Mixin(ChunkSection.class)
+@Mixin(LevelChunkSection.class)
 @Environment(EnvType.CLIENT)
 public abstract class ClientChunkSectionMixin implements ChunkSectionOxygenAccessorInternal {
-    @Inject(method = "fromPacket", at = @At("RETURN"))
-    private void galacticraft_fromPacket(PacketByteBuf buf, CallbackInfo ci) {
+    @Inject(method = "read", at = @At("RETURN"))
+    private void galacticraft_fromPacket(FriendlyByteBuf buf, CallbackInfo ci) {
         this.readOxygenPacket(buf);
     }
 }

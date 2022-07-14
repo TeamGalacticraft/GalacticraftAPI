@@ -25,12 +25,12 @@ package dev.galacticraft.impl.universe.display.config;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import dev.galacticraft.api.universe.display.CelestialDisplayConfig;
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.ResourceLocation;
 
-public record IconCelestialDisplayConfig(Identifier texture, int u, int v, int width, int height,
+public record IconCelestialDisplayConfig(ResourceLocation texture, int u, int v, int width, int height,
                                          float scale) implements CelestialDisplayConfig {
     public static final Codec<IconCelestialDisplayConfig> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-            Identifier.CODEC.fieldOf("texture").forGetter(IconCelestialDisplayConfig::texture),
+            ResourceLocation.CODEC.fieldOf("texture").forGetter(IconCelestialDisplayConfig::texture),
             Codec.INT.fieldOf("u").forGetter(IconCelestialDisplayConfig::u),
             Codec.INT.fieldOf("v").forGetter(IconCelestialDisplayConfig::v),
             Codec.INT.fieldOf("width").forGetter(IconCelestialDisplayConfig::width),
