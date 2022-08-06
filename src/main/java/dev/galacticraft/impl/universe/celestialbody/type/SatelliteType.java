@@ -222,12 +222,12 @@ public class SatelliteType extends CelestialBodyType<SatelliteConfig> implements
     }
 
     @Override
-    public int temperature(RegistryAccess access, long time, SatelliteConfig config) {
-        return time % 24000 < 12000 ? 395 : 116; //todo: temperature providers?
+    public CelestialBody<SatelliteConfig, SatelliteType> configure(SatelliteConfig config) {
+        return new CelestialBody<>(this, config);
     }
 
     @Override
-    public CelestialBody<SatelliteConfig, SatelliteType> configure(SatelliteConfig config) {
-        return new CelestialBody<>(this, config);
+    public int temperature(RegistryAccess access, long time, SatelliteConfig config) {
+        return time % 24000 < 12000 ? 121 : -157; //todo: gradual temperature change
     }
 }
