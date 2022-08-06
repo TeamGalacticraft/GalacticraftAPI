@@ -48,6 +48,7 @@ import io.netty.buffer.Unpooled;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.network.FriendlyByteBuf;
@@ -208,17 +209,12 @@ public class SatelliteType extends CelestialBodyType<SatelliteConfig> implements
     }
 
     @Override
-    public int temperature(SatelliteConfig config) {
-        return 121;
-    }
-
-    @Override
-    public int nightTemperature(SatelliteConfig config) {
-        return -157;
-    }
-
-    @Override
     public CelestialBody<SatelliteConfig, SatelliteType> configure(SatelliteConfig config) {
         return new CelestialBody<>(this, config);
+    }
+
+    @Override
+    public int temperature(RegistryAccess access, long time, SatelliteConfig config) {
+        return time % 24000 < 12000 ? 121 : -157; //todo: gradual temperature change
     }
 }
