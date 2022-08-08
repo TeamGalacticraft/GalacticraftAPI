@@ -50,8 +50,7 @@ public final class SatelliteConfig implements CelestialBodyConfig {
             ResourceLocation.CODEC.fieldOf("world").xmap(id -> ResourceKey.create(Registry.DIMENSION_REGISTRY, id), ResourceKey::location).forGetter(SatelliteConfig::world),
             GasComposition.CODEC.fieldOf("atmosphere").forGetter(SatelliteConfig::atmosphere),
             Codec.FLOAT.fieldOf("gravity").forGetter(SatelliteConfig::gravity),
-            Codec.INT.fieldOf("accessWeight").forGetter(SatelliteConfig::accessWeight),
-            LevelStem.CODEC.fieldOf("dimension_options").forGetter(SatelliteConfig::dimensionOptions)
+            Codec.INT.fieldOf("accessWeight").forGetter(SatelliteConfig::accessWeight)
     ).apply(instance, SatelliteConfig::new));
 
     private final ResourceKey<CelestialBody<?, ?>> parent;
@@ -63,10 +62,9 @@ public final class SatelliteConfig implements CelestialBodyConfig {
     private final GasComposition atmosphere;
     private final float gravity;
     private final int accessWeight;
-    private final LevelStem dimensionOptions;
     private Component customName = Component.empty();
 
-    public SatelliteConfig(ResourceKey<CelestialBody<?, ?>> parent, ResourceKey<Galaxy> galaxy, CelestialPosition<?, ?> position, CelestialDisplay<?, ?> display, SatelliteOwnershipData ownershipData, ResourceKey<Level> world, GasComposition atmosphere, float gravity, int accessWeight, LevelStem dimensionOptions) {
+    public SatelliteConfig(ResourceKey<CelestialBody<?, ?>> parent, ResourceKey<Galaxy> galaxy, CelestialPosition<?, ?> position, CelestialDisplay<?, ?> display, SatelliteOwnershipData ownershipData, ResourceKey<Level> world, GasComposition atmosphere, float gravity, int accessWeight) {
         this.parent = parent;
         this.galaxy = galaxy;
         this.position = position;
@@ -76,7 +74,6 @@ public final class SatelliteConfig implements CelestialBodyConfig {
         this.atmosphere = atmosphere;
         this.gravity = gravity;
         this.accessWeight = accessWeight;
-        this.dimensionOptions = dimensionOptions;
     }
 
     public ResourceKey<CelestialBody<?, ?>> parent() {return parent;}
@@ -100,10 +97,6 @@ public final class SatelliteConfig implements CelestialBodyConfig {
     public float gravity() {return gravity;}
 
     public int accessWeight() {return accessWeight;}
-
-    public LevelStem dimensionOptions() {
-        return this.dimensionOptions;
-    }
 
     @Override
     public boolean equals(Object obj) {

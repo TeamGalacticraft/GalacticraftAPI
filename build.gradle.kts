@@ -39,6 +39,7 @@ val minecraft       = project.property("minecraft.version").toString()
 val loader          = project.property("loader.version").toString()
 val fabric          = project.property("fabric.version").toString()
 val machinelib      = project.property("machinelib.version").toString()
+val dyndims         = project.property("dyndims.version").toString()
 
 group = modGroup
 version ="$modVersion+$minecraft"
@@ -89,7 +90,7 @@ loom {
 
 repositories {
     mavenLocal()
-    maven("https://maven.galacticraft.net/maven-releases/") {
+    maven("https://maven.galacticraft.net/repository/maven-releases/") {
         name = "Galacticraft Repository"
         content {
             includeGroup("dev.galacticraft")
@@ -119,6 +120,7 @@ dependencies {
     }
 
     modImplementation("dev.galacticraft:MachineLib:$machinelib")
+//    modImplementation("dev.galacticraft:dyndims:$dyndims")
     modRuntimeOnly("net.fabricmc.fabric-api:fabric-api:$fabric")
     "gametestImplementation"(sourceSets.main.get().output)
     "gametestImplementation"(sourceSets.main.get().compileClasspath)
