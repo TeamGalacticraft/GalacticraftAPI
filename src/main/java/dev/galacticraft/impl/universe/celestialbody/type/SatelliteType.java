@@ -36,8 +36,8 @@ import dev.galacticraft.api.universe.celestialbody.satellite.Orbitable;
 import dev.galacticraft.api.universe.display.CelestialDisplay;
 import dev.galacticraft.api.universe.galaxy.Galaxy;
 import dev.galacticraft.api.universe.position.CelestialPosition;
-import dev.galacticraft.dynworlds.api.DynamicLevelRegistry;
-import dev.galacticraft.dynworlds.api.PlayerRemover;
+import dev.galacticraft.dyndims.api.DynamicLevelRegistry;
+import dev.galacticraft.dyndims.api.PlayerRemover;
 import dev.galacticraft.impl.Constant;
 import dev.galacticraft.impl.internal.world.gen.SatelliteChunkGenerator;
 import dev.galacticraft.impl.internal.world.gen.biome.GcApiBiomes;
@@ -63,6 +63,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.valueproviders.ConstantInt;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.world.level.dimension.LevelStem;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
@@ -107,7 +108,6 @@ public class SatelliteType extends CelestialBodyType<SatelliteConfig> implements
         ResourceLocation identifier = Objects.requireNonNull(server.registryAccess().registryOrThrow(AddonRegistry.CELESTIAL_BODY_KEY).getKey(parent));
         ResourceLocation id = new ResourceLocation(identifier.getNamespace(), "sat_" + identifier.getPath() + "_" + player.getGameProfile().getName().toLowerCase(Locale.ROOT));
         DimensionType type = new DimensionType(OptionalLong.empty(), true, false, false, true, 1, false, false, 0, 256, 256, TagKey.create(Registry.BLOCK_REGISTRY, new ResourceLocation(Constant.MOD_ID, "infiniburn_space")), new ResourceLocation(Constant.MOD_ID, "space_sky"), 1, new DimensionType.MonsterSettings(false, false, ConstantInt.of(-1), 0));
-        LevelStem options = new LevelStem(Holder.direct(type), new SatelliteChunkGenerator(server.registryAccess().registryOrThrow(Registry.STRUCTURE_SET_REGISTRY), Holder.direct(GcApiBiomes.SPACE), structure));
         SatelliteOwnershipData ownershipData = SatelliteOwnershipData.create(player.getUUID(), player.getScoreboardName(), new LinkedList<>(), false);
         CelestialPosition<?, ?> position = new CelestialPosition<>(OrbitalCelestialPositionType.INSTANCE, new OrbitalCelestialPositionConfig(1550, 10.0f, 0.0F, false));
         CelestialDisplay<?, ?> display = new CelestialDisplay<>(IconCelestialDisplayType.INSTANCE, new IconCelestialDisplayConfig(new ResourceLocation(Constant.MOD_ID, "satellite"), 0, 0, 16, 16, 1));
@@ -115,22 +115,22 @@ public class SatelliteType extends CelestialBodyType<SatelliteConfig> implements
         ResourceKey<DimensionType> key2 = ResourceKey.create(Registry.DIMENSION_TYPE_REGISTRY, id);
         assert server.getLevel(key) == null : "Level already registered?!";
         assert server.registryAccess().registryOrThrow(Registry.DIMENSION_TYPE_REGISTRY).get(key2) == null : "Dimension Type already registered?!";
-        return create(id, server, parent, position, display, options, ownershipData, player.getGameProfile().getName() + "'s Space Station");
+        return create(id, server, parent, position, display, new SatelliteChunkGenerator(server.registryAccess().registryOrThrow(Registry.STRUCTURE_SET_REGISTRY), Holder.direct(GcApiBiomes.SPACE), structure), type, ownershipData, player.getGameProfile().getName() + "'s Space Station");
     }
 
     @ApiStatus.Experimental
     public static CelestialBody<SatelliteConfig, SatelliteType> create(ResourceLocation id, @NotNull MinecraftServer server, CelestialBody<?, ?> parent, CelestialPosition<?, ?> position, CelestialDisplay<?, ?> display,
-                                                                       LevelStem options, SatelliteOwnershipData ownershipData, String name) {
+                                                                       ChunkGenerator chunkGenerator, DimensionType type, SatelliteOwnershipData ownershipData, String name) {
         if (!(parent.type() instanceof Orbitable)) {
             throw new IllegalArgumentException("Parent must be orbitable!");
         }
 
         Constant.LOGGER.debug("Attempting to create a level dynamically ({})", id);
-        if (!((DynamicLevelRegistry) server).addDynamicLevel(id, options, options.typeHolder().value())) {
+        if (!((DynamicLevelRegistry) server).addDynamicDimension(id, chunkGenerator, type)) {
             throw new RuntimeException("Failed to create dynamic level!");
         }
 
-        SatelliteConfig config = new SatelliteConfig(ResourceKey.create(AddonRegistry.CELESTIAL_BODY_KEY, server.registryAccess().registryOrThrow(AddonRegistry.CELESTIAL_BODY_KEY).getKey(parent)), parent.galaxy(), position, display, ownershipData, ResourceKey.create(Registry.DIMENSION_REGISTRY, id), EMPTY_GAS_COMPOSITION, 0.0f, parent.type() instanceof Landable ? ((Landable) parent.type()).accessWeight(parent.config()) : 1, options);
+        SatelliteConfig config = new SatelliteConfig(ResourceKey.create(AddonRegistry.CELESTIAL_BODY_KEY, Objects.requireNonNull(server.registryAccess().registryOrThrow(AddonRegistry.CELESTIAL_BODY_KEY).getKey(parent))), parent.galaxy(), position, display, ownershipData, ResourceKey.create(Registry.DIMENSION_REGISTRY, id), EMPTY_GAS_COMPOSITION, 0.0f, parent.type() instanceof Landable ? ((Landable) parent.type()).accessWeight(parent.config()) : 1);
         config.customName(Component.translatable(name));
         CelestialBody<SatelliteConfig, SatelliteType> satellite = INSTANCE.configure(config);
         ((SatelliteAccessor) server).addSatellite(id, satellite);
@@ -144,7 +144,7 @@ public class SatelliteType extends CelestialBodyType<SatelliteConfig> implements
 
     @ApiStatus.Experimental
     public static boolean removeSatellite(@NotNull MinecraftServer server, ResourceLocation id) {
-        if (((DynamicLevelRegistry) server).removeDynamicLevel(id, PLAYER_REMOVER)) {
+        if (((DynamicLevelRegistry) server).removeDynamicDimension(id, PLAYER_REMOVER)) {
             ((SatelliteAccessor) server).removeSatellite(id);
 
             for (ServerPlayer player : server.getPlayerList().getPlayers()) {

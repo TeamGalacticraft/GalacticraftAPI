@@ -39,7 +39,7 @@ val minecraft       = project.property("minecraft.version").toString()
 val loader          = project.property("loader.version").toString()
 val fabric          = project.property("fabric.version").toString()
 val machinelib      = project.property("machinelib.version").toString()
-val dynworlds       = project.property("dynworlds.version").toString()
+val dyndims         = project.property("dyndims.version").toString()
 
 group = modGroup
 version ="$modVersion+$minecraft"
@@ -120,7 +120,7 @@ dependencies {
     }
 
     modImplementation("dev.galacticraft:MachineLib:$machinelib")
-    modImplementation("dev.galacticraft:dynworlds:$dynworlds")
+    modImplementation("dev.galacticraft:dyndims:$dyndims")
     modRuntimeOnly("net.fabricmc.fabric-api:fabric-api:$fabric")
     "gametestImplementation"(sourceSets.main.get().output)
     "gametestImplementation"(sourceSets.main.get().compileClasspath)
