@@ -24,7 +24,7 @@ package dev.galacticraft.impl.internal.client.fabric;
 
 import dev.galacticraft.api.accessor.GearInventoryProvider;
 import dev.galacticraft.api.accessor.SatelliteAccessor;
-import dev.galacticraft.api.client.accessor.ClientResearchAccessor;
+import dev.galacticraft.impl.client.accessor.ClientResearchAccessor;
 import dev.galacticraft.api.universe.celestialbody.CelestialBody;
 import dev.galacticraft.impl.Constant;
 import dev.galacticraft.impl.internal.accessor.ChunkOxygenSyncer;

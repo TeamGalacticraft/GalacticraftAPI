@@ -23,7 +23,7 @@
 package dev.galacticraft.impl.internal.mixin.client;
 
 import com.mojang.blaze3d.audio.Listener;
-import dev.galacticraft.api.accessor.SoundSystemAccessor;
+import dev.galacticraft.impl.accessor.SoundSystemAccessor;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.resources.sounds.SoundInstance;

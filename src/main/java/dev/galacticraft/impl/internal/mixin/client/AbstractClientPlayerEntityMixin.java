@@ -23,8 +23,8 @@
 package dev.galacticraft.impl.internal.mixin.client;
 
 import dev.galacticraft.api.accessor.GearInventoryProvider;
-import dev.galacticraft.api.accessor.SoundSystemAccessor;
-import dev.galacticraft.api.client.accessor.ClientResearchAccessor;
+import dev.galacticraft.impl.accessor.SoundSystemAccessor;
+import dev.galacticraft.impl.client.accessor.ClientResearchAccessor;
 import dev.galacticraft.api.item.Accessory;
 import dev.galacticraft.api.universe.celestialbody.CelestialBody;
 import dev.galacticraft.impl.Constant;
