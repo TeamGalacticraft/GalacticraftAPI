@@ -24,7 +24,7 @@ package dev.galacticraft.api.universe.celestialbody.satellite;
 
 import dev.galacticraft.api.satellite.SpaceStationRecipe;
 import dev.galacticraft.api.universe.celestialbody.CelestialBodyConfig;
-import dev.galacticraft.impl.universe.position.config.SatelliteConfig;
+import dev.galacticraft.impl.universe.position.config.SpaceStationConfig;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.Level;
@@ -52,7 +52,7 @@ public interface Orbitable<C extends CelestialBodyConfig> {
      * @param world
      * @param key             the {@link ResourceKey} of the satellite's dimension
      * @param config          the celestial body configuration
-     * @param satelliteConfig
+     * @param spaceStationConfig
      */
-    void registerClientWorldHooks(RegistryAccess manager, /*Client*/Level world, ResourceKey<Level> key, C config, SatelliteConfig satelliteConfig);
+    void registerClientWorldHooks(RegistryAccess manager, /*Client*/Level world, ResourceKey<Level> key, C config, SpaceStationConfig spaceStationConfig);
 }

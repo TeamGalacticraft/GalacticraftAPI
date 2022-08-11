@@ -26,8 +26,8 @@ import com.google.common.collect.ImmutableMap;
 import dev.galacticraft.api.accessor.SatelliteAccessor;
 import dev.galacticraft.api.universe.celestialbody.CelestialBody;
 import dev.galacticraft.impl.Constant;
-import dev.galacticraft.impl.universe.celestialbody.type.SatelliteType;
-import dev.galacticraft.impl.universe.position.config.SatelliteConfig;
+import dev.galacticraft.impl.universe.celestialbody.type.SpaceStationType;
+import dev.galacticraft.impl.universe.position.config.SpaceStationConfig;
 import net.fabricmc.fabric.api.util.NbtType;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.nbt.*;
@@ -53,19 +53,19 @@ import java.util.Map;
 
 @Mixin(MinecraftServer.class)
 public abstract class MinecraftServerMixin implements SatelliteAccessor {
-    @Unique private final Map<ResourceLocation, CelestialBody<SatelliteConfig, SatelliteType>> satellites = new HashMap<>();
+    @Unique private final Map<ResourceLocation, CelestialBody<SpaceStationConfig, SpaceStationType>> satellites = new HashMap<>();
 
     @Shadow @Final protected LevelStorageSource.LevelStorageAccess storageSource;
 
     @Shadow public abstract RegistryAccess.Frozen registryAccess();
 
     @Override
-    public @Unmodifiable Map<ResourceLocation, CelestialBody<SatelliteConfig, SatelliteType>> getSatellites() {
+    public @Unmodifiable Map<ResourceLocation, CelestialBody<SpaceStationConfig, SpaceStationType>> getSatellites() {
         return ImmutableMap.copyOf(this.satellites);
     }
 
     @Override
-    public void addSatellite(ResourceLocation id, CelestialBody<SatelliteConfig, SatelliteType> satellite) {
+    public void addSatellite(ResourceLocation id, CelestialBody<SpaceStationConfig, SpaceStationType> satellite) {
         this.satellites.put(id, satellite);
     }
 
@@ -78,8 +78,8 @@ public abstract class MinecraftServerMixin implements SatelliteAccessor {
     private void galacticraft_saveSatellites(boolean suppressLogs, boolean bl, boolean bl2, CallbackInfoReturnable<Boolean> cir) {
         Path path = this.storageSource.getLevelPath(LevelResource.ROOT);
         ListTag nbt = new ListTag();
-        for (Map.Entry<ResourceLocation, CelestialBody<SatelliteConfig, SatelliteType>> entry : this.satellites.entrySet()) {
-            CompoundTag compound = (CompoundTag) SatelliteConfig.CODEC.encode(entry.getValue().config(), NbtOps.INSTANCE, new CompoundTag()).get().orThrow();
+        for (Map.Entry<ResourceLocation, CelestialBody<SpaceStationConfig, SpaceStationType>> entry : this.satellites.entrySet()) {
+            CompoundTag compound = (CompoundTag) SpaceStationConfig.CODEC.encode(entry.getValue().config(), NbtOps.INSTANCE, new CompoundTag()).get().orThrow();
             compound.putString("id", entry.getKey().toString());
             nbt.add(compound);
         }
@@ -101,7 +101,7 @@ public abstract class MinecraftServerMixin implements SatelliteAccessor {
                 assert nbt != null : "NBT list was null";
                 for (Tag compound : nbt) {
                     assert compound instanceof CompoundTag : "Not a compound?!";
-                    this.satellites.put(new ResourceLocation(((CompoundTag) compound).getString("id")), new CelestialBody<>(SatelliteType.INSTANCE, SatelliteConfig.CODEC.decode(RegistryOps.create(NbtOps.INSTANCE, this.registryAccess()), compound).get().orThrow().getFirst()));
+                    this.satellites.put(new ResourceLocation(((CompoundTag) compound).getString("id")), new CelestialBody<>(SpaceStationType.INSTANCE, SpaceStationConfig.CODEC.decode(RegistryOps.create(NbtOps.INSTANCE, this.registryAccess()), compound).get().orThrow().getFirst()));
                 }
             } catch (Throwable exception) {
                 throw new RuntimeException("Failed to read satellite data!", exception);

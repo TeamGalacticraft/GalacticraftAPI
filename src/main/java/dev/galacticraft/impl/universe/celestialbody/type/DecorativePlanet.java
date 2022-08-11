@@ -32,7 +32,7 @@ import dev.galacticraft.api.universe.galaxy.Galaxy;
 import dev.galacticraft.api.universe.position.CelestialPosition;
 import dev.galacticraft.impl.internal.client.GCApiDimensionEffects;
 import dev.galacticraft.impl.universe.celestialbody.config.DecorativePlanetConfig;
-import dev.galacticraft.impl.universe.position.config.SatelliteConfig;
+import dev.galacticraft.impl.universe.position.config.SpaceStationConfig;
 import net.fabricmc.fabric.api.client.rendering.v1.DimensionRenderingRegistry;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
@@ -95,7 +95,7 @@ public class DecorativePlanet extends CelestialBodyType<DecorativePlanetConfig> 
     }
 
     @Override
-    public void registerClientWorldHooks(RegistryAccess manager, Level world, ResourceKey<Level> key, DecorativePlanetConfig config, SatelliteConfig satelliteConfig) {
+    public void registerClientWorldHooks(RegistryAccess manager, Level world, ResourceKey<Level> key, DecorativePlanetConfig config, SpaceStationConfig spaceStationConfig) {
         DimensionRenderingRegistry.registerCloudRenderer(key, GCApiDimensionEffects.NO_CLOUDS);
         DimensionRenderingRegistry.registerWeatherRenderer(key, GCApiDimensionEffects.NO_WEATHER);
 

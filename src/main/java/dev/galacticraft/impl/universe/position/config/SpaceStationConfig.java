@@ -38,20 +38,19 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.dimension.LevelStem;
 
-public final class SatelliteConfig implements CelestialBodyConfig {
-    public static final Codec<SatelliteConfig> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-            ResourceLocation.CODEC.fieldOf("parent").xmap(id -> ResourceKey.create(AddonRegistry.CELESTIAL_BODY_KEY, id), ResourceKey::location).forGetter(SatelliteConfig::parent),
-            ResourceLocation.CODEC.fieldOf("galaxy").xmap(id -> ResourceKey.create(AddonRegistry.GALAXY_KEY, id), ResourceKey::location).forGetter(SatelliteConfig::galaxy),
-            CelestialPosition.CODEC.fieldOf("position").forGetter(SatelliteConfig::position),
-            CelestialDisplay.CODEC.fieldOf("display").forGetter(SatelliteConfig::display),
-            SatelliteOwnershipData.CODEC.fieldOf("ownership_data").forGetter(SatelliteConfig::ownershipData),
-            ResourceLocation.CODEC.fieldOf("world").xmap(id -> ResourceKey.create(Registry.DIMENSION_REGISTRY, id), ResourceKey::location).forGetter(SatelliteConfig::world),
-            GasComposition.CODEC.fieldOf("atmosphere").forGetter(SatelliteConfig::atmosphere),
-            Codec.FLOAT.fieldOf("gravity").forGetter(SatelliteConfig::gravity),
-            Codec.INT.fieldOf("accessWeight").forGetter(SatelliteConfig::accessWeight)
-    ).apply(instance, SatelliteConfig::new));
+public final class SpaceStationConfig implements CelestialBodyConfig {
+    public static final Codec<SpaceStationConfig> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+            ResourceLocation.CODEC.fieldOf("parent").xmap(id -> ResourceKey.create(AddonRegistry.CELESTIAL_BODY_KEY, id), ResourceKey::location).forGetter(SpaceStationConfig::parent),
+            ResourceLocation.CODEC.fieldOf("galaxy").xmap(id -> ResourceKey.create(AddonRegistry.GALAXY_KEY, id), ResourceKey::location).forGetter(SpaceStationConfig::galaxy),
+            CelestialPosition.CODEC.fieldOf("position").forGetter(SpaceStationConfig::position),
+            CelestialDisplay.CODEC.fieldOf("display").forGetter(SpaceStationConfig::display),
+            SatelliteOwnershipData.CODEC.fieldOf("ownership_data").forGetter(SpaceStationConfig::ownershipData),
+            ResourceLocation.CODEC.fieldOf("world").xmap(id -> ResourceKey.create(Registry.DIMENSION_REGISTRY, id), ResourceKey::location).forGetter(SpaceStationConfig::world),
+            GasComposition.CODEC.fieldOf("atmosphere").forGetter(SpaceStationConfig::atmosphere),
+            Codec.FLOAT.fieldOf("gravity").forGetter(SpaceStationConfig::gravity),
+            Codec.INT.fieldOf("accessWeight").forGetter(SpaceStationConfig::accessWeight)
+    ).apply(instance, SpaceStationConfig::new));
 
     private final ResourceKey<CelestialBody<?, ?>> parent;
     private final ResourceKey<Galaxy> galaxy;
@@ -64,7 +63,7 @@ public final class SatelliteConfig implements CelestialBodyConfig {
     private final int accessWeight;
     private Component customName = Component.empty();
 
-    public SatelliteConfig(ResourceKey<CelestialBody<?, ?>> parent, ResourceKey<Galaxy> galaxy, CelestialPosition<?, ?> position, CelestialDisplay<?, ?> display, SatelliteOwnershipData ownershipData, ResourceKey<Level> world, GasComposition atmosphere, float gravity, int accessWeight) {
+    public SpaceStationConfig(ResourceKey<CelestialBody<?, ?>> parent, ResourceKey<Galaxy> galaxy, CelestialPosition<?, ?> position, CelestialDisplay<?, ?> display, SatelliteOwnershipData ownershipData, ResourceKey<Level> world, GasComposition atmosphere, float gravity, int accessWeight) {
         this.parent = parent;
         this.galaxy = galaxy;
         this.position = position;
@@ -102,7 +101,7 @@ public final class SatelliteConfig implements CelestialBodyConfig {
     public boolean equals(Object obj) {
         if (obj == this) return true;
         if (obj == null || obj.getClass() != this.getClass()) return false;
-        SatelliteConfig that = (SatelliteConfig) obj;
+        SpaceStationConfig that = (SpaceStationConfig) obj;
         return Objects.equals(this.parent, that.parent) &&
                 Objects.equals(this.galaxy, that.galaxy) &&
                 Objects.equals(this.position, that.position) &&

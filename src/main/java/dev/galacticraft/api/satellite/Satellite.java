@@ -43,7 +43,7 @@ public interface Satellite<C extends CelestialBodyConfig> {
 
     /**
      * Returns the custom name of this satellite
-     * By default it is {@code <Player Name>'s satellite}
+     * By default it is {@code [Player Name]'s satellite}
      *
      * @param config the satellite configuration to be queried
      * @return the custom name of this satellite

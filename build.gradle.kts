@@ -96,6 +96,12 @@ repositories {
             includeGroup("dev.galacticraft")
         }
     }
+    maven("https://maven.galacticraft.net/repository/maven-snapshots/") {
+        name = "Galacticraft Repository"
+        content {
+            includeVersionByRegex("dev.galacticraft", ".*", ".*-SNAPSHOT")
+        }
+    }
 }
 
 dependencies {

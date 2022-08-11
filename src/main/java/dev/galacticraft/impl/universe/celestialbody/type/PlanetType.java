@@ -25,7 +25,6 @@ package dev.galacticraft.impl.universe.celestialbody.type;
 import dev.galacticraft.api.gas.GasComposition;
 import dev.galacticraft.api.satellite.SpaceStationRecipe;
 import dev.galacticraft.api.universe.celestialbody.CelestialBody;
-import dev.galacticraft.api.universe.celestialbody.CelestialBodyConfig;
 import dev.galacticraft.api.universe.celestialbody.CelestialBodyType;
 import dev.galacticraft.api.universe.celestialbody.landable.Landable;
 import dev.galacticraft.api.universe.celestialbody.satellite.Orbitable;
@@ -34,7 +33,7 @@ import dev.galacticraft.api.universe.galaxy.Galaxy;
 import dev.galacticraft.api.universe.position.CelestialPosition;
 import dev.galacticraft.impl.internal.client.GCApiDimensionEffects;
 import dev.galacticraft.impl.universe.celestialbody.config.PlanetConfig;
-import dev.galacticraft.impl.universe.position.config.SatelliteConfig;
+import dev.galacticraft.impl.universe.position.config.SpaceStationConfig;
 import net.fabricmc.fabric.api.client.rendering.v1.DimensionRenderingRegistry;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
@@ -112,7 +111,7 @@ public class PlanetType extends CelestialBodyType<PlanetConfig> implements Landa
     }
 
     @Override
-    public void registerClientWorldHooks(RegistryAccess manager, Level world, ResourceKey<Level> key, @NotNull PlanetConfig config, SatelliteConfig satelliteConfig) {
+    public void registerClientWorldHooks(RegistryAccess manager, Level world, ResourceKey<Level> key, @NotNull PlanetConfig config, SpaceStationConfig spaceStationConfig) {
         DimensionRenderingRegistry.registerCloudRenderer(key, GCApiDimensionEffects.NO_CLOUDS);
         DimensionRenderingRegistry.registerWeatherRenderer(key, GCApiDimensionEffects.NO_WEATHER);
 

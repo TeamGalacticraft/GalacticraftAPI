@@ -28,8 +28,8 @@ import dev.galacticraft.api.client.accessor.ClientResearchAccessor;
 import dev.galacticraft.api.universe.celestialbody.CelestialBody;
 import dev.galacticraft.impl.Constant;
 import dev.galacticraft.impl.internal.accessor.ChunkOxygenSyncer;
-import dev.galacticraft.impl.universe.celestialbody.type.SatelliteType;
-import dev.galacticraft.impl.universe.position.config.SatelliteConfig;
+import dev.galacticraft.impl.universe.celestialbody.type.SpaceStationType;
+import dev.galacticraft.impl.universe.position.config.SpaceStationConfig;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -54,7 +54,7 @@ public class GalacticraftAPIClient implements ClientModInitializer {
             client.execute(() -> ((ClientResearchAccessor) Objects.requireNonNull(client.player)).readChanges(buf));
         });
         ClientPlayNetworking.registerGlobalReceiver(new ResourceLocation(Constant.MOD_ID, "add_satellite"), (client, networkHandler, buffer, sender) -> {
-            ((SatelliteAccessor) networkHandler).addSatellite(buffer.readResourceLocation(), new CelestialBody<>(SatelliteType.INSTANCE, SatelliteConfig.CODEC.decode(RegistryOps.create(NbtOps.INSTANCE, networkHandler.registryAccess()), buffer.readNbt()).get().orThrow().getFirst()));
+            ((SatelliteAccessor) networkHandler).addSatellite(buffer.readResourceLocation(), new CelestialBody<>(SpaceStationType.INSTANCE, SpaceStationConfig.CODEC.decode(RegistryOps.create(NbtOps.INSTANCE, networkHandler.registryAccess()), buffer.readNbt()).get().orThrow().getFirst()));
         });
         ClientPlayNetworking.registerGlobalReceiver(new ResourceLocation(Constant.MOD_ID, "remove_satellite"), (client, networkHandler, buffer, sender) -> {
             FriendlyByteBuf buf = new FriendlyByteBuf(buffer.copy());

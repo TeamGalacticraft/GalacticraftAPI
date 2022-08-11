@@ -25,7 +25,7 @@ package dev.galacticraft.impl.internal.mixin;
 import dev.galacticraft.api.accessor.GearInventoryProvider;
 import dev.galacticraft.api.accessor.SatelliteAccessor;
 import dev.galacticraft.impl.Constant;
-import dev.galacticraft.impl.universe.position.config.SatelliteConfig;
+import dev.galacticraft.impl.universe.position.config.SpaceStationConfig;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
@@ -66,7 +66,7 @@ public abstract class PlayerManagerMixin {
         this.broadcastAll(new ClientboundCustomPayloadPacket(new ResourceLocation(Constant.MOD_ID, "gear_inv_sync"), buf));
 
         ((SatelliteAccessor) this.getServer()).getSatellites().forEach((id, satellite) -> {
-            CompoundTag compound = (CompoundTag) SatelliteConfig.CODEC.encode(satellite.config(), NbtOps.INSTANCE, new CompoundTag()).get().orThrow();
+            CompoundTag compound = (CompoundTag) SpaceStationConfig.CODEC.encode(satellite.config(), NbtOps.INSTANCE, new CompoundTag()).get().orThrow();
             connection.send(new ClientboundCustomPayloadPacket(new ResourceLocation(Constant.MOD_ID, "add_satellite"), PacketByteBufs.create().writeResourceLocation(id).writeNbt(compound)));
         });
     }

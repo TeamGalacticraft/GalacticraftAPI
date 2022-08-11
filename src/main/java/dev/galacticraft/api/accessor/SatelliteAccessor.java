@@ -23,15 +23,15 @@
 package dev.galacticraft.api.accessor;
 
 import dev.galacticraft.api.universe.celestialbody.CelestialBody;
-import dev.galacticraft.impl.universe.celestialbody.type.SatelliteType;
-import dev.galacticraft.impl.universe.position.config.SatelliteConfig;
+import dev.galacticraft.impl.universe.celestialbody.type.SpaceStationType;
+import dev.galacticraft.impl.universe.position.config.SpaceStationConfig;
 import java.util.Map;
 import net.minecraft.resources.ResourceLocation;
 
 public interface SatelliteAccessor {
-    Map<ResourceLocation, CelestialBody<SatelliteConfig, SatelliteType>> getSatellites();
+    Map<ResourceLocation, CelestialBody<SpaceStationConfig, SpaceStationType>> getSatellites();
 
-    void addSatellite(ResourceLocation id, CelestialBody<SatelliteConfig, SatelliteType> satellite);
+    void addSatellite(ResourceLocation id, CelestialBody<SpaceStationConfig, SpaceStationType> satellite);
 
     void removeSatellite(ResourceLocation id);
 }

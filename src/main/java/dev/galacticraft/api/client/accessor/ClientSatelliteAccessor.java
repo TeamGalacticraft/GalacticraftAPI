@@ -24,8 +24,8 @@ package dev.galacticraft.api.client.accessor;
 
 import dev.galacticraft.api.accessor.SatelliteAccessor;
 import dev.galacticraft.api.universe.celestialbody.CelestialBody;
-import dev.galacticraft.impl.universe.celestialbody.type.SatelliteType;
-import dev.galacticraft.impl.universe.position.config.SatelliteConfig;
+import dev.galacticraft.impl.universe.celestialbody.type.SpaceStationType;
+import dev.galacticraft.impl.universe.position.config.SpaceStationConfig;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
@@ -37,6 +37,6 @@ public interface ClientSatelliteAccessor extends SatelliteAccessor {
 
     @FunctionalInterface
     interface SatelliteListener {
-        void onSatelliteUpdated(CelestialBody<SatelliteConfig, SatelliteType> satellite, boolean added);
+        void onSatelliteUpdated(CelestialBody<?, ?> satellite, boolean added);
     }
 }

@@ -30,10 +30,11 @@ import dev.galacticraft.api.accessor.WorldOxygenAccessor;
 import dev.galacticraft.api.registry.AddonRegistry;
 import dev.galacticraft.impl.Constant;
 import dev.galacticraft.impl.command.argument.RegistryArgumentType;
-import dev.galacticraft.impl.universe.celestialbody.type.SatelliteType;
+import dev.galacticraft.impl.universe.celestialbody.type.SpaceStationType;
 import dev.galacticraft.impl.command.argument.serializer.RegistryArgumentTypeSerializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.mixin.command.ArgumentTypesAccessor;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.ResourceLocationArgument;
@@ -55,23 +56,24 @@ public class GCApiCommands {
         RegistryArgumentTypeSerializer serializer = new RegistryArgumentTypeSerializer();
         ArgumentTypesAccessor.fabric_getClassMap().put( RegistryArgumentType.class, serializer);
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, commandSelection) -> {
-            dispatcher.register(Commands.literal(Constant.MOD_ID + ":debug")
+            if (FabricLoader.getInstance().isDevelopmentEnvironment()) {
+                dispatcher.register(Commands.literal(Constant.MOD_ID + ":debug")
                             .requires(serverCommandSource -> serverCommandSource.hasPermission(2)).then(Commands.literal("registry").then(Commands.argument("registry", RegistryArgumentType.create())
-                    .then(Commands.literal("dump_ids").executes(GCApiCommands::dumpRegistries))
-                    .then(Commands.literal("get")
-                            .then(Commands.argument("id", ResourceLocationArgument.id())
-                                    .executes(GCApiCommands::getRegistryValue)))
-                    .then(Commands.literal("get_raw")
-                            .then(Commands.argument("id", IntegerArgumentType.integer())
-                                    .executes(GCApiCommands::getRegistryValueFromRawId)))
-                    .then(Commands.literal("to_raw")
-                            .then(Commands.argument("id", ResourceLocationArgument.id())
-                                    .executes(GCApiCommands::getRegistryRawId)))
-                    .then(Commands.literal("dump_values")
-                            .then(Commands.argument("id", ResourceLocationArgument.id())
-                                    .executes(GCApiCommands::dumpRegistryValues))))));
-
-            dispatcher.register(Commands.literal(Constant.MOD_ID + ":oxygen").requires(source -> source.hasPermission(3))
+                                    .then(Commands.literal("dump_ids").executes(GCApiCommands::dumpRegistries))
+                                    .then(Commands.literal("get")
+                                            .then(Commands.argument("id", ResourceLocationArgument.id())
+                                                    .executes(GCApiCommands::getRegistryValue)))
+                                    .then(Commands.literal("get_raw")
+                                            .then(Commands.argument("id", IntegerArgumentType.integer())
+                                                    .executes(GCApiCommands::getRegistryValueFromRawId)))
+                                    .then(Commands.literal("to_raw")
+                                            .then(Commands.argument("id", ResourceLocationArgument.id())
+                                                    .executes(GCApiCommands::getRegistryRawId)))
+                                    .then(Commands.literal("dump_values")
+                                            .then(Commands.argument("id", ResourceLocationArgument.id())
+                                                    .executes(GCApiCommands::dumpRegistryValues))))));
+            }
+            dispatcher.register(Commands.literal("oxygen").requires(source -> source.hasPermission(2))
                     .then(Commands.literal("get").then(Commands.argument("start_pos", BlockPosArgument.blockPos())
                             .executes(GCApiCommands::getOxygen)
                             .then(Commands.argument("end_pos", BlockPosArgument.blockPos())
@@ -84,32 +86,32 @@ public class GCApiCommands {
                                             .then(Commands.argument("oxygen", BoolArgumentType.bool())
                                                     .executes(GCApiCommands::setOxygenArea))))));
 
-            dispatcher.register(Commands.literal(Constant.MOD_ID + ":satellite").requires(source -> source.hasPermission(3))
+            dispatcher.register(Commands.literal("space_station").requires(source -> source.hasPermission(2))
                     .then(Commands.literal("add").then(Commands.argument("world", ResourceLocationArgument.id())
-                            .executes(GCApiCommands::addSatellite)
+                            .executes(GCApiCommands::addSpaceStation)
                             .then(Commands.argument("structure", ResourceLocationArgument.id())
-                                    .executes(GCApiCommands::addSatelliteStructured))))
+                                    .executes(GCApiCommands::addSpaceStationStructured))))
                     .then(Commands.literal("remove").then(Commands.argument("id", ResourceLocationArgument.id())
-                            .executes(GCApiCommands::removeSatellite))));
+                            .executes(GCApiCommands::removeSpaceStation))));
         });
     }
 
-    private static int removeSatellite(@NotNull CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
-        if (SatelliteType.removeSatellite(ctx.getSource().getServer(), ResourceLocationArgument.getId(ctx, "id"))) {
+    private static int removeSpaceStation(@NotNull CommandContext<CommandSourceStack> ctx) {
+        if (SpaceStationType.removeSatellite(ctx.getSource().getServer(), ResourceLocationArgument.getId(ctx, "id"))) {
             return 1;
         } else {
             return 0;
         }
     }
 
-    private static int addSatelliteStructured(@NotNull CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+    private static int addSpaceStationStructured(@NotNull CommandContext<CommandSourceStack> ctx) {
         StructureTemplate structure = ctx.getSource().getServer().getStructureManager().get(ResourceLocationArgument.getId(ctx, "structure")).orElseThrow();
-        SatelliteType.registerSpaceStation(ctx.getSource().getServer(), ctx.getSource().getPlayer(), Objects.requireNonNull(ctx.getSource().registryAccess().registryOrThrow(AddonRegistry.CELESTIAL_BODY_KEY).get(ResourceLocationArgument.getId(ctx, "world"))), structure);
+        SpaceStationType.registerSpaceStation(ctx.getSource().getServer(), ctx.getSource().getPlayer(), Objects.requireNonNull(ctx.getSource().registryAccess().registryOrThrow(AddonRegistry.CELESTIAL_BODY_KEY).get(ResourceLocationArgument.getId(ctx, "world"))), structure);
         return 1;
     }
 
-    private static int addSatellite(@NotNull CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
-        SatelliteType.registerSpaceStation(ctx.getSource().getServer(), ctx.getSource().getPlayer(), Objects.requireNonNull(ctx.getSource().registryAccess().registryOrThrow(AddonRegistry.CELESTIAL_BODY_KEY).get(ResourceLocationArgument.getId(ctx, "world"))), new StructureTemplate());
+    private static int addSpaceStation(@NotNull CommandContext<CommandSourceStack> ctx) {
+        SpaceStationType.registerSpaceStation(ctx.getSource().getServer(), ctx.getSource().getPlayer(), Objects.requireNonNull(ctx.getSource().registryAccess().registryOrThrow(AddonRegistry.CELESTIAL_BODY_KEY).get(ResourceLocationArgument.getId(ctx, "world"))), new StructureTemplate());
         return 1;
     }
 
