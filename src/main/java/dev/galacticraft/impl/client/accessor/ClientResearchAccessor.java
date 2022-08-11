@@ -20,14 +20,16 @@
  * SOFTWARE.
  */
 
-package dev.galacticraft.api.client.accessor;
+package dev.galacticraft.impl.client.accessor;
 
 import dev.galacticraft.api.accessor.ResearchAccessor;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.network.FriendlyByteBuf;
+import org.jetbrains.annotations.ApiStatus;
 
 @Environment(EnvType.CLIENT)
+@ApiStatus.Internal
 public interface ClientResearchAccessor extends ResearchAccessor {
     void readChanges(FriendlyByteBuf buf);
 }

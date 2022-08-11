@@ -22,7 +22,7 @@
 
 package dev.galacticraft.impl.internal.mixin.client;
 
-import dev.galacticraft.api.accessor.SoundSystemAccessor;
+import dev.galacticraft.impl.accessor.SoundSystemAccessor;
 import dev.galacticraft.api.universe.celestialbody.CelestialBody;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;

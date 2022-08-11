@@ -20,7 +20,7 @@
  * SOFTWARE.
  */
 
-package dev.galacticraft.api.accessor;
+package dev.galacticraft.impl.accessor;
 
 import org.jetbrains.annotations.ApiStatus;
 
