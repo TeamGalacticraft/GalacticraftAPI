@@ -55,12 +55,8 @@ java {
 
 sourceSets {
     create("gametest") {
-        java {
-            srcDir("src/gametest/java")
-        }
-        resources {
-            srcDir("src/gametest/resources")
-        }
+        compileClasspath += main.get().compileClasspath + main.get().output;
+        runtimeClasspath += main.get().runtimeClasspath + main.get().output;
     }
 }
 
@@ -70,19 +66,26 @@ loom {
         add(sourceSets.main.get(), "${modId}.refmap.json")
     }
 
+    mods {
+        create("galacticraft-api") {
+            sourceSet(sourceSets.main.get())
+        }
+        create("gc-api-test") {
+            sourceSet(sourceSets.getByName("gametest"))
+        }
+    }
+
     runs {
         register("gametest") {
             server()
             name("Game Test")
             source(sourceSets.getByName("gametest"))
-            property("fabric.log.level", "debug")
             vmArgs("-Dfabric-api.gametest", "-Dfabric-api.gametest.report-file=${project.buildDir}/junit.xml", "-ea")
         }
         register("gametestClient") {
             server()
             name("Game Test Client")
             source(sourceSets.getByName("gametest"))
-            property("fabric.log.level", "debug")
             vmArgs("-Dfabric-api.gametest", "-Dfabric-api.gametest.report-file=${project.buildDir}/junit.xml", "-ea")
         }
     }
@@ -122,8 +125,6 @@ dependencies {
     modImplementation("dev.galacticraft:MachineLib:$machinelib")
 //    modImplementation("dev.galacticraft:dyndims:$dyndims")
     modRuntimeOnly("net.fabricmc.fabric-api:fabric-api:$fabric")
-    "gametestImplementation"(sourceSets.main.get().output)
-    "gametestImplementation"(sourceSets.main.get().compileClasspath)
 }
 
 tasks.processResources {
