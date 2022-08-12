@@ -61,9 +61,9 @@ public final class GCApiDimensionEffects {
 
         @Override
         public void render(WorldRenderContext context) {
+            context.profiler().push("satellite_sky_render");
             if (this.starBuffer == null) this.generateStarBuffer(context);
 
-            context.profiler().push("moon_sky_render");
             RenderSystem.disableTexture();
             RenderSystem.disableBlend();
             RenderSystem.depthMask(false);
@@ -86,7 +86,7 @@ public final class GCApiDimensionEffects {
             matrices.popPose();
             context.profiler().pop();
 
-            context.profiler().push("sun");
+            context.profiler().push("star");
             matrices.pushPose();
 
             matrices.mulPose(Vector3f.YP.rotationDegrees(-90.0F));
@@ -114,6 +114,7 @@ public final class GCApiDimensionEffects {
         }
 
         private void generateStarBuffer(@NotNull WorldRenderContext context) {
+            context.profiler().push("generate_star_buffer");
             final Random random = new Random(context.world().dimension().location().hashCode());
             final BufferBuilder buffer = Tesselator.getInstance().getBuilder();
             RenderSystem.setShader(GameRenderer::getPositionShader);
@@ -161,6 +162,7 @@ public final class GCApiDimensionEffects {
             this.starBuffer.bind();
             this.starBuffer.upload(buffer.end());
             VertexBuffer.unbind();
+            context.profiler().pop();
         }
 
         private float getStarBrightness(Level world, float delta) {
