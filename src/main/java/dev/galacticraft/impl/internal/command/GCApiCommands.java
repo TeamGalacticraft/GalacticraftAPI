@@ -22,6 +22,7 @@
 
 package dev.galacticraft.impl.internal.command;
 
+import com.mojang.brigadier.arguments.ArgumentType;
 import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.context.CommandContext;
@@ -31,7 +32,6 @@ import dev.galacticraft.api.registry.AddonRegistry;
 import dev.galacticraft.impl.Constant;
 import dev.galacticraft.impl.command.argument.RegistryArgumentType;
 import dev.galacticraft.impl.universe.celestialbody.type.SpaceStationType;
-import dev.galacticraft.impl.command.argument.serializer.RegistryArgumentTypeSerializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.mixin.command.ArgumentTypesAccessor;
 import net.fabricmc.loader.api.FabricLoader;
@@ -39,6 +39,7 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.ResourceLocationArgument;
 import net.minecraft.commands.arguments.coordinates.BlockPosArgument;
+import net.minecraft.commands.synchronization.SingletonArgumentInfo;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
 import net.minecraft.network.chat.Component;
@@ -53,8 +54,7 @@ import java.util.Objects;
 @ApiStatus.Internal
 public class GCApiCommands {
     public static void register() {
-        RegistryArgumentTypeSerializer serializer = new RegistryArgumentTypeSerializer();
-        ArgumentTypesAccessor.fabric_getClassMap().put( RegistryArgumentType.class, serializer);
+        ArgumentTypesAccessor.fabric_getClassMap().put(RegistryArgumentType.class, SingletonArgumentInfo.contextFree(RegistryArgumentType::create));
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, commandSelection) -> {
             if (FabricLoader.getInstance().isDevelopmentEnvironment()) {
                 dispatcher.register(Commands.literal(Constant.MOD_ID + ":debug")
