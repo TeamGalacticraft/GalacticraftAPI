@@ -33,6 +33,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Random;
 
@@ -45,67 +46,23 @@ public final class GCApiDimensionEffects {
     }
 
     private static class SatelliteSkyRenderer implements DimensionRenderingRegistry.SkyRenderer {
-        private final VertexBuffer starBuffer = new VertexBuffer();
         private final float starSize;
         private final float planetSize;
         private final CelestialDisplay<?, ?> starDisplay;
         private final CelestialDisplay<?, ?> planetDisplay;
+        private VertexBuffer starBuffer = null;
 
         public SatelliteSkyRenderer(float starSize, float planetSize, CelestialDisplay<?, ?> starDisplay, CelestialDisplay<?, ?> planetDisplay) {
             this.starSize = starSize;
             this.planetSize = planetSize;
             this.starDisplay = starDisplay;
             this.planetDisplay = planetDisplay;
-            final Random random = new Random(27893L);
-            final BufferBuilder buffer = Tesselator.getInstance().getBuilder();
-            RenderSystem.setShader(GameRenderer::getPositionShader);
-            buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION);
-            for (int i = 0; i < 12000; ++i) {
-                double j = random.nextFloat() * 2.0F - 1.0F;
-                double k = random.nextFloat() * 2.0F - 1.0F;
-                double l = random.nextFloat() * 2.0F - 1.0F;
-                double m = 0.15F + random.nextFloat() * 0.1F;
-                double n = j * j + k * k + l * l;
-
-                if (n < 1.0D && n > 0.01D) {
-                    n = 1.0D / Math.sqrt(n);
-                    j *= n;
-                    k *= n;
-                    l *= n;
-                    double o = j * 100.0D;
-                    double p = k * 100.0D;
-                    double q = l * 100.0D;
-                    double r = Math.atan2(j, l);
-                    double s = Math.sin(r);
-                    double t = Math.cos(r);
-                    double u = Math.atan2(Math.sqrt(j * j + l * l), k);
-                    double v = Math.sin(u);
-                    double w = Math.cos(u);
-                    double x = random.nextDouble() * Math.PI * 2.0D;
-                    double y = Math.sin(x);
-                    double z = Math.cos(x);
-
-                    for (int a = 0; a < 4; ++a) {
-                        double b = 0.0D;
-                        double c = ((a & 2) - 1) * m;
-                        double d = ((a + 1 & 2) - 1) * m;
-                        double e = c * z - d * y;
-                        double f = d * z + c * y;
-                        double g = e * v + b * w;
-                        double h = b * v - e * w;
-                        double aa = h * s - f * t;
-                        double ab = f * s + h * t;
-                        buffer.vertex((o + aa) * (i > 6000 ? -1 : 1), (p + g) * (i > 6000 ? -1 : 1), (q + ab) * (i > 6000 ? -1 : 1)).endVertex();
-                    }
-                }
-            }
-            starBuffer.bind();
-            starBuffer.upload(buffer.end());
-            VertexBuffer.unbind();
         }
 
         @Override
         public void render(WorldRenderContext context) {
+            if (this.starBuffer == null) this.generateStarBuffer(context);
+
             context.profiler().push("moon_sky_render");
             RenderSystem.disableTexture();
             RenderSystem.disableBlend();
@@ -154,6 +111,56 @@ public final class GCApiDimensionEffects {
             RenderSystem.disableTexture();
             RenderSystem.depthMask(true);
             context.profiler().pop();
+        }
+
+        private void generateStarBuffer(@NotNull WorldRenderContext context) {
+            final Random random = new Random(context.world().dimension().location().hashCode());
+            final BufferBuilder buffer = Tesselator.getInstance().getBuilder();
+            RenderSystem.setShader(GameRenderer::getPositionShader);
+            buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION);
+            for (int i = 0; i < 12000; ++i) {
+                double j = random.nextFloat() * 2.0F - 1.0F;
+                double k = random.nextFloat() * 2.0F - 1.0F;
+                double l = random.nextFloat() * 2.0F - 1.0F;
+                double m = 0.15F + random.nextFloat() * 0.1F;
+                double n = j * j + k * k + l * l;
+
+                if (n < 1.0D && n > 0.01D) {
+                    n = 1.0D / Math.sqrt(n);
+                    j *= n;
+                    k *= n;
+                    l *= n;
+                    double o = j * 100.0D;
+                    double p = k * 100.0D;
+                    double q = l * 100.0D;
+                    double r = Math.atan2(j, l);
+                    double s = Math.sin(r);
+                    double t = Math.cos(r);
+                    double u = Math.atan2(Math.sqrt(j * j + l * l), k);
+                    double v = Math.sin(u);
+                    double w = Math.cos(u);
+                    double x = random.nextDouble() * Math.PI * 2.0D;
+                    double y = Math.sin(x);
+                    double z = Math.cos(x);
+
+                    for (int a = 0; a < 4; ++a) {
+                        double b = 0.0D;
+                        double c = ((a & 2) - 1) * m;
+                        double d = ((a + 1 & 2) - 1) * m;
+                        double e = c * z - d * y;
+                        double f = d * z + c * y;
+                        double g = e * v + b * w;
+                        double h = b * v - e * w;
+                        double aa = h * s - f * t;
+                        double ab = f * s + h * t;
+                        buffer.vertex((o + aa) * (i > 6000 ? -1 : 1), (p + g) * (i > 6000 ? -1 : 1), (q + ab) * (i > 6000 ? -1 : 1)).endVertex();
+                    }
+                }
+            }
+            this.starBuffer = new VertexBuffer();
+            this.starBuffer.bind();
+            this.starBuffer.upload(buffer.end());
+            VertexBuffer.unbind();
         }
 
         private float getStarBrightness(Level world, float delta) {
