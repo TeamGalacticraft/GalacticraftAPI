@@ -22,7 +22,6 @@
 
 package dev.galacticraft.impl.client.rocket.render;
 
-import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -55,7 +54,7 @@ public record BakedModelRocketPartRenderer(Supplier<BakedModel> model,
     private static final Direction[] DIRECTIONS_AND_NULL = new Direction[]{null, Direction.DOWN, Direction.UP, Direction.NORTH, Direction.SOUTH, Direction.WEST, Direction.EAST};
 
     public BakedModelRocketPartRenderer(Supplier<BakedModel> model) {
-        this(model, () -> RenderType.entityTranslucent(model.get().getParticleIcon().getName(), true));
+        this(model, () -> RenderType.entityCutoutNoCull(model.get().getParticleIcon().getName(), true));
     }
 
     @Override
@@ -78,8 +77,7 @@ public record BakedModelRocketPartRenderer(Supplier<BakedModel> model,
         RenderSystem.setShaderTexture(0, TextureAtlas.LOCATION_BLOCKS);
         RenderSystem.enableTexture();
         RenderSystem.setShaderTexture(0, this.model.get().getParticleIcon().atlas().getId());
-        RenderSystem.enableBlend();
-        RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
+        RenderSystem.disableBlend();
         RenderSystem.disableDepthTest();
         RenderSystem.disableCull();
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);

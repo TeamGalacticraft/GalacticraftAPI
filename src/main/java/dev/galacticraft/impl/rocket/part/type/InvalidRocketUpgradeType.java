@@ -32,7 +32,7 @@ import dev.galacticraft.impl.rocket.travelpredicate.type.DefaultTravelPredicateT
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class InvalidRocketUpgradeType extends RocketUpgradeType<DefaultRocketUpgradeConfig> {
+public final class InvalidRocketUpgradeType extends RocketUpgradeType<DefaultRocketUpgradeConfig> {
     public static final InvalidRocketUpgradeType INSTANCE = new InvalidRocketUpgradeType(DefaultRocketUpgradeConfig.CODEC);
 
     private InvalidRocketUpgradeType(@NotNull Codec<DefaultRocketUpgradeConfig> configCodec) {

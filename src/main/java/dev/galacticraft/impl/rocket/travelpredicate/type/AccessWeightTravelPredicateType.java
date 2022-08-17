@@ -40,12 +40,12 @@ public final class AccessWeightTravelPredicateType extends TravelPredicateType<A
     public Result canTravelTo(CelestialBody<?, ?> type, ConfiguredRocketCone<?, ?> cone, ConfiguredRocketBody<?, ?> body, ConfiguredRocketFin<?, ?> fin, ConfiguredRocketBooster<?, ?> booster, ConfiguredRocketBottom<?, ?> bottom, ConfiguredRocketUpgrade<?, ?>[] upgrades, AccessWeightTravelPredicateConfig config) {
         if (type.type() instanceof Tiered tiered) {
             int weight = tiered.accessWeight(type.config());
-            if (weight >= 0 && weight <= config.weight()) {
+            if (weight <= config.weight()) {
                 return Result.ALLOW;
             } else {
-                return config.defaultType();
+                return Result.BLOCK;
             }
         }
-        return Result.BLOCK;
+        return config.defaultType();
     }
 }
