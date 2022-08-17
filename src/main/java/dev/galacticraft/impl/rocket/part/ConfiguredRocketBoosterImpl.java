@@ -20,7 +20,12 @@
  * SOFTWARE.
  */
 
-package dev.galacticraft.api.rocket.part.config;
+package dev.galacticraft.impl.rocket.part;
 
-public non-sealed interface RocketBoosterConfig extends RocketPartConfig {
+import dev.galacticraft.api.rocket.part.ConfiguredRocketBooster;
+import dev.galacticraft.api.rocket.part.config.RocketBoosterConfig;
+import dev.galacticraft.api.rocket.part.type.RocketBoosterType;
+import org.jetbrains.annotations.NotNull;
+
+public record ConfiguredRocketBoosterImpl<C extends RocketBoosterConfig, T extends RocketBoosterType<C>>(@NotNull C config, @NotNull T type) implements ConfiguredRocketBooster<C, T> {
 }

@@ -60,7 +60,7 @@ public non-sealed abstract class RocketConeType<C extends RocketConeConfig> impl
     }
 
     public @NotNull ConfiguredRocketCone<C, RocketConeType<C>> configure(@NotNull C config) {
-        return new ConfiguredRocketCone<>(config, this);
+        return ConfiguredRocketCone.create(config, this);
     }
 
     @Override

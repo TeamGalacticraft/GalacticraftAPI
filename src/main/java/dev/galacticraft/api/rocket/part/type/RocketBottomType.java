@@ -65,7 +65,7 @@ public non-sealed abstract class RocketBottomType<C extends RocketBottomConfig> 
     }
 
     public @NotNull ConfiguredRocketBottom<C, RocketBottomType<C>> configure(@NotNull C config) {
-        return new ConfiguredRocketBottom<>(config, this);
+        return ConfiguredRocketBottom.create(config, this);
     }
 
     @Override

@@ -76,7 +76,7 @@ public non-sealed abstract class RocketBoosterType<C extends RocketBoosterConfig
     }
 
     public @NotNull ConfiguredRocketBooster<C, RocketBoosterType<C>> configure(@NotNull C config) {
-        return new ConfiguredRocketBooster<>(config, this);
+        return ConfiguredRocketBooster.create(config, this);
     }
 
     @Override

@@ -26,8 +26,18 @@ import com.mojang.serialization.Codec;
 import dev.galacticraft.api.registry.RocketRegistry;
 import dev.galacticraft.api.rocket.part.config.RocketBodyConfig;
 import dev.galacticraft.api.rocket.part.type.RocketBodyType;
+import dev.galacticraft.impl.rocket.part.ConfiguredRocketBodyImpl;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
-public record ConfiguredRocketBody<C extends RocketBodyConfig, T extends RocketBodyType<C>>(@NotNull C config, @NotNull T type) implements ConfiguredRocketPart<C, T> {
-    public static final Codec<ConfiguredRocketBody<?, ?>> CODEC = RocketRegistry.ROCKET_BODY_TYPE.byNameCodec().dispatch(ConfiguredRocketBody::type, RocketBodyType::codec);
+public non-sealed interface ConfiguredRocketBody<C extends RocketBodyConfig, T extends RocketBodyType<C>> extends ConfiguredRocketPart<C, T> {
+    Codec<ConfiguredRocketBody<?, ?>> CODEC = RocketRegistry.ROCKET_BODY_TYPE.byNameCodec().dispatch(ConfiguredRocketBody::type, RocketBodyType::codec);
+
+    @Contract(pure = true, value = "_, _ -> new")
+    static @NotNull <C extends RocketBodyConfig, T extends RocketBodyType<C>> ConfiguredRocketBody<C, T> create(@NotNull C config, @NotNull T type) {
+        return new ConfiguredRocketBodyImpl<>(config, type);
+    }
+
+    @NotNull C config();
+    @NotNull T type();
 }

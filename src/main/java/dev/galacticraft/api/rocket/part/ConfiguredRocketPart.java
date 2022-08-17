@@ -31,13 +31,15 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public interface ConfiguredRocketPart<C extends RocketPartConfig, T extends RocketPartType<C>> {
+public sealed interface ConfiguredRocketPart<C extends RocketPartConfig, T extends RocketPartType<C>> permits ConfiguredRocketBody, ConfiguredRocketBooster, ConfiguredRocketBottom, ConfiguredRocketCone, ConfiguredRocketFin, ConfiguredRocketUpgrade {
     @NotNull C config();
+
     @NotNull T type();
 
     /**
      * Called every tick when this part is applied to a placed rocket.
      * The rocket may not have launched yet.
+     *
      * @param rocket the rocket that this part is a part of.
      */
     default void tick(@NotNull Rocket rocket) {
@@ -46,6 +48,7 @@ public interface ConfiguredRocketPart<C extends RocketPartConfig, T extends Rock
 
     /**
      * Returns the recipe of this rocket part.
+     *
      * @return the recipe of this rocket part. Can be null.
      */
     @Contract(pure = true)

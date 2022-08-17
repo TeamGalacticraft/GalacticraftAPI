@@ -26,8 +26,18 @@ import com.mojang.serialization.Codec;
 import dev.galacticraft.api.registry.RocketRegistry;
 import dev.galacticraft.api.rocket.part.config.RocketBoosterConfig;
 import dev.galacticraft.api.rocket.part.type.RocketBoosterType;
+import dev.galacticraft.impl.rocket.part.ConfiguredRocketBoosterImpl;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
-public record ConfiguredRocketBooster<C extends RocketBoosterConfig, T extends RocketBoosterType<C>>(@NotNull C config, @NotNull T type) implements ConfiguredRocketPart<C, T>  {
-    public static final Codec<ConfiguredRocketBooster<?, ?>> CODEC = RocketRegistry.ROCKET_BOOSTER_TYPE.byNameCodec().dispatch(ConfiguredRocketBooster::type, RocketBoosterType::codec);
+public non-sealed interface ConfiguredRocketBooster<C extends RocketBoosterConfig, T extends RocketBoosterType<C>> extends ConfiguredRocketPart<C, T> {
+    Codec<ConfiguredRocketBooster<?, ?>> CODEC = RocketRegistry.ROCKET_BOOSTER_TYPE.byNameCodec().dispatch(ConfiguredRocketBooster::type, RocketBoosterType::codec);
+
+    @Contract(pure = true, value = "_, _ -> new")
+    static @NotNull <C extends RocketBoosterConfig, T extends RocketBoosterType<C>> ConfiguredRocketBooster<C, T> create(@NotNull C config, @NotNull T type) {
+        return new ConfiguredRocketBoosterImpl<>(config, type);
+    }
+
+    @NotNull C config();
+    @NotNull T type();
 }

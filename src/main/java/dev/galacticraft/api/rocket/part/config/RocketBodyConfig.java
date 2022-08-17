@@ -22,5 +22,5 @@
 
 package dev.galacticraft.api.rocket.part.config;
 
-public interface RocketBodyConfig extends RocketPartConfig {
+public non-sealed interface RocketBodyConfig extends RocketPartConfig {
 }

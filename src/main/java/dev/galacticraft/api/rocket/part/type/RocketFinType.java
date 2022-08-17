@@ -65,7 +65,7 @@ public non-sealed abstract class RocketFinType<C extends RocketFinConfig> implem
     }
 
     public @NotNull ConfiguredRocketFin<C, RocketFinType<C>> configure(@NotNull C config) {
-        return new ConfiguredRocketFin<>(config, this);
+        return ConfiguredRocketFin.create(config, this);
     }
 
     @Override

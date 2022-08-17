@@ -26,8 +26,18 @@ import com.mojang.serialization.Codec;
 import dev.galacticraft.api.registry.RocketRegistry;
 import dev.galacticraft.api.rocket.part.config.RocketBottomConfig;
 import dev.galacticraft.api.rocket.part.type.RocketBottomType;
+import dev.galacticraft.impl.rocket.part.ConfiguredRocketBottomImpl;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
-public record ConfiguredRocketBottom<C extends RocketBottomConfig, T extends RocketBottomType<C>>(@NotNull C config, @NotNull T type) implements ConfiguredRocketPart<C, T>  {
-    public static final Codec<ConfiguredRocketBottom<?, ?>> CODEC = RocketRegistry.ROCKET_BOTTOM_TYPE.byNameCodec().dispatch(ConfiguredRocketBottom::type, RocketBottomType::codec);
+public non-sealed interface ConfiguredRocketBottom<C extends RocketBottomConfig, T extends RocketBottomType<C>> extends ConfiguredRocketPart<C, T> {
+    Codec<ConfiguredRocketBottom<?, ?>> CODEC = RocketRegistry.ROCKET_BOTTOM_TYPE.byNameCodec().dispatch(ConfiguredRocketBottom::type, RocketBottomType::codec);
+
+    @Contract(pure = true, value = "_, _ -> new")
+    static @NotNull <C extends RocketBottomConfig, T extends RocketBottomType<C>> ConfiguredRocketBottom<C, T> create(@NotNull C config, @NotNull T type) {
+        return new ConfiguredRocketBottomImpl<>(config, type);
+    }
+
+    @NotNull C config();
+    @NotNull T type();
 }

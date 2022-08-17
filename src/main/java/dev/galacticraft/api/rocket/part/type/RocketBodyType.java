@@ -71,7 +71,7 @@ public non-sealed abstract class RocketBodyType<C extends RocketBodyConfig> impl
     }
 
     public @NotNull ConfiguredRocketBody<C, RocketBodyType<C>> configure(@NotNull C config) {
-        return new ConfiguredRocketBody<>(config, this);
+        return ConfiguredRocketBody.create(config, this);
     }
 
     @Override

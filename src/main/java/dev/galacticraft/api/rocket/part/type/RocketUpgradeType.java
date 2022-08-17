@@ -77,7 +77,7 @@ public non-sealed abstract class RocketUpgradeType<C extends RocketUpgradeConfig
     }
 
     public @NotNull ConfiguredRocketUpgrade<C, RocketUpgradeType<C>> configure(@NotNull C config) {
-        return new ConfiguredRocketUpgrade<>(config, this);
+        return ConfiguredRocketUpgrade.create(config, this);
     }
 
     @Override

@@ -26,8 +26,18 @@ import com.mojang.serialization.Codec;
 import dev.galacticraft.api.registry.RocketRegistry;
 import dev.galacticraft.api.rocket.part.config.RocketUpgradeConfig;
 import dev.galacticraft.api.rocket.part.type.RocketUpgradeType;
+import dev.galacticraft.impl.rocket.part.ConfiguredRocketUpgradeImpl;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
-public record ConfiguredRocketUpgrade<C extends RocketUpgradeConfig, T extends RocketUpgradeType<C>>(@NotNull C config, @NotNull T type) implements ConfiguredRocketPart<C, T>  {
-    public static final Codec<ConfiguredRocketUpgrade<?, ?>> CODEC = RocketRegistry.ROCKET_UPGRADE_TYPE.byNameCodec().dispatch(ConfiguredRocketUpgrade::type, RocketUpgradeType::codec);
+public non-sealed interface ConfiguredRocketUpgrade<C extends RocketUpgradeConfig, T extends RocketUpgradeType<C>> extends ConfiguredRocketPart<C, T> {
+    Codec<ConfiguredRocketUpgrade<?, ?>> CODEC = RocketRegistry.ROCKET_UPGRADE_TYPE.byNameCodec().dispatch(ConfiguredRocketUpgrade::type, RocketUpgradeType::codec);
+
+    @Contract(pure = true, value = "_, _ -> new")
+    static @NotNull <C extends RocketUpgradeConfig, T extends RocketUpgradeType<C>> ConfiguredRocketUpgrade<C, T> create(@NotNull C config, @NotNull T type) {
+        return new ConfiguredRocketUpgradeImpl<>(config, type);
+    }
+
+    @NotNull C config();
+    @NotNull T type();
 }
