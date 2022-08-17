@@ -20,26 +20,7 @@
  * SOFTWARE.
  */
 
-package dev.galacticraft.api.gametest.rocket.part;
+package dev.galacticraft.api.rocket.part.config;
 
-import dev.galacticraft.api.rocket.entity.Rocket;
-import dev.galacticraft.api.rocket.part.RocketUpgrade;
-import dev.galacticraft.api.rocket.recipe.RocketPartRecipe;
-import org.jetbrains.annotations.Nullable;
-
-public class ExampleRocketUpgrade extends RocketUpgrade {
-    private final @Nullable RocketPartRecipe recipe;
-
-    public ExampleRocketUpgrade(@Nullable RocketPartRecipe recipe) {
-        this.recipe = recipe;
-    }
-
-    @Override
-    public void tick(Rocket rocket) {
-    }
-
-    @Override
-    public @Nullable RocketPartRecipe getRecipe() {
-        return this.recipe;
-    }
+public interface RocketPartConfig {
 }

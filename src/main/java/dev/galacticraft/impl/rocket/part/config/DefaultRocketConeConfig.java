@@ -20,14 +20,15 @@
  * SOFTWARE.
  */
 
-package dev.galacticraft.api.rocket.part;
+package dev.galacticraft.impl.rocket.part.config;
 
-import dev.galacticraft.api.rocket.recipe.RocketPartRecipe;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.mojang.serialization.Codec;
+import dev.galacticraft.api.rocket.part.config.RocketConeConfig;
 
-public sealed interface RocketPart permits RocketBody, RocketBooster, RocketBottom, RocketCone, RocketFin, RocketUpgrade {
-    @Nullable RocketPartRecipe getRecipe();
+public final class DefaultRocketConeConfig implements RocketConeConfig {
+    public static final DefaultRocketConeConfig INSTANCE = new DefaultRocketConeConfig();
+    public static final Codec<DefaultRocketConeConfig> CODEC = Codec.unit(INSTANCE);
 
-    @NotNull RocketPartType getType();
+    private DefaultRocketConeConfig() {
+    }
 }

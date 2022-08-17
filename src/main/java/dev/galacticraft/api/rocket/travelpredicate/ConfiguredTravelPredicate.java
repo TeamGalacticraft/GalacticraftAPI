@@ -24,14 +24,13 @@ package dev.galacticraft.api.rocket.travelpredicate;
 
 import com.mojang.serialization.Codec;
 import dev.galacticraft.api.registry.AddonRegistry;
+import dev.galacticraft.api.rocket.part.*;
 import dev.galacticraft.api.universe.celestialbody.CelestialBody;
-import it.unimi.dsi.fastutil.objects.Object2BooleanFunction;
-import net.minecraft.resources.ResourceLocation;
 
-public record ConfiguredTravelPredicate<C extends TravelPredicateConfig>(C config, TravelPredicateType<C> type) {
-    public static final Codec<ConfiguredTravelPredicate<?>> CODEC = AddonRegistry.TRAVEL_PREDICATE.byNameCodec().dispatch(ConfiguredTravelPredicate::type, TravelPredicateType::codec);
+public record ConfiguredTravelPredicate<C extends TravelPredicateConfig, T extends TravelPredicateType<C>>(C config, T type) {
+    public static final Codec<ConfiguredTravelPredicate<?, ?>> CODEC = AddonRegistry.TRAVEL_PREDICATE.byNameCodec().dispatch(ConfiguredTravelPredicate::type, TravelPredicateType::codec);
 
-    public TravelPredicateType.AccessType canTravelTo(CelestialBody<?, ?> type, Object2BooleanFunction<ResourceLocation> parts) {
-        return this.type.canTravelTo(type, parts, this.config);
+    public TravelPredicateType.AccessType canTravelTo(CelestialBody<?, ?> type, ConfiguredRocketCone<?, ?> cone, ConfiguredRocketBody<?, ?> body, ConfiguredRocketFin<?, ?> fin, ConfiguredRocketBooster<?, ?> booster, ConfiguredRocketBottom<?, ?> bottom, ConfiguredRocketUpgrade<?, ?>[] upgrades) {
+        return this.type.canTravelTo(type, cone, body, fin, booster, bottom, upgrades, this.config);
     }
 }

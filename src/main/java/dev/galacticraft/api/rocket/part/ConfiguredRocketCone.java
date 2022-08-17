@@ -22,20 +22,12 @@
 
 package dev.galacticraft.api.rocket.part;
 
-import dev.galacticraft.api.universe.celestialbody.CelestialBody;
-import dev.galacticraft.api.universe.celestialbody.CelestialBodyConfig;
-import dev.galacticraft.api.universe.celestialbody.CelestialBodyType;
-import dev.galacticraft.api.universe.celestialbody.landable.Landable;
+import com.mojang.serialization.Codec;
+import dev.galacticraft.api.registry.RocketRegistry;
+import dev.galacticraft.api.rocket.part.config.RocketConeConfig;
+import dev.galacticraft.api.rocket.part.type.RocketConeType;
 import org.jetbrains.annotations.NotNull;
 
-public abstract non-sealed class RocketCone implements RocketPart {
-
-    public abstract boolean canSupportVelocity(double velocity);
-
-    public abstract <C extends CelestialBodyConfig, T extends CelestialBodyType<C> & Landable<C>> boolean canEscapeAtmosphere(CelestialBody<C, T> celestialBody);
-
-    @Override
-    public final @NotNull RocketPartType getType() {
-        return RocketPartType.CONE;
-    }
+public record ConfiguredRocketCone<C extends RocketConeConfig, T extends RocketConeType<C>>(@NotNull C config, @NotNull T type) implements ConfiguredRocketPart<C, T>  {
+    public static final Codec<ConfiguredRocketCone<?, ?>> CODEC = RocketRegistry.ROCKET_CONE_TYPE.byNameCodec().dispatch(ConfiguredRocketCone::type, RocketConeType::codec);
 }

@@ -20,19 +20,15 @@
  * SOFTWARE.
  */
 
-package dev.galacticraft.api.rocket.part;
+package dev.galacticraft.impl.rocket.part.config;
 
-import org.jetbrains.annotations.NotNull;
+import com.mojang.serialization.Codec;
+import dev.galacticraft.api.rocket.part.config.RocketBottomConfig;
 
-public abstract non-sealed class RocketBottom implements RocketPart {
-    public abstract double getMaximumVelocity();
+public final class DefaultRocketBottomConfig implements RocketBottomConfig {
+    public static final DefaultRocketBottomConfig INSTANCE = new DefaultRocketBottomConfig();
+    public static final Codec<DefaultRocketBottomConfig> CODEC = Codec.unit(INSTANCE);
 
-    public abstract double getAccelerationPerTick();
-
-    public abstract long getFuelUsagePerTick();
-
-    @Override
-    public final @NotNull RocketPartType getType() {
-        return RocketPartType.BOTTOM;
+    private DefaultRocketBottomConfig() {
     }
 }

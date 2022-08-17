@@ -22,6 +22,7 @@
 
 package dev.galacticraft.impl;
 
+import net.minecraft.resources.ResourceLocation;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.ApiStatus;
@@ -43,6 +44,9 @@ public interface Constant {
         int WIDTH = 16;
         int SECTION_HEIGHT = 16;
         int CHUNK_SECTION_AREA = WIDTH * WIDTH * SECTION_HEIGHT;
+    }
 
+    interface Misc {
+        ResourceLocation INVALID = new ResourceLocation(MOD_ID, "invalid");
     }
 }

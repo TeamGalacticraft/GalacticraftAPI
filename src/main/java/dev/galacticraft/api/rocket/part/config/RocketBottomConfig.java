@@ -20,42 +20,7 @@
  * SOFTWARE.
  */
 
-package dev.galacticraft.api.gametest.rocket.part;
+package dev.galacticraft.api.rocket.part.config;
 
-import dev.galacticraft.api.rocket.part.RocketBottom;
-import dev.galacticraft.api.rocket.recipe.RocketPartRecipe;
-import org.jetbrains.annotations.Nullable;
-
-public class ExampleRocketBottom extends RocketBottom {
-    private final double maximumVelocity;
-    private final double acceleration;
-    private final long fuelUsage;
-    private final @Nullable RocketPartRecipe recipe;
-
-    public ExampleRocketBottom(double maximumVelocity, double acceleration, long fuelUsage, @Nullable RocketPartRecipe recipe) {
-        this.maximumVelocity = maximumVelocity;
-        this.acceleration = acceleration;
-        this.fuelUsage = fuelUsage;
-        this.recipe = recipe;
-    }
-
-    @Override
-    public double getMaximumVelocity() {
-        return this.maximumVelocity;
-    }
-
-    @Override
-    public double getAccelerationPerTick() {
-        return this.acceleration;
-    }
-
-    @Override
-    public long getFuelUsagePerTick() {
-        return this.fuelUsage;
-    }
-
-    @Override
-    public @Nullable RocketPartRecipe getRecipe() {
-        return this.recipe;
-    }
+public interface RocketBottomConfig extends RocketPartConfig {
 }

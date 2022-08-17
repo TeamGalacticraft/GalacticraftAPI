@@ -22,17 +22,12 @@
 
 package dev.galacticraft.api.rocket.part;
 
+import com.mojang.serialization.Codec;
+import dev.galacticraft.api.registry.RocketRegistry;
+import dev.galacticraft.api.rocket.part.config.RocketBottomConfig;
+import dev.galacticraft.api.rocket.part.type.RocketBottomType;
 import org.jetbrains.annotations.NotNull;
 
-public abstract non-sealed class RocketBooster implements RocketPart {
-    public abstract double getMaximumVelocity();
-
-    public abstract double getAccelerationPerTick();
-
-    public abstract long getFuelUsagePerTick();
-
-    @Override
-    public final @NotNull RocketPartType getType() {
-        return RocketPartType.BOOSTER;
-    }
+public record ConfiguredRocketBottom<C extends RocketBottomConfig, T extends RocketBottomType<C>>(@NotNull C config, @NotNull T type) implements ConfiguredRocketPart<C, T>  {
+    public static final Codec<ConfiguredRocketBottom<?, ?>> CODEC = RocketRegistry.ROCKET_BOTTOM_TYPE.byNameCodec().dispatch(ConfiguredRocketBottom::type, RocketBottomType::codec);
 }

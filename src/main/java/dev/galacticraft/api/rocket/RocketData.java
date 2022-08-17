@@ -22,7 +22,6 @@
 
 package dev.galacticraft.api.rocket;
 
-import dev.galacticraft.api.rocket.part.RocketPartType;
 import dev.galacticraft.api.universe.celestialbody.CelestialBody;
 import dev.galacticraft.impl.Constant;
 import dev.galacticraft.impl.rocket.RocketDataImpl;
@@ -34,16 +33,15 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
 
 public interface RocketData {
-    ResourceLocation INVALID_ID = new ResourceLocation(Constant.MOD_ID, "invalid");
+    ResourceLocation INVALID_ID = Constant.Misc.INVALID;
 
-    static RocketData create(int color, ResourceLocation cone, ResourceLocation body, ResourceLocation fin, ResourceLocation booster, ResourceLocation bottom, ResourceLocation upgrade) {
-        if (cone == INVALID_ID
-                || body == INVALID_ID
-                || fin == INVALID_ID
-                || booster == INVALID_ID
-                || bottom == INVALID_ID
-                || upgrade == INVALID_ID) return empty();
-        return new RocketDataImpl(color, cone, body, fin, booster, bottom, upgrade);
+    static RocketData create(int color, ResourceLocation cone, ResourceLocation body, ResourceLocation fin, ResourceLocation booster, ResourceLocation bottom, ResourceLocation[] upgrades) {
+        assert cone != INVALID_ID
+                && body != INVALID_ID
+                && fin != INVALID_ID
+                && booster != INVALID_ID
+                && bottom != INVALID_ID;
+        return new RocketDataImpl(color, cone, body, fin, booster, bottom, upgrades);
     }
 
     static @NotNull @Unmodifiable RocketData fromNbt(CompoundTag nbt) {
@@ -59,13 +57,25 @@ public interface RocketData {
 
     int color();
 
-    int red();
+    default int red() {
+        return this.color() >> 16 & 0xFF;
+    }
 
-    int green();
+    default int green() {
+        return this.color() >> 8 & 0xFF;
+    }
 
-    int blue();
+    default int blue() {
+        return this.color() & 0xFF;
+    }
 
-    int alpha();
+    default int alpha() {
+        return this.color() >> 24 & 0xFF;
+    }
+
+    default int upgradeCount() {
+        return this.upgrades().length;
+    }
 
     ResourceLocation cone();
 
@@ -77,13 +87,10 @@ public interface RocketData {
 
     ResourceLocation bottom();
 
-    ResourceLocation upgrade();
+    ResourceLocation[] upgrades();
 
     boolean isEmpty();
 
-    boolean canTravelTo(RegistryAccess manager, CelestialBody<?, ?> celestialBodyType);
+    boolean canTravelTo(RegistryAccess manager, CelestialBody<?, ?> from, CelestialBody<?, ?> to);
 
-    ResourceLocation getPartForType(RocketPartType type);
-
-    ResourceLocation[] parts();
 }

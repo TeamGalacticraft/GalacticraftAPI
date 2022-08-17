@@ -22,24 +22,12 @@
 
 package dev.galacticraft.api.rocket.part;
 
-import dev.galacticraft.api.rocket.entity.Rocket;
-import dev.galacticraft.api.rocket.recipe.RocketPartRecipe;
+import com.mojang.serialization.Codec;
+import dev.galacticraft.api.registry.RocketRegistry;
+import dev.galacticraft.api.rocket.part.config.RocketBodyConfig;
+import dev.galacticraft.api.rocket.part.type.RocketBodyType;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-public abstract non-sealed class RocketUpgrade implements RocketPart {
-    public static final RocketUpgrade NO_UPGRADE = new RocketUpgrade() {
-        @Override
-        public void tick(Rocket rocket) {}
-
-        @Override
-        public @Nullable RocketPartRecipe getRecipe() {return null;}
-    };
-
-    public abstract void tick(Rocket rocket);
-
-    @Override
-    public @NotNull RocketPartType getType() {
-        return RocketPartType.UPGRADE;
-    }
+public record ConfiguredRocketBody<C extends RocketBodyConfig, T extends RocketBodyType<C>>(@NotNull C config, @NotNull T type) implements ConfiguredRocketPart<C, T> {
+    public static final Codec<ConfiguredRocketBody<?, ?>> CODEC = RocketRegistry.ROCKET_BODY_TYPE.byNameCodec().dispatch(ConfiguredRocketBody::type, RocketBodyType::codec);
 }

@@ -20,42 +20,15 @@
  * SOFTWARE.
  */
 
-package dev.galacticraft.api.gametest.rocket.part;
+package dev.galacticraft.impl.rocket.part.config;
 
-import dev.galacticraft.api.rocket.part.RocketBooster;
-import dev.galacticraft.api.rocket.recipe.RocketPartRecipe;
-import org.jetbrains.annotations.Nullable;
+import com.mojang.serialization.Codec;
+import dev.galacticraft.api.rocket.part.config.RocketBoosterConfig;
 
-public class ExampleRocketBooster extends RocketBooster {
-    private final double maximumVelocity;
-    private final double acceleration;
-    private final long fuelUsage;
-    private final @Nullable RocketPartRecipe recipe;
+public final class DefaultRocketBoosterConfig implements RocketBoosterConfig {
+    public static final DefaultRocketBoosterConfig INSTANCE = new DefaultRocketBoosterConfig();
+    public static final Codec<DefaultRocketBoosterConfig> CODEC = Codec.unit(INSTANCE);
 
-    public ExampleRocketBooster(double maximumVelocity, double acceleration, long fuelUsage, @Nullable RocketPartRecipe recipe) {
-        this.maximumVelocity = maximumVelocity;
-        this.acceleration = acceleration;
-        this.fuelUsage = fuelUsage;
-        this.recipe = recipe;
-    }
-
-    @Override
-    public double getMaximumVelocity() {
-        return this.maximumVelocity;
-    }
-
-    @Override
-    public double getAccelerationPerTick() {
-        return this.acceleration;
-    }
-
-    @Override
-    public long getFuelUsagePerTick() {
-        return this.fuelUsage;
-    }
-
-    @Override
-    public @Nullable RocketPartRecipe getRecipe() {
-        return this.recipe;
+    private DefaultRocketBoosterConfig() {
     }
 }

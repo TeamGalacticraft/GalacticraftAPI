@@ -20,15 +20,7 @@
  * SOFTWARE.
  */
 
-package dev.galacticraft.api.rocket.part;
+package dev.galacticraft.api.rocket.part.config;
 
-import org.jetbrains.annotations.NotNull;
-
-public abstract non-sealed class RocketBody implements RocketPart {
-    public abstract long getFuelCapacity();
-
-    @Override
-    public final @NotNull RocketPartType getType() {
-        return RocketPartType.BODY;
-    }
+public interface RocketFinConfig extends RocketPartConfig {
 }

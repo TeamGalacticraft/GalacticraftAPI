@@ -20,27 +20,14 @@
  * SOFTWARE.
  */
 
-package dev.galacticraft.impl.universe.display.type;
+package dev.galacticraft.api.rocket.part;
 
-import com.mojang.blaze3d.vertex.BufferBuilder;
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Vector4f;
-import dev.galacticraft.api.universe.display.CelestialDisplayType;
-import dev.galacticraft.impl.universe.display.config.EmptyCelestialDisplayConfig;
-import net.minecraft.client.renderer.ShaderInstance;
+import com.mojang.serialization.Codec;
+import dev.galacticraft.api.registry.RocketRegistry;
+import dev.galacticraft.api.rocket.part.config.RocketUpgradeConfig;
+import dev.galacticraft.api.rocket.part.type.RocketUpgradeType;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.function.Consumer;
-import java.util.function.Supplier;
-
-public class EmptyCelestialDisplayType extends CelestialDisplayType<EmptyCelestialDisplayConfig> {
-    public static final EmptyCelestialDisplayType INSTANCE = new EmptyCelestialDisplayType();
-
-    private EmptyCelestialDisplayType() {
-        super(EmptyCelestialDisplayConfig.CODEC);
-    }
-
-    @Override
-    public Vector4f render(PoseStack matrices, BufferBuilder buffer, int size, double mouseX, double mouseY, float delta, Consumer<Supplier<ShaderInstance>> shaderSetter, EmptyCelestialDisplayConfig config) {
-        return NULL_VECTOR;
-    }
+public record ConfiguredRocketUpgrade<C extends RocketUpgradeConfig, T extends RocketUpgradeType<C>>(@NotNull C config, @NotNull T type) implements ConfiguredRocketPart<C, T>  {
+    public static final Codec<ConfiguredRocketUpgrade<?, ?>> CODEC = RocketRegistry.ROCKET_UPGRADE_TYPE.byNameCodec().dispatch(ConfiguredRocketUpgrade::type, RocketUpgradeType::codec);
 }

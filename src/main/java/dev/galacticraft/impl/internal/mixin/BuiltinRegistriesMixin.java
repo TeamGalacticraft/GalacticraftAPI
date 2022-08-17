@@ -24,8 +24,13 @@ package dev.galacticraft.impl.internal.mixin;
 
 import com.mojang.serialization.Lifecycle;
 import dev.galacticraft.api.registry.AddonRegistry;
+import dev.galacticraft.api.registry.RocketRegistry;
+import dev.galacticraft.api.rocket.part.*;
+import dev.galacticraft.api.rocket.part.type.*;
 import dev.galacticraft.impl.Constant;
+import dev.galacticraft.impl.rocket.part.config.*;
 import dev.galacticraft.impl.universe.BuiltinObjects;
+import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.WritableRegistry;
 import net.minecraft.data.BuiltinRegistries;
@@ -44,11 +49,30 @@ public abstract class BuiltinRegistriesMixin {
         throw new UnsupportedOperationException("Untransformed mixin");
     }
 
+    @Shadow
+    public static <T> Holder<T> register(Registry<T> registry, ResourceLocation resourceLocation, T object) {
+        throw new UnsupportedOperationException("Untransformed mixin");
+    }
+
+    @Shadow
+    public static <T> Holder<T> register(Registry<T> registry, ResourceKey<T> resourceKey, T object) {
+        throw new UnsupportedOperationException("Untransformed mixin");
+    }
+
     @Inject(method = "<clinit>", at = @At(value = "INVOKE", target = "Lnet/minecraft/data/BuiltinRegistries;registerSimple(Lnet/minecraft/resources/ResourceKey;Lnet/minecraft/data/BuiltinRegistries$RegistryBootstrap;)Lnet/minecraft/core/Registry;", ordinal = 0))
     private static void galacticraft_addDynamicRegistries(CallbackInfo ci) {
         BuiltinObjects.register();
-        internalRegister(AddonRegistry.GALAXY_KEY, AddonRegistry.GALAXY, (registry) -> AddonRegistry.GALAXY.getHolderOrThrow(BuiltinObjects.MILKY_WAY_KEY), Lifecycle.experimental());
-        internalRegister(AddonRegistry.CELESTIAL_BODY_KEY, AddonRegistry.CELESTIAL_BODY, (registry) -> AddonRegistry.CELESTIAL_BODY.getHolderOrThrow(BuiltinObjects.SOL_KEY), Lifecycle.experimental());
-        internalRegister(AddonRegistry.ROCKET_PART_KEY, AddonRegistry.ROCKET_PART, (registry) -> AddonRegistry.ROCKET_PART.getHolderOrThrow(ResourceKey.create(AddonRegistry.ROCKET_PART_KEY, new ResourceLocation(Constant.MOD_ID, "invalid"))), Lifecycle.experimental());
+        internalRegister(AddonRegistry.GALAXY_KEY, AddonRegistry.GALAXY, (registry) -> register(registry, BuiltinObjects.MILKY_WAY_KEY, BuiltinObjects.createMilkyWay()), Lifecycle.experimental());
+        internalRegister(AddonRegistry.CELESTIAL_BODY_KEY, AddonRegistry.CELESTIAL_BODY, (registry) -> {
+            register(registry, BuiltinObjects.EARTH_KEY, BuiltinObjects.createEarth());
+            return register(registry, BuiltinObjects.SOL_KEY.location(), BuiltinObjects.createSol());
+        }, Lifecycle.experimental());
+
+        internalRegister(RocketRegistry.CONFIGURED_ROCKET_CONE_KEY, RocketRegistry.CONFIGURED_ROCKET_CONE, (registry) -> register(registry, Constant.Misc.INVALID, new ConfiguredRocketCone<>(DefaultRocketConeConfig.INSTANCE, RocketConeType.INVALID)), Lifecycle.experimental());
+        internalRegister(RocketRegistry.CONFIGURED_ROCKET_BODY_KEY, RocketRegistry.CONFIGURED_ROCKET_BODY, (registry) -> register(registry, Constant.Misc.INVALID, new ConfiguredRocketBody<>(DefaultRocketBodyConfig.INSTANCE, RocketBodyType.INVALID)), Lifecycle.experimental());
+        internalRegister(RocketRegistry.CONFIGURED_ROCKET_FIN_KEY, RocketRegistry.CONFIGURED_ROCKET_FIN, (registry) -> register(registry, Constant.Misc.INVALID, new ConfiguredRocketFin<>(DefaultRocketFinConfig.INSTANCE, RocketFinType.INVALID)), Lifecycle.experimental());
+        internalRegister(RocketRegistry.CONFIGURED_ROCKET_BOOSTER_KEY, RocketRegistry.CONFIGURED_ROCKET_BOOSTER, (registry) -> register(registry, Constant.Misc.INVALID, new ConfiguredRocketBooster<>(DefaultRocketBoosterConfig.INSTANCE, RocketBoosterType.INVALID)), Lifecycle.experimental());
+        internalRegister(RocketRegistry.CONFIGURED_ROCKET_BOTTOM_KEY, RocketRegistry.CONFIGURED_ROCKET_BOTTOM, (registry) -> register(registry, Constant.Misc.INVALID, new ConfiguredRocketBottom<>(DefaultRocketBottomConfig.INSTANCE, RocketBottomType.INVALID)), Lifecycle.experimental());
+        internalRegister(RocketRegistry.CONFIGURED_ROCKET_UPGRADE_KEY, RocketRegistry.CONFIGURED_ROCKET_UPGRADE, (registry) -> register(registry, Constant.Misc.INVALID, new ConfiguredRocketUpgrade<>(DefaultRocketUpgradeConfig.INSTANCE, RocketUpgradeType.INVALID)), Lifecycle.experimental());
     }
 }

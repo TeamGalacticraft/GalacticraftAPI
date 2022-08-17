@@ -20,15 +20,15 @@
  * SOFTWARE.
  */
 
-package dev.galacticraft.api.rocket.part;
+package dev.galacticraft.impl.rocket.part.config;
 
-import org.jetbrains.annotations.NotNull;
+import com.mojang.serialization.Codec;
+import dev.galacticraft.api.rocket.part.config.RocketBodyConfig;
 
-public abstract non-sealed class RocketFin implements RocketPart {
-    public abstract boolean canSupportVelocity(double velocity);
+public final class DefaultRocketBodyConfig implements RocketBodyConfig {
+    public static final DefaultRocketBodyConfig INSTANCE = new DefaultRocketBodyConfig();
+    public static final Codec<DefaultRocketBodyConfig> CODEC = Codec.unit(INSTANCE);
 
-    @Override
-    public final @NotNull RocketPartType getType() {
-        return RocketPartType.FIN;
+    private DefaultRocketBodyConfig() {
     }
 }

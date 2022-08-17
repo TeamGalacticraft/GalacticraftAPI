@@ -20,28 +20,15 @@
  * SOFTWARE.
  */
 
-package dev.galacticraft.api.gametest.rocket.part;
+package dev.galacticraft.impl.rocket.part.config;
 
-import dev.galacticraft.api.rocket.part.RocketFin;
-import dev.galacticraft.api.rocket.recipe.RocketPartRecipe;
-import org.jetbrains.annotations.Nullable;
+import com.mojang.serialization.Codec;
+import dev.galacticraft.api.rocket.part.config.RocketFinConfig;
 
-public class ExampleRocketFin extends RocketFin {
-    private final double maxVelocity;
-    private final @Nullable RocketPartRecipe recipe;
+public final class DefaultRocketFinConfig implements RocketFinConfig {
+    public static final DefaultRocketFinConfig INSTANCE = new DefaultRocketFinConfig();
+    public static final Codec<DefaultRocketFinConfig> CODEC = Codec.unit(INSTANCE);
 
-    public ExampleRocketFin(double maxVelocity, @Nullable RocketPartRecipe recipe) {
-        this.maxVelocity = maxVelocity;
-        this.recipe = recipe;
-    }
-
-    @Override
-    public boolean canSupportVelocity(double velocity) {
-        return velocity <= this.maxVelocity;
-    }
-
-    @Override
-    public @Nullable RocketPartRecipe getRecipe() {
-        return this.recipe;
+    private DefaultRocketFinConfig() {
     }
 }

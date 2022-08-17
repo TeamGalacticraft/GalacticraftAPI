@@ -23,31 +23,11 @@
 package dev.galacticraft.api.rocket.part;
 
 import com.mojang.serialization.Codec;
-import net.minecraft.util.StringRepresentable;
+import dev.galacticraft.api.registry.RocketRegistry;
+import dev.galacticraft.api.rocket.part.config.RocketFinConfig;
+import dev.galacticraft.api.rocket.part.type.RocketFinType;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.Locale;
-
-public enum RocketPartType implements StringRepresentable {
-    CONE(RocketCone.class),
-    BODY(RocketBody.class),
-    FIN(RocketFin.class),
-    BOOSTER(RocketBooster.class),
-    BOTTOM(RocketBottom.class),
-    UPGRADE(RocketUpgrade.class);
-
-    public static final Codec<RocketPartType> CODEC = Codec.STRING.xmap(s -> RocketPartType.valueOf(s.toUpperCase(Locale.ROOT)), RocketPartType::getSerializedName);
-    private final Class<? extends RocketPart> clazz;
-
-    RocketPartType(Class<? extends RocketPart> clazz) {
-        this.clazz = clazz;
-    }
-
-    public boolean isOfType(RocketPart part) {
-        return clazz.isInstance(part);
-    }
-
-    @Override
-    public String getSerializedName() {
-        return this.toString().toLowerCase(Locale.ROOT);
-    }
+public record ConfiguredRocketFin<C extends RocketFinConfig, T extends RocketFinType<C>>(@NotNull C config, @NotNull T type) implements ConfiguredRocketPart<C, T>  {
+    public static final Codec<ConfiguredRocketFin<?, ?>> CODEC = RocketRegistry.ROCKET_FIN_TYPE.byNameCodec().dispatch(ConfiguredRocketFin::type, RocketFinType::codec);
 }

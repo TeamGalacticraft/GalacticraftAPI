@@ -29,9 +29,10 @@ import com.mojang.serialization.Codec;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.renderer.ShaderInstance;
+
 import java.util.function.Consumer;
 import java.util.function.Supplier;
-
+//todo: validate client/server split
 public abstract class CelestialDisplayType<C extends CelestialDisplayConfig> {
     public static final Vector4f NULL_VECTOR = new Vector4f(0, 0, 0, 0);
     private final Codec<CelestialDisplay<C, CelestialDisplayType<C>>> codec;

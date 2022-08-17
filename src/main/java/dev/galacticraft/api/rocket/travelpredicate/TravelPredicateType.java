@@ -24,10 +24,9 @@ package dev.galacticraft.api.rocket.travelpredicate;
 
 import com.mojang.serialization.Codec;
 import dev.galacticraft.api.registry.AddonRegistry;
+import dev.galacticraft.api.rocket.part.*;
 import dev.galacticraft.api.universe.celestialbody.CelestialBody;
-import it.unimi.dsi.fastutil.objects.Object2BooleanFunction;
 import net.minecraft.core.Holder;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.StringRepresentable;
 import org.jetbrains.annotations.ApiStatus;
 
@@ -35,19 +34,19 @@ import java.util.Locale;
 
 public abstract class TravelPredicateType<C extends TravelPredicateConfig> {
     private final Holder.Reference<TravelPredicateType<?>> reference = AddonRegistry.TRAVEL_PREDICATE.createIntrusiveHolder(this);
-    private final Codec<ConfiguredTravelPredicate<C>> codec;
+    private final Codec<ConfiguredTravelPredicate<C, TravelPredicateType<C>>> codec;
 
     public TravelPredicateType(Codec<C> configCodec) {
         this.codec = configCodec.fieldOf("config").xmap(this::configure, ConfiguredTravelPredicate::config).codec();
     }
 
-    public ConfiguredTravelPredicate<C> configure(C config) {
+    public ConfiguredTravelPredicate<C, TravelPredicateType<C>> configure(C config) {
         return new ConfiguredTravelPredicate<>(config, this);
     }
 
-    public abstract AccessType canTravelTo(CelestialBody<?, ?> type, Object2BooleanFunction<ResourceLocation> parts, C config);
+    public abstract AccessType canTravelTo(CelestialBody<?, ?> type, ConfiguredRocketCone<?, ?> cone, ConfiguredRocketBody<?, ?> body, ConfiguredRocketFin<?, ?> fin, ConfiguredRocketBooster<?, ?> booster, ConfiguredRocketBottom<?, ?> bottom, ConfiguredRocketUpgrade<?, ?>[] upgrades, C config);
 
-    public Codec<ConfiguredTravelPredicate<C>> codec() {
+    public Codec<ConfiguredTravelPredicate<C, TravelPredicateType<C>>> codec() {
         return this.codec;
     }
 
@@ -77,6 +76,7 @@ public abstract class TravelPredicateType<C extends TravelPredicateConfig> {
 
         public AccessType merge(AccessType other) {
             if (other == PASS) return this;
+            if (this == PASS) return other;
             if (other == BLOCK || this == BLOCK) return BLOCK;
             return ALLOW;
         }

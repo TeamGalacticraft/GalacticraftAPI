@@ -20,28 +20,7 @@
  * SOFTWARE.
  */
 
-package dev.galacticraft.api.gametest.rocket.part;
+package dev.galacticraft.api.rocket.part.config;
 
-import dev.galacticraft.api.rocket.part.RocketBody;
-import dev.galacticraft.api.rocket.recipe.RocketPartRecipe;
-import org.jetbrains.annotations.Nullable;
-
-public class ExampleRocketBody extends RocketBody {
-    private final long fuelCapacity;
-    private final @Nullable RocketPartRecipe recipe;
-
-    public ExampleRocketBody(long fuelCapacity, @Nullable RocketPartRecipe recipe) {
-        this.fuelCapacity = fuelCapacity;
-        this.recipe = recipe;
-    }
-
-    @Override
-    public long getFuelCapacity() {
-        return this.fuelCapacity;
-    }
-
-    @Override
-    public @Nullable RocketPartRecipe getRecipe() {
-        return this.recipe;
-    }
+public interface RocketUpgradeConfig extends RocketPartConfig {
 }

@@ -20,39 +20,40 @@
  * SOFTWARE.
  */
 
-package dev.galacticraft.api.gametest.rocket.part;
+package dev.galacticraft.api.rocket.part;
 
-import dev.galacticraft.api.rocket.part.RocketCone;
+import dev.galacticraft.api.rocket.entity.Rocket;
+import dev.galacticraft.api.rocket.part.config.RocketPartConfig;
+import dev.galacticraft.api.rocket.part.type.RocketPartType;
 import dev.galacticraft.api.rocket.recipe.RocketPartRecipe;
-import dev.galacticraft.api.universe.celestialbody.CelestialBody;
-import dev.galacticraft.api.universe.celestialbody.CelestialBodyConfig;
-import dev.galacticraft.api.universe.celestialbody.CelestialBodyType;
-import dev.galacticraft.api.universe.celestialbody.landable.Landable;
+import dev.galacticraft.api.rocket.travelpredicate.ConfiguredTravelPredicate;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class ExampleRocketCone extends RocketCone {
-    private final double maxVelocity;
-    private final double maxGravity;
-    private final @Nullable RocketPartRecipe recipe;
+public interface ConfiguredRocketPart<C extends RocketPartConfig, T extends RocketPartType<C>> {
+    @NotNull C config();
+    @NotNull T type();
 
-    public ExampleRocketCone(double maxVelocity, double maxGravity, @Nullable RocketPartRecipe recipe) {
-        this.maxVelocity = maxVelocity;
-        this.maxGravity = maxGravity;
-        this.recipe = recipe;
+    /**
+     * Called every tick when this part is applied to a placed rocket.
+     * The rocket may not have launched yet.
+     * @param rocket the rocket that this part is a part of.
+     */
+    default void tick(@NotNull Rocket rocket) {
+        this.type().tick(rocket, this.config());
     }
 
-    @Override
-    public boolean canSupportVelocity(double velocity) {
-        return velocity <= this.maxVelocity;
+    /**
+     * Returns the recipe of this rocket part.
+     * @return the recipe of this rocket part. Can be null.
+     */
+    @Contract(pure = true)
+    default @Nullable RocketPartRecipe getRecipe() {
+        return this.type().getRecipe(this.config());
     }
 
-    @Override
-    public <C extends CelestialBodyConfig, T extends CelestialBodyType<C> & Landable<C>> boolean canEscapeAtmosphere(CelestialBody<C, T> celestialBody) {
-        return celestialBody.gravity() < this.maxGravity;
-    }
-
-    @Override
-    public @Nullable RocketPartRecipe getRecipe() {
-        return this.recipe;
+    default @NotNull ConfiguredTravelPredicate<?, ?> travelPredicate() {
+        return this.type().travelPredicate(this.config());
     }
 }
