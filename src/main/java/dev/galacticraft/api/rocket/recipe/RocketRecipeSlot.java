@@ -22,28 +22,7 @@
 
 package dev.galacticraft.api.rocket.recipe;
 
-import net.minecraft.recipe.Ingredient;
+import net.minecraft.world.item.crafting.Ingredient;
 
-public class RocketRecipeSlot {
-    private final int x;
-    private final int y;
-    private final Ingredient ingredient;
-
-    public RocketRecipeSlot(int x, int y, Ingredient ingredient) {
-        this.x = x;
-        this.y = y;
-        this.ingredient = ingredient;
-    }
-
-    public int getX() {
-        return x;
-    }
-
-    public int getY() {
-        return y;
-    }
-
-    public Ingredient getIngredient() {
-        return ingredient;
-    }
+public record RocketRecipeSlot(int x, int y, Ingredient ingredient) {
 }

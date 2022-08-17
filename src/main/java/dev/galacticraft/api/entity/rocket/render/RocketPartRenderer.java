@@ -23,7 +23,7 @@
 package dev.galacticraft.api.entity.rocket.render;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import dev.galacticraft.api.entity.Rocket;
+import dev.galacticraft.api.rocket.entity.Rocket;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.multiplayer.ClientLevel;

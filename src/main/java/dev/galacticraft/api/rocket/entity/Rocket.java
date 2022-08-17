@@ -22,5 +22,44 @@
 
 package dev.galacticraft.api.rocket.entity;
 
-public interface Rocket {
+import com.mojang.math.Vector3d;
+import dev.galacticraft.api.rocket.LaunchStage;
+import dev.galacticraft.api.rocket.RocketData;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.Level;
+
+import java.util.List;
+
+public interface Rocket extends RocketData {
+
+    /**
+     * Returns the launch stage of this rocket.
+     * @return the launch stage of this rocket.
+     */
+    LaunchStage getLaunchStage();
+
+    // utility entity methods
+
+    Entity getEntity();
+
+    Level getWorld();
+
+    Vector3d getPos();
+
+    Vector3d getVelocity();
+
+    BlockPos getBlockPos();
+
+    double getX();
+
+    double getY();
+
+    double getZ();
+
+    double getSpeed();
+
+    List<Entity> getPassengers();
+
+    // end utility entity methods
 }

@@ -34,8 +34,8 @@ public class RocketPartRecipe {
         int maxX = 0;
         int maxY = 0;
         for (RocketRecipeSlot slot : slots) {
-            maxX = Math.max(maxX, slot.getX() + 18);
-            maxY = Math.max(maxY, slot.getY() + 18);
+            maxX = Math.max(maxX, slot.x() + 18);
+            maxY = Math.max(maxY, slot.y() + 18);
         }
         this.width = maxX;
         this.height = maxY;
