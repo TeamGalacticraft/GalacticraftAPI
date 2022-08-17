@@ -51,11 +51,11 @@ public interface DynamicRegistryManagerMixin {
         put(builder, AddonRegistry.GALAXY_KEY, Galaxy.CODEC);
         put(builder, AddonRegistry.CELESTIAL_BODY_KEY, CelestialBody.CODEC);
 
-        put(builder, RocketRegistry.CONFIGURED_ROCKET_CONE_KEY, ConfiguredRocketCone.CODEC);
-        put(builder, RocketRegistry.CONFIGURED_ROCKET_BODY_KEY, ConfiguredRocketBody.CODEC);
-        put(builder, RocketRegistry.CONFIGURED_ROCKET_FIN_KEY, ConfiguredRocketFin.CODEC);
-        put(builder, RocketRegistry.CONFIGURED_ROCKET_BOOSTER_KEY, ConfiguredRocketBooster.CODEC);
-        put(builder, RocketRegistry.CONFIGURED_ROCKET_BOTTOM_KEY, ConfiguredRocketBottom.CODEC);
-        put(builder, RocketRegistry.CONFIGURED_ROCKET_UPGRADE_KEY, ConfiguredRocketUpgrade.CODEC);
+        put(builder, RocketRegistry.CONFIGURED_ROCKET_CONE_KEY, ConfiguredRocketCone.DIRECT_CODEC);
+        put(builder, RocketRegistry.CONFIGURED_ROCKET_BODY_KEY, ConfiguredRocketBody.DIRECT_CODEC);
+        put(builder, RocketRegistry.CONFIGURED_ROCKET_FIN_KEY, ConfiguredRocketFin.DIRECT_CODEC);
+        put(builder, RocketRegistry.CONFIGURED_ROCKET_BOOSTER_KEY, ConfiguredRocketBooster.DIRECT_CODEC);
+        put(builder, RocketRegistry.CONFIGURED_ROCKET_BOTTOM_KEY, ConfiguredRocketBottom.DIRECT_CODEC);
+        put(builder, RocketRegistry.CONFIGURED_ROCKET_UPGRADE_KEY, ConfiguredRocketUpgrade.DIRECT_CODEC);
     }
 }

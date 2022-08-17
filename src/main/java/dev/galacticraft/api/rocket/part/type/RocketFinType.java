@@ -23,47 +23,21 @@
 package dev.galacticraft.api.rocket.part.type;
 
 import com.mojang.serialization.Codec;
-import dev.galacticraft.api.rocket.entity.Rocket;
 import dev.galacticraft.api.rocket.part.ConfiguredRocketFin;
 import dev.galacticraft.api.rocket.part.config.RocketFinConfig;
-import dev.galacticraft.api.rocket.recipe.RocketPartRecipe;
-import dev.galacticraft.api.rocket.travelpredicate.ConfiguredTravelPredicate;
-import dev.galacticraft.impl.rocket.part.config.DefaultRocketFinConfig;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * The fins of a rocket. Controls how fast the rocket can accelerate.
  */
 public non-sealed abstract class RocketFinType<C extends RocketFinConfig> implements RocketPartType<C> {
-    public static final RocketFinType<DefaultRocketFinConfig> INVALID = new RocketFinType<>(DefaultRocketFinConfig.CODEC) {
-        @Override
-        public void tick(@NotNull Rocket rocket, @NotNull DefaultRocketFinConfig config) {
-
-        }
-
-        @Override
-        public @Nullable RocketPartRecipe getRecipe(@NotNull DefaultRocketFinConfig config) {
-            return null;
-        }
-
-        @Override
-        public @NotNull ConfiguredTravelPredicate<?, ?> travelPredicate(@NotNull DefaultRocketFinConfig config) {
-            return null;
-        }
-
-        @Override
-        public boolean canManeuver(@NotNull DefaultRocketFinConfig config) {
-            return false;
-        }
-    };
-
     private final @NotNull Codec<ConfiguredRocketFin<C, RocketFinType<C>>> codec;
 
     protected RocketFinType(@NotNull Codec<C> configCodec) {
         this.codec = configCodec.fieldOf("config").xmap(this::configure, ConfiguredRocketFin::config).codec();
     }
 
+    @Override
     public @NotNull ConfiguredRocketFin<C, RocketFinType<C>> configure(@NotNull C config) {
         return ConfiguredRocketFin.create(config, this);
     }

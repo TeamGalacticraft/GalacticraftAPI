@@ -23,14 +23,13 @@
 package dev.galacticraft.impl.rocket.travelpredicate.config;
 
 import com.mojang.serialization.Codec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
+import dev.galacticraft.api.rocket.travelpredicate.ConfiguredTravelPredicate;
 import dev.galacticraft.api.rocket.travelpredicate.TravelPredicateConfig;
-import dev.galacticraft.api.rocket.travelpredicate.TravelPredicateType;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Unmodifiable;
 
-public record AccessWeightTravelPredicateConfig(int weight,
-                                                TravelPredicateType.Result defaultType) implements TravelPredicateConfig {
-    public static final Codec<AccessWeightTravelPredicateConfig> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-            Codec.INT.fieldOf("weight").forGetter(AccessWeightTravelPredicateConfig::weight),
-            TravelPredicateType.Result.CODEC.optionalFieldOf("default", TravelPredicateType.Result.PASS).forGetter(AccessWeightTravelPredicateConfig::defaultType)
-    ).apply(instance, AccessWeightTravelPredicateConfig::new));
+import java.util.List;
+
+public record OrTravelPredicateConfig(@Unmodifiable @NotNull List<ConfiguredTravelPredicate<?, ?>> predicates) implements TravelPredicateConfig {
+    public static final Codec<OrTravelPredicateConfig> CODEC = ConfiguredTravelPredicate.DIRECT_CODEC.listOf().xmap(OrTravelPredicateConfig::new, OrTravelPredicateConfig::predicates);
 }

@@ -27,17 +27,30 @@ import dev.galacticraft.api.registry.RocketRegistry;
 import dev.galacticraft.api.rocket.part.config.RocketBottomConfig;
 import dev.galacticraft.api.rocket.part.type.RocketBottomType;
 import dev.galacticraft.impl.rocket.part.ConfiguredRocketBottomImpl;
+import net.minecraft.core.Holder;
+import net.minecraft.core.HolderSet;
+import net.minecraft.core.RegistryCodecs;
+import net.minecraft.resources.RegistryFileCodec;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 public non-sealed interface ConfiguredRocketBottom<C extends RocketBottomConfig, T extends RocketBottomType<C>> extends ConfiguredRocketPart<C, T> {
-    Codec<ConfiguredRocketBottom<?, ?>> CODEC = RocketRegistry.ROCKET_BOTTOM_TYPE.byNameCodec().dispatch(ConfiguredRocketBottom::type, RocketBottomType::codec);
+    Codec<ConfiguredRocketBottom<?, ?>> DIRECT_CODEC = RocketRegistry.ROCKET_BOTTOM_TYPE.byNameCodec().dispatch(ConfiguredRocketBottom::type, RocketBottomType::codec);
+    Codec<Holder<ConfiguredRocketBottom<?, ?>>> CODEC = RegistryFileCodec.create(RocketRegistry.CONFIGURED_ROCKET_BOTTOM_KEY, DIRECT_CODEC);
+    Codec<HolderSet<ConfiguredRocketBottom<?, ?>>> LIST_CODEC = RegistryCodecs.homogeneousList(RocketRegistry.CONFIGURED_ROCKET_BOTTOM_KEY, DIRECT_CODEC);
 
     @Contract(pure = true, value = "_, _ -> new")
     static @NotNull <C extends RocketBottomConfig, T extends RocketBottomType<C>> ConfiguredRocketBottom<C, T> create(@NotNull C config, @NotNull T type) {
         return new ConfiguredRocketBottomImpl<>(config, type);
     }
 
-    @NotNull C config();
-    @NotNull T type();
+    /**
+     * Returns the fuel capacity of this rocket.
+     *
+     * @return the fuel capacity of this rocket. 1 bucket = 81000.
+     * @see net.fabricmc.fabric.api.transfer.v1.fluid.FluidConstants
+     */
+    default long getFuelCapacity() {
+        return this.type().getFuelCapacity(this.config());
+    }
 }

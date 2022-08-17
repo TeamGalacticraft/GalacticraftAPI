@@ -23,47 +23,21 @@
 package dev.galacticraft.api.rocket.part.type;
 
 import com.mojang.serialization.Codec;
-import dev.galacticraft.api.rocket.entity.Rocket;
 import dev.galacticraft.api.rocket.part.ConfiguredRocketBottom;
 import dev.galacticraft.api.rocket.part.config.RocketBottomConfig;
-import dev.galacticraft.api.rocket.recipe.RocketPartRecipe;
-import dev.galacticraft.api.rocket.travelpredicate.ConfiguredTravelPredicate;
-import dev.galacticraft.impl.rocket.part.config.DefaultRocketBottomConfig;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * The bottom of a rocket. Controls how much fuel the rocket can hold.
  */
 public non-sealed abstract class RocketBottomType<C extends RocketBottomConfig> implements RocketPartType<C> {
-    public static final RocketBottomType<DefaultRocketBottomConfig> INVALID = new RocketBottomType<>(DefaultRocketBottomConfig.CODEC) {
-        @Override
-        public void tick(@NotNull Rocket rocket, @NotNull DefaultRocketBottomConfig config) {
-
-        }
-
-        @Override
-        public @Nullable RocketPartRecipe getRecipe(@NotNull DefaultRocketBottomConfig config) {
-            return null;
-        }
-
-        @Override
-        public @NotNull ConfiguredTravelPredicate<?, ?> travelPredicate(@NotNull DefaultRocketBottomConfig config) {
-            return null;
-        }
-
-        @Override
-        public long getFuelCapacity(@NotNull DefaultRocketBottomConfig config) {
-            return 0;
-        }
-    };
-
     private final @NotNull Codec<ConfiguredRocketBottom<C, RocketBottomType<C>>> codec;
 
     protected RocketBottomType(@NotNull Codec<C> configCodec) {
         this.codec = configCodec.fieldOf("config").xmap(this::configure, ConfiguredRocketBottom::config).codec();
     }
 
+    @Override
     public @NotNull ConfiguredRocketBottom<C, RocketBottomType<C>> configure(@NotNull C config) {
         return ConfiguredRocketBottom.create(config, this);
     }

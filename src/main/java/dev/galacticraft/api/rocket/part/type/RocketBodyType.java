@@ -23,53 +23,22 @@
 package dev.galacticraft.api.rocket.part.type;
 
 import com.mojang.serialization.Codec;
-import dev.galacticraft.api.rocket.entity.Rocket;
 import dev.galacticraft.api.rocket.part.ConfiguredRocketBody;
 import dev.galacticraft.api.rocket.part.config.RocketBodyConfig;
-import dev.galacticraft.api.rocket.recipe.RocketPartRecipe;
-import dev.galacticraft.api.rocket.travelpredicate.ConfiguredTravelPredicate;
-import dev.galacticraft.impl.rocket.part.config.DefaultRocketBodyConfig;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * The body of a rocket. Controls the number of installable rocket upgrades and the maximum passenger count.
  */
 public non-sealed abstract class RocketBodyType<C extends RocketBodyConfig> implements RocketPartType<C> {
-    public static final RocketBodyType<DefaultRocketBodyConfig> INVALID = new RocketBodyType<>(DefaultRocketBodyConfig.CODEC) {
-        @Override
-        public void tick(@NotNull Rocket rocket, @NotNull DefaultRocketBodyConfig config) {
-
-        }
-
-        @Override
-        public @Nullable RocketPartRecipe getRecipe(@NotNull DefaultRocketBodyConfig config) {
-            return null;
-        }
-
-        @Override
-        public @NotNull ConfiguredTravelPredicate<?, ?> travelPredicate(@NotNull DefaultRocketBodyConfig config) {
-            return null;
-        }
-
-        @Override
-        public int getMaxPassengers(@NotNull DefaultRocketBodyConfig config) {
-            return 0;
-        }
-
-        @Override
-        public int getUpgradeCapacity(@NotNull DefaultRocketBodyConfig config) {
-            return 0;
-        }
-    };
-
     private final @NotNull Codec<ConfiguredRocketBody<C, RocketBodyType<C>>> codec;
 
     protected RocketBodyType(@NotNull Codec<C> configCodec) {
         this.codec = configCodec.fieldOf("config").xmap(this::configure, ConfiguredRocketBody::config).codec();
     }
 
+    @Override
     public @NotNull ConfiguredRocketBody<C, RocketBodyType<C>> configure(@NotNull C config) {
         return ConfiguredRocketBody.create(config, this);
     }

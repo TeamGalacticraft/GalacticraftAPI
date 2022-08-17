@@ -25,7 +25,11 @@ package dev.galacticraft.api.registry;
 import com.mojang.serialization.Lifecycle;
 import dev.galacticraft.api.rocket.part.*;
 import dev.galacticraft.api.rocket.part.type.*;
+import dev.galacticraft.api.rocket.travelpredicate.ConfiguredTravelPredicate;
+import dev.galacticraft.api.rocket.travelpredicate.TravelPredicateType;
 import dev.galacticraft.impl.Constant;
+import dev.galacticraft.impl.rocket.part.type.*;
+import dev.galacticraft.impl.rocket.travelpredicate.type.*;
 import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder;
 import net.minecraft.core.DefaultedRegistry;
 import net.minecraft.core.MappedRegistry;
@@ -35,18 +39,26 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 
 public final class RocketRegistry {
+    public static final ResourceKey<Registry<TravelPredicateType<?>>> TRAVEL_PREDICATE_KEY = ResourceKey.createRegistryKey(new ResourceLocation(Constant.MOD_ID, "travel_predicate_type"));
     public static final ResourceKey<Registry<RocketConeType<?>>> ROCKET_CONE_TYPE_KEY = ResourceKey.createRegistryKey(new ResourceLocation(Constant.MOD_ID, "rocket_cone_type"));
     public static final ResourceKey<Registry<RocketBodyType<?>>> ROCKET_BODY_TYPE_KEY = ResourceKey.createRegistryKey(new ResourceLocation(Constant.MOD_ID, "rocket_body_type"));
     public static final ResourceKey<Registry<RocketFinType<?>>> ROCKET_FIN_TYPE_KEY = ResourceKey.createRegistryKey(new ResourceLocation(Constant.MOD_ID, "rocket_fin_type"));
     public static final ResourceKey<Registry<RocketBoosterType<?>>> ROCKET_BOOSTER_TYPE_KEY = ResourceKey.createRegistryKey(new ResourceLocation(Constant.MOD_ID, "rocket_booster_type"));
     public static final ResourceKey<Registry<RocketBottomType<?>>> ROCKET_BOTTOM_TYPE_KEY = ResourceKey.createRegistryKey(new ResourceLocation(Constant.MOD_ID, "rocket_bottom_type"));
     public static final ResourceKey<Registry<RocketUpgradeType<?>>> ROCKET_UPGRADE_TYPE_KEY = ResourceKey.createRegistryKey(new ResourceLocation(Constant.MOD_ID, "rocket_upgrade_type"));
+    public static final ResourceKey<Registry<ConfiguredTravelPredicate<?, ?>>> CONFIGURED_TRAVEL_PREDICATE_KEY = ResourceKey.createRegistryKey(new ResourceLocation(Constant.MOD_ID, "configured_travel_predicate_type"));
     public static final ResourceKey<Registry<ConfiguredRocketCone<?, ?>>> CONFIGURED_ROCKET_CONE_KEY = ResourceKey.createRegistryKey(new ResourceLocation(Constant.MOD_ID, "configured_rocket_cone"));
     public static final ResourceKey<Registry<ConfiguredRocketBody<?, ?>>> CONFIGURED_ROCKET_BODY_KEY = ResourceKey.createRegistryKey(new ResourceLocation(Constant.MOD_ID, "configured_rocket_body"));
     public static final ResourceKey<Registry<ConfiguredRocketFin<?, ?>>> CONFIGURED_ROCKET_FIN_KEY = ResourceKey.createRegistryKey(new ResourceLocation(Constant.MOD_ID, "configured_rocket_fin"));
     public static final ResourceKey<Registry<ConfiguredRocketBooster<?, ?>>> CONFIGURED_ROCKET_BOOSTER_KEY = ResourceKey.createRegistryKey(new ResourceLocation(Constant.MOD_ID, "configured_rocket_booster"));
     public static final ResourceKey<Registry<ConfiguredRocketBottom<?, ?>>> CONFIGURED_ROCKET_BOTTOM_KEY = ResourceKey.createRegistryKey(new ResourceLocation(Constant.MOD_ID, "configured_rocket_bottom"));
     public static final ResourceKey<Registry<ConfiguredRocketUpgrade<?, ?>>> CONFIGURED_ROCKET_UPGRADE_KEY = ResourceKey.createRegistryKey(new ResourceLocation(Constant.MOD_ID, "configured_rocket_upgrade"));
+
+    public static final WritableRegistry<TravelPredicateType<?>> TRAVEL_PREDICATE_TYPE = FabricRegistryBuilder.from(
+            new MappedRegistry<>(TRAVEL_PREDICATE_KEY,
+                    Lifecycle.experimental(),
+                    TravelPredicateType::getReference
+            )).buildAndRegister();
 
     public static final WritableRegistry<RocketConeType<?>> ROCKET_CONE_TYPE = FabricRegistryBuilder.from(
             new DefaultedRegistry<>(Constant.Misc.INVALID.toString(),
@@ -89,7 +101,13 @@ public final class RocketRegistry {
                     Lifecycle.experimental(),
                     null
             )).buildAndRegister();
-    
+
+    public static final WritableRegistry<ConfiguredTravelPredicate<?, ?>> CONFIGURED_TRAVEL_PREDICATE = FabricRegistryBuilder.from(
+            new MappedRegistry<>(CONFIGURED_TRAVEL_PREDICATE_KEY,
+                    Lifecycle.experimental(),
+                    null
+            )).buildAndRegister();
+
     public static final WritableRegistry<ConfiguredRocketCone<?, ?>> CONFIGURED_ROCKET_CONE = FabricRegistryBuilder.from(
             new MappedRegistry<>(CONFIGURED_ROCKET_CONE_KEY,
                     Lifecycle.experimental(),
@@ -129,11 +147,19 @@ public final class RocketRegistry {
     public static void initialize() {}
 
     static {
-        Registry.register(ROCKET_CONE_TYPE, Constant.Misc.INVALID, RocketConeType.INVALID);
-        Registry.register(ROCKET_BODY_TYPE, Constant.Misc.INVALID, RocketBodyType.INVALID);
-        Registry.register(ROCKET_FIN_TYPE, Constant.Misc.INVALID, RocketFinType.INVALID);
-        Registry.register(ROCKET_BOOSTER_TYPE, Constant.Misc.INVALID, RocketBoosterType.INVALID);
-        Registry.register(ROCKET_BOTTOM_TYPE, Constant.Misc.INVALID, RocketBottomType.INVALID);
-        Registry.register(ROCKET_UPGRADE_TYPE, Constant.Misc.INVALID, RocketUpgradeType.INVALID);
+        Registry.register(RocketRegistry.TRAVEL_PREDICATE_TYPE, new ResourceLocation(Constant.MOD_ID, "default"), DefaultTravelPredicateType.INSTANCE);
+        Registry.register(RocketRegistry.TRAVEL_PREDICATE_TYPE, new ResourceLocation(Constant.MOD_ID, "access_weight"), AccessWeightTravelPredicateType.INSTANCE);
+        Registry.register(RocketRegistry.TRAVEL_PREDICATE_TYPE, new ResourceLocation(Constant.MOD_ID, "constant"), ConstantTravelPredicateType.INSTANCE);
+        Registry.register(RocketRegistry.TRAVEL_PREDICATE_TYPE, new ResourceLocation(Constant.MOD_ID, "and"), AndTravelPredicateType.INSTANCE);
+        Registry.register(RocketRegistry.TRAVEL_PREDICATE_TYPE, new ResourceLocation(Constant.MOD_ID, "or"), OrTravelPredicateType.INSTANCE);
+
+        Registry.register(ROCKET_CONE_TYPE, Constant.Misc.INVALID, InvalidRocketConeType.INSTANCE);
+        Registry.register(ROCKET_BODY_TYPE, Constant.Misc.INVALID, InvalidRocketBodyType.INSTANCE);
+        Registry.register(ROCKET_FIN_TYPE, Constant.Misc.INVALID, InvalidRocketFinType.INSTANCE);
+        Registry.register(ROCKET_BOOSTER_TYPE, Constant.Misc.INVALID, InvalidRocketBoosterType.INSTANCE);
+        Registry.register(ROCKET_BOTTOM_TYPE, Constant.Misc.INVALID, InvalidRocketBottomType.INSTANCE);
+        Registry.register(ROCKET_UPGRADE_TYPE, Constant.Misc.INVALID, InvalidRocketUpgradeType.INSTANCE);
+
+        Registry.register(ROCKET_UPGRADE_TYPE, new ResourceLocation(Constant.MOD_ID, "no_upgrade"), NoUpgradeRocketUpgradeType.INSTANCE);
     }
 }

@@ -27,17 +27,24 @@ import dev.galacticraft.api.registry.RocketRegistry;
 import dev.galacticraft.api.rocket.part.config.RocketFinConfig;
 import dev.galacticraft.api.rocket.part.type.RocketFinType;
 import dev.galacticraft.impl.rocket.part.ConfiguredRocketFinImpl;
+import net.minecraft.core.Holder;
+import net.minecraft.core.HolderSet;
+import net.minecraft.core.RegistryCodecs;
+import net.minecraft.resources.RegistryFileCodec;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 public non-sealed interface ConfiguredRocketFin<C extends RocketFinConfig, T extends RocketFinType<C>> extends ConfiguredRocketPart<C, T> {
-    Codec<ConfiguredRocketFin<?, ?>> CODEC = RocketRegistry.ROCKET_FIN_TYPE.byNameCodec().dispatch(ConfiguredRocketFin::type, RocketFinType::codec);
+    Codec<ConfiguredRocketFin<?, ?>> DIRECT_CODEC = RocketRegistry.ROCKET_FIN_TYPE.byNameCodec().dispatch(ConfiguredRocketFin::type, RocketFinType::codec);
+    Codec<Holder<ConfiguredRocketFin<?, ?>>> CODEC = RegistryFileCodec.create(RocketRegistry.CONFIGURED_ROCKET_FIN_KEY, DIRECT_CODEC);
+    Codec<HolderSet<ConfiguredRocketFin<?, ?>>> LIST_CODEC = RegistryCodecs.homogeneousList(RocketRegistry.CONFIGURED_ROCKET_FIN_KEY, DIRECT_CODEC);
 
     @Contract(pure = true, value = "_, _ -> new")
     static @NotNull <C extends RocketFinConfig, T extends RocketFinType<C>> ConfiguredRocketFin<C, T> create(@NotNull C config, @NotNull T type) {
         return new ConfiguredRocketFinImpl<>(config, type);
     }
 
-    @NotNull C config();
-    @NotNull T type();
+    default boolean canManeuver() {
+        return this.type().canManeuver(this.config());
+    }
 }

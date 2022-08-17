@@ -23,9 +23,13 @@
 package dev.galacticraft.impl.rocket.travelpredicate.config;
 
 import com.mojang.serialization.Codec;
+import dev.galacticraft.api.rocket.travelpredicate.ConfiguredTravelPredicate;
 import dev.galacticraft.api.rocket.travelpredicate.TravelPredicateConfig;
-import dev.galacticraft.api.rocket.travelpredicate.TravelPredicateType;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Unmodifiable;
 
-public record AccessTypeTravelPredicateConfig(TravelPredicateType.AccessType type) implements TravelPredicateConfig {
-    public static final Codec<AccessTypeTravelPredicateConfig> CODEC = TravelPredicateType.AccessType.CODEC.xmap(AccessTypeTravelPredicateConfig::new, AccessTypeTravelPredicateConfig::type);
+import java.util.List;
+
+public record AndTravelPredicateConfig(@Unmodifiable @NotNull List<ConfiguredTravelPredicate<?, ?>> predicates) implements TravelPredicateConfig {
+    public static final Codec<AndTravelPredicateConfig> CODEC = ConfiguredTravelPredicate.DIRECT_CODEC.listOf().xmap(AndTravelPredicateConfig::new, AndTravelPredicateConfig::predicates);
 }

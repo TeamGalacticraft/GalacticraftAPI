@@ -23,52 +23,15 @@
 package dev.galacticraft.api.rocket.part.type;
 
 import com.mojang.serialization.Codec;
-import dev.galacticraft.api.rocket.entity.Rocket;
 import dev.galacticraft.api.rocket.part.ConfiguredRocketBooster;
 import dev.galacticraft.api.rocket.part.config.RocketBoosterConfig;
-import dev.galacticraft.api.rocket.recipe.RocketPartRecipe;
-import dev.galacticraft.api.rocket.travelpredicate.ConfiguredTravelPredicate;
-import dev.galacticraft.impl.rocket.part.config.DefaultRocketBoosterConfig;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * The booster of a rocket. Controls how fast the rocket accelerates, where the rocket can travel to, and how much fuel is consumed.
  */
 public non-sealed abstract class RocketBoosterType<C extends RocketBoosterConfig> implements RocketPartType<C> {
-    public static final RocketBoosterType<DefaultRocketBoosterConfig> INVALID = new RocketBoosterType<>(DefaultRocketBoosterConfig.CODEC) {
-        @Override
-        public void tick(@NotNull Rocket rocket, @NotNull DefaultRocketBoosterConfig config) {
-
-        }
-
-        @Override
-        public @Nullable RocketPartRecipe getRecipe(@NotNull DefaultRocketBoosterConfig config) {
-            return null;
-        }
-
-        @Override
-        public @NotNull ConfiguredTravelPredicate<?, ?> travelPredicate(@NotNull DefaultRocketBoosterConfig config) {
-            return null;
-        }
-
-        @Override
-        public double getMaximumVelocity(@NotNull DefaultRocketBoosterConfig config) {
-            return 0;
-        }
-
-        @Override
-        public double getAccelerationPerTick(@NotNull DefaultRocketBoosterConfig config) {
-            return 0;
-        }
-
-        @Override
-        public long getFuelUsagePerTick(@NotNull DefaultRocketBoosterConfig config) {
-            return 0;
-        }
-    };
-
     private final @NotNull Codec<ConfiguredRocketBooster<C, RocketBoosterType<C>>> codec;
 
     protected RocketBoosterType(@NotNull Codec<C> configCodec) {

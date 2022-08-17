@@ -23,15 +23,12 @@
 package dev.galacticraft.api.registry;
 
 import com.mojang.serialization.Lifecycle;
-import dev.galacticraft.api.rocket.travelpredicate.TravelPredicateType;
 import dev.galacticraft.api.universe.celestialbody.CelestialBody;
 import dev.galacticraft.api.universe.celestialbody.CelestialBodyType;
 import dev.galacticraft.api.universe.display.CelestialDisplayType;
 import dev.galacticraft.api.universe.galaxy.Galaxy;
 import dev.galacticraft.api.universe.position.CelestialPositionType;
 import dev.galacticraft.impl.Constant;
-import dev.galacticraft.impl.rocket.travelpredicate.type.AccessWeightPredicateType;
-import dev.galacticraft.impl.rocket.travelpredicate.type.ConstantTravelPredicateType;
 import dev.galacticraft.impl.universe.celestialbody.type.DecorativePlanet;
 import dev.galacticraft.impl.universe.celestialbody.type.PlanetType;
 import dev.galacticraft.impl.universe.celestialbody.type.StarType;
@@ -48,10 +45,6 @@ import net.minecraft.resources.ResourceLocation;
 
 public final class AddonRegistry {
     private AddonRegistry() {}
-
-    public static final ResourceKey<Registry<TravelPredicateType<?>>> TRAVEL_PREDICATE_KEY = ResourceKey.createRegistryKey(new ResourceLocation(Constant.MOD_ID, "travel_predicate"));
-    public static final WritableRegistry<TravelPredicateType<?>> TRAVEL_PREDICATE = FabricRegistryBuilder.from(
-            new MappedRegistry<>(TRAVEL_PREDICATE_KEY, Lifecycle.experimental(), TravelPredicateType::getReference)).buildAndRegister();
 
     public static final ResourceKey<Registry<CelestialPositionType<?>>> CELESTIAL_POSITION_TYPE_KEY = ResourceKey.createRegistryKey(new ResourceLocation(Constant.MOD_ID, "celestial_position_type"));
     public static final WritableRegistry<CelestialPositionType<?>> CELESTIAL_POSITION_TYPE = FabricRegistryBuilder.from(
@@ -83,8 +76,5 @@ public final class AddonRegistry {
         Registry.register(CELESTIAL_BODY_TYPE, new ResourceLocation(Constant.MOD_ID, "star"), StarType.INSTANCE);
         Registry.register(CELESTIAL_BODY_TYPE, new ResourceLocation(Constant.MOD_ID, "planet"), PlanetType.INSTANCE);
         Registry.register(CELESTIAL_BODY_TYPE, new ResourceLocation(Constant.MOD_ID, "decorative_planet"), DecorativePlanet.INSTANCE);
-
-        Registry.register(TRAVEL_PREDICATE, new ResourceLocation(Constant.MOD_ID, "access_weight"), AccessWeightPredicateType.INSTANCE);
-        Registry.register(TRAVEL_PREDICATE, new ResourceLocation(Constant.MOD_ID, "constant"), ConstantTravelPredicateType.INSTANCE);
     }
 }

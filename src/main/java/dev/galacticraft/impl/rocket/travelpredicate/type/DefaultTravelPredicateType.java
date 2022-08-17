@@ -20,17 +20,24 @@
  * SOFTWARE.
  */
 
-package dev.galacticraft.impl.rocket.travelpredicate.config;
+package dev.galacticraft.impl.rocket.travelpredicate.type;
 
-import com.mojang.serialization.Codec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
-import dev.galacticraft.api.rocket.travelpredicate.TravelPredicateConfig;
+import dev.galacticraft.api.rocket.part.*;
+import dev.galacticraft.api.rocket.travelpredicate.ConfiguredTravelPredicate;
 import dev.galacticraft.api.rocket.travelpredicate.TravelPredicateType;
+import dev.galacticraft.api.universe.celestialbody.CelestialBody;
+import dev.galacticraft.impl.rocket.travelpredicate.config.DefaultTravelPredicateConfig;
 
-public record AccessWeightTravelPredicateConfig(int weight,
-                                                TravelPredicateType.Result defaultType) implements TravelPredicateConfig {
-    public static final Codec<AccessWeightTravelPredicateConfig> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-            Codec.INT.fieldOf("weight").forGetter(AccessWeightTravelPredicateConfig::weight),
-            TravelPredicateType.Result.CODEC.optionalFieldOf("default", TravelPredicateType.Result.PASS).forGetter(AccessWeightTravelPredicateConfig::defaultType)
-    ).apply(instance, AccessWeightTravelPredicateConfig::new));
+public final class DefaultTravelPredicateType extends TravelPredicateType<DefaultTravelPredicateConfig> {
+    public static final DefaultTravelPredicateType INSTANCE = new DefaultTravelPredicateType();
+    public static final ConfiguredTravelPredicate<?, ?> CONFIGURED = INSTANCE.configure(DefaultTravelPredicateConfig.INSTANCE);
+
+    private DefaultTravelPredicateType() {
+        super(DefaultTravelPredicateConfig.CODEC);
+    }
+
+    @Override
+    public Result canTravelTo(CelestialBody<?, ?> type, ConfiguredRocketCone<?, ?> cone, ConfiguredRocketBody<?, ?> body, ConfiguredRocketFin<?, ?> fin, ConfiguredRocketBooster<?, ?> booster, ConfiguredRocketBottom<?, ?> bottom, ConfiguredRocketUpgrade<?, ?>[] upgrades, DefaultTravelPredicateConfig config) {
+        return Result.PASS;
+    }
 }

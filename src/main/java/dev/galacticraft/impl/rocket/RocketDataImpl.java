@@ -95,7 +95,7 @@ public record RocketDataImpl(int color, ResourceLocation cone, ResourceLocation 
 
     @Override
     public boolean canTravelTo(RegistryAccess manager, CelestialBody<?, ?> from, CelestialBody<?, ?> to) {
-        TravelPredicateType.AccessType type = TravelPredicateType.AccessType.PASS;
+        TravelPredicateType.Result type = TravelPredicateType.Result.PASS;
         ConfiguredRocketCone<?, ?> cone = manager.registryOrThrow(RocketRegistry.CONFIGURED_ROCKET_CONE_KEY).get(this.cone());
         ConfiguredRocketBody<?, ?> body = manager.registryOrThrow(RocketRegistry.CONFIGURED_ROCKET_BODY_KEY).get(this.body());
         ConfiguredRocketFin<?, ?> fin = manager.registryOrThrow(RocketRegistry.CONFIGURED_ROCKET_FIN_KEY).get(this.fin());
@@ -123,6 +123,6 @@ public record RocketDataImpl(int color, ResourceLocation cone, ResourceLocation 
             type = type.merge(upgrade.travelPredicate().canTravelTo(to, cone, body, fin, booster, bottom, upgrades));
         }
 
-        return type == TravelPredicateType.AccessType.ALLOW;
+        return type == TravelPredicateType.Result.ALLOW;
     }
 }

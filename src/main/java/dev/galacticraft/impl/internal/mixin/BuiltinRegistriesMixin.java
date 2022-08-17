@@ -26,9 +26,10 @@ import com.mojang.serialization.Lifecycle;
 import dev.galacticraft.api.registry.AddonRegistry;
 import dev.galacticraft.api.registry.RocketRegistry;
 import dev.galacticraft.api.rocket.part.*;
-import dev.galacticraft.api.rocket.part.type.*;
 import dev.galacticraft.impl.Constant;
 import dev.galacticraft.impl.rocket.part.config.*;
+import dev.galacticraft.impl.rocket.part.type.*;
+import dev.galacticraft.impl.rocket.travelpredicate.type.DefaultTravelPredicateType;
 import dev.galacticraft.impl.universe.BuiltinObjects;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
@@ -68,11 +69,15 @@ public abstract class BuiltinRegistriesMixin {
             return register(registry, BuiltinObjects.SOL_KEY.location(), BuiltinObjects.createSol());
         }, Lifecycle.experimental());
 
-        internalRegister(RocketRegistry.CONFIGURED_ROCKET_CONE_KEY, RocketRegistry.CONFIGURED_ROCKET_CONE, (registry) -> register(registry, Constant.Misc.INVALID, ConfiguredRocketCone.create(DefaultRocketConeConfig.INSTANCE, RocketConeType.INVALID)), Lifecycle.experimental());
-        internalRegister(RocketRegistry.CONFIGURED_ROCKET_BODY_KEY, RocketRegistry.CONFIGURED_ROCKET_BODY, (registry) -> register(registry, Constant.Misc.INVALID, ConfiguredRocketBody.create(DefaultRocketBodyConfig.INSTANCE, RocketBodyType.INVALID)), Lifecycle.experimental());
-        internalRegister(RocketRegistry.CONFIGURED_ROCKET_FIN_KEY, RocketRegistry.CONFIGURED_ROCKET_FIN, (registry) -> register(registry, Constant.Misc.INVALID, ConfiguredRocketFin.create(DefaultRocketFinConfig.INSTANCE, RocketFinType.INVALID)), Lifecycle.experimental());
-        internalRegister(RocketRegistry.CONFIGURED_ROCKET_BOOSTER_KEY, RocketRegistry.CONFIGURED_ROCKET_BOOSTER, (registry) -> register(registry, Constant.Misc.INVALID, ConfiguredRocketBooster.create(DefaultRocketBoosterConfig.INSTANCE, RocketBoosterType.INVALID)), Lifecycle.experimental());
-        internalRegister(RocketRegistry.CONFIGURED_ROCKET_BOTTOM_KEY, RocketRegistry.CONFIGURED_ROCKET_BOTTOM, (registry) -> register(registry, Constant.Misc.INVALID, ConfiguredRocketBottom.create(DefaultRocketBottomConfig.INSTANCE, RocketBottomType.INVALID)), Lifecycle.experimental());
-        internalRegister(RocketRegistry.CONFIGURED_ROCKET_UPGRADE_KEY, RocketRegistry.CONFIGURED_ROCKET_UPGRADE, (registry) -> register(registry, Constant.Misc.INVALID, ConfiguredRocketUpgrade.create(DefaultRocketUpgradeConfig.INSTANCE, RocketUpgradeType.INVALID)), Lifecycle.experimental());
+        internalRegister(RocketRegistry.CONFIGURED_TRAVEL_PREDICATE_KEY, RocketRegistry.CONFIGURED_TRAVEL_PREDICATE, (registry) -> register(registry, new ResourceLocation(Constant.MOD_ID, "default"), DefaultTravelPredicateType.CONFIGURED), Lifecycle.experimental());
+        internalRegister(RocketRegistry.CONFIGURED_ROCKET_CONE_KEY, RocketRegistry.CONFIGURED_ROCKET_CONE, (registry) -> register(registry, Constant.Misc.INVALID, ConfiguredRocketCone.create(DefaultRocketConeConfig.INSTANCE, InvalidRocketConeType.INSTANCE)), Lifecycle.experimental());
+        internalRegister(RocketRegistry.CONFIGURED_ROCKET_BODY_KEY, RocketRegistry.CONFIGURED_ROCKET_BODY, (registry) -> register(registry, Constant.Misc.INVALID, ConfiguredRocketBody.create(DefaultRocketBodyConfig.INSTANCE, InvalidRocketBodyType.INSTANCE)), Lifecycle.experimental());
+        internalRegister(RocketRegistry.CONFIGURED_ROCKET_FIN_KEY, RocketRegistry.CONFIGURED_ROCKET_FIN, (registry) -> register(registry, Constant.Misc.INVALID, ConfiguredRocketFin.create(DefaultRocketFinConfig.INSTANCE, InvalidRocketFinType.INSTANCE)), Lifecycle.experimental());
+        internalRegister(RocketRegistry.CONFIGURED_ROCKET_BOOSTER_KEY, RocketRegistry.CONFIGURED_ROCKET_BOOSTER, (registry) -> register(registry, Constant.Misc.INVALID, ConfiguredRocketBooster.create(DefaultRocketBoosterConfig.INSTANCE, InvalidRocketBoosterType.INSTANCE)), Lifecycle.experimental());
+        internalRegister(RocketRegistry.CONFIGURED_ROCKET_BOTTOM_KEY, RocketRegistry.CONFIGURED_ROCKET_BOTTOM, (registry) -> register(registry, Constant.Misc.INVALID, ConfiguredRocketBottom.create(DefaultRocketBottomConfig.INSTANCE, InvalidRocketBottomType.INSTANCE)), Lifecycle.experimental());
+        internalRegister(RocketRegistry.CONFIGURED_ROCKET_UPGRADE_KEY, RocketRegistry.CONFIGURED_ROCKET_UPGRADE, (registry) -> {
+            register(registry, new ResourceLocation(Constant.MOD_ID, "no_upgrade"), ConfiguredRocketUpgrade.create(DefaultRocketUpgradeConfig.INSTANCE, NoUpgradeRocketUpgradeType.INSTANCE));
+            return register(registry, Constant.Misc.INVALID, ConfiguredRocketUpgrade.create(DefaultRocketUpgradeConfig.INSTANCE, InvalidRocketUpgradeType.INSTANCE));
+        }, Lifecycle.experimental());
     }
 }

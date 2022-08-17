@@ -23,14 +23,20 @@
 package dev.galacticraft.api.rocket.travelpredicate;
 
 import com.mojang.serialization.Codec;
-import dev.galacticraft.api.registry.AddonRegistry;
+import dev.galacticraft.api.registry.RocketRegistry;
 import dev.galacticraft.api.rocket.part.*;
 import dev.galacticraft.api.universe.celestialbody.CelestialBody;
+import net.minecraft.core.Holder;
+import net.minecraft.core.HolderSet;
+import net.minecraft.core.RegistryCodecs;
+import net.minecraft.resources.RegistryFileCodec;
 
 public record ConfiguredTravelPredicate<C extends TravelPredicateConfig, T extends TravelPredicateType<C>>(C config, T type) {
-    public static final Codec<ConfiguredTravelPredicate<?, ?>> CODEC = AddonRegistry.TRAVEL_PREDICATE.byNameCodec().dispatch(ConfiguredTravelPredicate::type, TravelPredicateType::codec);
+    public static final Codec<ConfiguredTravelPredicate<?, ?>> DIRECT_CODEC = RocketRegistry.TRAVEL_PREDICATE_TYPE.byNameCodec().dispatch(ConfiguredTravelPredicate::type, TravelPredicateType::codec);
+    public static final Codec<Holder<ConfiguredTravelPredicate<?, ?>>> CODEC = RegistryFileCodec.create(RocketRegistry.CONFIGURED_TRAVEL_PREDICATE_KEY, DIRECT_CODEC);
+    public static final Codec<HolderSet<ConfiguredTravelPredicate<?, ?>>> LIST_CODEC = RegistryCodecs.homogeneousList(RocketRegistry.CONFIGURED_TRAVEL_PREDICATE_KEY, DIRECT_CODEC);
 
-    public TravelPredicateType.AccessType canTravelTo(CelestialBody<?, ?> type, ConfiguredRocketCone<?, ?> cone, ConfiguredRocketBody<?, ?> body, ConfiguredRocketFin<?, ?> fin, ConfiguredRocketBooster<?, ?> booster, ConfiguredRocketBottom<?, ?> bottom, ConfiguredRocketUpgrade<?, ?>[] upgrades) {
+    public TravelPredicateType.Result canTravelTo(CelestialBody<?, ?> type, ConfiguredRocketCone<?, ?> cone, ConfiguredRocketBody<?, ?> body, ConfiguredRocketFin<?, ?> fin, ConfiguredRocketBooster<?, ?> booster, ConfiguredRocketBottom<?, ?> bottom, ConfiguredRocketUpgrade<?, ?>[] upgrades) {
         return this.type.canTravelTo(type, cone, body, fin, booster, bottom, upgrades, this.config);
     }
 }

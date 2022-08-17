@@ -22,20 +22,25 @@
 
 package dev.galacticraft.impl.rocket.travelpredicate.type;
 
+import com.mojang.serialization.Codec;
 import dev.galacticraft.api.rocket.part.*;
+import dev.galacticraft.api.rocket.travelpredicate.ConfiguredTravelPredicate;
 import dev.galacticraft.api.rocket.travelpredicate.TravelPredicateType;
 import dev.galacticraft.api.universe.celestialbody.CelestialBody;
-import dev.galacticraft.impl.rocket.travelpredicate.config.ConstantTravelPredicateConfig;
+import dev.galacticraft.impl.rocket.travelpredicate.config.OrTravelPredicateConfig;
 
-public final class ConstantTravelPredicateType extends TravelPredicateType<ConstantTravelPredicateConfig> {
-    public static final ConstantTravelPredicateType INSTANCE = new ConstantTravelPredicateType();
-
-    private ConstantTravelPredicateType() {
-        super(ConstantTravelPredicateConfig.CODEC);
+public final class OrTravelPredicateType extends TravelPredicateType<OrTravelPredicateConfig> {
+    public static final OrTravelPredicateType INSTANCE = new OrTravelPredicateType(OrTravelPredicateConfig.CODEC);
+    private OrTravelPredicateType(Codec<OrTravelPredicateConfig> configCodec) {
+        super(configCodec);
     }
 
     @Override
-    public Result canTravelTo(CelestialBody<?, ?> type, ConfiguredRocketCone<?, ?> cone, ConfiguredRocketBody<?, ?> body, ConfiguredRocketFin<?, ?> fin, ConfiguredRocketBooster<?, ?> booster, ConfiguredRocketBottom<?, ?> bottom, ConfiguredRocketUpgrade<?, ?>[] upgrades, ConstantTravelPredicateConfig config) {
-        return config.type();
+    public Result canTravelTo(CelestialBody<?, ?> type, ConfiguredRocketCone<?, ?> cone, ConfiguredRocketBody<?, ?> body, ConfiguredRocketFin<?, ?> fin, ConfiguredRocketBooster<?, ?> booster, ConfiguredRocketBottom<?, ?> bottom, ConfiguredRocketUpgrade<?, ?>[] upgrades, OrTravelPredicateConfig config) {
+        for (ConfiguredTravelPredicate<?, ?> predicate : config.predicates()) {
+            Result result = predicate.canTravelTo(type, cone, body, fin, booster, bottom, upgrades);
+            if (result != Result.PASS) return result;
+        }
+        return Result.PASS;
     }
 }

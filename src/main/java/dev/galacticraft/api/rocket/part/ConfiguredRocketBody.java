@@ -27,17 +27,39 @@ import dev.galacticraft.api.registry.RocketRegistry;
 import dev.galacticraft.api.rocket.part.config.RocketBodyConfig;
 import dev.galacticraft.api.rocket.part.type.RocketBodyType;
 import dev.galacticraft.impl.rocket.part.ConfiguredRocketBodyImpl;
+import net.minecraft.core.Holder;
+import net.minecraft.core.HolderSet;
+import net.minecraft.core.RegistryCodecs;
+import net.minecraft.resources.RegistryFileCodec;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 public non-sealed interface ConfiguredRocketBody<C extends RocketBodyConfig, T extends RocketBodyType<C>> extends ConfiguredRocketPart<C, T> {
-    Codec<ConfiguredRocketBody<?, ?>> CODEC = RocketRegistry.ROCKET_BODY_TYPE.byNameCodec().dispatch(ConfiguredRocketBody::type, RocketBodyType::codec);
+    Codec<ConfiguredRocketBody<?, ?>> DIRECT_CODEC = RocketRegistry.ROCKET_BODY_TYPE.byNameCodec().dispatch(ConfiguredRocketBody::type, RocketBodyType::codec);
+    Codec<Holder<ConfiguredRocketBody<?, ?>>> CODEC = RegistryFileCodec.create(RocketRegistry.CONFIGURED_ROCKET_BODY_KEY, DIRECT_CODEC);
+    Codec<HolderSet<ConfiguredRocketBody<?, ?>>> LIST_CODEC = RegistryCodecs.homogeneousList(RocketRegistry.CONFIGURED_ROCKET_BODY_KEY, DIRECT_CODEC);
 
     @Contract(pure = true, value = "_, _ -> new")
     static @NotNull <C extends RocketBodyConfig, T extends RocketBodyType<C>> ConfiguredRocketBody<C, T> create(@NotNull C config, @NotNull T type) {
         return new ConfiguredRocketBodyImpl<>(config, type);
     }
 
-    @NotNull C config();
-    @NotNull T type();
+    /**
+     * Returns the maximum number of passengers allowed on this rocket.
+     * @return the maximum number of passengers allowed on this rocket.
+     */
+    @Contract(pure = true)
+    default int getMaxPassengers() {
+        return this.type().getMaxPassengers(this.config());
+    }
+
+    /**
+     * Returns the maximum number of upgrades that can be installed on this rocket.
+     *
+     * @return the maximum number of upgrades that can be installed on this rocket.
+     */
+    @Contract(pure = true)
+    default int getUpgradeCapacity() {
+        return this.type().getUpgradeCapacity(this.config());
+    }
 }

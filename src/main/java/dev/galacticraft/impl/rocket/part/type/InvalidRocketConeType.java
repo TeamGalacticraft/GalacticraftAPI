@@ -20,30 +20,36 @@
  * SOFTWARE.
  */
 
-package dev.galacticraft.api.rocket.part.type;
+package dev.galacticraft.impl.rocket.part.type;
 
 import com.mojang.serialization.Codec;
-import dev.galacticraft.api.rocket.part.ConfiguredRocketUpgrade;
-import dev.galacticraft.api.rocket.part.config.RocketUpgradeConfig;
+import dev.galacticraft.api.rocket.entity.Rocket;
+import dev.galacticraft.api.rocket.part.type.RocketConeType;
+import dev.galacticraft.api.rocket.recipe.RocketPartRecipe;
+import dev.galacticraft.api.rocket.travelpredicate.ConfiguredTravelPredicate;
+import dev.galacticraft.impl.rocket.part.config.DefaultRocketConeConfig;
+import dev.galacticraft.impl.rocket.travelpredicate.type.DefaultTravelPredicateType;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-/**
- * An upgrade for a rocket.
- */
-public non-sealed abstract class RocketUpgradeType<C extends RocketUpgradeConfig> implements RocketPartType<C> {
-    private final @NotNull Codec<ConfiguredRocketUpgrade<C, RocketUpgradeType<C>>> codec;
+public final class InvalidRocketConeType extends RocketConeType<DefaultRocketConeConfig> {
+    public static final InvalidRocketConeType INSTANCE = new InvalidRocketConeType(DefaultRocketConeConfig.CODEC);
 
-    protected RocketUpgradeType(@NotNull Codec<C> configCodec) {
-        this.codec = configCodec.fieldOf("config").xmap(this::configure, ConfiguredRocketUpgrade::config).codec();
+    private InvalidRocketConeType(@NotNull Codec<DefaultRocketConeConfig> configCodec) {
+        super(configCodec);
     }
 
     @Override
-    public @NotNull ConfiguredRocketUpgrade<C, RocketUpgradeType<C>> configure(@NotNull C config) {
-        return ConfiguredRocketUpgrade.create(config, this);
+    public void tick(@NotNull Rocket rocket, @NotNull DefaultRocketConeConfig config) {
     }
 
     @Override
-    public @NotNull Codec<ConfiguredRocketUpgrade<C, RocketUpgradeType<C>>> codec() {
-        return this.codec;
+    public @Nullable RocketPartRecipe getRecipe(@NotNull DefaultRocketConeConfig config) {
+        return null;
+    }
+
+    @Override
+    public @NotNull ConfiguredTravelPredicate<?, ?> travelPredicate(@NotNull DefaultRocketConeConfig config) {
+        return DefaultTravelPredicateType.CONFIGURED;
     }
 }

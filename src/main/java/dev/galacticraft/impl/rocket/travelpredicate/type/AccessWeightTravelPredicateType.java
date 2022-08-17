@@ -29,23 +29,23 @@ import dev.galacticraft.api.universe.celestialbody.CelestialBody;
 import dev.galacticraft.api.universe.celestialbody.Tiered;
 import dev.galacticraft.impl.rocket.travelpredicate.config.AccessWeightTravelPredicateConfig;
 
-public class AccessWeightPredicateType extends TravelPredicateType<AccessWeightTravelPredicateConfig> {
-    public static final AccessWeightPredicateType INSTANCE = new AccessWeightPredicateType(AccessWeightTravelPredicateConfig.CODEC);
+public final class AccessWeightTravelPredicateType extends TravelPredicateType<AccessWeightTravelPredicateConfig> {
+    public static final AccessWeightTravelPredicateType INSTANCE = new AccessWeightTravelPredicateType(AccessWeightTravelPredicateConfig.CODEC);
 
-    protected AccessWeightPredicateType(Codec<AccessWeightTravelPredicateConfig> configCodec) {
+    private AccessWeightTravelPredicateType(Codec<AccessWeightTravelPredicateConfig> configCodec) {
         super(configCodec);
     }
 
     @Override
-    public AccessType canTravelTo(CelestialBody<?, ?> type, ConfiguredRocketCone<?, ?> cone, ConfiguredRocketBody<?, ?> body, ConfiguredRocketFin<?, ?> fin, ConfiguredRocketBooster<?, ?> booster, ConfiguredRocketBottom<?, ?> bottom, ConfiguredRocketUpgrade<?, ?>[] upgrades, AccessWeightTravelPredicateConfig config) {
+    public Result canTravelTo(CelestialBody<?, ?> type, ConfiguredRocketCone<?, ?> cone, ConfiguredRocketBody<?, ?> body, ConfiguredRocketFin<?, ?> fin, ConfiguredRocketBooster<?, ?> booster, ConfiguredRocketBottom<?, ?> bottom, ConfiguredRocketUpgrade<?, ?>[] upgrades, AccessWeightTravelPredicateConfig config) {
         if (type.type() instanceof Tiered tiered) {
             int weight = tiered.accessWeight(type.config());
             if (weight >= 0 && weight <= config.weight()) {
-                return AccessType.ALLOW;
+                return Result.ALLOW;
             } else {
                 return config.defaultType();
             }
         }
-        return AccessType.BLOCK;
+        return Result.BLOCK;
     }
 }

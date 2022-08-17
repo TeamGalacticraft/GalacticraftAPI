@@ -20,41 +20,42 @@
  * SOFTWARE.
  */
 
-package dev.galacticraft.api.rocket.part.type;
+package dev.galacticraft.impl.rocket.part.type;
 
 import com.mojang.serialization.Codec;
 import dev.galacticraft.api.rocket.entity.Rocket;
-import dev.galacticraft.api.rocket.part.ConfiguredRocketPart;
-import dev.galacticraft.api.rocket.part.config.RocketPartConfig;
+import dev.galacticraft.api.rocket.part.type.RocketBottomType;
 import dev.galacticraft.api.rocket.recipe.RocketPartRecipe;
 import dev.galacticraft.api.rocket.travelpredicate.ConfiguredTravelPredicate;
-import org.jetbrains.annotations.Contract;
+import dev.galacticraft.impl.rocket.part.config.DefaultRocketBottomConfig;
+import dev.galacticraft.impl.rocket.travelpredicate.type.DefaultTravelPredicateType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * Base rocket part interface.
- * To create a custom rocket part, extend {@link RocketBottomType}, {@link RocketBoosterType}, {@link RocketBottomType}, {@link RocketConeType}, {@link RocketFinType}, or {@link RocketUpgradeType}
- */
-public sealed interface RocketPartType<C extends RocketPartConfig> permits RocketBodyType, RocketBoosterType, RocketBottomType, RocketConeType, RocketFinType, RocketUpgradeType {
+public final class InvalidRocketBottomType extends RocketBottomType<DefaultRocketBottomConfig> {
+    public static final InvalidRocketBottomType INSTANCE = new InvalidRocketBottomType(DefaultRocketBottomConfig.CODEC);
 
-    @NotNull ConfiguredRocketPart<C, ? extends RocketPartType<C>> configure(@NotNull C config);
+    private InvalidRocketBottomType(@NotNull Codec<DefaultRocketBottomConfig> configCodec) {
+        super(configCodec);
+    }
 
-    /**
-     * Called every tick when this part is applied to a placed rocket.
-     * The rocket may not have launched yet.
-     * @param rocket the rocket that this part is a part of.
-     */
-    void tick(@NotNull Rocket rocket, @NotNull C config);
+    @Override
+    public long getFuelCapacity(@NotNull DefaultRocketBottomConfig config) {
+        return 0;
+    }
 
-    @NotNull Codec<? extends ConfiguredRocketPart<C, ? extends RocketPartType<C>>> codec();
+    @Override
+    public void tick(@NotNull Rocket rocket, @NotNull DefaultRocketBottomConfig config) {
 
-    /**
-     * Returns the recipe of this rocket part.
-     * @return the recipe of this rocket part. Can be null.
-     */
-    @Contract(pure = true)
-    @Nullable RocketPartRecipe getRecipe(@NotNull C config);
+    }
 
-    @NotNull ConfiguredTravelPredicate<?, ?> travelPredicate(@NotNull C config);
+    @Override
+    public @Nullable RocketPartRecipe getRecipe(@NotNull DefaultRocketBottomConfig config) {
+        return null;
+    }
+
+    @Override
+    public @NotNull ConfiguredTravelPredicate<?, ?> travelPredicate(@NotNull DefaultRocketBottomConfig config) {
+        return DefaultTravelPredicateType.CONFIGURED;
+    }
 }

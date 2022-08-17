@@ -27,17 +27,20 @@ import dev.galacticraft.api.registry.RocketRegistry;
 import dev.galacticraft.api.rocket.part.config.RocketConeConfig;
 import dev.galacticraft.api.rocket.part.type.RocketConeType;
 import dev.galacticraft.impl.rocket.part.ConfiguredRocketConeImpl;
+import net.minecraft.core.Holder;
+import net.minecraft.core.HolderSet;
+import net.minecraft.core.RegistryCodecs;
+import net.minecraft.resources.RegistryFileCodec;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 public non-sealed interface ConfiguredRocketCone<C extends RocketConeConfig, T extends RocketConeType<C>> extends ConfiguredRocketPart<C, T> {
-    Codec<ConfiguredRocketCone<?, ?>> CODEC = RocketRegistry.ROCKET_CONE_TYPE.byNameCodec().dispatch(ConfiguredRocketCone::type, RocketConeType::codec);
+    Codec<ConfiguredRocketCone<?, ?>> DIRECT_CODEC = RocketRegistry.ROCKET_CONE_TYPE.byNameCodec().dispatch(ConfiguredRocketCone::type, RocketConeType::codec);
+    Codec<Holder<ConfiguredRocketCone<?, ?>>> CODEC = RegistryFileCodec.create(RocketRegistry.CONFIGURED_ROCKET_CONE_KEY, DIRECT_CODEC);
+    Codec<HolderSet<ConfiguredRocketCone<?, ?>>> LIST_CODEC = RegistryCodecs.homogeneousList(RocketRegistry.CONFIGURED_ROCKET_CONE_KEY, DIRECT_CODEC);
 
     @Contract(pure = true, value = "_, _ -> new")
     static @NotNull <C extends RocketConeConfig, T extends RocketConeType<C>> ConfiguredRocketCone<C, T> create(@NotNull C config, @NotNull T type) {
         return new ConfiguredRocketConeImpl<>(config, type);
     }
-
-    @NotNull C config();
-    @NotNull T type();
 }

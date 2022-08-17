@@ -27,17 +27,20 @@ import dev.galacticraft.api.registry.RocketRegistry;
 import dev.galacticraft.api.rocket.part.config.RocketUpgradeConfig;
 import dev.galacticraft.api.rocket.part.type.RocketUpgradeType;
 import dev.galacticraft.impl.rocket.part.ConfiguredRocketUpgradeImpl;
+import net.minecraft.core.Holder;
+import net.minecraft.core.HolderSet;
+import net.minecraft.core.RegistryCodecs;
+import net.minecraft.resources.RegistryFileCodec;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 public non-sealed interface ConfiguredRocketUpgrade<C extends RocketUpgradeConfig, T extends RocketUpgradeType<C>> extends ConfiguredRocketPart<C, T> {
-    Codec<ConfiguredRocketUpgrade<?, ?>> CODEC = RocketRegistry.ROCKET_UPGRADE_TYPE.byNameCodec().dispatch(ConfiguredRocketUpgrade::type, RocketUpgradeType::codec);
+    Codec<ConfiguredRocketUpgrade<?, ?>> DIRECT_CODEC = RocketRegistry.ROCKET_UPGRADE_TYPE.byNameCodec().dispatch(ConfiguredRocketUpgrade::type, RocketUpgradeType::codec);
+    Codec<Holder<ConfiguredRocketUpgrade<?, ?>>> CODEC = RegistryFileCodec.create(RocketRegistry.CONFIGURED_ROCKET_UPGRADE_KEY, DIRECT_CODEC);
+    Codec<HolderSet<ConfiguredRocketUpgrade<?, ?>>> LIST_CODEC = RegistryCodecs.homogeneousList(RocketRegistry.CONFIGURED_ROCKET_UPGRADE_KEY, DIRECT_CODEC);
 
     @Contract(pure = true, value = "_, _ -> new")
     static @NotNull <C extends RocketUpgradeConfig, T extends RocketUpgradeType<C>> ConfiguredRocketUpgrade<C, T> create(@NotNull C config, @NotNull T type) {
         return new ConfiguredRocketUpgradeImpl<>(config, type);
     }
-
-    @NotNull C config();
-    @NotNull T type();
 }
