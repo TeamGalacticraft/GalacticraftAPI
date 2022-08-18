@@ -42,7 +42,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Optional;
 
 public record PlanetConfig(@NotNull MutableComponent name, @NotNull MutableComponent description,
-                           @NotNull ResourceKey<Galaxy> galaxy, @NotNull ResourceKey<CelestialBody<?, ?>> parent,
+                           @NotNull Optional<ResourceKey<Galaxy>> galaxy, @NotNull Optional<ResourceKey<CelestialBody<?, ?>>> parent,
                            @NotNull CelestialPosition<?, ?> position, @NotNull CelestialDisplay<?, ?> display,
                            @NotNull ResourceKey<Level> world, @NotNull GasComposition atmosphere, float gravity,
                            int accessWeight, int dayTemperature, int nightTemperature,
@@ -50,8 +50,8 @@ public record PlanetConfig(@NotNull MutableComponent name, @NotNull MutableCompo
     public static final Codec<PlanetConfig> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             Codec.STRING.fieldOf("name").xmap(Component::translatable, Component::getString).forGetter(PlanetConfig::name),
             Codec.STRING.fieldOf("description").xmap(Component::translatable, Component::getString).forGetter(PlanetConfig::description),
-            ResourceLocation.CODEC.fieldOf("galaxy").xmap(id -> ResourceKey.create(AddonRegistry.GALAXY_KEY, id), ResourceKey::location).forGetter(PlanetConfig::galaxy),
-            ResourceLocation.CODEC.fieldOf("parent").xmap(id -> ResourceKey.create(AddonRegistry.CELESTIAL_BODY_KEY, id), ResourceKey::location).forGetter(PlanetConfig::parent),
+            ResourceLocation.CODEC.optionalFieldOf("galaxy").xmap(id -> id.map(resourceLocation -> ResourceKey.create(AddonRegistry.GALAXY_KEY, resourceLocation)), key -> key.map(ResourceKey::location)).forGetter(PlanetConfig::galaxy),
+            ResourceLocation.CODEC.optionalFieldOf("parent").xmap(id -> id.map(resourceLocation -> ResourceKey.create(AddonRegistry.CELESTIAL_BODY_KEY, resourceLocation)), key -> key.map(ResourceKey::location)).forGetter(PlanetConfig::parent),
             CelestialPosition.CODEC.fieldOf("position").forGetter(PlanetConfig::position),
             CelestialDisplay.CODEC.fieldOf("display").forGetter(PlanetConfig::display),
             Level.RESOURCE_KEY_CODEC.fieldOf("world").forGetter(PlanetConfig::world),

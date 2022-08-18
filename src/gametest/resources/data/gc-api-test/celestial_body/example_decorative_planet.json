@@ -1,9 +1,9 @@
 {
   "config": {
-    "name": "planet.gc-api-test.example_planet.name",
-    "description": "planet.gc-api-test.example_planet.description",
+    "name": "planet.gc-api-test.decorative_planet.name",
+    "description": "planet.gc-api-test.decorative_planet.description",
     "galaxy": "gc-api-test:example_galaxy",
-    "parent": "gc-api-test:example_star",
+    "parent": "gc-api-test:example_decorative_star",
     "position": {
       "config": {
         "orbit_time": 1536000,
@@ -24,7 +24,6 @@
       },
       "type": "galacticraft-api:icon"
     },
-    "world": "minecraft:the_end",
     "atmosphere": {
       "composition": {
         "galacticraft-api:nitrogen": 780840,
@@ -44,13 +43,12 @@
         "galacticraft-api:nitrous_dioxide": 0.02,
         "galacticraft-api:iodine": 0.01
       },
-      "temperature": 15,
+      "temperature": 30,
       "pressure": 1
     },
-    "gravity": 1,
-    "access_weight": 0,
     "day_temperature": 21,
-    "night_temperature": 15
+    "night_temperature": 15,
+    "gravity": 1
   },
-  "type": "galacticraft-api:planet"
+  "type": "galacticraft-api:decorative_planet"
 }

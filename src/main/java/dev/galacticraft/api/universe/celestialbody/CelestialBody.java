@@ -121,11 +121,11 @@ public record CelestialBody<C extends CelestialBodyConfig, T extends CelestialBo
     }
 
     /**
-     * Returns this celestial body's parent galaxy's id
+     * Returns this celestial body's parent galaxy's id, or {@code null} if it doesn't have a parent galaxy
      *
      * @return this celestial body's parent galaxy's id
      */
-    public @NotNull ResourceKey<Galaxy> galaxy() {
+    public @Nullable ResourceKey<Galaxy> galaxy() {
         return this.type().galaxy(this.config());
     }
 

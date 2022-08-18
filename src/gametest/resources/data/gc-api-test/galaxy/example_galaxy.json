@@ -1,6 +1,6 @@
 {
-  "name": "galaxy.gc-api-test.galaxy.name",
-  "description": "galaxy.gc-api-test.galaxy.description",
+  "name": "galaxy.gc-api-test.example_galaxy.name",
+  "description": "galaxy.gc-api-test.example_galaxy.description",
   "position": {
     "config": {
       "x": 0,

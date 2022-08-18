@@ -26,21 +26,24 @@ import dev.galacticraft.api.gas.GasComposition;
 import dev.galacticraft.api.satellite.SatelliteRecipe;
 import dev.galacticraft.api.universe.celestialbody.CelestialBody;
 import dev.galacticraft.api.universe.celestialbody.CelestialBodyType;
+import dev.galacticraft.api.universe.celestialbody.SurfaceEnvironment;
 import dev.galacticraft.api.universe.celestialbody.satellite.Orbitable;
 import dev.galacticraft.api.universe.display.CelestialDisplay;
 import dev.galacticraft.api.universe.galaxy.Galaxy;
 import dev.galacticraft.api.universe.position.CelestialPosition;
 import dev.galacticraft.impl.universe.celestialbody.config.DecorativePlanetConfig;
 import net.minecraft.core.Registry;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class DecorativePlanet extends CelestialBodyType<DecorativePlanetConfig> implements Orbitable<DecorativePlanetConfig> {
-    public static final DecorativePlanet INSTANCE = new DecorativePlanet();
+public class DecorativePlanetType extends CelestialBodyType<DecorativePlanetConfig> implements Orbitable<DecorativePlanetConfig>,
+        SurfaceEnvironment<DecorativePlanetConfig> {
+    public static final DecorativePlanetType INSTANCE = new DecorativePlanetType();
 
-    private DecorativePlanet() {
+    private DecorativePlanetType() {
         super(DecorativePlanetConfig.CODEC);
     }
 
@@ -51,12 +54,12 @@ public class DecorativePlanet extends CelestialBodyType<DecorativePlanetConfig> 
 
     @Override
     public @Nullable CelestialBody<?, ?> parent(Registry<CelestialBody<?, ?>> registry, DecorativePlanetConfig config) {
-        return registry.get(config.parent());
+        return registry.get(config.parent().orElse(null));
     }
 
     @Override
-    public @NotNull ResourceKey<Galaxy> galaxy(DecorativePlanetConfig config) {
-        return config.galaxy();
+    public @Nullable ResourceKey<Galaxy> galaxy(DecorativePlanetConfig config) {
+        return config.galaxy().orElse(null);
     }
 
     @Override
@@ -82,6 +85,11 @@ public class DecorativePlanet extends CelestialBodyType<DecorativePlanetConfig> 
     @Override
     public float gravity(DecorativePlanetConfig config) {
         return config.gravity();
+    }
+
+    @Override
+    public int temperature(RegistryAccess access, long time, DecorativePlanetConfig config) {
+        return time % 24000 < 12000 ? config.dayTemperature() : config.nightTemperature(); //todo: temperature providers?
     }
 
     @Override

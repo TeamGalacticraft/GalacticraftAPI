@@ -23,89 +23,80 @@
 package dev.galacticraft.impl.universe.celestialbody.type;
 
 import dev.galacticraft.api.gas.GasComposition;
-import dev.galacticraft.api.satellite.SatelliteRecipe;
 import dev.galacticraft.api.universe.celestialbody.CelestialBody;
 import dev.galacticraft.api.universe.celestialbody.CelestialBodyType;
 import dev.galacticraft.api.universe.celestialbody.SurfaceEnvironment;
-import dev.galacticraft.api.universe.celestialbody.landable.Landable;
-import dev.galacticraft.api.universe.celestialbody.satellite.Orbitable;
+import dev.galacticraft.api.universe.celestialbody.star.Star;
 import dev.galacticraft.api.universe.display.CelestialDisplay;
 import dev.galacticraft.api.universe.galaxy.Galaxy;
 import dev.galacticraft.api.universe.position.CelestialPosition;
-import dev.galacticraft.impl.universe.celestialbody.config.PlanetConfig;
+import dev.galacticraft.impl.universe.celestialbody.config.DecorativeStarConfig;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class PlanetType extends CelestialBodyType<PlanetConfig> implements Landable<PlanetConfig>, Orbitable<PlanetConfig>,
-        SurfaceEnvironment<PlanetConfig> {
-    public static final PlanetType INSTANCE = new PlanetType();
+public class DecorativeStarType extends CelestialBodyType<DecorativeStarConfig> implements Star<DecorativeStarConfig>,
+        SurfaceEnvironment<DecorativeStarConfig> {
+    public static final DecorativeStarType INSTANCE = new DecorativeStarType();
 
-    protected PlanetType() {
-        super(PlanetConfig.CODEC);
+    protected DecorativeStarType() {
+        super(DecorativeStarConfig.CODEC);
     }
 
     @Override
-    public @NotNull Component name(PlanetConfig config) {
+    public @NotNull Component name(DecorativeStarConfig config) {
         return config.name();
     }
 
     @Override
-    public @Nullable CelestialBody<?, ?> parent(Registry<CelestialBody<?, ?>> registry, PlanetConfig config) {
+    public @Nullable CelestialBody<?, ?> parent(Registry<CelestialBody<?, ?>> registry, DecorativeStarConfig config) {
         return registry.get(config.parent().orElse(null));
     }
 
     @Override
-    public @Nullable ResourceKey<Galaxy> galaxy(PlanetConfig config) {
+    public @Nullable ResourceKey<Galaxy> galaxy(DecorativeStarConfig config) {
         return config.galaxy().orElse(null);
     }
 
     @Override
-    public @NotNull Component description(PlanetConfig config) {
+    public @NotNull Component description(DecorativeStarConfig config) {
         return config.description();
     }
 
     @Override
-    public @NotNull CelestialPosition<?, ?> position(PlanetConfig config) {
+    public @NotNull CelestialPosition<?, ?> position(DecorativeStarConfig config) {
         return config.position();
     }
 
     @Override
-    public @NotNull CelestialDisplay<?, ?> display(PlanetConfig config) {
+    public @NotNull CelestialDisplay<?, ?> display(DecorativeStarConfig config) {
         return config.display();
     }
 
+    /**
+     * {@inheritDoc}
+     * Treat as this star's photospheric composition
+     */
     @Override
-    public @NotNull ResourceKey<Level> world(PlanetConfig config) {
-        return config.world();
+    public @NotNull GasComposition atmosphere(DecorativeStarConfig config) {
+        return config.photosphericComposition();
     }
 
     @Override
-    public @NotNull GasComposition atmosphere(PlanetConfig config) {
-        return config.atmosphere();
-    }
-
-    @Override
-    public float gravity(PlanetConfig config) {
+    public float gravity(DecorativeStarConfig config) {
         return config.gravity();
     }
 
     @Override
-    public int accessWeight(PlanetConfig config) {
-        return config.accessWeight();
+    public double luminance(DecorativeStarConfig config) {
+        return config.luminance();
     }
 
     @Override
-    public int temperature(RegistryAccess access, long time, PlanetConfig config) {
-        return time % 24000 < 12000 ? config.dayTemperature() : config.nightTemperature(); //todo: temperature providers?
-    }
-
-    @Override
-    public @Nullable SatelliteRecipe satelliteRecipe(PlanetConfig config) {
-        return config.satelliteRecipe().orElse(null);
+    public int temperature(RegistryAccess access, long time, DecorativeStarConfig config) {
+        return config.surfaceTemperature(); //todo: temperature providers?
     }
 }

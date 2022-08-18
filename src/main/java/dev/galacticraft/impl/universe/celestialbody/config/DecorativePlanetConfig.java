@@ -41,20 +41,21 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Optional;
 
 public record DecorativePlanetConfig(@NotNull MutableComponent name, @NotNull MutableComponent description,
-                                     @NotNull ResourceKey<Galaxy> galaxy,
-                                     @NotNull ResourceKey<CelestialBody<?, ?>> parent,
+                                     @NotNull Optional<ResourceKey<Galaxy>> galaxy, @NotNull Optional<ResourceKey<CelestialBody<?, ?>>> parent,
                                      @NotNull CelestialPosition<?, ?> position, @NotNull CelestialDisplay<?, ?> display,
-                                     GasComposition atmosphere, float gravity,
+                                     GasComposition atmosphere, float gravity, int dayTemperature, int nightTemperature,
                                      @NotNull Optional<SatelliteRecipe> satelliteRecipe) implements CelestialBodyConfig {
     public static final Codec<DecorativePlanetConfig> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             Codec.STRING.fieldOf("name").xmap(Component::translatable, Component::getString).forGetter(DecorativePlanetConfig::name),
             Codec.STRING.fieldOf("description").xmap(Component::translatable, Component::getString).forGetter(DecorativePlanetConfig::description),
-            ResourceLocation.CODEC.fieldOf("galaxy").xmap(id -> ResourceKey.create(AddonRegistry.GALAXY_KEY, id), ResourceKey::location).forGetter(DecorativePlanetConfig::galaxy),
-            ResourceLocation.CODEC.fieldOf("parent").xmap(id -> ResourceKey.create(AddonRegistry.CELESTIAL_BODY_KEY, id), ResourceKey::location).forGetter(DecorativePlanetConfig::parent),
+            ResourceLocation.CODEC.optionalFieldOf("galaxy").xmap(id -> id.map(resourceLocation -> ResourceKey.create(AddonRegistry.GALAXY_KEY, resourceLocation)), key -> key.map(ResourceKey::location)).forGetter(DecorativePlanetConfig::galaxy),
+            ResourceLocation.CODEC.optionalFieldOf("parent").xmap(id -> id.map(resourceLocation -> ResourceKey.create(AddonRegistry.CELESTIAL_BODY_KEY, resourceLocation)), key -> key.map(ResourceKey::location)).forGetter(DecorativePlanetConfig::parent),
             CelestialPosition.CODEC.fieldOf("position").forGetter(DecorativePlanetConfig::position),
             CelestialDisplay.CODEC.fieldOf("display").forGetter(DecorativePlanetConfig::display),
             GasComposition.CODEC.fieldOf("atmosphere").forGetter(DecorativePlanetConfig::atmosphere),
             Codec.FLOAT.fieldOf("gravity").forGetter(DecorativePlanetConfig::gravity),
+            Codec.INT.fieldOf("day_temperature").forGetter(DecorativePlanetConfig::dayTemperature),
+            Codec.INT.fieldOf("night_temperature").forGetter(DecorativePlanetConfig::nightTemperature),
             SatelliteRecipe.CODEC.optionalFieldOf("satellite_recipe").forGetter(DecorativePlanetConfig::satelliteRecipe)
     ).apply(instance, DecorativePlanetConfig::new));
 }

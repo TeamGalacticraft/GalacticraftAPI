@@ -33,6 +33,8 @@ import dev.galacticraft.api.universe.display.CelestialDisplay;
 import dev.galacticraft.api.universe.galaxy.Galaxy;
 import dev.galacticraft.api.universe.position.CelestialPosition;
 import java.util.Objects;
+import java.util.Optional;
+
 import net.minecraft.core.Registry;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
@@ -42,9 +44,9 @@ import net.minecraft.world.level.dimension.LevelStem;
 
 public final class SatelliteConfig implements CelestialBodyConfig {
     public static final Codec<SatelliteConfig> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-            ResourceLocation.CODEC.fieldOf("parent").xmap(id -> ResourceKey.create(AddonRegistry.CELESTIAL_BODY_KEY, id), ResourceKey::location).forGetter(SatelliteConfig::parent),
-            ResourceLocation.CODEC.fieldOf("galaxy").xmap(id -> ResourceKey.create(AddonRegistry.GALAXY_KEY, id), ResourceKey::location).forGetter(SatelliteConfig::galaxy),
-            CelestialPosition.CODEC.fieldOf("position").forGetter(SatelliteConfig::position),
+		    ResourceLocation.CODEC.optionalFieldOf("galaxy").xmap(id -> id.map(resourceLocation -> ResourceKey.create(AddonRegistry.GALAXY_KEY, resourceLocation)), key -> key.map(ResourceKey::location)).forGetter(SatelliteConfig::galaxy),
+		    ResourceLocation.CODEC.optionalFieldOf("parent").xmap(id -> id.map(resourceLocation -> ResourceKey.create(AddonRegistry.CELESTIAL_BODY_KEY, resourceLocation)), key -> key.map(ResourceKey::location)).forGetter(SatelliteConfig::parent),
+		    CelestialPosition.CODEC.fieldOf("position").forGetter(SatelliteConfig::position),
             CelestialDisplay.CODEC.fieldOf("display").forGetter(SatelliteConfig::display),
             SatelliteOwnershipData.CODEC.fieldOf("ownership_data").forGetter(SatelliteConfig::ownershipData),
             ResourceLocation.CODEC.fieldOf("world").xmap(id -> ResourceKey.create(Registry.DIMENSION_REGISTRY, id), ResourceKey::location).forGetter(SatelliteConfig::world),
@@ -54,8 +56,8 @@ public final class SatelliteConfig implements CelestialBodyConfig {
             LevelStem.CODEC.fieldOf("dimension_options").forGetter(SatelliteConfig::dimensionOptions)
     ).apply(instance, SatelliteConfig::new));
 
-    private final ResourceKey<CelestialBody<?, ?>> parent;
-    private final ResourceKey<Galaxy> galaxy;
+    private final Optional<ResourceKey<CelestialBody<?, ?>>> parent;
+    private final Optional<ResourceKey<Galaxy>> galaxy;
     private final CelestialPosition<?, ?> position;
     private final CelestialDisplay<?, ?> display;
     private final SatelliteOwnershipData ownershipData;
@@ -66,9 +68,9 @@ public final class SatelliteConfig implements CelestialBodyConfig {
     private final LevelStem options;
     private Component customName = Component.empty();
 
-    public SatelliteConfig(ResourceKey<CelestialBody<?, ?>> parent, ResourceKey<Galaxy> galaxy, CelestialPosition<?, ?> position, CelestialDisplay<?, ?> display, SatelliteOwnershipData ownershipData, ResourceKey<Level> world, GasComposition atmosphere, float gravity, int accessWeight, LevelStem options) {
-        this.parent = parent;
-        this.galaxy = galaxy;
+    public SatelliteConfig(Optional<ResourceKey<Galaxy>> galaxy, Optional<ResourceKey<CelestialBody<?, ?>>> parent, CelestialPosition<?, ?> position, CelestialDisplay<?, ?> display, SatelliteOwnershipData ownershipData, ResourceKey<Level> world, GasComposition atmosphere, float gravity, int accessWeight, LevelStem options) {
+	    this.galaxy = galaxy;
+		this.parent = parent;
         this.position = position;
         this.display = display;
         this.ownershipData = ownershipData;
@@ -79,9 +81,9 @@ public final class SatelliteConfig implements CelestialBodyConfig {
         this.options = options;
     }
 
-    public ResourceKey<CelestialBody<?, ?>> parent() {return parent;}
+    public Optional<ResourceKey<CelestialBody<?, ?>>> parent() {return parent;}
 
-    public ResourceKey<Galaxy> galaxy() {return galaxy;}
+    public Optional<ResourceKey<Galaxy>> galaxy() {return galaxy;}
 
     public CelestialPosition<?, ?> position() {return position;}
 

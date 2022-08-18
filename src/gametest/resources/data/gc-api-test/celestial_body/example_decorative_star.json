@@ -1,7 +1,7 @@
 {
   "config": {
-    "name": "star.gc-api-test.star.name",
-    "description": "star.gc-api-test.star.description",
+    "name": "star.gc-api-test.decorative_star.name",
+    "description": "star.gc-api-test.decorative_star.description",
     "galaxy": "gc-api-test:example_galaxy",
     "position": {
       "config": {
@@ -21,7 +21,6 @@
       },
       "type": "galacticraft-api:icon"
     },
-    "world": "minecraft:the_nether",
     "photospheric_composition": {
       "composition": {
         "galacticraft-api:hydrogen": 734600,
@@ -35,8 +34,7 @@
     },
     "gravity": 28,
     "luminance": 1,
-    "access_weight": 0,
     "surface_temperature": 5772
   },
-  "type": "galacticraft-api:star"
+  "type": "galacticraft-api:decorative_star"
 }

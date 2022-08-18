@@ -30,9 +30,10 @@ import dev.galacticraft.api.universe.celestialbody.CelestialBodyType;
 import dev.galacticraft.api.universe.galaxy.Galaxy;
 import dev.galacticraft.impl.Constant;
 import dev.galacticraft.impl.universe.celestialbody.config.PlanetConfig;
-import dev.galacticraft.impl.universe.celestialbody.config.StarConfig;
-import dev.galacticraft.impl.universe.celestialbody.type.DecorativePlanet;
+import dev.galacticraft.impl.universe.celestialbody.config.DecorativeStarConfig;
+import dev.galacticraft.impl.universe.celestialbody.type.DecorativePlanetType;
 import dev.galacticraft.impl.universe.celestialbody.type.PlanetType;
+import dev.galacticraft.impl.universe.celestialbody.type.DecorativeStarType;
 import dev.galacticraft.impl.universe.celestialbody.type.StarType;
 import dev.galacticraft.impl.universe.display.config.EmptyCelestialDisplayConfig;
 import dev.galacticraft.impl.universe.display.config.IconCelestialDisplayConfig;
@@ -59,11 +60,12 @@ public class BuiltinObjects {
     );
 
     public static final ResourceKey<CelestialBody<?, ?>> SOL_KEY = ResourceKey.create(AddonRegistry.CELESTIAL_BODY_KEY, new ResourceLocation(Constant.MOD_ID, "sol"));
-    public static final CelestialBody<StarConfig, ? extends CelestialBodyType<StarConfig>> SOL = StarType.INSTANCE.configure(
-            new StarConfig(
+    public static final CelestialBody<DecorativeStarConfig, ? extends CelestialBodyType<DecorativeStarConfig>> SOL = DecorativeStarType.INSTANCE.configure(
+            new DecorativeStarConfig(
                     Component.translatable("star.galacticraft-api.sol.name"),
                     Component.translatable("star.galacticraft-api.sol.description"),
-                    MILKY_WAY_KEY,
+                    Optional.of(MILKY_WAY_KEY),
+                    Optional.empty(),
                     StaticCelestialPositionType.INSTANCE.configure(new StaticCelestialPositionConfig(0, 0)),
                     IconCelestialDisplayType.INSTANCE.configure(new IconCelestialDisplayConfig(new ResourceLocation(Constant.MOD_ID, "textures/body_icons.png"), 0, 0, 16, 16, 1.5f)),
                     new GasComposition.Builder()
@@ -85,8 +87,8 @@ public class BuiltinObjects {
             new PlanetConfig(
                     Component.translatable("planet.galacticraft-api.earth.name"),
                     Component.translatable("planet.galacticraft-api.earth.description"),
-                    MILKY_WAY_KEY,
-                    SOL_KEY,
+                    Optional.of(MILKY_WAY_KEY),
+                    Optional.of(SOL_KEY),
                     OrbitalCelestialPositionType.INSTANCE.configure(new OrbitalCelestialPositionConfig(1536000.0, 1.0, 0.0F, true)),
                     IconCelestialDisplayType.INSTANCE.configure(new IconCelestialDisplayConfig(new ResourceLocation(Constant.MOD_ID, "textures/body_icons.png"), 0, 16, 16, 16, 1)),
                     Level.OVERWORLD,
@@ -127,9 +129,10 @@ public class BuiltinObjects {
 
         Registry.register(AddonRegistry.GALAXY, MILKY_WAY_KEY.location(), MILKY_WAY);
 
-        Registry.register(AddonRegistry.CELESTIAL_BODY_TYPE, new ResourceLocation(Constant.MOD_ID, "star"), StarType.INSTANCE);
         Registry.register(AddonRegistry.CELESTIAL_BODY_TYPE, new ResourceLocation(Constant.MOD_ID, "planet"), PlanetType.INSTANCE);
-        Registry.register(AddonRegistry.CELESTIAL_BODY_TYPE, new ResourceLocation(Constant.MOD_ID, "decorative_planet"), DecorativePlanet.INSTANCE);
+        Registry.register(AddonRegistry.CELESTIAL_BODY_TYPE, new ResourceLocation(Constant.MOD_ID, "star"), StarType.INSTANCE);
+        Registry.register(AddonRegistry.CELESTIAL_BODY_TYPE, new ResourceLocation(Constant.MOD_ID, "decorative_planet"), DecorativePlanetType.INSTANCE);
+        Registry.register(AddonRegistry.CELESTIAL_BODY_TYPE, new ResourceLocation(Constant.MOD_ID, "decorative_star"), DecorativeStarType.INSTANCE);
 
         Registry.register(AddonRegistry.CELESTIAL_BODY, SOL_KEY.location(), SOL);
         Registry.register(AddonRegistry.CELESTIAL_BODY, EARTH_KEY.location(), EARTH);

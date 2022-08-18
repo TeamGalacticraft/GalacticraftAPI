@@ -26,7 +26,7 @@
   },
   "depends": {
     "fabricloader": ">=0.12.12",
-    "minecraft": ">=1.18.1",
-    "galacticraft-api": ">=0.4.0-prealpha.23+1.18.1"
+    "minecraft": ">=1.19.2",
+    "galacticraft-api": ">=0.4.0-prealpha.24-tts+1.19.2"
   }
 }

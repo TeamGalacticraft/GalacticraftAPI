@@ -23,84 +23,110 @@
 package dev.galacticraft.impl.universe.celestialbody.type;
 
 import dev.galacticraft.api.gas.GasComposition;
+import dev.galacticraft.api.satellite.SatelliteRecipe;
 import dev.galacticraft.api.universe.celestialbody.CelestialBody;
 import dev.galacticraft.api.universe.celestialbody.CelestialBodyType;
+import dev.galacticraft.api.universe.celestialbody.SurfaceEnvironment;
+import dev.galacticraft.api.universe.celestialbody.landable.Landable;
+import dev.galacticraft.api.universe.celestialbody.satellite.Orbitable;
 import dev.galacticraft.api.universe.celestialbody.star.Star;
 import dev.galacticraft.api.universe.display.CelestialDisplay;
 import dev.galacticraft.api.universe.galaxy.Galaxy;
 import dev.galacticraft.api.universe.position.CelestialPosition;
 import dev.galacticraft.impl.universe.celestialbody.config.StarConfig;
 import net.minecraft.core.Registry;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class StarType extends CelestialBodyType<StarConfig> implements Star<StarConfig> {
-    public static final StarType INSTANCE = new StarType();
+public class StarType extends CelestialBodyType<StarConfig> implements Star<StarConfig>, Orbitable<StarConfig>, Landable<StarConfig>,
+		SurfaceEnvironment<StarConfig>
+{
+	public static final StarType INSTANCE = new StarType();
 
-    protected StarType() {
-        super(StarConfig.CODEC);
-    }
+	protected StarType() {
+		super(StarConfig.CODEC);
+	}
 
-    @Override
-    public @NotNull Component name(StarConfig config) {
-        return config.name();
-    }
+	@Override
+	public @NotNull Component name(StarConfig config) {
+		return config.name();
+	}
 
-    /**
-     * Returns {@code null} as stars do not have parent celestial bodies
-     *
-     * @param registry the registry to query for the parent
-     * @param config   the celestial body configuration to be queried
-     * @return {@code null}
-     */
-    @Override
-    public @Nullable CelestialBody<?, ?> parent(Registry<CelestialBody<?, ?>> registry, StarConfig config) {
-        return null;
-    }
+	/**
+	 * Returns {@code null} as stars do not have parent celestial bodies
+	 *
+	 * @param registry the registry to query for the parent
+	 * @param config   the celestial body configuration to be queried
+	 * @return {@code null}
+	 */
+	@Override
+	public @Nullable CelestialBody<?, ?> parent(Registry<CelestialBody<?, ?>> registry, StarConfig config) {
+		return registry.get(config.parent().orElse(null));
+	}
 
-    @Override
-    public @NotNull ResourceKey<Galaxy> galaxy(StarConfig config) {
-        return config.galaxy();
-    }
+	@Override
+	public @Nullable ResourceKey<Galaxy> galaxy(StarConfig config) {
+		return config.galaxy().orElse(null);
+	}
 
-    @Override
-    public @NotNull Component description(StarConfig config) {
-        return config.description();
-    }
+	@Override
+	public @NotNull Component description(StarConfig config) {
+		return config.description();
+	}
 
-    @Override
-    public @NotNull CelestialPosition<?, ?> position(StarConfig config) {
-        return config.position();
-    }
+	@Override
+	public @NotNull CelestialPosition<?, ?> position(StarConfig config) {
+		return config.position();
+	}
 
-    @Override
-    public @NotNull CelestialDisplay<?, ?> display(StarConfig config) {
-        return config.display();
-    }
+	@Override
+	public @NotNull CelestialDisplay<?, ?> display(StarConfig config) {
+		return config.display();
+	}
 
-    /**
-     * {@inheritDoc}
-     * Treat as this star's photospheric composition
-     */
-    @Override
-    public @NotNull GasComposition atmosphere(StarConfig config) {
-        return config.photosphericComposition();
-    }
+	/**
+	 * {@inheritDoc}
+	 * Treat as this star's photospheric composition
+	 */
+	@Override
+	public @NotNull GasComposition atmosphere(StarConfig config) {
+		return config.photosphericComposition();
+	}
 
-    @Override
-    public float gravity(StarConfig config) {
-        return config.gravity();
-    }
+	@Override
+	public float gravity(StarConfig config) {
+		return config.gravity();
+	}
 
-    @Override
-    public double luminance(StarConfig config) {
-        return config.luminance();
-    }
+	@Override
+	public double luminance(StarConfig config) {
+		return config.luminance();
+	}
 
-    @Override
-    public int surfaceTemperature(StarConfig config) {
-        return config.surfaceTemperature();
-    }
+	@Override
+	public int temperature(RegistryAccess access, long time, StarConfig config) {
+		return config.surfaceTemperature(); //todo: temperature providers?
+	}
+
+	@Override
+	public @NotNull ResourceKey<Level> world(StarConfig config)
+	{
+		return config.world();
+	}
+
+	@Override
+	public int accessWeight(StarConfig config)
+	{
+		return config.accessWeight();
+	}
+
+	@Override
+	public @Nullable SatelliteRecipe satelliteRecipe(StarConfig config)
+	{
+		return config.satelliteRecipe().orElse(null);
+	}
 }
