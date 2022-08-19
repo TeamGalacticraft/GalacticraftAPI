@@ -20,9 +20,12 @@
  * SOFTWARE.
  */
 
-package dev.galacticraft.api.rocket.recipe;
+package dev.galacticraft.impl.rocket.recipe;
 
-import net.minecraft.world.item.crafting.Ingredient;
+import dev.galacticraft.api.rocket.recipe.RocketPartRecipe;
+import dev.galacticraft.api.rocket.recipe.slot.RocketRecipeSlot;
 
-public record RocketRecipeSlot(int x, int y, Ingredient ingredient) {
+import java.util.Set;
+
+public record RocketPartRecipeImpl(Set<RocketRecipeSlot> slots, int width, int height) implements RocketPartRecipe {
 }

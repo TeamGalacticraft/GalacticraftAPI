@@ -22,25 +22,71 @@
 
 package dev.galacticraft.api.rocket.recipe;
 
-import java.util.Collections;
-import java.util.List;
-// todo: design?
-public class RocketPartRecipe {
-    public static final RocketPartRecipe EMPTY = new RocketPartRecipe(Collections.emptyList());
+import com.google.common.collect.ImmutableSet;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+import dev.galacticraft.api.rocket.recipe.slot.RocketRecipeSlot;
+import dev.galacticraft.api.rocket.recipe.slot.SlotAlignment;
+import dev.galacticraft.impl.rocket.recipe.EmptyRocketPartRecipeImpl;
+import dev.galacticraft.impl.rocket.recipe.RocketPartRecipeImpl;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Unmodifiable;
 
-    private final int width;
-    private final int height;
-    private final List<RocketRecipeSlot> slots;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Set;
 
-    public RocketPartRecipe(List<RocketRecipeSlot> slots) {
-        this.slots = slots;
+public interface RocketPartRecipe {
+    Codec<RocketPartRecipe> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+            RocketRecipeSlot.CODEC.listOf().fieldOf("slots").forGetter(s -> new ArrayList<>(s.slots())),
+            Codec.BOOL.optionalFieldOf("mirrored", false).forGetter(a -> false)
+    ).apply(instance, (slots, mirrored) -> mirrored ? RocketPartRecipe.mirrored(slots) : RocketPartRecipe.create(slots)));
+
+    Codec<RocketPartRecipe> SINGLE_ALIGNMENT_CODEC = RocketRecipeSlot.CODEC.listOf().xmap(slots -> {
+        for (RocketRecipeSlot rocketRecipeSlot : slots) {
+            if (rocketRecipeSlot.alignment() != SlotAlignment.LEFT) throw new RuntimeException("Slot rocket part recipe has invalid alignment!");
+        }
+        return RocketPartRecipe.create(slots);
+    }, r -> new ArrayList<>(r.slots()));
+
+    @Contract(pure = true)
+    static @NotNull RocketPartRecipe create(@NotNull Collection<RocketRecipeSlot> slots) {
+        if (slots.size() == 0) return empty();
         int maxX = 0;
         int maxY = 0;
         for (RocketRecipeSlot slot : slots) {
             maxX = Math.max(maxX, slot.x() + 18);
             maxY = Math.max(maxY, slot.y() + 18);
         }
-        this.width = maxX;
-        this.height = maxY;
+        return new RocketPartRecipeImpl(ImmutableSet.copyOf(slots), maxX, maxY);
     }
+
+    @Contract(pure = true)
+    static @NotNull RocketPartRecipe mirrored(@NotNull Collection<RocketRecipeSlot> slots) {
+        if (slots.size() == 0) return empty();
+        int maxX = 0;
+        int maxY = 0;
+        for (RocketRecipeSlot slot : slots) {
+            maxX = Math.max(maxX, slot.x() + 18);
+            maxY = Math.max(maxY, slot.y() + 18);
+        }
+        ImmutableSet.Builder<RocketRecipeSlot> builder = ImmutableSet.builderWithExpectedSize(slots.size() * 2);
+        builder.addAll(slots);
+        for (RocketRecipeSlot slot : slots) {
+            builder.add(RocketRecipeSlot.create(slot.x(), slot.y(), slot.alignment().inverse(), slot.ingredient()));
+        }
+        return new RocketPartRecipeImpl(builder.build(), maxX, maxY);
+    }
+
+    @Contract(pure = true)
+    static @NotNull RocketPartRecipe empty() {
+        return EmptyRocketPartRecipeImpl.INSTANCE;
+    }
+
+    int width();
+
+    int height();
+
+    @NotNull @Unmodifiable Set<RocketRecipeSlot> slots();
 }

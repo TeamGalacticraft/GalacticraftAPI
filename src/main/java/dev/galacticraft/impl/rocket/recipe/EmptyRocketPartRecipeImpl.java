@@ -20,40 +20,35 @@
  * SOFTWARE.
  */
 
-package dev.galacticraft.api.rocket.part.type;
+package dev.galacticraft.impl.rocket.recipe;
 
-import com.mojang.serialization.Codec;
-import dev.galacticraft.api.rocket.part.ConfiguredRocketUpgrade;
-import dev.galacticraft.api.rocket.part.config.RocketUpgradeConfig;
-import dev.galacticraft.api.rocket.recipe.QuantifiedIngredient;
 import dev.galacticraft.api.rocket.recipe.RocketPartRecipe;
+import dev.galacticraft.api.rocket.recipe.slot.RocketRecipeSlot;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.Unmodifiable;
 
-/**
- * An upgrade for a rocket.
- */
-public non-sealed abstract class RocketUpgradeType<C extends RocketUpgradeConfig> implements RocketPartType<C> {
-    private final @NotNull Codec<ConfiguredRocketUpgrade<C, RocketUpgradeType<C>>> codec;
+import java.util.Collections;
+import java.util.Set;
 
-    protected RocketUpgradeType(@NotNull Codec<C> configCodec) {
-        this.codec = configCodec.fieldOf("config").xmap(this::configure, ConfiguredRocketUpgrade::config).codec();
+public final class EmptyRocketPartRecipeImpl implements RocketPartRecipe {
+    public static final @NotNull EmptyRocketPartRecipeImpl INSTANCE = new EmptyRocketPartRecipeImpl();
+
+    private EmptyRocketPartRecipeImpl() {}
+
+    @Override
+    public int width() {
+        return 0;
     }
 
     @Override
-    public @NotNull ConfiguredRocketUpgrade<C, RocketUpgradeType<C>> configure(@NotNull C config) {
-        return ConfiguredRocketUpgrade.create(config, this);
+    public int height() {
+        return 0;
     }
 
+    @Contract(pure = true)
     @Override
-    public final @Nullable RocketPartRecipe getRecipe(@NotNull C config) {
-        return null;
-    }
-
-    public abstract @NotNull QuantifiedIngredient upgradeRecipe(@NotNull C config);
-
-    @Override
-    public @NotNull Codec<ConfiguredRocketUpgrade<C, RocketUpgradeType<C>>> codec() {
-        return this.codec;
+    public @NotNull @Unmodifiable Set<RocketRecipeSlot> slots() {
+        return Collections.emptySet();
     }
 }

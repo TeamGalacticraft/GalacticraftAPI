@@ -20,40 +20,17 @@
  * SOFTWARE.
  */
 
-package dev.galacticraft.api.rocket.part.type;
+package dev.galacticraft.impl.rocket.recipe;
 
-import com.mojang.serialization.Codec;
-import dev.galacticraft.api.rocket.part.ConfiguredRocketUpgrade;
-import dev.galacticraft.api.rocket.part.config.RocketUpgradeConfig;
 import dev.galacticraft.api.rocket.recipe.QuantifiedIngredient;
-import dev.galacticraft.api.rocket.recipe.RocketPartRecipe;
+import net.minecraft.world.item.crafting.Ingredient;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-/**
- * An upgrade for a rocket.
- */
-public non-sealed abstract class RocketUpgradeType<C extends RocketUpgradeConfig> implements RocketPartType<C> {
-    private final @NotNull Codec<ConfiguredRocketUpgrade<C, RocketUpgradeType<C>>> codec;
-
-    protected RocketUpgradeType(@NotNull Codec<C> configCodec) {
-        this.codec = configCodec.fieldOf("config").xmap(this::configure, ConfiguredRocketUpgrade::config).codec();
-    }
-
+public record QuantifiedIngredientImpl(@NotNull Ingredient ingredient, long amount) implements QuantifiedIngredient {
     @Override
-    public @NotNull ConfiguredRocketUpgrade<C, RocketUpgradeType<C>> configure(@NotNull C config) {
-        return ConfiguredRocketUpgrade.create(config, this);
-    }
-
-    @Override
-    public final @Nullable RocketPartRecipe getRecipe(@NotNull C config) {
-        return null;
-    }
-
-    public abstract @NotNull QuantifiedIngredient upgradeRecipe(@NotNull C config);
-
-    @Override
-    public @NotNull Codec<ConfiguredRocketUpgrade<C, RocketUpgradeType<C>>> codec() {
-        return this.codec;
+    public boolean isEmpty() {
+        assert !this.ingredient().isEmpty();
+        assert this.amount() > 0;
+        return false;
     }
 }
