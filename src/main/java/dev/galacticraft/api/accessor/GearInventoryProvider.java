@@ -29,15 +29,27 @@ import net.minecraft.world.Container;
  * @author <a href="https://github.com/TeamGalacticraft">TeamGalacticraft</a>
  */
 public interface GearInventoryProvider {
-    Container getGearInv();
+    default Container getGearInv() {
+        throw new RuntimeException("This should not happen, you need to override this!");
+    }
 
-    Container getOxygenTanks();
+    default Container getOxygenTanks() {
+        throw new RuntimeException("This should not happen, you need to override this!");
+    }
 
-    Container getThermalArmor();
+    default Container getThermalArmor() {
+        throw new RuntimeException("This should not happen, you need to override this!");
+    }
 
-    Container getAccessories();
+    default Container getAccessories() {
+        throw new RuntimeException("This should not happen, you need to override this!");
+    }
 
-    void writeGearToNbt(CompoundTag tag);
+    default void writeGearToNbt(CompoundTag tag) {
+        throw new RuntimeException("This should not happen, you need to override this!");
+    }
 
-    void readGearFromNbt(CompoundTag tag);
+   default void readGearFromNbt(CompoundTag tag) {
+       throw new RuntimeException("This should not happen, you need to override this!");
+   }
 }

@@ -29,5 +29,7 @@ import org.jetbrains.annotations.ApiStatus;
  */
 @ApiStatus.Internal
 public interface SoundSystemAccessor {
-    void updateAtmosphericVolumeMultiplier(float multiplier);
+    default void updateAtmosphericVolumeMultiplier(float multiplier) {
+        throw new RuntimeException("This should not happen, you need to override this!");
+    }
 }

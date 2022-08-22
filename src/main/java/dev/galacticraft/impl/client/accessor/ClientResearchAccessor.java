@@ -31,5 +31,7 @@ import org.jetbrains.annotations.ApiStatus;
 @Environment(EnvType.CLIENT)
 @ApiStatus.Internal
 public interface ClientResearchAccessor extends ResearchAccessor {
-    void readChanges(FriendlyByteBuf buf);
+    default void readChanges(FriendlyByteBuf buf) {
+        throw new RuntimeException("This should not happen, you need to override this!");
+    }
 }

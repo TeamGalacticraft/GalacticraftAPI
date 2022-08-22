@@ -66,16 +66,16 @@ public abstract class AbstractClientPlayerEntityMixin implements ClientResearchA
                 for (int i = 0; i < inventory.getContainerSize(); i++) {
                     ItemStack stack = inventory.getItem(i);
                     if (stack.getItem() instanceof Accessory accessory && accessory.enablesHearing()) {
-                        ((SoundSystemAccessor) ((SoundManagerAccessor) Minecraft.getInstance().getSoundManager()).getSoundSystem())
+                        ((SoundManagerAccessor) Minecraft.getInstance().getSoundManager()).getSoundSystem()
                                 .updateAtmosphericVolumeMultiplier(1.0f);
                         return;
                     } else {
-                        ((SoundSystemAccessor) ((SoundManagerAccessor) Minecraft.getInstance().getSoundManager()).getSoundSystem())
+                        ((SoundManagerAccessor) Minecraft.getInstance().getSoundManager()).getSoundSystem()
                                 .updateAtmosphericVolumeMultiplier(pressure);
                     }
                 }
             } else {
-                ((SoundSystemAccessor) ((SoundManagerAccessor) Minecraft.getInstance().getSoundManager()).getSoundSystem()).updateAtmosphericVolumeMultiplier(pressure);
+                ((SoundManagerAccessor) Minecraft.getInstance().getSoundManager()).getSoundSystem().updateAtmosphericVolumeMultiplier(pressure);
             }
         });
         return inv;
