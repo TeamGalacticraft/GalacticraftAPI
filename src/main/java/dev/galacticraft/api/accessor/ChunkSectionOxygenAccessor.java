@@ -26,7 +26,11 @@ package dev.galacticraft.api.accessor;
  * @author <a href="https://github.com/TeamGalacticraft">TeamGalacticraft</a>
  */
 public interface ChunkSectionOxygenAccessor {
-    boolean isBreathable(int x, int y, int z);
+    default boolean isBreathable(int x, int y, int z) {
+        throw new RuntimeException("This should be overridden by mixin!");
+    }
 
-    void setBreathable(int x, int y, int z, boolean value);
+    default void setBreathable(int x, int y, int z, boolean value) {
+        throw new RuntimeException("This should be overridden by mixin!");
+    }
 }

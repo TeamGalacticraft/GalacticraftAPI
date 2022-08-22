@@ -22,7 +22,6 @@
 
 package dev.galacticraft.impl.internal.mixin;
 
-import dev.galacticraft.api.accessor.ChunkOxygenAccessor;
 import dev.galacticraft.api.accessor.WorldOxygenAccessor;
 import dev.galacticraft.api.universe.celestialbody.CelestialBody;
 import dev.galacticraft.impl.internal.accessor.WorldOxygenAccessorInternal;
@@ -60,7 +59,7 @@ public abstract class WorldMixin implements WorldOxygenAccessor, WorldOxygenAcce
             this.init = true;
             CelestialBody.getByDimension(this.registryAccess(), this.dimension()).ifPresent(celestialBodyType -> this.breathable = celestialBodyType.atmosphere().breathable());
         }
-        return isInSpawnableBounds(pos) ? ((ChunkOxygenAccessor) this.getChunkAt(pos)).isBreathable(pos.getX() & 15, pos.getY(), pos.getZ() & 15) : this.breathable;
+        return isInSpawnableBounds(pos) ? this.getChunkAt(pos).isBreathable(pos.getX() & 15, pos.getY(), pos.getZ() & 15) : this.breathable;
     }
 
     @Override
@@ -70,7 +69,7 @@ public abstract class WorldMixin implements WorldOxygenAccessor, WorldOxygenAcce
             CelestialBody.getByDimension(((Level) (Object) this)).ifPresent(celestialBodyType -> this.breathable = celestialBodyType.atmosphere().breathable());
         }
         if (isInSpawnableBounds(pos)) {
-            ((ChunkOxygenAccessor) this.getChunkAt(pos)).setBreathable(pos.getX() & 15, pos.getY(), pos.getZ() & 15, value);
+            this.getChunkAt(pos).setBreathable(pos.getX() & 15, pos.getY(), pos.getZ() & 15, value);
         }
     }
 

@@ -23,28 +23,12 @@
 package dev.galacticraft.impl.internal.mixin;
 
 import dev.galacticraft.api.accessor.ChunkOxygenAccessor;
-import dev.galacticraft.api.accessor.ChunkSectionOxygenAccessor;
 import dev.galacticraft.impl.Constant;
 import dev.galacticraft.impl.internal.accessor.ChunkOxygenAccessorInternal;
 import dev.galacticraft.impl.internal.accessor.ChunkOxygenSyncer;
 import dev.galacticraft.impl.internal.accessor.ChunkSectionOxygenAccessorInternal;
 import dev.galacticraft.impl.internal.accessor.WorldOxygenAccessorInternal;
 import io.netty.buffer.Unpooled;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.spongepowered.asm.mixin.Final;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.Unique;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
-
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
 import net.minecraft.network.FriendlyByteBuf;
@@ -63,6 +47,21 @@ import net.minecraft.world.level.chunk.UpgradeData;
 import net.minecraft.world.level.levelgen.blending.BlendingData;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.ticks.LevelChunkTicks;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.spongepowered.asm.mixin.Final;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
+
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * @author <a href="https://github.com/TeamGalacticraft">TeamGalacticraft</a>
@@ -94,7 +93,7 @@ public abstract class WorldChunkMixin extends ChunkAccess implements ChunkOxygen
         if (this.isOutsideBuildHeight(y)) return this.defaultBreathable;
         LevelChunkSection section = this.getSection(this.getSectionIndex(y));
         if (!section.hasOnlyAir()) {
-            return ((ChunkSectionOxygenAccessor) section).isBreathable(x & 15, y & 15, z & 15);
+            return section.isBreathable(x & 15, y & 15, z & 15);
         }
         return this.defaultBreathable;
     }
@@ -104,14 +103,13 @@ public abstract class WorldChunkMixin extends ChunkAccess implements ChunkOxygen
         if (this.isOutsideBuildHeight(y)) return;
         LevelChunkSection section = this.getSection(this.getSectionIndex(y));
         assert section != null;
-        ChunkSectionOxygenAccessor accessor = ((ChunkSectionOxygenAccessor) section);
-        if (value != accessor.isBreathable(x & 15, y & 15, z & 15)) {
+        if (value != section.isBreathable(x & 15, y & 15, z & 15)) {
             if (!this.level.isClientSide) {
                 this.unsaved = true;
                 this.dirty = true;
                 sectionDirty[this.getSectionIndex(y)] = true;
             }
-            accessor.setBreathable(x & 15, y & 15, z & 15, value);
+            section.setBreathable(x & 15, y & 15, z & 15, value);
         }
     }
 

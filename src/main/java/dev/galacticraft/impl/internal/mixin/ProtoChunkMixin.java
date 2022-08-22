@@ -23,7 +23,6 @@
 package dev.galacticraft.impl.internal.mixin;
 
 import dev.galacticraft.api.accessor.ChunkOxygenAccessor;
-import dev.galacticraft.api.accessor.ChunkSectionOxygenAccessor;
 import dev.galacticraft.impl.internal.accessor.ChunkOxygenAccessorInternal;
 import dev.galacticraft.impl.internal.accessor.ChunkOxygenSyncer;
 import net.minecraft.core.Registry;
@@ -55,7 +54,7 @@ public abstract class ProtoChunkMixin extends ChunkAccess implements ChunkOxygen
         if (this.isOutsideBuildHeight(y)) return this.defaultBreathable;
         LevelChunkSection section = this.getSection(this.getSectionIndex(y));
         if (!section.hasOnlyAir()) {
-            return ((ChunkSectionOxygenAccessor) section).isBreathable(x & 15, y & 15, z & 15);
+            return section.isBreathable(x & 15, y & 15, z & 15);
         }
         return this.defaultBreathable;
     }
@@ -65,9 +64,8 @@ public abstract class ProtoChunkMixin extends ChunkAccess implements ChunkOxygen
         if (this.isOutsideBuildHeight(y)) return;
         LevelChunkSection section = this.getSection(this.getSectionIndex(y));
         assert section != null;
-        ChunkSectionOxygenAccessor accessor = ((ChunkSectionOxygenAccessor) section);
-        if (value != accessor.isBreathable(x & 15, y & 15, z & 15)) {
-            accessor.setBreathable(x & 15, y & 15, z & 15, value);
+        if (value != section.isBreathable(x & 15, y & 15, z & 15)) {
+            section.setBreathable(x & 15, y & 15, z & 15, value);
         }
     }
 

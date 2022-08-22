@@ -74,7 +74,7 @@ public class GalacticraftApiTestSuite implements FabricGameTest {
             } else {
                 CompoundTag serialized = ChunkSerializer.write(context.getLevel(), chunk);
                 ProtoChunk deserialized = ChunkSerializer.read(context.getLevel(), context.getLevel().getPoiManager(), chunk.getPos(), serialized);
-                if (((ChunkOxygenAccessor) deserialized).isBreathable(x, y, z)) {
+                if (deserialized.isBreathable(x, y, z)) {
                     context.fail("Expected area to stay unbreathable upon deserialization!");
                 }
             }

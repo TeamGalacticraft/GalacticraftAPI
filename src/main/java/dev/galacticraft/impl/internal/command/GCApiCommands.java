@@ -100,7 +100,7 @@ public class GCApiCommands {
     private static int setOxygen(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         BlockPos pos = BlockPosArgument.getLoadedBlockPos(context, "start_pos");
         boolean b = BoolArgumentType.getBool(context, "oxygen");
-        ((WorldOxygenAccessor) context.getSource().getLevel()).setBreathable(pos, b);
+        context.getSource().getLevel().setBreathable(pos, b);
         context.getSource().sendSuccess(Component.translatable("command.galacticraft-api.oxygen.set.single"), true);
         return 1;
     }
@@ -108,7 +108,7 @@ public class GCApiCommands {
     private static int setOxygenArea(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         BlockPos startPos = BlockPosArgument.getLoadedBlockPos(context, "start_pos");
         BlockPos endPos = BlockPosArgument.getLoadedBlockPos(context, "end_pos");
-        WorldOxygenAccessor accessor = (WorldOxygenAccessor) context.getSource().getLevel();
+        WorldOxygenAccessor accessor = context.getSource().getLevel();
         BoundingBox box = BoundingBox.fromCorners(startPos, endPos);
         boolean b = BoolArgumentType.getBool(context, "oxygen");
         BlockPos.MutableBlockPos mutable = new BlockPos.MutableBlockPos();
@@ -126,7 +126,7 @@ public class GCApiCommands {
 
     private static int getOxygen(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         BlockPos pos = BlockPosArgument.getLoadedBlockPos(context, "start_pos");
-        if (((WorldOxygenAccessor) context.getSource().getLevel()).isBreathable(pos)) {
+        if (context.getSource().getLevel().isBreathable(pos)) {
             context.getSource().sendSuccess(Component.translatable("command.galacticraft-api.oxygen.get.single.oxygen"), false);
         } else {
             context.getSource().sendSuccess(Component.translatable("command.galacticraft-api.oxygen.get.single.no_oxygen"), false);
@@ -137,7 +137,7 @@ public class GCApiCommands {
     private static int getOxygenArea(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         BlockPos startPos = BlockPosArgument.getLoadedBlockPos(context, "start_pos");
         BlockPos endPos = BlockPosArgument.getLoadedBlockPos(context, "end_pos");
-        WorldOxygenAccessor accessor = (WorldOxygenAccessor) context.getSource().getLevel();
+        WorldOxygenAccessor accessor = context.getSource().getLevel();
         BoundingBox box = BoundingBox.fromCorners(startPos, endPos);
         BlockPos.MutableBlockPos mutable = new BlockPos.MutableBlockPos();
         boolean allOxygen = true;
