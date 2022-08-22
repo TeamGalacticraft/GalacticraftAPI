@@ -46,15 +46,15 @@ public record RocketDataImpl(int color, ResourceLocation cone, ResourceLocation 
     public static final RocketDataImpl EMPTY = new RocketDataImpl(0xffffffff, new ResourceLocation(Constant.MOD_ID, "invalid"), new ResourceLocation(Constant.MOD_ID, "invalid"), new ResourceLocation(Constant.MOD_ID, "invalid"), new ResourceLocation(Constant.MOD_ID, "invalid"), new ResourceLocation(Constant.MOD_ID, "invalid"), new ResourceLocation(Constant.MOD_ID, "invalid"));
 
     public static RocketDataImpl fromNbt(@NotNull CompoundTag nbt) {
-        if (nbt.getBoolean("Empty")) return empty();
+        if (nbt.getBoolean("empty")) return empty();
         return new RocketDataImpl(
-                nbt.getInt("Color"),
-                new ResourceLocation(nbt.getString("Cone")),
-                new ResourceLocation(nbt.getString("Body")),
-                new ResourceLocation(nbt.getString("Fin")),
-                new ResourceLocation(nbt.getString("Booster")),
-                new ResourceLocation(nbt.getString("Bottom")),
-                new ResourceLocation(nbt.getString("Upgrade"))
+                nbt.getInt("color"),
+                new ResourceLocation(nbt.getString("cone")),
+                new ResourceLocation(nbt.getString("body")),
+                new ResourceLocation(nbt.getString("fin")),
+                new ResourceLocation(nbt.getString("booster")),
+                new ResourceLocation(nbt.getString("bottom")),
+                new ResourceLocation(nbt.getString("upgrade"))
         );
     }
 
@@ -66,16 +66,16 @@ public record RocketDataImpl(int color, ResourceLocation cone, ResourceLocation 
     @Override
     public @NotNull CompoundTag toNbt(@NotNull CompoundTag nbt) {
         if (this.isEmpty()) {
-            nbt.putBoolean("Empty", true);
+            nbt.putBoolean("empty", true);
             return nbt;
         }
-        nbt.putInt("Color", this.color());
-        nbt.putString("Cone", this.cone().toString());
-        nbt.putString("Body", this.body().toString());
-        nbt.putString("Fin", this.fin().toString());
-        nbt.putString("Booster", this.booster().toString());
-        nbt.putString("Bottom", this.bottom().toString());
-        nbt.putString("Upgrade", this.upgrade().toString());
+        nbt.putInt("color", this.color());
+        nbt.putString("cone", this.cone().toString());
+        nbt.putString("body", this.body().toString());
+        nbt.putString("fin", this.fin().toString());
+        nbt.putString("booster", this.booster().toString());
+        nbt.putString("bottom", this.bottom().toString());
+        nbt.putString("upgrade", this.upgrade().toString());
         return nbt;
     }
 
