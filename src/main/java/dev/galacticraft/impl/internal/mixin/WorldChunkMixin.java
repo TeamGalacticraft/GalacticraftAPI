@@ -23,19 +23,14 @@
 package dev.galacticraft.impl.internal.mixin;
 
 import dev.galacticraft.api.accessor.ChunkOxygenAccessor;
-import dev.galacticraft.impl.Constant;
 import dev.galacticraft.impl.internal.accessor.ChunkOxygenAccessorInternal;
 import dev.galacticraft.impl.internal.accessor.ChunkOxygenSyncer;
 import dev.galacticraft.impl.internal.accessor.ChunkSectionOxygenAccessorInternal;
 import dev.galacticraft.impl.internal.accessor.WorldOxygenAccessorInternal;
 import io.netty.buffer.Unpooled;
-import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.ClientboundCustomPayloadPacket;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelHeightAccessor;
@@ -61,10 +56,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-
 /**
  * @author <a href="https://github.com/TeamGalacticraft">TeamGalacticraft</a>
  */
@@ -73,7 +64,7 @@ public abstract class WorldChunkMixin extends ChunkAccess implements ChunkOxygen
     @Shadow @Final Level level;
     private @Unique boolean /*@NotNull*/ [] sectionDirty;
     private @Unique boolean defaultBreathable = false;
-    private @Unique boolean dirty = false;
+    private @Unique byte dirty = 0;
 
     private WorldChunkMixin(ChunkPos pos, UpgradeData upgradeData, LevelHeightAccessor heightLimitView, Registry<Biome> biome, long inhabitedTime, @Nullable LevelChunkSection[] sectionArrayInitializer, @Nullable BlendingData blendingData) {
         super(pos, upgradeData, heightLimitView, biome, inhabitedTime, sectionArrayInitializer, blendingData);
@@ -108,33 +99,34 @@ public abstract class WorldChunkMixin extends ChunkAccess implements ChunkOxygen
         if (value != section.isBreathable(x & 15, y & 15, z & 15)) {
             if (!this.level.isClientSide) {
                 this.unsaved = true;
-                this.dirty = true;
-                sectionDirty[this.getSectionIndex(y)] = true;
+                if (!this.sectionDirty[this.getSectionIndex(y)]) {
+                    this.sectionDirty[this.getSectionIndex(y)] = true;
+                    this.dirty++;
+                }
             }
             section.setBreathable(x & 15, y & 15, z & 15, value);
         }
     }
 
     @Override
-    public @NotNull List<Packet<?>> syncOxygenPacketsToClient() {
-        if (dirty && !level.isClientSide) {
-            dirty = false;
-            List<Packet<?>> list = new LinkedList<>();
-            for (int i = 0; i < sectionDirty.length; i++) {
-                if (sectionDirty[i]) {
-                    sectionDirty[i] = false;
-                    ChunkPos pos = this.getPos();
-                    ChunkSectionOxygenAccessorInternal accessor = (ChunkSectionOxygenAccessorInternal) this.getSection(i);
-                    int size = 1 + ((Integer.SIZE / Byte.SIZE) * 2) + (1 + (Short.SIZE / Byte.SIZE) + accessor.getModifiedBlocks() > 0 ? (Constant.Chunk.CHUNK_SECTION_AREA / Byte.SIZE) : 0);
-                    FriendlyByteBuf buf = new FriendlyByteBuf(Unpooled.buffer(size, size)
-                            .writeByte(i).writeInt(pos.x).writeInt(pos.z));
-                    accessor.writeOxygenPacket(buf);
-                    list.add(ServerPlayNetworking.createS2CPacket(new ResourceLocation(Constant.MOD_ID, "oxygen_update"), buf));
+    public @Nullable FriendlyByteBuf syncOxygenPacketsToClient() {
+        assert !this.level.isClientSide;
+        if (this.dirty != 0) {
+            FriendlyByteBuf buf = new FriendlyByteBuf(Unpooled.buffer(8 + this.dirty * 4));
+            buf.writeInt(this.getPos().x);
+            buf.writeInt(this.getPos().z);
+            buf.writeByte(this.dirty);
+            for (int i = 0; i < this.sectionDirty.length; i++) {
+                if (this.sectionDirty[i]) {
+                    this.sectionDirty[i] = false;
+                    buf.writeByte(i);
+                    ((ChunkSectionOxygenAccessorInternal) this.getSection(i)).writeOxygenPacket(buf);
                 }
             }
-            return list;
+            this.dirty = 0;
+            return buf;
         }
-        return Collections.emptyList();
+        return null;
     }
 
     @Override

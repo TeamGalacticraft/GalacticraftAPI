@@ -22,21 +22,21 @@
 
 package dev.galacticraft.impl.internal.accessor;
 
+import net.minecraft.network.FriendlyByteBuf;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.BitSet;
-import net.minecraft.network.FriendlyByteBuf;
 
 /**
  * @author <a href="https://github.com/TeamGalacticraft">TeamGalacticraft</a>
  */
 @ApiStatus.Internal
 public interface ChunkSectionOxygenAccessorInternal {
-    @Nullable BitSet getInversionArray();
+    @Nullable BitSet getInversion();
 
-    void setInversionArray(@Nullable BitSet inverted);
+    void setInversion(@Nullable BitSet inverted);
 
     short getModifiedBlocks();
 

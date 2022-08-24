@@ -24,9 +24,9 @@ package dev.galacticraft.impl.internal.client.fabric;
 
 import dev.galacticraft.api.accessor.GearInventoryProvider;
 import dev.galacticraft.api.accessor.SatelliteAccessor;
-import dev.galacticraft.impl.client.accessor.ClientResearchAccessor;
 import dev.galacticraft.api.universe.celestialbody.CelestialBody;
 import dev.galacticraft.impl.Constant;
+import dev.galacticraft.impl.client.accessor.ClientResearchAccessor;
 import dev.galacticraft.impl.internal.accessor.ChunkOxygenSyncer;
 import dev.galacticraft.impl.universe.celestialbody.type.SatelliteType;
 import dev.galacticraft.impl.universe.position.config.SatelliteConfig;
@@ -60,9 +60,14 @@ public class GalacticraftAPIClient implements ClientModInitializer {
             ((SatelliteAccessor) networkHandler).removeSatellite(buf.readResourceLocation());
         });
         ClientPlayNetworking.registerGlobalReceiver(new ResourceLocation(Constant.MOD_ID, "oxygen_update"), (client, handler, buf, responseSender) -> {
-            byte b = buf.readByte();
-            ChunkOxygenSyncer syncer = ((ChunkOxygenSyncer) handler.getLevel().getChunk(buf.readInt(), buf.readInt()));
-            syncer.readOxygenUpdate(b, buf);
+            int x = buf.readInt();
+            int y = buf.readInt();
+            byte dirty = buf.readByte();
+            var syncer = (ChunkOxygenSyncer) handler.getLevel().getChunk(x, y);
+
+            for (byte a = 0; a < dirty; a++) {
+                syncer.readOxygenUpdate(buf.readByte(), buf);
+            }
         });
 
         ClientPlayNetworking.registerGlobalReceiver(new ResourceLocation(Constant.MOD_ID, "gear_inv_sync"), (client, handler, buf, responseSender) -> {

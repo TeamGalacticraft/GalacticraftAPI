@@ -34,14 +34,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.ai.village.poi.PoiManager;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.biome.Biome;
-import net.minecraft.world.level.chunk.ChunkAccess;
-import net.minecraft.world.level.chunk.ChunkSource;
-import net.minecraft.world.level.chunk.DataLayer;
-import net.minecraft.world.level.chunk.LevelChunkSection;
-import net.minecraft.world.level.chunk.PalettedContainer;
-import net.minecraft.world.level.chunk.PalettedContainerRO;
-import net.minecraft.world.level.chunk.ProtoChunk;
-import net.minecraft.world.level.chunk.UpgradeData;
+import net.minecraft.world.level.chunk.*;
 import net.minecraft.world.level.chunk.storage.ChunkSerializer;
 import net.minecraft.world.level.levelgen.BelowZeroRetrogen;
 import net.minecraft.world.level.levelgen.blending.BlendingData;
@@ -67,7 +60,7 @@ public abstract class ChunkSerializerMixin {
         }
         nbt.putShort(Constant.Nbt.CHANGE_COUNT, ((ChunkSectionOxygenAccessorInternal) chunkSection).getModifiedBlocks());
         if (((ChunkSectionOxygenAccessorInternal) chunkSection).getModifiedBlocks() > 0) {
-            BitSet bits = ((ChunkSectionOxygenAccessorInternal) chunkSection).getInversionArray();
+            BitSet bits = ((ChunkSectionOxygenAccessorInternal) chunkSection).getInversion();
             assert bits != null;
             nbt.putLongArray(Constant.Nbt.OXYGEN, bits.toLongArray());
         }
@@ -85,7 +78,7 @@ public abstract class ChunkSerializerMixin {
         }
         ((ChunkSectionOxygenAccessorInternal) chunkSection).setModifiedBlocks(changedCount);
         if (changedCount > 0) {
-            ((ChunkSectionOxygenAccessorInternal) chunkSection).setInversionArray(BitSet.valueOf(nbtC.getLongArray(Constant.Nbt.OXYGEN)));
+            ((ChunkSectionOxygenAccessorInternal) chunkSection).setInversion(BitSet.valueOf(nbtC.getLongArray(Constant.Nbt.OXYGEN)));
         }
     }
 }
