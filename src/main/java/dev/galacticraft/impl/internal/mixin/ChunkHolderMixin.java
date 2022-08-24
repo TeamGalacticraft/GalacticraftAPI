@@ -45,8 +45,8 @@ public abstract class ChunkHolderMixin {
 
     @Inject(method = "broadcastChanges", at = @At("HEAD"))
     private void galacticraft_flushOxygenPackets(LevelChunk chunk, CallbackInfo ci) {
-        List<ClientboundCustomPayloadPacket> packets = ((ChunkOxygenSyncer) chunk).syncOxygenPacketsToClient();
-        for (ClientboundCustomPayloadPacket packet : packets) {
+        List<Packet<?>> packets = ((ChunkOxygenSyncer) chunk).syncOxygenPacketsToClient();
+        for (Packet<?> packet : packets) {
             this.broadcast(packet, false);
         }
     }

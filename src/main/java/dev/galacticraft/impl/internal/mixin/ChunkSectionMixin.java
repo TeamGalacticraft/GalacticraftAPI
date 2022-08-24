@@ -131,8 +131,8 @@ public abstract class ChunkSectionMixin implements ChunkSectionOxygenAccessor, C
         if (this.getModifiedBlocks() > 0) {
             assert this.getInversionArray() != null;
             long[] inverted = this.getInversionArray().toLongArray();
-            assert inverted.length == 64;
-            for (int i = 0; i < 64; i++) {
+            buf.writeInt(inverted.length);
+            for (int i = 0; i < inverted.length; i++) {
                 buf.writeLong(inverted[i]);
             }
         }
@@ -143,8 +143,9 @@ public abstract class ChunkSectionMixin implements ChunkSectionOxygenAccessor, C
         this.setDefaultBreathable(buf.readBoolean());
         this.setModifiedBlocks(buf.readShort());
         if (this.getModifiedBlocks() > 0) {
-            long[] words = new long[64];
-            for (int i = 0; i < 64; i++) {
+            int length = buf.readInt();
+            long[] words = new long[length];
+            for (int i = 0; i < length; i++) {
                 words[i] = buf.readLong();
             }
             this.setInversionArray(BitSet.valueOf(words));

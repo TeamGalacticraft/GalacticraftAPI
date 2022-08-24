@@ -29,9 +29,11 @@ import dev.galacticraft.impl.internal.accessor.ChunkOxygenSyncer;
 import dev.galacticraft.impl.internal.accessor.ChunkSectionOxygenAccessorInternal;
 import dev.galacticraft.impl.internal.accessor.WorldOxygenAccessorInternal;
 import io.netty.buffer.Unpooled;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientboundCustomPayloadPacket;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.ChunkPos;
@@ -114,10 +116,10 @@ public abstract class WorldChunkMixin extends ChunkAccess implements ChunkOxygen
     }
 
     @Override
-    public @NotNull List<ClientboundCustomPayloadPacket> syncOxygenPacketsToClient() {
+    public @NotNull List<Packet<?>> syncOxygenPacketsToClient() {
         if (dirty && !level.isClientSide) {
             dirty = false;
-            List<ClientboundCustomPayloadPacket> list = new LinkedList<>();
+            List<Packet<?>> list = new LinkedList<>();
             for (int i = 0; i < sectionDirty.length; i++) {
                 if (sectionDirty[i]) {
                     sectionDirty[i] = false;
@@ -127,7 +129,7 @@ public abstract class WorldChunkMixin extends ChunkAccess implements ChunkOxygen
                     FriendlyByteBuf buf = new FriendlyByteBuf(Unpooled.buffer(size, size)
                             .writeByte(i).writeInt(pos.x).writeInt(pos.z));
                     accessor.writeOxygenPacket(buf);
-                    list.add(new ClientboundCustomPayloadPacket(new ResourceLocation(Constant.MOD_ID, "oxygen_update"), buf));
+                    list.add(ServerPlayNetworking.createS2CPacket(new ResourceLocation(Constant.MOD_ID, "oxygen_update"), buf));
                 }
             }
             return list;

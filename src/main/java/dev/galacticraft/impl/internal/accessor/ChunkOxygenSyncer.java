@@ -22,6 +22,7 @@
 
 package dev.galacticraft.impl.internal.accessor;
 
+import net.minecraft.network.protocol.Packet;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
@@ -30,7 +31,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.protocol.game.ClientboundCustomPayloadPacket;
 
 public interface ChunkOxygenSyncer {
-    default @NotNull List<@NotNull ClientboundCustomPayloadPacket> syncOxygenPacketsToClient() {
+    default @NotNull List<@NotNull Packet<?>> syncOxygenPacketsToClient() {
         return Collections.emptyList();
     }
 
