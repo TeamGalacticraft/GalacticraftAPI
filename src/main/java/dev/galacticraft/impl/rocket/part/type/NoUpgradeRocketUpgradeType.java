@@ -25,12 +25,11 @@ package dev.galacticraft.impl.rocket.part.type;
 import com.mojang.serialization.Codec;
 import dev.galacticraft.api.rocket.entity.Rocket;
 import dev.galacticraft.api.rocket.part.type.RocketUpgradeType;
-import dev.galacticraft.api.rocket.recipe.RocketPartRecipe;
+import dev.galacticraft.api.rocket.recipe.QuantifiedIngredient;
 import dev.galacticraft.api.rocket.travelpredicate.ConfiguredTravelPredicate;
 import dev.galacticraft.impl.rocket.part.config.DefaultRocketUpgradeConfig;
 import dev.galacticraft.impl.rocket.travelpredicate.type.DefaultTravelPredicateType;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public final class NoUpgradeRocketUpgradeType extends RocketUpgradeType<DefaultRocketUpgradeConfig> {
     public static final NoUpgradeRocketUpgradeType INSTANCE = new NoUpgradeRocketUpgradeType(DefaultRocketUpgradeConfig.CODEC);
@@ -44,8 +43,8 @@ public final class NoUpgradeRocketUpgradeType extends RocketUpgradeType<DefaultR
     }
 
     @Override
-    public @Nullable RocketPartRecipe getRecipe(@NotNull DefaultRocketUpgradeConfig config) {
-        return RocketPartRecipe.EMPTY;
+    public @NotNull QuantifiedIngredient upgradeRecipe(@NotNull DefaultRocketUpgradeConfig config) {
+        return QuantifiedIngredient.empty();
     }
 
     @Override
