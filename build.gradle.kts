@@ -20,15 +20,19 @@
  * SOFTWARE.
  */
 
+import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 plugins {
     java
     `maven-publish`
-    id("fabric-loom") version "0.12-SNAPSHOT"
-    id("org.cadixdev.licenser") version "0.6.1"
+    id("fabric-loom") version("1.0-SNAPSHOT")
+    id("org.cadixdev.licenser") version("0.6.1")
     id("io.github.juuxel.loom-quiltflower") version("1.7.3")
 }
+
+val buildNumber = System.getenv("BUILD_NUMBER") ?: ""
+val prerelease = (System.getenv("PRE_RELEASE") ?: "false") == "true"
 
 val modId           = project.property("mod.id").toString()
 val modVersion      = project.property("mod.version").toString()
@@ -50,14 +54,8 @@ java {
     targetCompatibility = JavaVersion.VERSION_17
     sourceCompatibility = JavaVersion.VERSION_17
 
+    withSourcesJar()
     withJavadocJar()
-}
-
-sourceSets {
-    create("gametest") {
-        compileClasspath += main.get().compileClasspath + main.get().output;
-        runtimeClasspath += main.get().runtimeClasspath + main.get().output;
-    }
 }
 
 loom {
@@ -71,7 +69,7 @@ loom {
             sourceSet(sourceSets.main.get())
         }
         create("gc-api-test") {
-            sourceSet(sourceSets.getByName("gametest"))
+            sourceSet(sourceSets.test.get())
         }
     }
 
@@ -79,13 +77,13 @@ loom {
         register("gametest") {
             server()
             name("Game Test")
-            source(sourceSets.getByName("gametest"))
+            source(sourceSets.test.get())
             vmArgs("-Dfabric-api.gametest", "-Dfabric-api.gametest.report-file=${project.buildDir}/junit.xml", "-ea")
         }
         register("gametestClient") {
             server()
             name("Game Test Client")
-            source(sourceSets.getByName("gametest"))
+            source(sourceSets.test.get())
             vmArgs("-Dfabric-api.gametest", "-Dfabric-api.gametest.report-file=${project.buildDir}/junit.xml", "-ea")
         }
     }
@@ -138,12 +136,14 @@ tasks.jar {
     from("LICENSE")
     manifest {
         attributes(
-            "Implementation-Title"     to modName,
-            "Implementation-Version"   to "${project.version}",
-            "Implementation-Vendor"    to "Team Galacticraft",
-            "Implementation-Timestamp" to DateTimeFormatter.ISO_DATE_TIME,
-            "Maven-Artifact"           to "${project.group}:${modName}:${project.version}",
-            "ModSide"                  to "BOTH"
+            "Specification-Title" to modName,
+            "Specification-Vendor" to "Team Galacticraft",
+            "Specification-Version" to modVersion,
+            "Implementation-Title" to project.name,
+            "Implementation-Version" to "${project.version}",
+            "Implementation-Vendor" to "Team Galacticraft",
+            "Implementation-Timestamp" to LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME),
+            "Built-On-Java" to "${System.getProperty("java.vm.version")} (${System.getProperty("java.vm.vendor")})"
         )
     }
 }
@@ -185,9 +185,3 @@ license {
         set("company", "Team Galacticraft")
     }
 }
-
-tasks.named<ProcessResources>("processGametestResources") {
-    duplicatesStrategy = DuplicatesStrategy.WARN
-}
-
-tasks.getByName("gametestClasses").dependsOn("classes")
