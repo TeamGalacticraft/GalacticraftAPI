@@ -58,6 +58,15 @@ java {
     withJavadocJar()
 }
 
+sourceSets {
+    main {
+        resources {
+            srcDir("src/main/generated")
+            exclude(".cache/**")
+        }
+    }
+}
+
 loom {
     accessWidenerPath.set(project.file("src/main/resources/${modId}.accesswidener"))
     mixin {
@@ -74,6 +83,12 @@ loom {
     }
 
     runs {
+        register("datagen") {
+            server()
+            name("Data Generation")
+            runDir("build/datagen")
+            vmArgs("-Dfabric-api.datagen", "-Dfabric-api.datagen.output-dir=${file("src/main/generated")}", "-Dfabric-api.datagen.strict-validation")
+        }
         register("gametest") {
             server()
             name("Game Test")

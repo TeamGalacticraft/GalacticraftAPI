@@ -42,6 +42,7 @@ import dev.galacticraft.impl.universe.position.config.OrbitalCelestialPositionCo
 import dev.galacticraft.impl.universe.position.config.StaticCelestialPositionConfig;
 import dev.galacticraft.impl.universe.position.type.OrbitalCelestialPositionType;
 import dev.galacticraft.impl.universe.position.type.StaticCelestialPositionType;
+
 import java.util.Optional;
 import net.minecraft.core.Registry;
 import net.minecraft.network.chat.Component;

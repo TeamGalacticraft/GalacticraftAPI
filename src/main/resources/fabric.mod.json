@@ -28,6 +28,9 @@
     ],
     "client": [
       "dev.galacticraft.impl.internal.client.fabric.GalacticraftAPIClient"
+    ],
+    "fabric-datagen": [
+      "dev.galacticraft.impl.internal.fabric.GalacticraftAPIData"
     ]
   },
   "mixins": [
