@@ -23,8 +23,17 @@
 package dev.galacticraft.impl.universe.data;
 
 import dev.galacticraft.api.data.CelestialBodyDataProvider;
+import dev.galacticraft.api.gas.GasComposition;
+import dev.galacticraft.api.gas.Gases;
+import dev.galacticraft.impl.Constant;
 import dev.galacticraft.impl.universe.BuiltinObjects;
+import dev.galacticraft.impl.universe.display.config.IconCelestialDisplayConfig;
+import dev.galacticraft.impl.universe.display.type.IconCelestialDisplayType;
+import dev.galacticraft.impl.universe.position.config.StaticCelestialPositionConfig;
+import dev.galacticraft.impl.universe.position.type.StaticCelestialPositionType;
 import net.minecraft.data.DataGenerator;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 
 public class CelestialBodyGenetator extends CelestialBodyDataProvider {
     public CelestialBodyGenetator(DataGenerator dataGenerator) {
@@ -33,7 +42,25 @@ public class CelestialBodyGenetator extends CelestialBodyDataProvider {
 
     @Override
     public void generateCelestialBodies() {
-        celestialBody(BuiltinObjects.SOL_KEY, BuiltinObjects.SOL);
+        star(BuiltinObjects.SOL_KEY.location())
+                .name(Component.translatable("star.galacticraft-api.sol.name"))
+                .description(Component.translatable("star.galacticraft-api.sol.description"))
+                .galaxy(BuiltinObjects.MILKY_WAY_KEY)
+                .position(StaticCelestialPositionType.INSTANCE.configure(new StaticCelestialPositionConfig(0, 0)))
+                .display(IconCelestialDisplayType.INSTANCE.configure(new IconCelestialDisplayConfig(new ResourceLocation(Constant.MOD_ID, "textures/body_icons.png"), 0, 0, 16, 16, 1.5f)))
+                .photosphericComposition(new GasComposition.Builder()
+                    .pressure(28)
+                    .gas(Gases.HYDROGEN_ID, 734600.000)
+                    .gas(Gases.HELIUM_ID, 248500.000)
+                    .gas(Gases.OXYGEN_ID, 7700.000)
+                    .gas(Gases.NEON_ID, 1200.000)
+                    .gas(Gases.NITROGEN_ID, 900.000)
+                    .build())
+                .gravity(28.0f)
+                .luminance(1)
+                .surfaceTemperature(5772);
+
+//        celestialBody(BuiltinObjects.SOL_KEY, BuiltinObjects.SOL);
         celestialBody(BuiltinObjects.EARTH_KEY, BuiltinObjects.EARTH);
     }
 
