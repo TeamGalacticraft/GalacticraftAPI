@@ -56,12 +56,15 @@
   },
   "custom": {
     "loom:injected_interfaces": {
+      "net/minecraft/class_742": ["dev/galacticraft/api/accessor/GearInventoryProvider"],
+      "net/minecraft/class_1309": ["dev/galacticraft/api/accessor/GearInventoryProvider"],
       "net/minecraft/class_1937": ["dev/galacticraft/api/accessor/WorldOxygenAccessor"],
       "net/minecraft/class_2812": ["dev/galacticraft/api/accessor/ChunkOxygenAccessor"],
       "net/minecraft/class_2818": ["dev/galacticraft/api/accessor/ChunkOxygenAccessor"],
       "net/minecraft/class_2821": ["dev/galacticraft/api/accessor/ChunkOxygenAccessor"],
       "net/minecraft/class_2826": ["dev/galacticraft/api/accessor/ChunkSectionOxygenAccessor"],
-      "net/minecraft/class_2839": ["dev/galacticraft/api/accessor/ChunkOxygenAccessor"]
+      "net/minecraft/class_2839": ["dev/galacticraft/api/accessor/ChunkOxygenAccessor"],
+      "net/minecraft/class_3222": ["dev/galacticraft/api/accessor/GearInventoryProvider"]
     },
     "modmenu": {
       "badges": [ "library" ],

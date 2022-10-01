@@ -29,15 +29,27 @@ import net.minecraft.world.Container;
  * @author <a href="https://github.com/TeamGalacticraft">TeamGalacticraft</a>
  */
 public interface GearInventoryProvider {
-    Container getGearInv();
+    default Container getGearInv() {
+        throw new RuntimeException("This should be overridden by mixin!");
+    }
 
-    Container getOxygenTanks();
+    default Container getOxygenTanks() {
+        throw new RuntimeException("This should be overridden by mixin!");
+    }
 
-    Container getThermalArmor();
+    default Container getThermalArmor() {
+        throw new RuntimeException("This should be overridden by mixin!");
+    }
 
-    Container getAccessories();
+    default Container getAccessories() {
+        throw new RuntimeException("This should be overridden by mixin!");
+    }
 
-    void writeGearToNbt(CompoundTag tag);
+    default void writeGearToNbt(CompoundTag tag) {
+        throw new RuntimeException("This should be overridden by mixin!");
+    }
 
-    void readGearFromNbt(CompoundTag tag);
+    default void readGearFromNbt(CompoundTag tag) {
+        throw new RuntimeException("This should be overridden by mixin!");
+    }
 }
