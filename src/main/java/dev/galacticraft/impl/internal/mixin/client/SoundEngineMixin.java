@@ -52,14 +52,14 @@ public abstract class SoundEngineMixin implements SoundSystemAccessor {
 
     @Inject(method = "calculateVolume(FLnet/minecraft/sounds/SoundSource;)F", at = @At("RETURN"), cancellable = true)
     private void galacticraft_adjustVolumeToAtmosphere(float f, SoundSource soundSource, CallbackInfoReturnable<Float> cir) {
-        if (multiplier != 1.0f) {
+        if (multiplier != 1.0f && soundSource != SoundSource.MASTER) {
             cir.setReturnValue(Mth.clamp(cir.getReturnValueF() * this.multiplier, 0.0f, 2.0f));
         }
     }
 
     @Redirect(method = "play", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/resources/sounds/SoundInstance;canStartSilent()Z", ordinal = 0))
     private boolean galacticraft_shouldAlwaysPlay(SoundInstance soundInstance) {
-        if (this.multiplier != 1.0f) {
+        if (this.multiplier != 1.0f && soundInstance.getAttenuation() != SoundInstance.Attenuation.NONE) {
             return true;
         }
         return soundInstance.canStartSilent();
