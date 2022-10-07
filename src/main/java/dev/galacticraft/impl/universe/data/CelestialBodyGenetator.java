@@ -24,13 +24,13 @@ package dev.galacticraft.impl.universe.data;
 
 import dev.galacticraft.api.data.CelestialBodyDataProvider;
 import dev.galacticraft.api.gas.GasComposition;
-import dev.galacticraft.api.gas.Gases;
 import dev.galacticraft.impl.Constant;
 import dev.galacticraft.impl.universe.BuiltinObjects;
 import dev.galacticraft.impl.universe.display.config.IconCelestialDisplayConfig;
 import dev.galacticraft.impl.universe.display.type.IconCelestialDisplayType;
 import dev.galacticraft.impl.universe.position.config.StaticCelestialPositionConfig;
 import dev.galacticraft.impl.universe.position.type.StaticCelestialPositionType;
+import dev.galacticraft.machinelib.api.gas.Gases;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
