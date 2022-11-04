@@ -28,6 +28,9 @@
     ],
     "client": [
       "dev.galacticraft.impl.internal.client.fabric.GalacticraftAPIClient"
+    ],
+    "fabric-datagen": [
+      "dev.galacticraft.impl.internal.fabric.GalacticraftAPIData"
     ]
   },
   "mixins": [
@@ -53,13 +56,17 @@
   },
   "custom": {
     "loom:injected_interfaces": {
-      "net/minecraft/class_634": ["dev.galacticraft.api.client.accessor.ClientSatelliteAccessor"],
-      "net/minecraft/class_742": [
-        "dev.galacticraft.api.accessor.GearInventoryProvider",
-        "dev.galacticraft.impl.client.accessor.ClientResearchAccessor"
-      ],
-      "net/minecraft/class_1140": ["dev.galacticraft.impl.accessor.SoundSystemAccessor"],
-      "net/minecraft/class_1309": ["dev.galacticraft.api.accessor.GearInventoryProvider"]
+      "net/minecraft/class_634": ["dev/galacticraft/api/client/accessor/ClientSatelliteAccessor"],
+      "net/minecraft/class_742": ["dev/galacticraft/api/accessor/GearInventoryProvider"],
+      "net/minecraft/class_1309": ["dev/galacticraft/api/accessor/GearInventoryProvider"],
+      "net/minecraft/class_1140": ["dev/galacticraft/impl/accessor/SoundSystemAccessor"],
+      "net/minecraft/class_1937": ["dev/galacticraft/api/accessor/WorldOxygenAccessor"],
+      "net/minecraft/class_2812": ["dev/galacticraft/api/accessor/ChunkOxygenAccessor"],
+      "net/minecraft/class_2818": ["dev/galacticraft/api/accessor/ChunkOxygenAccessor"],
+      "net/minecraft/class_2821": ["dev/galacticraft/api/accessor/ChunkOxygenAccessor"],
+      "net/minecraft/class_2826": ["dev/galacticraft/api/accessor/ChunkSectionOxygenAccessor"],
+      "net/minecraft/class_2839": ["dev/galacticraft/api/accessor/ChunkOxygenAccessor"],
+      "net/minecraft/class_3222": ["dev/galacticraft/api/accessor/GearInventoryProvider"]
     },
     "modmenu": {
       "badges": [ "library" ],

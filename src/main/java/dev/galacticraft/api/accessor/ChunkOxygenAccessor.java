@@ -30,11 +30,13 @@ public interface ChunkOxygenAccessor {
      * Returns whether the supplied position in the chunk is breathable for entities
      *
      * @param x the position to test on the X-axis, normalized from 0 to 15
-     * @param y the position to test on the Y-axis, will return {@code false} if it is outside the world's min/max height
+     * @param y the position to test on the Y-axis, will return the default breathability if it is outside the world's min/max height
      * @param z the position to test on the Z-axis, normalized from 0 to 15
      * @return whether the supplied position in the chunk is breathable for entities
      */
-    boolean isBreathable(int x, int y, int z);
+    default boolean isBreathable(int x, int y, int z) {
+        throw new RuntimeException("This should be overridden by mixin!");
+    }
 
     /**
      * Sets the breathable state for entities for the supplied position
@@ -44,5 +46,7 @@ public interface ChunkOxygenAccessor {
      * @param z     the position to test on the Z-axis, normalized from 0 to 15
      * @param value whether the supplied position is breathable
      */
-    void setBreathable(int x, int y, int z, boolean value);
+    default void setBreathable(int x, int y, int z, boolean value) {
+        throw new RuntimeException("This should be overridden by mixin!");
+    }
 }

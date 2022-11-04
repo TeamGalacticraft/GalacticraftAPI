@@ -20,33 +20,15 @@
  * SOFTWARE.
  */
 
-package dev.galacticraft.impl.internal.accessor;
+package dev.galacticraft.impl.internal.fabric;
 
-import net.minecraft.network.FriendlyByteBuf;
-import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import dev.galacticraft.impl.universe.data.CelestialBodyGenetator;
+import net.fabricmc.fabric.api.datagen.v1.DataGeneratorEntrypoint;
+import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
 
-import java.util.BitSet;
-
-/**
- * @author <a href="https://github.com/TeamGalacticraft">TeamGalacticraft</a>
- */
-@ApiStatus.Internal
-public interface ChunkSectionOxygenAccessorInternal {
-    @Nullable BitSet getInversion();
-
-    void setInversion(@Nullable BitSet inverted);
-
-    short getModifiedBlocks();
-
-    void setModifiedBlocks(short amount);
-
-    void writeOxygenPacket(@NotNull FriendlyByteBuf buf);
-
-    void readOxygenPacket(@NotNull FriendlyByteBuf buf);
-
-    boolean getDefaultBreathable();
-
-    void setDefaultBreathable(boolean breathable);
+public class GalacticraftAPIData implements DataGeneratorEntrypoint {
+    @Override
+    public void onInitializeDataGenerator(FabricDataGenerator generator) {
+        generator.addProvider(CelestialBodyGenetator::new);
+    }
 }

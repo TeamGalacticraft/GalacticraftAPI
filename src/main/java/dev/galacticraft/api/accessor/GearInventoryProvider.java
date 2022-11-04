@@ -30,26 +30,26 @@ import net.minecraft.world.Container;
  */
 public interface GearInventoryProvider {
     default Container getGearInv() {
-        throw new RuntimeException("This should not happen, you need to override this!");
+        throw new RuntimeException("This should be overridden by mixin!");
     }
 
     default Container getOxygenTanks() {
-        throw new RuntimeException("This should not happen, you need to override this!");
+        throw new RuntimeException("This should be overridden by mixin!");
     }
 
     default Container getThermalArmor() {
-        throw new RuntimeException("This should not happen, you need to override this!");
+        throw new RuntimeException("This should be overridden by mixin!");
     }
 
     default Container getAccessories() {
-        throw new RuntimeException("This should not happen, you need to override this!");
+        throw new RuntimeException("This should be overridden by mixin!");
     }
 
     default void writeGearToNbt(CompoundTag tag) {
-        throw new RuntimeException("This should not happen, you need to override this!");
+        throw new RuntimeException("This should be overridden by mixin!");
     }
 
-   default void readGearFromNbt(CompoundTag tag) {
-       throw new RuntimeException("This should not happen, you need to override this!");
-   }
+    default void readGearFromNbt(CompoundTag tag) {
+        throw new RuntimeException("This should be overridden by mixin!");
+    }
 }

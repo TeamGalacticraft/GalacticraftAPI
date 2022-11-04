@@ -22,18 +22,19 @@
 
 package dev.galacticraft.impl.internal.mixin;
 
+import dev.galacticraft.impl.Constant;
 import dev.galacticraft.impl.internal.accessor.ChunkOxygenSyncer;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ChunkHolder;
+import net.minecraft.world.level.chunk.LevelChunk;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-
-import java.util.List;
-import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.ClientboundCustomPayloadPacket;
-import net.minecraft.server.level.ChunkHolder;
-import net.minecraft.world.level.chunk.LevelChunk;
 
 /**
  * @author <a href="https://github.com/TeamGalacticraft">TeamGalacticraft</a>
@@ -45,9 +46,7 @@ public abstract class ChunkHolderMixin {
 
     @Inject(method = "broadcastChanges", at = @At("HEAD"))
     private void galacticraft_flushOxygenPackets(LevelChunk chunk, CallbackInfo ci) {
-        List<ClientboundCustomPayloadPacket> packets = ((ChunkOxygenSyncer) chunk).syncOxygenPacketsToClient();
-        for (ClientboundCustomPayloadPacket packet : packets) {
-            this.broadcast(packet, false);
-        }
+        FriendlyByteBuf buf = ((ChunkOxygenSyncer) chunk).syncOxygenPacketsToClient();
+        if (buf != null) this.broadcast(ServerPlayNetworking.createS2CPacket(new ResourceLocation(Constant.MOD_ID, "oxygen_update"), buf), false);
     }
 }

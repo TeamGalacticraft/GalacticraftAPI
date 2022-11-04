@@ -23,14 +23,13 @@
 package dev.galacticraft.impl.internal.mixin;
 
 import dev.galacticraft.api.accessor.GearInventoryProvider;
-import dev.galacticraft.api.accessor.WorldOxygenAccessor;
 import dev.galacticraft.api.entity.attribute.GcApiEntityAttributes;
-import dev.galacticraft.api.gas.Gases;
 import dev.galacticraft.api.item.Accessory;
 import dev.galacticraft.api.item.OxygenGear;
 import dev.galacticraft.api.item.OxygenMask;
 import dev.galacticraft.api.universe.celestialbody.CelestialBody;
 import dev.galacticraft.impl.internal.fabric.GalacticraftAPI;
+import dev.galacticraft.machinelib.api.gas.Gases;
 import net.fabricmc.fabric.api.transfer.v1.context.ContainerItemContext;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidStorage;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;
@@ -93,7 +92,7 @@ public abstract class LivingEntityMixin extends Entity implements GearInventoryP
     private boolean galacticraft_testForBreathability(LivingEntity entity, TagKey<Fluid> tag) {
         //noinspection ConstantConditions
         assert ((Object) entity) == this;
-        return entity.isEyeInFluid(tag) || !((WorldOxygenAccessor) this.level).isBreathable(entity.blockPosition().relative(Direction.UP, (int) Math.floor(this.getEyeHeight(entity.getPose(), entity.getDimensions(entity.getPose())))));
+        return entity.isEyeInFluid(tag) || !this.level.isBreathable(entity.blockPosition().relative(Direction.UP, (int) Math.floor(this.getEyeHeight(entity.getPose(), entity.getDimensions(entity.getPose())))));
     }
 
     @Inject(method = "tick", at = @At(value = "RETURN"))

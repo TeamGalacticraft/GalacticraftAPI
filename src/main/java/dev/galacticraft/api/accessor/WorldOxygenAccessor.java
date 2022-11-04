@@ -34,7 +34,11 @@ public interface WorldOxygenAccessor {
      * @param pos the position to test
      * @return whether the supplied position in the chunk is breathable for entities
      */
-    boolean isBreathable(BlockPos pos);
+    default boolean isBreathable(BlockPos pos) {
+        throw new RuntimeException("This should be overridden by mixin!");
+    }
 
-    void setBreathable(BlockPos pos, boolean value);
+    default void setBreathable(BlockPos pos, boolean value) {
+        throw new RuntimeException("This should be overridden by mixin!");
+    }
 }

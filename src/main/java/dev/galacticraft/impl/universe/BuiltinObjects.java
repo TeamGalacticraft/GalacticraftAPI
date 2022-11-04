@@ -23,7 +23,6 @@
 package dev.galacticraft.impl.universe;
 
 import dev.galacticraft.api.gas.GasComposition;
-import dev.galacticraft.api.gas.Gases;
 import dev.galacticraft.api.registry.AddonRegistry;
 import dev.galacticraft.api.universe.celestialbody.CelestialBody;
 import dev.galacticraft.api.universe.celestialbody.CelestialBodyType;
@@ -42,7 +41,10 @@ import dev.galacticraft.impl.universe.position.config.OrbitalCelestialPositionCo
 import dev.galacticraft.impl.universe.position.config.StaticCelestialPositionConfig;
 import dev.galacticraft.impl.universe.position.type.OrbitalCelestialPositionType;
 import dev.galacticraft.impl.universe.position.type.StaticCelestialPositionType;
+
 import java.util.Optional;
+
+import dev.galacticraft.machinelib.api.gas.Gases;
 import net.minecraft.core.Registry;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
