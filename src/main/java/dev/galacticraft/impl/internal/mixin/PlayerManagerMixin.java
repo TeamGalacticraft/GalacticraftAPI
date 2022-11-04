@@ -23,28 +23,36 @@
 package dev.galacticraft.impl.internal.mixin;
 
 import dev.galacticraft.api.accessor.GearInventoryProvider;
+import dev.galacticraft.api.accessor.SatelliteAccessor;
 import dev.galacticraft.impl.Constant;
+import dev.galacticraft.impl.universe.position.config.SpaceStationConfig;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
-import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
-import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtOps;
 import net.minecraft.network.Connection;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientboundCustomPayloadPacket;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.players.PlayerList;
 import net.minecraft.world.Container;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-
-import java.util.Collection;
 
 /**
  * @author <a href="https://github.com/TeamGalacticraft">TeamGalacticraft</a>
  */
 @Mixin(PlayerList.class)
 public abstract class PlayerManagerMixin {
+    @Shadow public abstract MinecraftServer getServer();
+
+    @Shadow public abstract void broadcastAll(Packet<?> packet);
+
     @Inject(method = "placeNewPlayer", at = @At("RETURN"))
     private void galacticraft_syncGearInventory(Connection connection, ServerPlayer player, CallbackInfo ci) {
         FriendlyByteBuf buf = PacketByteBufs.create();
@@ -55,12 +63,11 @@ public abstract class PlayerManagerMixin {
             buf.writeItem(inventory.getItem(i));
         }
 
-        Collection<ServerPlayer> tracking = PlayerLookup.tracking(player);
-        if (!tracking.contains(player)) {
-            ServerPlayNetworking.send(player, new ResourceLocation(Constant.MOD_ID, "gear_inv_sync"), buf);
-        }
-        for (ServerPlayer pl : tracking) {
-            ServerPlayNetworking.send(pl, new ResourceLocation(Constant.MOD_ID, "gear_inv_sync"), PacketByteBufs.copy(buf));
-        }
+        this.broadcastAll(new ClientboundCustomPayloadPacket(new ResourceLocation(Constant.MOD_ID, "gear_inv_sync"), buf));
+
+        ((SatelliteAccessor) this.getServer()).getSatellites().forEach((id, satellite) -> {
+            CompoundTag compound = (CompoundTag) SpaceStationConfig.CODEC.encode(satellite.config(), NbtOps.INSTANCE, new CompoundTag()).get().orThrow();
+            connection.send(new ClientboundCustomPayloadPacket(new ResourceLocation(Constant.MOD_ID, "add_satellite"), PacketByteBufs.create().writeResourceLocation(id).writeNbt(compound)));
+        });
     }
 }

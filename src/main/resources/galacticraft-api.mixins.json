@@ -12,7 +12,6 @@
     "EmptyChunkMixin",
     "EntityGravityMixin",
     "LivingEntityMixin",
-    "MinecraftServerAccessor",
     "MinecraftServerMixin",
     "PlayerManagerMixin",
     "ProtoChunkMixin",

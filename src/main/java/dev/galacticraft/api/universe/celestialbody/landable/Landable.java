@@ -40,7 +40,7 @@ public interface Landable<C extends CelestialBodyConfig> extends SurfaceEnvironm
      * @param config the celestial body configuration to be queried
      * @return the registry key of the {@link Level} this celestial body is linked to
      */
-    @NotNull ResourceKey<Level> world(C config);
+    @NotNull ResourceKey<Level> world(@NotNull C config);
 
     /**
      * Returns the access weight required to generically reach this celestial body or a negative value if it cannot be accessed this way.

@@ -46,9 +46,9 @@ public record RocketDataImpl(int color, ResourceLocation cone, ResourceLocation 
     public static final RocketDataImpl EMPTY = new RocketDataImpl(0xffffffff, new ResourceLocation(Constant.MOD_ID, "invalid"), new ResourceLocation(Constant.MOD_ID, "invalid"), new ResourceLocation(Constant.MOD_ID, "invalid"), new ResourceLocation(Constant.MOD_ID, "invalid"), new ResourceLocation(Constant.MOD_ID, "invalid"), new ResourceLocation(Constant.MOD_ID, "invalid"));
 
     public static RocketDataImpl fromNbt(@NotNull CompoundTag nbt) {
-        if (nbt.getBoolean("Empty")) return empty();
+        if (nbt.getBoolean("empty")) return empty();
         return new RocketDataImpl(
-                nbt.getInt("Color"),
+                nbt.getInt("color"),
                 new ResourceLocation(nbt.getString("cone")),
                 new ResourceLocation(nbt.getString("body")),
                 new ResourceLocation(nbt.getString("fin")),
@@ -66,7 +66,7 @@ public record RocketDataImpl(int color, ResourceLocation cone, ResourceLocation 
     @Override
     public @NotNull CompoundTag toNbt(@NotNull CompoundTag nbt) {
         if (this.isEmpty()) {
-            nbt.putBoolean("Empty", true);
+            nbt.putBoolean("empty", true);
             return nbt;
         }
         nbt.putInt("color", this.color());

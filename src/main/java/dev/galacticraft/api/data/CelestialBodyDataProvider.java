@@ -29,7 +29,7 @@ import com.google.gson.JsonElement;
 import com.mojang.logging.LogUtils;
 import com.mojang.serialization.JsonOps;
 import dev.galacticraft.api.gas.GasComposition;
-import dev.galacticraft.api.satellite.SatelliteRecipe;
+import dev.galacticraft.api.satellite.SpaceStationRecipe;
 import dev.galacticraft.api.universe.celestialbody.CelestialBody;
 import dev.galacticraft.api.universe.display.CelestialDisplay;
 import dev.galacticraft.api.universe.galaxy.Galaxy;
@@ -218,7 +218,7 @@ public abstract class CelestialBodyDataProvider implements DataProvider {
         private GasComposition atmosphere;
         private float gravity;
         private int accessWeight, dayTemperature, nightTemperature;
-        private Optional<SatelliteRecipe> satelliteRecipe;
+        private Optional<SpaceStationRecipe> satelliteRecipe;
 
         PlanetBuilder(ResourceLocation key) {
             this.key = key;
@@ -290,7 +290,7 @@ public abstract class CelestialBodyDataProvider implements DataProvider {
             return this;
         }
 
-        public PlanetBuilder satelliteRecipe(Optional<SatelliteRecipe> satelliteRecipe) {
+        public PlanetBuilder satelliteRecipe(Optional<SpaceStationRecipe> satelliteRecipe) {
             this.satelliteRecipe = satelliteRecipe;
             return this;
         }

@@ -5,7 +5,8 @@
   "star.galacticraft-api.sol.desc": "",
   "planet.galacticraft-api.earth.name": "Earth",
   "planet.galacticraft-api.earth.desc": "The Overworld",
-  "ui.galacticraft-api.bodies.satellite": "Satellite",
+  "ui.galacticraft-api.space_station.name": "Space Station",
+  "ui.galacticraft-api.space_station.description": "Space Station",
 
   "ui.galacticraft-api.gases.hydrogen": "Hydrogen",
   "ui.galacticraft-api.gases.nitrogen": "Nitrogen",

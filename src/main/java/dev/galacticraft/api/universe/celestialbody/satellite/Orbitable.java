@@ -22,21 +22,37 @@
 
 package dev.galacticraft.api.universe.celestialbody.satellite;
 
-import dev.galacticraft.api.satellite.SatelliteRecipe;
+import dev.galacticraft.api.satellite.SpaceStationRecipe;
 import dev.galacticraft.api.universe.celestialbody.CelestialBodyConfig;
+import dev.galacticraft.impl.universe.position.config.SpaceStationConfig;
+import net.minecraft.core.RegistryAccess;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
 
 /**
  * Represents a {@link dev.galacticraft.api.universe.celestialbody.CelestialBodyType<C> celestial body type} that can potentially allow player-made objects to orbit itself.
+ * Moons and other natural satellites are not effected by this.
  *
  * @param <C> the type of configuration
  */
 public interface Orbitable<C extends CelestialBodyConfig> {
     /**
-     * Returns the {@link SatelliteRecipe stellite recipe} of this celestial body, or {@code null} if satellites should not be allowed to be created
+     * Returns the {@link SpaceStationRecipe stellite recipe} of this celestial body, or {@code null} if satellites should not be allowed to be created
      *
      * @param config the celestial body configuration to be queried
-     * @return the {@link SatelliteRecipe satellite recipe} of this celestial body
+     * @return the {@link SpaceStationRecipe satellite recipe} of this celestial body
      */
-    @Nullable SatelliteRecipe satelliteRecipe(C config);
+    @Nullable SpaceStationRecipe getSpaceStationRecipe(C config);
+
+    /**
+     * Callback to register client listeners (for example, {@link net.fabricmc.fabric.api.client.rendering.v1.DimensionRenderingRegistry.SkyRenderer sky renderers}) for this celestial body.
+     * Should only be called on the client.
+     *
+     * @param world
+     * @param key             the {@link ResourceKey} of the satellite's dimension
+     * @param config          the celestial body configuration
+     * @param spaceStationConfig
+     */
+    void registerClientWorldHooks(RegistryAccess manager, /*Client*/Level world, ResourceKey<Level> key, C config, SpaceStationConfig spaceStationConfig);
 }

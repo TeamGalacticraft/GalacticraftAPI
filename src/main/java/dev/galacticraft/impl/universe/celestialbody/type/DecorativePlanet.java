@@ -23,17 +23,22 @@
 package dev.galacticraft.impl.universe.celestialbody.type;
 
 import dev.galacticraft.api.gas.GasComposition;
-import dev.galacticraft.api.satellite.SatelliteRecipe;
+import dev.galacticraft.api.satellite.SpaceStationRecipe;
 import dev.galacticraft.api.universe.celestialbody.CelestialBody;
 import dev.galacticraft.api.universe.celestialbody.CelestialBodyType;
 import dev.galacticraft.api.universe.celestialbody.satellite.Orbitable;
 import dev.galacticraft.api.universe.display.CelestialDisplay;
 import dev.galacticraft.api.universe.galaxy.Galaxy;
 import dev.galacticraft.api.universe.position.CelestialPosition;
+import dev.galacticraft.impl.internal.client.GCApiDimensionEffects;
 import dev.galacticraft.impl.universe.celestialbody.config.DecorativePlanetConfig;
+import dev.galacticraft.impl.universe.position.config.SpaceStationConfig;
+import net.fabricmc.fabric.api.client.rendering.v1.DimensionRenderingRegistry;
 import net.minecraft.core.Registry;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -85,7 +90,20 @@ public class DecorativePlanet extends CelestialBodyType<DecorativePlanetConfig> 
     }
 
     @Override
-    public @Nullable SatelliteRecipe satelliteRecipe(DecorativePlanetConfig config) {
+    public @Nullable SpaceStationRecipe getSpaceStationRecipe(DecorativePlanetConfig config) {
         return config.satelliteRecipe().orElse(null);
+    }
+
+    @Override
+    public void registerClientWorldHooks(RegistryAccess manager, Level world, ResourceKey<Level> key, DecorativePlanetConfig config, SpaceStationConfig spaceStationConfig) {
+        DimensionRenderingRegistry.registerCloudRenderer(key, GCApiDimensionEffects.NO_CLOUDS);
+        DimensionRenderingRegistry.registerWeatherRenderer(key, GCApiDimensionEffects.NO_WEATHER);
+
+        Registry<CelestialBody<?, ?>> registry = CelestialBody.getRegistry(manager);
+        CelestialBody<?, ?> celestialBody = registry.get(config.parent());
+        while (celestialBody.parent(manager) != null) {
+            celestialBody = celestialBody.parent(manager);
+        }
+        DimensionRenderingRegistry.registerSkyRenderer(key, GCApiDimensionEffects.createSpaceStationRenderer(4, 30, celestialBody.display(), config.display()));
     }
 }

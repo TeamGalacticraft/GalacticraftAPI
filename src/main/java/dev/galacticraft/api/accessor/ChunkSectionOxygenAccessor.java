@@ -26,10 +26,26 @@ package dev.galacticraft.api.accessor;
  * @author <a href="https://github.com/TeamGalacticraft">TeamGalacticraft</a>
  */
 public interface ChunkSectionOxygenAccessor {
+    /**
+     * Returns whether the supplied position in this chunk section is breathable for entities
+     *
+     * @param x the position to test on the X-axis
+     * @param y the position to test on the Y-axis
+     * @param z the position to test on the Z-axis
+     * @return whether the supplied position in this chunk section is breathable for entities
+     */
     default boolean isBreathable(int x, int y, int z) {
         throw new RuntimeException("This should be overridden by mixin!");
     }
 
+    /**
+     * Sets the breathable state for entities for the supplied position
+     *
+     * @param x     the position to test on the X-axis
+     * @param y     the position to test on the Y-axis
+     * @param z     the position to test on the Z-axis
+     * @param value whether the supplied position is breathable
+     */
     default void setBreathable(int x, int y, int z, boolean value) {
         throw new RuntimeException("This should be overridden by mixin!");
     }

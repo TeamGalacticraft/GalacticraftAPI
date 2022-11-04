@@ -22,7 +22,7 @@
 
 package dev.galacticraft.impl.satellite;
 
-import dev.galacticraft.api.satellite.SatelliteRecipe;
+import dev.galacticraft.api.satellite.SpaceStationRecipe;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
@@ -31,10 +31,10 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import org.jetbrains.annotations.NotNull;
 
-public class SatelliteRecipeImpl implements SatelliteRecipe {
+public class SpaceStationRecipeImpl implements SpaceStationRecipe {
     private final Object2IntMap<Ingredient> ingredients;
 
-    public SatelliteRecipeImpl(Object2IntMap<Ingredient> list) {
+    public SpaceStationRecipeImpl(Object2IntMap<Ingredient> list) {
         this.ingredients = list;
     }
 

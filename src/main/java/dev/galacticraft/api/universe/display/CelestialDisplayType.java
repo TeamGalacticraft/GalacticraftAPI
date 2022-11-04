@@ -41,7 +41,7 @@ public abstract class CelestialDisplayType<C extends CelestialDisplayConfig> {
     }
 
     @Environment(EnvType.CLIENT)
-    public abstract Vector4f render(PoseStack matrices, BufferBuilder buffer, int size, double mouseX, double mouseY, float delta, Consumer<Supplier<ShaderInstance>> shaderSetter, C config);
+    public abstract Vector4f render(PoseStack matrices, BufferBuilder buffer, float size, double mouseX, double mouseY, float delta, Consumer<Supplier<ShaderInstance>> shaderSetter, C config);
 
     public Codec<CelestialDisplay<C, CelestialDisplayType<C>>> codec() {
         return this.codec;

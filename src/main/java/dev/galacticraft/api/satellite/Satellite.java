@@ -39,11 +39,11 @@ public interface Satellite<C extends CelestialBodyConfig> {
      * @return the ownership data of this satellite
      * @see SatelliteOwnershipData
      */
-    SatelliteOwnershipData ownershipData(C config);
+    SatelliteOwnershipData ownershipData(@NotNull C config);
 
     /**
      * Returns the custom name of this satellite
-     * By default it is {@code <Player Name>'s satellite}
+     * By default it is {@code [Player Name]'s satellite}
      *
      * @param config the satellite configuration to be queried
      * @return the custom name of this satellite
@@ -56,5 +56,5 @@ public interface Satellite<C extends CelestialBodyConfig> {
      * @param text   the text to set
      * @param config the satellite configuration to be set
      */
-    void setCustomName(@NotNull Component text, C config);
+    void setCustomName(@NotNull Component text, @NotNull C config);
 }

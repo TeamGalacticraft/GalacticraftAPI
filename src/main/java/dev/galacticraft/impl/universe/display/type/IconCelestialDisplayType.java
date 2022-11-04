@@ -51,7 +51,7 @@ public class IconCelestialDisplayType extends CelestialDisplayType<IconCelestial
     }
 
     @Override
-    public Vector4f render(PoseStack matrices, BufferBuilder buffer, int size, double mouseX, double mouseY, float delta, Consumer<Supplier<ShaderInstance>> shaderSetter, IconCelestialDisplayConfig config) {
+    public Vector4f render(PoseStack matrices, BufferBuilder buffer, float size, double mouseX, double mouseY, float delta, Consumer<Supplier<ShaderInstance>> shaderSetter, IconCelestialDisplayConfig config) {
         shaderSetter.accept(GameRenderer::getPositionTexShader);
         Matrix4f positionMatrix = matrices.last().pose();
         AbstractTexture texture = Minecraft.getInstance().getTextureManager().getTexture(config.texture());

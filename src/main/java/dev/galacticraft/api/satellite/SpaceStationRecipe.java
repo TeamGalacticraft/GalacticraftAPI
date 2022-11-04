@@ -25,7 +25,7 @@ package dev.galacticraft.api.satellite;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.*;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import dev.galacticraft.impl.satellite.SatelliteRecipeImpl;
+import dev.galacticraft.impl.satellite.SpaceStationRecipeImpl;
 import it.unimi.dsi.fastutil.objects.Object2IntArrayMap;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import org.jetbrains.annotations.Contract;
@@ -35,7 +35,7 @@ import java.util.function.Predicate;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.crafting.Ingredient;
 
-public interface SatelliteRecipe extends Predicate<Container> {
+public interface SpaceStationRecipe extends Predicate<Container> {
     Codec<Ingredient> INGREDIENT_CODEC = new Codec<>() {
         @Override
         public <T> DataResult<T> encode(Ingredient input, DynamicOps<T> ops, T prefix) {
@@ -48,7 +48,7 @@ public interface SatelliteRecipe extends Predicate<Container> {
         }
     };
 
-    Codec<SatelliteRecipe> CODEC = RecordCodecBuilder.create(i -> i.group(
+    Codec<SpaceStationRecipe> CODEC = RecordCodecBuilder.create(i -> i.group(
             new Codec<Object2IntMap<Ingredient>>() {
                 @Override
                 public <T> DataResult<T> encode(Object2IntMap<Ingredient> input, DynamicOps<T> ops, T prefix) {
@@ -64,12 +64,12 @@ public interface SatelliteRecipe extends Predicate<Container> {
                     mapLike.entries().forEachOrdered(ttPair -> list.put(INGREDIENT_CODEC.decode(ops, ttPair.getFirst()).get().orThrow().getFirst(), ops.getNumberValue(ttPair.getSecond()).get().orThrow().intValue()));
                     return DataResult.success(new Pair<>(list, input));
                 }
-            }.fieldOf("ingredients").forGetter(SatelliteRecipe::ingredients)
-    ).apply(i, SatelliteRecipe::create));
+            }.fieldOf("ingredients").forGetter(SpaceStationRecipe::ingredients)
+    ).apply(i, SpaceStationRecipe::create));
 
     @Contract(value = "_ -> new", pure = true)
-    static @NotNull SatelliteRecipe create(Object2IntMap<Ingredient> list) {
-        return new SatelliteRecipeImpl(list);
+    static @NotNull SpaceStationRecipe create(Object2IntMap<Ingredient> list) {
+        return new SpaceStationRecipeImpl(list);
     }
 
     Object2IntMap<Ingredient> ingredients();
