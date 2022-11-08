@@ -61,7 +61,6 @@ public class CelestialBodyGenetator extends CelestialBodyDataProvider {
                 .surfaceTemperature(5772);
 
 //        celestialBody(BuiltinObjects.SOL_KEY, BuiltinObjects.SOL);
-        celestialBody(BuiltinObjects.EARTH_KEY, BuiltinObjects.EARTH);
     }
 
     @Override
