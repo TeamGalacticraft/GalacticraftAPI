@@ -53,7 +53,7 @@ public interface SatelliteRecipe extends Predicate<Container> {
                 @Override
                 public <T> DataResult<T> encode(Int2ObjectMap<Ingredient> input, DynamicOps<T> ops, T prefix) {
                     RecordBuilder<T> mapBuilder = ops.mapBuilder();
-                    input.forEach((amount, ingredient) -> mapBuilder.add(ops.createInt(amount), INGREDIENT_CODEC.encode(ingredient, ops, null).get().orThrow()));
+                    input.forEach((amount, ingredient) -> mapBuilder.add(ops.createInt(amount).toString(), INGREDIENT_CODEC.encode(ingredient, ops, null).get().orThrow()));
                     return mapBuilder.build(prefix);
                 }
 
