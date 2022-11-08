@@ -61,7 +61,7 @@ public interface SatelliteRecipe extends Predicate<Container> {
                 public <T> DataResult<Pair<Int2ObjectMap<Ingredient>, T>> decode(DynamicOps<T> ops, T input) {
                     MapLike<T> mapLike = ops.getMap(input).get().orThrow();
                     Int2ObjectMap<Ingredient> list = new Int2ObjectArrayMap<>();
-                    mapLike.entries().forEachOrdered(ttPair -> list.put(ops.getNumberValue(ttPair.getFirst()).get().orThrow().intValue(), INGREDIENT_CODEC.decode(ops, ttPair.getSecond()).get().orThrow().getFirst()));
+                    mapLike.entries().forEachOrdered(ttPair -> list.put(Integer.decode(ops.getStringValue(ttPair.getFirst()).get().orThrow()).intValue(), INGREDIENT_CODEC.decode(ops, ttPair.getSecond()).get().orThrow().getFirst()));
                     return DataResult.success(new Pair<>(list, input));
                 }
             }.fieldOf("ingredients").forGetter(SatelliteRecipe::ingredients)

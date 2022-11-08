@@ -35,6 +35,7 @@ import dev.galacticraft.api.universe.celestialbody.landable.Landable;
 import dev.galacticraft.api.universe.display.CelestialDisplay;
 import dev.galacticraft.api.universe.galaxy.Galaxy;
 import dev.galacticraft.api.universe.position.CelestialPosition;
+import dev.galacticraft.dyndims.api.DynamicDimensionRegistry;
 import dev.galacticraft.impl.Constant;
 import dev.galacticraft.impl.internal.mixin.MinecraftServerAccessor;
 import dev.galacticraft.impl.internal.world.gen.SatelliteChunkGenerator;
@@ -65,6 +66,7 @@ import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.BiomeManager;
 import net.minecraft.world.level.border.BorderChangeListener;
+import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.chunk.ChunkStatus;
 import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.world.level.dimension.LevelStem;
@@ -110,31 +112,28 @@ public class SatelliteType extends CelestialBodyType<SatelliteConfig> implements
     public static CelestialBody<SatelliteConfig, SatelliteType> registerSatellite(@NotNull MinecraftServer server, @NotNull ServerPlayer player, @NotNull CelestialBody<?, ?> parent, StructureTemplate structure) {
         ResourceLocation id = new ResourceLocation(Objects.requireNonNull(server.registryAccess().registryOrThrow(AddonRegistry.CELESTIAL_BODY_KEY).getKey(parent)) + "_" + player.getScoreboardName().toLowerCase(Locale.ROOT));
         DimensionType type = new DimensionType(OptionalLong.empty(), true, false, false, true, 1, false, false, 0, 256, 256, TagKey.create(Registry.BLOCK_REGISTRY, new ResourceLocation(Constant.MOD_ID, "infiniburn_space")), new ResourceLocation(Constant.MOD_ID, "space_sky"), 0, new DimensionType.MonsterSettings(false, true, UniformInt.of(0, 7), 0));
-        LevelStem options = new LevelStem(Holder.direct(type), new SatelliteChunkGenerator(server.registryAccess().registryOrThrow(Registry.STRUCTURE_SET_REGISTRY), Holder.direct(GcApiBiomes.SPACE), structure));
+        SatelliteChunkGenerator chunkGenerator = new SatelliteChunkGenerator(server.registryAccess().registryOrThrow(Registry.STRUCTURE_SET_REGISTRY), Holder.direct(GcApiBiomes.SPACE), structure);
         SatelliteOwnershipData ownershipData = SatelliteOwnershipData.create(player.getUUID(), player.getScoreboardName(), new LinkedList<>(), false);
         CelestialPosition<?, ?> position = new CelestialPosition<>(OrbitalCelestialPositionType.INSTANCE, new OrbitalCelestialPositionConfig(1550, 10.0f, 0.0F, false));
         CelestialDisplay<?, ?> display = new CelestialDisplay<>(IconCelestialDisplayType.INSTANCE, new IconCelestialDisplayConfig(new ResourceLocation(Constant.MOD_ID, "satellite"), 0, 0, 16, 16, 1));
         ResourceKey<Level> key = ResourceKey.create(Registry.DIMENSION_REGISTRY, id);
-        ResourceKey<DimensionType> key2 = ResourceKey.create(Registry.DIMENSION_TYPE_REGISTRY, id);
+        DynamicDimensionRegistry registry = (DynamicDimensionRegistry) server;
         assert server.getLevel(key) == null : "World already registered?!";
-        assert server.registryAccess().registryOrThrow(Registry.DIMENSION_TYPE_REGISTRY).get(key2) == null : "Dimension Type already registered?!";
-        Registry.register(server.registryAccess().registryOrThrow(Registry.DIMENSION_TYPE_REGISTRY), id, type);
-        return create(id, server, parent, position, display, options, ownershipData, player.getGameProfile().getName() + "'s Space Station");
+        assert registry.dimensionExists(id) : "Dimension Type already registered?!";
+        return create(id, server, parent, position, display, chunkGenerator, type, ownershipData, player.getGameProfile().getName() + "'s Space Station");
     }
 
     @ApiStatus.Internal
     public static CelestialBody<SatelliteConfig, SatelliteType> create(ResourceLocation id, MinecraftServer server, CelestialBody<?, ?> parent, CelestialPosition<?, ?> position, CelestialDisplay<?, ?> display,
-                                                                       LevelStem options, SatelliteOwnershipData ownershipData, String name) {
-        SatelliteConfig config = new SatelliteConfig(ResourceKey.create(AddonRegistry.CELESTIAL_BODY_KEY, server.registryAccess().registryOrThrow(AddonRegistry.CELESTIAL_BODY_KEY).getKey(parent)), parent.galaxy(), position, display, ownershipData, ResourceKey.create(Registry.DIMENSION_REGISTRY, id), EMPTY_GAS_COMPOSITION, 0.0f, parent.type() instanceof Landable ? ((Landable) parent.type()).accessWeight(parent.config()) : 1, options);
+                                                                       ChunkGenerator generator, DimensionType type, SatelliteOwnershipData ownershipData, String name) {
+        Constant.LOGGER.debug("Attempting to create a world dynamically ({})", id);
+
+        ((DynamicDimensionRegistry)server).addDynamicDimension(id, generator, type);
+
+        SatelliteConfig config = new SatelliteConfig(ResourceKey.create(AddonRegistry.CELESTIAL_BODY_KEY, server.registryAccess().registryOrThrow(AddonRegistry.CELESTIAL_BODY_KEY).getKey(parent)), parent.galaxy(), position, display, ownershipData, ResourceKey.create(Registry.DIMENSION_REGISTRY, id), EMPTY_GAS_COMPOSITION, 0.0f, parent.type() instanceof Landable ? ((Landable) parent.type()).accessWeight(parent.config()) : 1, new LevelStem(Holder.direct(type), generator));
         config.customName(Component.translatable(name));
         CelestialBody<SatelliteConfig, SatelliteType> satellite = INSTANCE.configure(config);
         ((SatelliteAccessor) server).addSatellite(id, satellite);
-        Constant.LOGGER.debug("Attempting to create a world dynamically ({})", id);
-
-        DerivedLevelData unmodifiableLevelProperties = new DerivedLevelData(server.getWorldData(), server.getWorldData().overworldData());
-        ServerLevel serverWorld2 = new ServerLevel(server, ((MinecraftServerAccessor) server).getWorkerExecutor(), ((MinecraftServerAccessor) server).getSession(), unmodifiableLevelProperties, ResourceKey.create(Registry.DIMENSION_REGISTRY, id), options, EMPTY_PROGRESS_LISTENER, server.getWorldData().worldGenSettings().isDebug(), BiomeManager.obfuscateSeed(server.getWorldData().worldGenSettings().seed()), ImmutableList.of(), false);
-        server.getLevel(Level.OVERWORLD).getWorldBorder().addListener(new BorderChangeListener.DelegateBorderChangeListener(serverWorld2.getWorldBorder()));
-        ((MinecraftServerAccessor) server).getWorlds().put(ResourceKey.create(Registry.DIMENSION_REGISTRY, id), serverWorld2);
 
         for (ServerPlayer player : server.getPlayerList().getPlayers()) {
             CompoundTag compound = (CompoundTag) SatelliteConfig.CODEC.encode(satellite.config(), NbtOps.INSTANCE, new CompoundTag()).get().orThrow();

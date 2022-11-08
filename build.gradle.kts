@@ -112,6 +112,7 @@ repositories {
             includeGroup("dev.galacticraft")
         }
     }
+    maven("https://maven.bai.lol")
 }
 
 dependencies {
@@ -122,7 +123,7 @@ dependencies {
     modImplementation("net.fabricmc.fabric-api:fabric-api:$fabric")
 
     modImplementation("dev.galacticraft:MachineLib:$machinelib")
-//    modImplementation("dev.galacticraft:dyndims:$dyndims")
+    modImplementation("dev.galacticraft:dyndims-fabric:$dyndims")
 }
 
 tasks.processResources {
