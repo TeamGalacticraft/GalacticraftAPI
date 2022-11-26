@@ -36,7 +36,6 @@
   "mixins": [
     "galacticraft-api.mixins.json"
   ],
-  "accessWidener": "galacticraft-api.accesswidener",
   "depends": {
     "fabricloader": ">=0.14",
     "minecraft": ">=1.19.2",

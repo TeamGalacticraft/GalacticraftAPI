@@ -1,6 +1,7 @@
 pluginManagement {
     repositories {
-        maven("https://maven.fabricmc.net/") {
+        maven {
+            url "https://maven.fabricmc.net/"
             name = "Fabric"
             content {
                 includeGroup("net.fabricmc")
@@ -8,7 +9,10 @@ pluginManagement {
                 includeGroup("fabric-loom")
             }
         }
-        maven("https://server.bbkr.space/artifactory/libs-release/") {
+        maven { url "https://maven.architectury.dev/" }
+        maven { url "https://maven.minecraftforge.net/" }
+        maven{
+            url"https://server.bbkr.space/artifactory/libs-release/"
             name = "Cotton"
             content {
                 includeGroup("io.github.juuxel.loom-quiltflower")
@@ -18,5 +22,8 @@ pluginManagement {
         gradlePluginPortal()
     }
 }
+include("common")
+include("fabric")
+include("forge")
 
 rootProject.name = "GalacticraftAPI"

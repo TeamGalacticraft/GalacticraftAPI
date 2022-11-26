@@ -29,7 +29,6 @@ import dev.galacticraft.api.universe.celestialbody.CelestialBody;
 import dev.galacticraft.impl.Constant;
 import dev.galacticraft.impl.universe.celestialbody.type.SatelliteType;
 import dev.galacticraft.impl.universe.position.config.SatelliteConfig;
-import net.fabricmc.fabric.api.util.NbtType;
 import net.minecraft.core.Registry;
 import net.minecraft.nbt.*;
 import net.minecraft.resources.ResourceKey;
@@ -111,7 +110,7 @@ public abstract class MinecraftServerMixin implements SatelliteAccessor {
         File worldFile = this.storageSource.getLevelPath(LevelResource.ROOT).toFile();
         if (new File(worldFile, "satellites.dat").exists()) {
             try {
-                ListTag nbt = NbtIo.readCompressed(new File(worldFile, "satellites.dat")).getList("satellites", NbtType.COMPOUND);
+                ListTag nbt = NbtIo.readCompressed(new File(worldFile, "satellites.dat")).getList("satellites", Tag.TAG_COMPOUND);
                 assert nbt != null : "NBT list was null";
                 for (Tag compound : nbt) {
                     assert compound instanceof CompoundTag : "Not a compound?!";

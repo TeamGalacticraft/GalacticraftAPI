@@ -22,7 +22,6 @@
 
 package dev.galacticraft.impl.universe.celestialbody.type;
 
-import com.google.common.collect.ImmutableList;
 import com.mojang.serialization.Codec;
 import dev.galacticraft.api.accessor.SatelliteAccessor;
 import dev.galacticraft.api.gas.GasComposition;
@@ -37,7 +36,6 @@ import dev.galacticraft.api.universe.galaxy.Galaxy;
 import dev.galacticraft.api.universe.position.CelestialPosition;
 import dev.galacticraft.dyndims.api.DynamicDimensionRegistry;
 import dev.galacticraft.impl.Constant;
-import dev.galacticraft.impl.internal.mixin.MinecraftServerAccessor;
 import dev.galacticraft.impl.internal.world.gen.SatelliteChunkGenerator;
 import dev.galacticraft.impl.internal.world.gen.biome.GcApiBiomes;
 import dev.galacticraft.impl.universe.display.config.IconCelestialDisplayConfig;
@@ -57,21 +55,17 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.level.progress.ChunkProgressListener;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.valueproviders.UniformInt;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.biome.BiomeManager;
-import net.minecraft.world.level.border.BorderChangeListener;
 import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.chunk.ChunkStatus;
 import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.world.level.dimension.LevelStem;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
-import net.minecraft.world.level.storage.DerivedLevelData;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
