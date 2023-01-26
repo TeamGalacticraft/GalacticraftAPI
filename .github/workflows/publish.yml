@@ -21,6 +21,18 @@ jobs:
           java-version: 17
           distribution: temurin
 
+      - uses: actions/cache@v2
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/loom-cache
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/gradle-wrapper.properties') }}
+          restore-keys: ${{ runner.os }}-gradle
+
+      - name: make gradle wrapper executable
+        run: chmod +x ./gradlew
+
       - name: Publish
         uses: gradle/gradle-build-action@v2
         with:
