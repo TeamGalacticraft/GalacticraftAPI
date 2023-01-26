@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2021 Team Galacticraft
+ * Copyright (c) 2019-2022 Team Galacticraft
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,12 +22,12 @@
 
 package dev.galacticraft.api.rocket.part;
 
-import com.mojang.serialization.Codec;
-import net.minecraft.util.StringIdentifiable;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Locale;
+import net.minecraft.util.StringRepresentable;
 
-public enum RocketPartType implements StringIdentifiable {
+public enum RocketPartType implements StringRepresentable {
     CONE,
     BODY,
     FIN,
@@ -35,10 +35,10 @@ public enum RocketPartType implements StringIdentifiable {
     BOTTOM,
     UPGRADE;
 
-    public static final Codec<RocketPartType> CODEC = StringIdentifiable.createCodec(Enum::ordinal, value -> RocketPartType.values()[value], s -> RocketPartType.valueOf(s.toUpperCase(Locale.ROOT)));
+    public static final com.mojang.serialization.Codec<RocketPartType> CODEC = com.mojang.serialization.Codec.STRING.xmap(s -> RocketPartType.valueOf(s.toUpperCase(Locale.ROOT)), RocketPartType::getSerializedName);
 
     @Override
-    public String asString() {
-        return this.toString().toLowerCase();
+    public @NotNull String getSerializedName() {
+        return this.toString().toLowerCase(Locale.ROOT);
     }
 }

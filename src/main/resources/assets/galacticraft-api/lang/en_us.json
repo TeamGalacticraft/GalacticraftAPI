@@ -1,6 +1,10 @@
 {
-  "ui.galacticraft-api.bodies.the_sun": "The Sun",
-  "ui.galacticraft-api.bodies.earth": "Earth",
+  "galaxy.galacticraft-api.milky_way.name": "Milky Way",
+  "galaxy.galacticraft-api.milky_way.desc": "",
+  "star.galacticraft-api.sol.name": "Sol",
+  "star.galacticraft-api.sol.desc": "",
+  "planet.galacticraft-api.earth.name": "Earth",
+  "planet.galacticraft-api.earth.desc": "The Overworld",
   "ui.galacticraft-api.bodies.satellite": "Satellite",
 
   "ui.galacticraft-api.gases.hydrogen": "Hydrogen",
