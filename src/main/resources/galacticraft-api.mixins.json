@@ -4,11 +4,10 @@
   "compatibilityLevel": "JAVA_17",
   "mixins": [
     "AdvancementRewardsMixin",
-    "BuiltinRegistriesMixin",
+    "BiomesMixin",
     "ChunkHolderMixin",
     "ChunkSectionMixin",
     "ChunkSerializerMixin",
-    "DynamicRegistryManagerMixin",
     "EmptyChunkMixin",
     "EntityGravityMixin",
     "LivingEntityMixin",
@@ -17,6 +16,7 @@
     "PlayerManagerMixin",
     "ProtoChunkMixin",
     "ReadOnlyChunkMixin",
+    "RegistryDataLoaderMixin",
     "ServerPlayerEntityMixin",
     "WorldChunkMixin",
     "WorldMixin"
@@ -28,8 +28,8 @@
     "client.MinecraftClientMixin",
     "client.ParticleAccessor",
     "client.ParticleManagerMixin",
-    "client.SoundManagerAccessor",
-    "client.SoundEngineMixin"
+    "client.SoundEngineMixin",
+    "client.SoundManagerAccessor"
   ],
   "minVersion": "0.8.0",
   "injectors": {

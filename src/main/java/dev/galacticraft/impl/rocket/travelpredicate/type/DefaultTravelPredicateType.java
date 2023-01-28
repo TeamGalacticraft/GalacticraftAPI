@@ -22,31 +22,22 @@
 
 package dev.galacticraft.impl.rocket.travelpredicate.type;
 
-import com.mojang.serialization.Codec;
+import dev.galacticraft.api.rocket.part.*;
+import dev.galacticraft.api.rocket.travelpredicate.ConfiguredTravelPredicate;
 import dev.galacticraft.api.rocket.travelpredicate.TravelPredicateType;
 import dev.galacticraft.api.universe.celestialbody.CelestialBody;
-import dev.galacticraft.api.universe.celestialbody.landable.Landable;
-import dev.galacticraft.impl.rocket.travelpredicate.config.AccessWeightTravelPredicateConfig;
-import it.unimi.dsi.fastutil.objects.Object2BooleanFunction;
-import net.minecraft.resources.ResourceLocation;
+import dev.galacticraft.impl.rocket.travelpredicate.config.DefaultTravelPredicateConfig;
 
-public class AccessWeightPredicateType extends TravelPredicateType<AccessWeightTravelPredicateConfig> {
-    public static final AccessWeightPredicateType INSTANCE = new AccessWeightPredicateType(AccessWeightTravelPredicateConfig.CODEC);
+public final class DefaultTravelPredicateType extends TravelPredicateType<DefaultTravelPredicateConfig> {
+    public static final DefaultTravelPredicateType INSTANCE = new DefaultTravelPredicateType();
+    public static final ConfiguredTravelPredicate<?, ?> CONFIGURED = INSTANCE.configure(DefaultTravelPredicateConfig.INSTANCE);
 
-    protected AccessWeightPredicateType(Codec<AccessWeightTravelPredicateConfig> configCodec) {
-        super(configCodec);
+    private DefaultTravelPredicateType() {
+        super(DefaultTravelPredicateConfig.CODEC);
     }
 
     @Override
-    public AccessType canTravelTo(CelestialBody<?, ?> type, Object2BooleanFunction<ResourceLocation> parts, AccessWeightTravelPredicateConfig config) {
-        if (type.type() instanceof Landable landable) {
-            int weight = landable.accessWeight(type.config());
-            if (weight >= 0 && weight <= config.weight()) {
-                return AccessType.ALLOW;
-            } else {
-                return config.defaultType();
-            }
-        }
-        return AccessType.BLOCK;
+    public Result canTravelTo(CelestialBody<?, ?> type, RocketCone<?, ?> cone, RocketBody<?, ?> body, RocketFin<?, ?> fin, RocketBooster<?, ?> booster, RocketBottom<?, ?> bottom, RocketUpgrade<?, ?>[] upgrades, DefaultTravelPredicateConfig config) {
+        return Result.PASS;
     }
 }

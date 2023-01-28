@@ -30,26 +30,28 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import dev.galacticraft.api.registry.AddonRegistry;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.SharedSuggestionProvider;
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
-import net.minecraft.commands.CommandSourceStack;
-import net.minecraft.commands.SharedSuggestionProvider;
-import net.minecraft.core.Registry;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 
 public class RegistryArgumentType<T> implements ArgumentType<Registry<T>> {
     private static final ImmutableList<String> EXAMPLES = ImmutableList.of(
-            Registry.BLOCK_REGISTRY.location().toString(),
-            Registry.ITEM_REGISTRY.location().toString(),
-            Registry.ENTITY_TYPE_REGISTRY.location().toString(),
-            Registry.DIMENSION_TYPE_REGISTRY.location().toString(),
-            Registry.BIOME_REGISTRY.location().toString(),
-            Registry.SOUND_EVENT_REGISTRY.location().toString(),
+            Registries.BLOCK.location().toString(),
+            Registries.ITEM.location().toString(),
+            Registries.ENTITY_TYPE.location().toString(),
+            Registries.DIMENSION_TYPE.location().toString(),
+            Registries.BIOME.location().toString(),
+            Registries.SOUND_EVENT.location().toString(),
             AddonRegistry.CELESTIAL_BODY_TYPE_KEY.location().toString()
     );
 
@@ -70,12 +72,12 @@ public class RegistryArgumentType<T> implements ArgumentType<Registry<T>> {
     @Override
     public Registry<T> parse(StringReader reader) throws CommandSyntaxException {
         ResourceKey<Registry<T>> key = ResourceKey.createRegistryKey(ResourceLocation.read(reader));
-        return ((Registry<Registry<T>>) Registry.REGISTRY).get(key);
+        return ((Registry<Registry<T>>) BuiltInRegistries.REGISTRY).get(key);
     }
 
     @Override
     public <S> CompletableFuture<Suggestions> listSuggestions(CommandContext<S> context, SuggestionsBuilder builder) {
-        return SharedSuggestionProvider.suggestResource(Registry.REGISTRY.keySet().stream(), builder);
+        return SharedSuggestionProvider.suggestResource(BuiltInRegistries.REGISTRY.keySet().stream(), builder);
     }
 
     @Override

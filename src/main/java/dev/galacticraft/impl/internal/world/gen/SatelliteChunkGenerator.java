@@ -28,15 +28,20 @@ import com.mojang.serialization.DataResult;
 import com.mojang.serialization.DynamicOps;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.*;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
+import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.WorldGenRegion;
 import net.minecraft.util.random.WeightedRandomList;
 import net.minecraft.world.entity.MobCategory;
-import net.minecraft.world.level.*;
+import net.minecraft.world.level.LevelHeightAccessor;
+import net.minecraft.world.level.NoiseColumn;
+import net.minecraft.world.level.StructureManager;
+import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.BiomeManager;
 import net.minecraft.world.level.biome.FixedBiomeSource;
@@ -44,13 +49,13 @@ import net.minecraft.world.level.biome.MobSpawnSettings;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.chunk.ChunkGenerator;
+import net.minecraft.world.level.chunk.ChunkGeneratorStructureState;
 import net.minecraft.world.level.levelgen.GenerationStep;
 import net.minecraft.world.level.levelgen.Heightmap.Types;
 import net.minecraft.world.level.levelgen.RandomState;
 import net.minecraft.world.level.levelgen.blending.Blender;
 import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.level.levelgen.structure.StructureSet;
-import net.minecraft.world.level.levelgen.structure.placement.ConcentricRingsStructurePlacement;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlaceSettings;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplateManager;
@@ -71,7 +76,9 @@ public class SatelliteChunkGenerator extends ChunkGenerator {
             StructureTemplate structure = new StructureTemplate();
             Tag nbtElement = ops.convertTo(NbtOps.INSTANCE, input);
             if (nbtElement instanceof CompoundTag compound) {
-                structure.load(compound);
+                if (ops instanceof RegistryOps<T> registryOps) {
+                    structure.load(registryOps.getter(Registries.BLOCK).orElseThrow(), compound);
+                }
                 return DataResult.success(new Pair<>(structure, input));
             } else {
                 return DataResult.error("Not a compound");
@@ -83,17 +90,17 @@ public class SatelliteChunkGenerator extends ChunkGenerator {
             return DataResult.success(NbtOps.INSTANCE.convertTo(ops, input.save(new CompoundTag())));
         }
     };
-    public static final Codec<SatelliteChunkGenerator> CODEC = RecordCodecBuilder.create(instance -> commonCodec(instance).and(instance.group(
+    public static final Codec<SatelliteChunkGenerator> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             Biome.CODEC.fieldOf("biome").forGetter(SatelliteChunkGenerator::getBiome),
             STRUCTURE_CODEC.fieldOf("structure").forGetter(SatelliteChunkGenerator::getStructure)
-    )).apply(instance, SatelliteChunkGenerator::new));
+    ).apply(instance, SatelliteChunkGenerator::new));
 
     private static final NoiseColumn EMPTY_VIEW = new NoiseColumn(0, new BlockState[0]);
     private final StructureTemplate structure;
     private final Holder<Biome> biome;
 
-    public SatelliteChunkGenerator(Registry<StructureSet> registry, Holder<Biome> biome, StructureTemplate structure) {
-        super(registry, Optional.empty(), new FixedBiomeSource(biome));
+    public SatelliteChunkGenerator(Holder<Biome> biome, StructureTemplate structure) {
+        super(new FixedBiomeSource(biome));
         this.structure = structure;
         this.biome = biome;
     }
@@ -120,9 +127,8 @@ public class SatelliteChunkGenerator extends ChunkGenerator {
     }
 
     @Override
-    public CompletableFuture<ChunkAccess> createBiomes(Registry<Biome> registry, Executor executor, RandomState noiseConfig, Blender arg, StructureManager structureAccessor, ChunkAccess chunk) {
-//        chunk.setBiomeIfAbsent(() -> this.biome);
-        return CompletableFuture.completedFuture(chunk);
+    public CompletableFuture<ChunkAccess> createBiomes(Executor executor, RandomState randomState, Blender blender, StructureManager structureManager, ChunkAccess chunkAccess) {
+        return CompletableFuture.completedFuture(chunkAccess);
     }
 
     @Override
@@ -143,7 +149,12 @@ public class SatelliteChunkGenerator extends ChunkGenerator {
     }
 
     @Override
-    public void createStructures(RegistryAccess registryManager, RandomState noiseConfig, StructureManager structureAccessor, ChunkAccess chunk, StructureTemplateManager structureTemplateManager, long seed) {
+    public void createStructures(RegistryAccess registryAccess, ChunkGeneratorStructureState chunkGeneratorStructureState, StructureManager structureManager, ChunkAccess chunkAccess, StructureTemplateManager structureTemplateManager) {
+    }
+
+    @Override
+    public ChunkGeneratorStructureState createState(HolderLookup<StructureSet> holderLookup, RandomState randomState, long l) {
+        return ChunkGeneratorStructureState.createForFlat(randomState, l, this.biomeSource, Stream.empty());
     }
 
     @Override
@@ -182,18 +193,8 @@ public class SatelliteChunkGenerator extends ChunkGenerator {
     }
 
     @Override
-    public Stream<Holder<StructureSet>> possibleStructureSets() {
-        return Stream.empty();
-    }
-
-    @Override
     public Optional<ResourceKey<Codec<? extends ChunkGenerator>>> getTypeNameForDataFixer() {
         return super.getTypeNameForDataFixer();
-    }
-
-    @Override
-    public boolean hasStructureChunkInRange(Holder<StructureSet> structureSet, RandomState noiseConfig, long seed, int chunkX, int chunkZ, int chunkRange) {
-        return false;
     }
 
     @Override
@@ -203,17 +204,6 @@ public class SatelliteChunkGenerator extends ChunkGenerator {
 
     public Holder<Biome> getBiome() {
         return biome;
-    }
-
-    @Override
-    public void ensureStructuresGenerated(RandomState noiseConfig) {
-//        super.computeStructurePlacementsIfNeeded();
-    }
-
-    @Nullable
-    @Override
-    public List<ChunkPos> getRingPositionsFor(ConcentricRingsStructurePlacement structurePlacement, RandomState noiseConfig) {
-        return null;
     }
 
     @Override

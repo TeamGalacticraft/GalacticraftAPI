@@ -24,12 +24,13 @@ package dev.galacticraft.impl.universe.display.type;
 
 import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Vector4f;
 import dev.galacticraft.api.universe.display.CelestialDisplayType;
 import dev.galacticraft.impl.universe.display.config.EmptyCelestialDisplayConfig;
+import net.minecraft.client.renderer.ShaderInstance;
+import org.joml.Vector4f;
+
 import java.util.function.Consumer;
 import java.util.function.Supplier;
-import net.minecraft.client.renderer.ShaderInstance;
 
 public class EmptyCelestialDisplayType extends CelestialDisplayType<EmptyCelestialDisplayConfig> {
     public static final EmptyCelestialDisplayType INSTANCE = new EmptyCelestialDisplayType();

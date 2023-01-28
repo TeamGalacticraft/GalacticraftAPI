@@ -30,7 +30,7 @@ import dev.galacticraft.impl.Constant;
 import dev.galacticraft.impl.universe.celestialbody.type.SatelliteType;
 import dev.galacticraft.impl.universe.position.config.SatelliteConfig;
 import net.fabricmc.fabric.api.util.NbtType;
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.*;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -122,9 +122,9 @@ public abstract class MinecraftServerMixin implements SatelliteAccessor {
                 for (Map.Entry<ResourceLocation, CelestialBody<SatelliteConfig, SatelliteType>> entry : this.satellites.entrySet()) {
                     ChunkGenerator chunkGenerator = entry.getValue().config().dimensionOptions().generator();
                     DerivedLevelData unmodifiableLevelProperties = new DerivedLevelData(getWorldData(), getWorldData().overworldData());
-                    ServerLevel world = new ServerLevel((MinecraftServer) (Object) this, executor, storageSource, unmodifiableLevelProperties, ResourceKey.create(Registry.DIMENSION_REGISTRY, entry.getKey()), entry.getValue().config().dimensionOptions(), SatelliteType.EMPTY_PROGRESS_LISTENER, getWorldData().worldGenSettings().isDebug(), BiomeManager.obfuscateSeed(getWorldData().worldGenSettings().seed()), ImmutableList.of(), false);
+                    ServerLevel world = new ServerLevel((MinecraftServer) (Object) this, executor, storageSource, unmodifiableLevelProperties, ResourceKey.create(Registries.DIMENSION, entry.getKey()), entry.getValue().config().dimensionOptions(), SatelliteType.EMPTY_PROGRESS_LISTENER, getWorldData().isDebugWorld(), BiomeManager.obfuscateSeed(getWorldData().worldGenOptions().seed()), ImmutableList.of(), false);
                     worldBorder.addListener(new BorderChangeListener.DelegateBorderChangeListener(world.getWorldBorder()));
-                    levels.put(ResourceKey.create(Registry.DIMENSION_REGISTRY, entry.getKey()), world);
+                    levels.put(ResourceKey.create(Registries.DIMENSION, entry.getKey()), world);
                 }
             } catch (Throwable exception) {
                 throw new RuntimeException("Failed to reade satellite data!", exception);

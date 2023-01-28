@@ -27,12 +27,13 @@ import dev.galacticraft.api.entity.attribute.GcApiEntityAttributes;
 import dev.galacticraft.impl.Constant;
 import dev.galacticraft.impl.internal.command.GCApiCommands;
 import dev.galacticraft.impl.internal.world.gen.SatelliteChunkGenerator;
-import dev.galacticraft.impl.internal.world.gen.biome.GcApiBiomes;
+import dev.galacticraft.impl.universe.BuiltinObjects;
 import io.netty.buffer.Unpooled;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -74,8 +75,8 @@ public class GalacticraftAPI implements ModInitializer {
             });
         });
 
-        Registry.register(Registry.CHUNK_GENERATOR, new ResourceLocation(Constant.MOD_ID, "satellite"), SatelliteChunkGenerator.CODEC);
-        GcApiBiomes.register();
+        Registry.register(BuiltInRegistries.CHUNK_GENERATOR, new ResourceLocation(Constant.MOD_ID, "satellite"), SatelliteChunkGenerator.CODEC);
+        BuiltinObjects.register();
         GcApiEntityAttributes.init();
         Constant.LOGGER.info("Initialization Complete. (Took {}ms).", System.currentTimeMillis() - startInitTime);
     }

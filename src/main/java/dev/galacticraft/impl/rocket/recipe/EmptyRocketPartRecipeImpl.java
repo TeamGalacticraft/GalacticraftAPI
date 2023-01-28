@@ -20,12 +20,25 @@
  * SOFTWARE.
  */
 
-package dev.galacticraft.impl.rocket.travelpredicate.config;
+package dev.galacticraft.impl.rocket.recipe;
 
-import com.mojang.serialization.Codec;
-import dev.galacticraft.api.rocket.travelpredicate.TravelPredicateConfig;
-import dev.galacticraft.api.rocket.travelpredicate.TravelPredicateType;
+import dev.galacticraft.api.rocket.recipe.QuantifiedIngredient;
+import dev.galacticraft.api.rocket.recipe.RocketPartRecipe;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Unmodifiable;
 
-public record AccessTypeTravelPredicateConfig(TravelPredicateType.AccessType type) implements TravelPredicateConfig {
-    public static final Codec<AccessTypeTravelPredicateConfig> CODEC = TravelPredicateType.AccessType.CODEC.xmap(AccessTypeTravelPredicateConfig::new, AccessTypeTravelPredicateConfig::type);
+import java.util.Collections;
+import java.util.List;
+
+public final class EmptyRocketPartRecipeImpl implements RocketPartRecipe {
+    public static final @NotNull EmptyRocketPartRecipeImpl INSTANCE = new EmptyRocketPartRecipeImpl();
+
+    private EmptyRocketPartRecipeImpl() {}
+
+    @Contract(pure = true)
+    @Override
+    public @NotNull @Unmodifiable List<QuantifiedIngredient> ingredients() {
+        return Collections.emptyList();
+    }
 }

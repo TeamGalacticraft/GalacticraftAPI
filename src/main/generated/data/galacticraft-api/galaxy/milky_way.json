@@ -1,0 +1,15 @@
+{
+  "description": "galaxy.galacticraft-api.milky_way.description",
+  "display": {
+    "type": "galacticraft-api:empty",
+    "config": {}
+  },
+  "name": "galaxy.galacticraft-api.milky_way.name",
+  "position": {
+    "type": "galacticraft-api:static",
+    "config": {
+      "x": 0.0,
+      "y": 0.0
+    }
+  }
+}

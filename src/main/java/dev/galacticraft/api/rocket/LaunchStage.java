@@ -22,19 +22,39 @@
 
 package dev.galacticraft.api.rocket;
 
-public enum LaunchStage {
+import net.minecraft.util.StringRepresentable;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Locale;
+
+/**
+ * Defines the 5 stages of launching a rocket.
+ */
+public enum LaunchStage implements StringRepresentable {
+    /**
+     * The rocket is on a launch pad.
+     */
     IDLE,
+    /**
+     * The launch button has been pressed once, and the player has been prompted about potential problems with their gear.
+     */
     WARNING,
+    /**
+     * The launch button has been pressed a second time, and the 20-second countdown timer has begun,
+     */
     IGNITED,
+    /**
+     * The rocket has launched.
+     */
     LAUNCHED,
+    /**
+     * The rocket has run out of fuel, hit a wall or some other problem has occurred.
+     * The rocket is probably falling out of the sky.
+     */
     FAILED;
 
-
-    public LaunchStage next() {
-        if (this.ordinal() < LAUNCHED.ordinal()) {
-            return LaunchStage.values()[ordinal() + 1];
-        } else {
-            return LAUNCHED;
-        }
+    @Override
+    public @NotNull String getSerializedName() {
+        return this.toString().toLowerCase(Locale.ROOT);
     }
 }

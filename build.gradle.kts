@@ -28,22 +28,23 @@ plugins {
     `maven-publish`
     id("fabric-loom") version("1.0-SNAPSHOT")
     id("org.cadixdev.licenser") version("0.6.1")
-    id("io.github.juuxel.loom-quiltflower") version("1.7.3")
+    id("io.github.juuxel.loom-quiltflower") version("1.8.0")
 }
 
-val buildNumber = System.getenv("BUILD_NUMBER") ?: ""
-val prerelease = (System.getenv("PRE_RELEASE") ?: "false") == "true"
+val buildNumber       = System.getenv("BUILD_NUMBER") ?: ""
+val prerelease        = (System.getenv("PRE_RELEASE") ?: "false") == "true"
 
-val modId           = project.property("mod.id").toString()
-val modVersion      = project.property("mod.version").toString()
-val modName         = project.property("mod.name").toString()
-val modGroup        = project.property("mod.group").toString()
+val modId             = project.property("mod.id").toString()
+val modVersion        = project.property("mod.version").toString()
+val modName           = project.property("mod.name").toString()
+val modGroup          = project.property("mod.group").toString()
 
-val minecraft       = project.property("minecraft.version").toString()
-val loader          = project.property("loader.version").toString()
-val fabric          = project.property("fabric.version").toString()
-val machinelib      = project.property("machinelib.version").toString()
-val dyndims         = project.property("dyndims.version").toString()
+val minecraft         = project.property("minecraft.version").toString()
+val loader            = project.property("loader.version").toString()
+val fabric            = project.property("fabric.version").toString()
+val machinelib        = project.property("machinelib.version").toString()
+val dynamicdimensions = project.property("dynamicdimensions.version").toString()
+val badpackets        = project.property("badpackets.version").toString()
 
 group = modGroup
 version ="$modVersion+$minecraft"
@@ -82,6 +83,8 @@ loom {
         }
     }
 
+    createRemapConfigurations(sourceSets.test.get())
+
     runs {
         register("datagen") {
             server()
@@ -112,7 +115,11 @@ repositories {
             includeGroup("dev.galacticraft")
         }
     }
-    maven("https://maven.bai.lol")
+    maven("https://maven.bai.lol") {
+        content {
+            includeGroup("lol.bai")
+        }
+    }
 }
 
 dependencies {
@@ -123,7 +130,8 @@ dependencies {
     modImplementation("net.fabricmc.fabric-api:fabric-api:$fabric")
 
     modImplementation("dev.galacticraft:MachineLib:$machinelib")
-    modImplementation("dev.galacticraft:dyndims-fabric:$dyndims")
+    modImplementation("dev.galacticraft:dynamicdimensions-fabric:$dynamicdimensions")
+    modImplementation("lol.bai:badpackets:fabric-$badpackets")
 }
 
 tasks.processResources {

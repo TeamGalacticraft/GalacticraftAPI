@@ -22,13 +22,20 @@
 
 package dev.galacticraft.impl.internal.fabric;
 
-import dev.galacticraft.impl.universe.data.CelestialBodyGenetator;
+import dev.galacticraft.impl.data.*;
 import net.fabricmc.fabric.api.datagen.v1.DataGeneratorEntrypoint;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
 
 public class GalacticraftAPIData implements DataGeneratorEntrypoint {
     @Override
     public void onInitializeDataGenerator(FabricDataGenerator generator) {
-        generator.addProvider(CelestialBodyGenetator::new);
+        generator.createPack().addProvider((FabricDataGenerator.Pack.Factory<ConfiguredCelestialBodyGenerator>) ConfiguredCelestialBodyGenerator::new);
+        generator.createPack().addProvider((FabricDataGenerator.Pack.Factory<GalaxyDataGenerator>) GalaxyDataGenerator::new);
+        generator.createPack().addProvider((FabricDataGenerator.Pack.Factory<ConfiguredRocketConeDataGenerator>) ConfiguredRocketConeDataGenerator::new);
+        generator.createPack().addProvider((FabricDataGenerator.Pack.Factory<ConfiguredRocketBodyDataGenerator>) ConfiguredRocketBodyDataGenerator::new);
+        generator.createPack().addProvider((FabricDataGenerator.Pack.Factory<ConfiguredRocketFinDataGenerator>) ConfiguredRocketFinDataGenerator::new);
+        generator.createPack().addProvider((FabricDataGenerator.Pack.Factory<ConfiguredRocketBoosterDataGenerator>) ConfiguredRocketBoosterDataGenerator::new);
+        generator.createPack().addProvider((FabricDataGenerator.Pack.Factory<ConfiguredRocketBottomDataGenerator>) ConfiguredRocketBottomDataGenerator::new);
+        generator.createPack().addProvider((FabricDataGenerator.Pack.Factory<ConfiguredRocketUpgradeDataGenerator>) ConfiguredRocketUpgradeDataGenerator::new);
     }
 }

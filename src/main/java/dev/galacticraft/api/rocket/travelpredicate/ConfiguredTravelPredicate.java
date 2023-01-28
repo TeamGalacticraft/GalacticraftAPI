@@ -23,15 +23,21 @@
 package dev.galacticraft.api.rocket.travelpredicate;
 
 import com.mojang.serialization.Codec;
-import dev.galacticraft.api.registry.AddonRegistry;
+import dev.galacticraft.api.registry.BuiltInRocketRegistries;
+import dev.galacticraft.api.registry.RocketRegistries;
+import dev.galacticraft.api.rocket.part.*;
 import dev.galacticraft.api.universe.celestialbody.CelestialBody;
-import it.unimi.dsi.fastutil.objects.Object2BooleanFunction;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.core.Holder;
+import net.minecraft.core.HolderSet;
+import net.minecraft.core.RegistryCodecs;
+import net.minecraft.resources.RegistryFileCodec;
 
-public record ConfiguredTravelPredicate<C extends TravelPredicateConfig>(C config, TravelPredicateType<C> type) {
-    public static final Codec<ConfiguredTravelPredicate<?>> CODEC = AddonRegistry.TRAVEL_PREDICATE.byNameCodec().dispatch(ConfiguredTravelPredicate::type, TravelPredicateType::codec);
+public record ConfiguredTravelPredicate<C extends TravelPredicateConfig, T extends TravelPredicateType<C>>(C config, T type) {
+    public static final Codec<ConfiguredTravelPredicate<?, ?>> DIRECT_CODEC = BuiltInRocketRegistries.TRAVEL_PREDICATE_TYPE.byNameCodec().dispatch(ConfiguredTravelPredicate::type, TravelPredicateType::codec);
+    public static final Codec<Holder<ConfiguredTravelPredicate<?, ?>>> CODEC = RegistryFileCodec.create(RocketRegistries.TRAVEL_PREDICATE, DIRECT_CODEC);
+    public static final Codec<HolderSet<ConfiguredTravelPredicate<?, ?>>> LIST_CODEC = RegistryCodecs.homogeneousList(RocketRegistries.TRAVEL_PREDICATE, DIRECT_CODEC);
 
-    public TravelPredicateType.AccessType canTravelTo(CelestialBody<?, ?> type, Object2BooleanFunction<ResourceLocation> parts) {
-        return this.type.canTravelTo(type, parts, this.config);
+    public TravelPredicateType.Result canTravelTo(CelestialBody<?, ?> type, RocketCone<?, ?> cone, RocketBody<?, ?> body, RocketFin<?, ?> fin, RocketBooster<?, ?> booster, RocketBottom<?, ?> bottom, RocketUpgrade<?, ?>[] upgrades) {
+        return this.type.canTravelTo(type, cone, body, fin, booster, bottom, upgrades, this.config);
     }
 }

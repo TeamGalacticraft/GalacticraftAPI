@@ -22,125 +22,41 @@
 
 package dev.galacticraft.api.rocket.part;
 
-import com.mojang.serialization.Codec;
-import com.mojang.serialization.Dynamic;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
-import dev.galacticraft.api.accessor.ResearchAccessor;
-import dev.galacticraft.api.registry.AddonRegistry;
+import dev.galacticraft.api.rocket.entity.Rocket;
+import dev.galacticraft.api.rocket.part.config.RocketPartConfig;
+import dev.galacticraft.api.rocket.part.type.RocketPartType;
+import dev.galacticraft.api.rocket.recipe.RocketPartRecipe;
 import dev.galacticraft.api.rocket.travelpredicate.ConfiguredTravelPredicate;
-import dev.galacticraft.api.rocket.travelpredicate.TravelPredicateType;
-import dev.galacticraft.impl.Constant;
-import dev.galacticraft.impl.rocket.travelpredicate.config.AccessTypeTravelPredicateConfig;
-import dev.galacticraft.impl.rocket.travelpredicate.type.ConstantTravelPredicateType;
-import net.minecraft.core.Registry;
-import net.minecraft.core.RegistryAccess;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.player.Player;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.Optional;
+public sealed interface RocketPart<C extends RocketPartConfig, T extends RocketPartType<C>> permits RocketBody, RocketBooster, RocketBottom, RocketCone, RocketFin, RocketUpgrade {
+    @NotNull C config();
 
-public record RocketPart(MutableComponent name, RocketPartType type, ConfiguredTravelPredicate<?> travelPredicate,
-                         boolean hasRecipe, ResourceLocation research) {
-    public static final Codec<RocketPart> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-            Codec.STRING.fieldOf("name").xmap(Component::translatable, Component::getString).forGetter(RocketPart::name),
-            RocketPartType.CODEC.fieldOf("type").forGetter(RocketPart::type),
-            ConfiguredTravelPredicate.CODEC.fieldOf("travel_predicate").forGetter(RocketPart::travelPredicate),
-            Codec.BOOL.fieldOf("recipe").forGetter(RocketPart::hasRecipe),
-            ResourceLocation.CODEC.optionalFieldOf("research").xmap(o -> o.orElse(null), Optional::ofNullable).forGetter(RocketPart::research)
-    ).apply(instance, RocketPart::new));
+    @NotNull T type();
 
-    public static final RocketPart INVALID = Builder.create()
-            .name(Component.translatable("tooltip.galacticraft-api.something_went_wrong"))
-            .type(RocketPartType.UPGRADE)
-            .travelPredicate(ConstantTravelPredicateType.INSTANCE.configure(new AccessTypeTravelPredicateConfig(TravelPredicateType.AccessType.BLOCK)))
-            .research(new ResourceLocation(Constant.MOD_ID, "unobtainable"))
-            .recipe(false)
-            .build();
-
-    public RocketPart(@NotNull MutableComponent name, @NotNull RocketPartType type, ConfiguredTravelPredicate<?> travelPredicate, boolean hasRecipe, ResourceLocation research) {
-        this.type = type;
-        this.name = name;
-        this.travelPredicate = travelPredicate;
-        this.hasRecipe = hasRecipe;
-        this.research = research;
+    /**
+     * Called every tick when this part is applied to a placed rocket.
+     * The rocket may not have launched yet.
+     *
+     * @param rocket the rocket that this part is a part of.
+     */
+    default void tick(@NotNull Rocket rocket) {
+        this.type().tick(rocket, this.config());
     }
 
-    public static RocketPart deserialize(RegistryAccess manager, Dynamic<?> dynamic) {
-        return manager.registryOrThrow(AddonRegistry.ROCKET_PART_KEY).get(new ResourceLocation(dynamic.asString("")));
+    /**
+     * Returns the recipe of this rocket part.
+     *
+     * @return the recipe of this rocket part. Can be null.
+     */
+    @Contract(pure = true)
+    default @Nullable RocketPartRecipe getRecipe() {
+        return this.type().getRecipe(this.config());
     }
 
-    public static Registry<RocketPart> getRegistry(RegistryAccess manager) {
-        return manager.registryOrThrow(AddonRegistry.ROCKET_PART_KEY);
-    }
-
-    public static RocketPart getById(RegistryAccess manager, ResourceLocation id) {
-        return getById(getRegistry(manager), id);
-    }
-
-    public static ResourceLocation getId(RegistryAccess manager, RocketPart rocketPart) {
-        return getId(getRegistry(manager), rocketPart);
-    }
-
-    public static RocketPart getById(Registry<RocketPart> registry, ResourceLocation id) {
-        return registry.get(id);
-    }
-
-    public static ResourceLocation getId(Registry<RocketPart> registry, RocketPart rocketPart) {
-        return registry.getKey(rocketPart);
-    }
-
-    public boolean isUnlocked(Player player) {
-        if (this.research() == null) return true;
-        return ((ResearchAccessor) player).hasUnlockedResearch(this.research());
-    }
-
-    public static class Builder {
-        private MutableComponent name;
-        private RocketPartType partType;
-        private ConfiguredTravelPredicate<?> travelPredicate = ConstantTravelPredicateType.INSTANCE.configure(new AccessTypeTravelPredicateConfig(TravelPredicateType.AccessType.PASS));
-        private boolean hasRecipe = true;
-        private ResourceLocation research = null;
-
-        private Builder() {}
-
-        public static Builder create() {
-            return new Builder();
-        }
-
-
-        public Builder name(MutableComponent name) {
-            this.name = name;
-            return this;
-        }
-
-        public Builder type(RocketPartType type) {
-            this.partType = type;
-            return this;
-        }
-
-        public Builder recipe(boolean hasRecipe) {
-            this.hasRecipe = hasRecipe;
-            return this;
-        }
-
-        public Builder travelPredicate(ConfiguredTravelPredicate<?> travelPredicate) {
-            this.travelPredicate = travelPredicate;
-            return this;
-        }
-
-        public Builder research(ResourceLocation research) {
-            this.research = research;
-            return this;
-        }
-
-        public RocketPart build() {
-            if (name == null || partType == null) {
-                throw new RuntimeException("Tried to build incomplete RocketPart!");
-            }
-            return new RocketPart(name, partType, travelPredicate, hasRecipe, research);
-        }
+    default @NotNull ConfiguredTravelPredicate<?, ?> travelPredicate() {
+        return this.type().travelPredicate(this.config());
     }
 }

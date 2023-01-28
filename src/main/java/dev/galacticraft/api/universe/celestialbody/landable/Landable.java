@@ -41,13 +41,4 @@ public interface Landable<C extends CelestialBodyConfig> extends SurfaceEnvironm
      * @return the registry key of the {@link Level} this celestial body is linked to
      */
     @NotNull ResourceKey<Level> world(C config);
-
-    /**
-     * Returns the access weight required to generically reach this celestial body or a negative value if it cannot be accessed this way.
-     * For more advanced access requirements see {@link dev.galacticraft.api.rocket.travelpredicate.TravelPredicateType}
-     *
-     * @param config the celestial body configuration to be queried
-     * @return the access weight required to generically reach this celestial body
-     */
-    int accessWeight(C config);
 }

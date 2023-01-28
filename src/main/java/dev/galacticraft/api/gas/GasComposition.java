@@ -28,7 +28,7 @@ import dev.galacticraft.impl.codec.MapCodec;
 import dev.galacticraft.impl.gas.GasCompositionImpl;
 import it.unimi.dsi.fastutil.objects.Object2DoubleArrayMap;
 import it.unimi.dsi.fastutil.objects.Object2DoubleMap;
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -37,7 +37,7 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 public interface GasComposition {
-    MapCodec<ResourceKey<Fluid>, Double, Object2DoubleMap<ResourceKey<Fluid>>> MAP_CODEC = MapCodec.create(Object2DoubleArrayMap::new, ResourceLocation.CODEC.xmap(id -> ResourceKey.create(Registry.FLUID_REGISTRY, id), ResourceKey::location), Codec.DOUBLE);
+    MapCodec<ResourceKey<Fluid>, Double, Object2DoubleMap<ResourceKey<Fluid>>> MAP_CODEC = MapCodec.create(Object2DoubleArrayMap::new, ResourceLocation.CODEC.xmap(id -> ResourceKey.create(Registries.FLUID, id), ResourceKey::location), Codec.DOUBLE);
     Codec<GasComposition> CODEC = RecordCodecBuilder.create(atmosphericInfoInstance -> atmosphericInfoInstance.group(
             MAP_CODEC.fieldOf("composition").forGetter(GasComposition::composition),
             Codec.DOUBLE.fieldOf("temperature").forGetter(GasComposition::temperature),
@@ -84,7 +84,7 @@ public interface GasComposition {
         }
 
         public Builder gas(ResourceLocation gas, double ppm) {
-            return this.gas(ResourceKey.create(Registry.FLUID_REGISTRY, gas), ppm);
+            return this.gas(ResourceKey.create(Registries.FLUID, gas), ppm);
         }
 
         public GasComposition build() {

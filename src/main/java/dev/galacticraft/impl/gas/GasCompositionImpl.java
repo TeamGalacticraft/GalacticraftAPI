@@ -25,7 +25,7 @@ package dev.galacticraft.impl.gas;
 import dev.galacticraft.api.gas.GasComposition;
 import dev.galacticraft.machinelib.api.gas.Gases;
 import it.unimi.dsi.fastutil.objects.Object2DoubleMap;
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.material.Fluid;
@@ -38,13 +38,13 @@ public record GasCompositionImpl(@NotNull Object2DoubleMap<ResourceKey<Fluid>> c
         builder.pressure(buf.readFloat());
         builder.temperature(buf.readDouble());
         for (int i = 0; i < size; i++) {
-            builder.gas(ResourceKey.create(Registry.FLUID_REGISTRY, buf.readResourceLocation()), buf.readDouble());
+            builder.gas(ResourceKey.create(Registries.FLUID, buf.readResourceLocation()), buf.readDouble());
         }
         return builder.build();
     }
 
     public boolean breathable() {
-        double oxygen = this.composition().getOrDefault(ResourceKey.create(Registry.FLUID_REGISTRY, Gases.OXYGEN_ID), 0.0);
+        double oxygen = this.composition().getOrDefault(ResourceKey.create(Registries.FLUID, Gases.OXYGEN_ID), 0.0);
         return oxygen > 195000.0 && oxygen < 235000.0; //195000ppm to 235000ppm (19.5% to 23.5%)
     }
 

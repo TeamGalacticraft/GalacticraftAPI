@@ -23,60 +23,61 @@
 package dev.galacticraft.api.rocket.travelpredicate;
 
 import com.mojang.serialization.Codec;
-import dev.galacticraft.api.registry.AddonRegistry;
+import dev.galacticraft.api.registry.BuiltInRocketRegistries;
+import dev.galacticraft.api.rocket.part.*;
 import dev.galacticraft.api.universe.celestialbody.CelestialBody;
-import it.unimi.dsi.fastutil.objects.Object2BooleanFunction;
+import net.minecraft.core.Holder;
+import net.minecraft.util.StringRepresentable;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Locale;
-import net.minecraft.core.Holder;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.StringRepresentable;
 
 public abstract class TravelPredicateType<C extends TravelPredicateConfig> {
-    private final Holder.Reference<TravelPredicateType<?>> reference = AddonRegistry.TRAVEL_PREDICATE.createIntrusiveHolder(this);
-    private final Codec<ConfiguredTravelPredicate<C>> codec;
+    private final @NotNull Holder.Reference<TravelPredicateType<?>> reference = BuiltInRocketRegistries.TRAVEL_PREDICATE_TYPE.createIntrusiveHolder(this);
+    private final @NotNull Codec<ConfiguredTravelPredicate<C, TravelPredicateType<C>>> codec;
 
-    public TravelPredicateType(Codec<C> configCodec) {
+    public TravelPredicateType(@NotNull Codec<C> configCodec) {
         this.codec = configCodec.fieldOf("config").xmap(this::configure, ConfiguredTravelPredicate::config).codec();
     }
 
-    public ConfiguredTravelPredicate<C> configure(C config) {
+    public ConfiguredTravelPredicate<C, TravelPredicateType<C>> configure(C config) {
         return new ConfiguredTravelPredicate<>(config, this);
     }
 
-    public abstract AccessType canTravelTo(CelestialBody<?, ?> type, Object2BooleanFunction<ResourceLocation> parts, C config);
+    public abstract Result canTravelTo(CelestialBody<?, ?> type, RocketCone<?, ?> cone, RocketBody<?, ?> body, RocketFin<?, ?> fin, RocketBooster<?, ?> booster, RocketBottom<?, ?> bottom, RocketUpgrade<?, ?>[] upgrades, C config);
 
-    public Codec<ConfiguredTravelPredicate<C>> codec() {
+    public Codec<ConfiguredTravelPredicate<C, TravelPredicateType<C>>> codec() {
         return this.codec;
     }
 
     @ApiStatus.Internal
-    public Holder.Reference<TravelPredicateType<?>> getReference() {
+    public @NotNull Holder.Reference<TravelPredicateType<?>> getReference() {
         return reference;
     }
 
-    public enum AccessType implements StringRepresentable {
+    public enum Result implements StringRepresentable {
         /**
-         * Allow other rocket parts to decide whether or not the player may visit the celestial body
+         * Allow other rocket parts to decide whether the player may visit the celestial body
          */
         PASS,
 
         /**
-         * Forcefully block access to celestial body - overrides {@link AccessType#ALLOW ALLOW}
+         * Forcefully block access to celestial body - overrides {@link Result#ALLOW ALLOW}
          */
         BLOCK,
 
         /**
          * Allow access to celestial body.
-         * Can be overridden by {@link AccessType#BLOCK BLOCK}
+         * Can be overridden by {@link Result#BLOCK BLOCK}
          */
         ALLOW;
 
-        public static final EnumCodec<AccessType> CODEC = StringRepresentable.fromEnum(AccessType::values);
+        public static final EnumCodec<Result> CODEC = StringRepresentable.fromEnum(Result::values);
 
-        public AccessType merge(AccessType other) {
+        public Result merge(Result other) {
             if (other == PASS) return this;
+            if (this == PASS) return other;
             if (other == BLOCK || this == BLOCK) return BLOCK;
             return ALLOW;
         }

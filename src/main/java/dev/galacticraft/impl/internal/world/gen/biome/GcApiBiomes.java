@@ -23,8 +23,10 @@
 package dev.galacticraft.impl.internal.world.gen.biome;
 
 import dev.galacticraft.impl.Constant;
-import net.minecraft.core.Registry;
-import net.minecraft.data.BuiltinRegistries;
+import net.minecraft.core.HolderGetter;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.data.worldgen.BootstapContext;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.BiomeGenerationSettings;
@@ -34,12 +36,12 @@ import org.jetbrains.annotations.ApiStatus;
 
 @ApiStatus.Internal
 public class GcApiBiomes {
-    public static final Biome SPACE = createSpaceBiome();
+    public static final ResourceKey<Biome> SPACE = ResourceKey.create(Registries.BIOME, new ResourceLocation(Constant.MOD_ID, "space"));
 
-    private static Biome createSpaceBiome() {
+    private static Biome createSpaceBiome(HolderGetter<net.minecraft.world.level.levelgen.placement.PlacedFeature> holderGetter, HolderGetter<net.minecraft.world.level.levelgen.carver.ConfiguredWorldCarver<?>> holderGetter2) {
         Biome.BiomeBuilder builder = new Biome.BiomeBuilder();
         MobSpawnSettings.Builder spawns = new MobSpawnSettings.Builder();
-        BiomeGenerationSettings.Builder genSettings = new BiomeGenerationSettings.Builder();
+        BiomeGenerationSettings.Builder genSettings = new BiomeGenerationSettings.Builder(holderGetter, holderGetter2);
         BiomeSpecialEffects.Builder effects = new BiomeSpecialEffects.Builder();
         effects.fogColor(0).waterColor(4159204).waterFogColor(329011).skyColor(0);
         return builder
@@ -52,7 +54,7 @@ public class GcApiBiomes {
                 .temperatureAdjustment(Biome.TemperatureModifier.NONE).build();
     }
 
-    public static void register() {
-        Registry.register(BuiltinRegistries.BIOME, new ResourceLocation(Constant.MOD_ID, "space"), SPACE);
+    public static void bootstrap(BootstapContext<Biome> context) {
+        context.register(ResourceKey.create(Registries.BIOME, new ResourceLocation(Constant.MOD_ID, "space")), createSpaceBiome(context.lookup(Registries.PLACED_FEATURE), context.lookup(Registries.CONFIGURED_CARVER)));
     }
 }

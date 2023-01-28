@@ -20,25 +20,16 @@
  * SOFTWARE.
  */
 
-package dev.galacticraft.api.rocket.part;
+package dev.galacticraft.impl.rocket.travelpredicate.config;
 
+import com.mojang.serialization.Codec;
+import dev.galacticraft.api.rocket.travelpredicate.ConfiguredTravelPredicate;
+import dev.galacticraft.api.rocket.travelpredicate.TravelPredicateConfig;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Unmodifiable;
 
-import java.util.Locale;
-import net.minecraft.util.StringRepresentable;
+import java.util.List;
 
-public enum RocketPartType implements StringRepresentable {
-    CONE,
-    BODY,
-    FIN,
-    BOOSTER,
-    BOTTOM,
-    UPGRADE;
-
-    public static final com.mojang.serialization.Codec<RocketPartType> CODEC = com.mojang.serialization.Codec.STRING.xmap(s -> RocketPartType.valueOf(s.toUpperCase(Locale.ROOT)), RocketPartType::getSerializedName);
-
-    @Override
-    public @NotNull String getSerializedName() {
-        return this.toString().toLowerCase(Locale.ROOT);
-    }
+public record OrTravelPredicateConfig(@Unmodifiable @NotNull List<ConfiguredTravelPredicate<?, ?>> predicates) implements TravelPredicateConfig {
+    public static final Codec<OrTravelPredicateConfig> CODEC = ConfiguredTravelPredicate.DIRECT_CODEC.listOf().xmap(OrTravelPredicateConfig::new, OrTravelPredicateConfig::predicates);
 }

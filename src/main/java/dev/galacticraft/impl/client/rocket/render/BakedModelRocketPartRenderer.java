@@ -22,14 +22,13 @@
 
 package dev.galacticraft.impl.client.rocket.render;
 
-import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Vector3f;
-import dev.galacticraft.api.entity.Rocket;
+import com.mojang.math.Axis;
 import dev.galacticraft.api.entity.rocket.render.RocketPartRenderer;
+import dev.galacticraft.api.rocket.entity.Rocket;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
@@ -40,7 +39,6 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.Sheets;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
-import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.resources.model.BakedModel;
@@ -56,7 +54,7 @@ public record BakedModelRocketPartRenderer(Supplier<BakedModel> model,
     private static final Direction[] DIRECTIONS_AND_NULL = new Direction[]{null, Direction.DOWN, Direction.UP, Direction.NORTH, Direction.SOUTH, Direction.WEST, Direction.EAST};
 
     public BakedModelRocketPartRenderer(Supplier<BakedModel> model) {
-        this(model, () -> RenderType.entityTranslucent(model.get().getParticleIcon().getName(), true));
+        this(model, () -> RenderType.entityCutoutNoCull(model.get().getParticleIcon().atlasLocation(), true));
     }
 
     @Override
@@ -65,9 +63,9 @@ public record BakedModelRocketPartRenderer(Supplier<BakedModel> model,
         matrices.translate(0, 0, 150);
         matrices.translate(8, 8, 8);
         model.get().getTransforms().getTransform(ItemTransforms.TransformType.GUI).apply(false, matrices);
-        matrices.mulPose(Vector3f.XN.rotationDegrees(35));
-        matrices.mulPose(Vector3f.YP.rotationDegrees(225));
-        matrices.mulPose(Vector3f.ZP.rotationDegrees(180));
+        matrices.mulPose(Axis.XN.rotationDegrees(35));
+        matrices.mulPose(Axis.YP.rotationDegrees(225));
+        matrices.mulPose(Axis.ZP.rotationDegrees(180));
         matrices.scale(16, 16, 16);
 
         PoseStack.Pose entry = matrices.last();
@@ -78,9 +76,8 @@ public record BakedModelRocketPartRenderer(Supplier<BakedModel> model,
         Minecraft.getInstance().getTextureManager().getTexture(TextureAtlas.LOCATION_BLOCKS).setFilter(false, false);
         RenderSystem.setShaderTexture(0, TextureAtlas.LOCATION_BLOCKS);
         RenderSystem.enableTexture();
-        RenderSystem.setShaderTexture(0, this.model.get().getParticleIcon().atlas().getId());
-        RenderSystem.enableBlend();
-        RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
+        RenderSystem.setShaderTexture(0, this.model.get().getParticleIcon().atlasLocation());
+        RenderSystem.disableBlend();
         RenderSystem.disableDepthTest();
         RenderSystem.disableCull();
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
@@ -114,7 +111,7 @@ public record BakedModelRocketPartRenderer(Supplier<BakedModel> model,
 
     @Override
     public void render(ClientLevel world, PoseStack matrices, Rocket rocket, MultiBufferSource vertices, float delta, int light) {
-        RenderSystem.setShaderColor((((rocket.getColor() >> 16) & 0xFF) / 255f), (((rocket.getColor() >> 8) & 0xFF) / 255f), ((rocket.getColor() & 0xFF) / 255f), (((rocket.getColor() >> 24) & 0xFF) / 255f));
+        RenderSystem.setShaderColor(rocket.red() / 255.0f, rocket.green() / 255.0f, rocket.blue() / 255.0f, rocket.alpha() / 255.0f);
         matrices.translate(0.5D, 0.5D, 0.5D);
         PoseStack.Pose entry = matrices.last();
         VertexConsumer vertexConsumer = vertices.getBuffer(layer.get());

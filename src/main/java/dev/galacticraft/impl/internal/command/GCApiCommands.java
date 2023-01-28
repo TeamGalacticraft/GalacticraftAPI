@@ -40,6 +40,7 @@ import net.minecraft.commands.arguments.coordinates.BlockPosArgument;
 import net.minecraft.commands.synchronization.SingletonArgumentInfo;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
@@ -50,7 +51,7 @@ public class GCApiCommands {
     public static void register() {
         SingletonArgumentInfo<ArgumentType<?>> serializer = SingletonArgumentInfo.contextFree(RegistryArgumentType::create);
         ArgumentTypesAccessor.fabric_getClassMap().put(RegistryArgumentType.class, serializer);
-        Registry.register(Registry.COMMAND_ARGUMENT_TYPE, new ResourceLocation("galacticraft-api", "registry"), serializer); // Blame fabric api generics for this
+        Registry.register(BuiltInRegistries.COMMAND_ARGUMENT_TYPE, new ResourceLocation("galacticraft-api", "registry"), serializer); // Blame fabric api generics for this
         CommandRegistrationCallback.EVENT.register((commandDispatcher, registryAccess, environment) -> {
             LiteralArgumentBuilder<CommandSourceStack> builder = Commands.literal(Constant.MOD_ID + ":debug")
                     .requires(serverCommandSource -> serverCommandSource.hasPermission(2))

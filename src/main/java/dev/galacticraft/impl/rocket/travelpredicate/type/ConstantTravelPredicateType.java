@@ -22,21 +22,20 @@
 
 package dev.galacticraft.impl.rocket.travelpredicate.type;
 
+import dev.galacticraft.api.rocket.part.*;
 import dev.galacticraft.api.rocket.travelpredicate.TravelPredicateType;
 import dev.galacticraft.api.universe.celestialbody.CelestialBody;
-import dev.galacticraft.impl.rocket.travelpredicate.config.AccessTypeTravelPredicateConfig;
-import it.unimi.dsi.fastutil.objects.Object2BooleanFunction;
-import net.minecraft.resources.ResourceLocation;
+import dev.galacticraft.impl.rocket.travelpredicate.config.ConstantTravelPredicateConfig;
 
-public class ConstantTravelPredicateType extends TravelPredicateType<AccessTypeTravelPredicateConfig> {
+public final class ConstantTravelPredicateType extends TravelPredicateType<ConstantTravelPredicateConfig> {
     public static final ConstantTravelPredicateType INSTANCE = new ConstantTravelPredicateType();
 
     private ConstantTravelPredicateType() {
-        super(AccessTypeTravelPredicateConfig.CODEC);
+        super(ConstantTravelPredicateConfig.CODEC);
     }
 
     @Override
-    public AccessType canTravelTo(CelestialBody<?, ?> type, Object2BooleanFunction<ResourceLocation> parts, AccessTypeTravelPredicateConfig config) {
+    public Result canTravelTo(CelestialBody<?, ?> type, RocketCone<?, ?> cone, RocketBody<?, ?> body, RocketFin<?, ?> fin, RocketBooster<?, ?> booster, RocketBottom<?, ?> bottom, RocketUpgrade<?, ?>[] upgrades, ConstantTravelPredicateConfig config) {
         return config.type();
     }
 }

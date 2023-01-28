@@ -24,12 +24,12 @@ package dev.galacticraft.api.universe.display;
 
 import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Vector4f;
 import com.mojang.serialization.Codec;
 import dev.galacticraft.api.registry.AddonRegistry;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.renderer.ShaderInstance;
+import org.joml.Vector4f;
 
 import java.util.function.Consumer;
 import java.util.function.Supplier;

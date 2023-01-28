@@ -27,10 +27,10 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import dev.galacticraft.api.registry.AddonRegistry;
 import dev.galacticraft.api.universe.display.CelestialDisplay;
 import dev.galacticraft.api.universe.position.CelestialPosition;
+import dev.galacticraft.impl.codec.MiscCodecs;
 import dev.galacticraft.impl.universe.galaxy.GalaxyImpl;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
-import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Contract;
@@ -38,8 +38,8 @@ import org.jetbrains.annotations.NotNull;
 
 public interface Galaxy {
     Codec<Galaxy> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-            Codec.STRING.fieldOf("name").xmap(Component::translatable, Component::getString).forGetter(Galaxy::name),
-            Codec.STRING.fieldOf("description").xmap(Component::translatable, Component::getString).forGetter(Galaxy::description),
+            MiscCodecs.TRANSLATABLE_COMPONENT.fieldOf("name").forGetter(Galaxy::name),
+            MiscCodecs.TRANSLATABLE_COMPONENT.fieldOf("description").forGetter(Galaxy::description),
             CelestialPosition.CODEC.fieldOf("position").forGetter(Galaxy::position),
             CelestialDisplay.CODEC.fieldOf("display").forGetter(Galaxy::display)
     ).apply(instance, Galaxy::create));

@@ -30,7 +30,7 @@ import dev.galacticraft.api.universe.celestialbody.CelestialBodyConfig;
 import dev.galacticraft.api.universe.display.CelestialDisplay;
 import dev.galacticraft.api.universe.galaxy.Galaxy;
 import dev.galacticraft.api.universe.position.CelestialPosition;
-import net.minecraft.network.chat.Component;
+import dev.galacticraft.impl.codec.MiscCodecs;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -41,8 +41,8 @@ public record StarConfig(@NotNull MutableComponent name, @NotNull MutableCompone
                          @NotNull CelestialDisplay<?, ?> display, GasComposition photosphericComposition, float gravity,
                          double luminance, int surfaceTemperature) implements CelestialBodyConfig {
     public static final Codec<StarConfig> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-            Codec.STRING.fieldOf("name").xmap(Component::translatable, Component::getString).forGetter(StarConfig::name),
-            Codec.STRING.fieldOf("description").xmap(Component::translatable, Component::getString).forGetter(StarConfig::description),
+            MiscCodecs.TRANSLATABLE_COMPONENT.fieldOf("name").forGetter(StarConfig::name),
+            MiscCodecs.TRANSLATABLE_COMPONENT.fieldOf("description").forGetter(StarConfig::description),
             ResourceLocation.CODEC.fieldOf("galaxy").xmap(id -> ResourceKey.create(AddonRegistry.GALAXY_KEY, id), ResourceKey::location).forGetter(StarConfig::galaxy),
             CelestialPosition.CODEC.fieldOf("position").forGetter(StarConfig::position),
             CelestialDisplay.CODEC.fieldOf("display").forGetter(StarConfig::display),

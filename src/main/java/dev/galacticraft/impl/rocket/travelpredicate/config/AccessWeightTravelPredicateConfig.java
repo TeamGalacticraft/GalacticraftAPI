@@ -28,9 +28,9 @@ import dev.galacticraft.api.rocket.travelpredicate.TravelPredicateConfig;
 import dev.galacticraft.api.rocket.travelpredicate.TravelPredicateType;
 
 public record AccessWeightTravelPredicateConfig(int weight,
-                                                TravelPredicateType.AccessType defaultType) implements TravelPredicateConfig {
+                                                TravelPredicateType.Result defaultType) implements TravelPredicateConfig {
     public static final Codec<AccessWeightTravelPredicateConfig> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             Codec.INT.fieldOf("weight").forGetter(AccessWeightTravelPredicateConfig::weight),
-            TravelPredicateType.AccessType.CODEC.optionalFieldOf("default", TravelPredicateType.AccessType.PASS).forGetter(AccessWeightTravelPredicateConfig::defaultType)
+            TravelPredicateType.Result.CODEC.optionalFieldOf("default", TravelPredicateType.Result.PASS).forGetter(AccessWeightTravelPredicateConfig::defaultType)
     ).apply(instance, AccessWeightTravelPredicateConfig::new));
 }
