@@ -24,9 +24,13 @@ package dev.galacticraft.api.rocket.entity;
 
 import dev.galacticraft.api.rocket.LaunchStage;
 import dev.galacticraft.api.rocket.RocketData;
+import dev.galacticraft.api.rocket.part.*;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.NotNull;
 import org.joml.Vector3d;
 
 import java.util.List;
@@ -39,13 +43,55 @@ public interface Rocket extends RocketData {
      */
     LaunchStage getLaunchStage();
 
+    void setStage(LaunchStage stage);
+
+    RocketCone<?, ?> getCone();
+
+    RocketBody<?, ?> getBody();
+
+    RocketFin<?, ?> getFin();
+
+    RocketBooster<?, ?> getBooster();
+
+    RocketBottom<?, ?> getBottom();
+
+    RocketUpgrade<?, ?>[] getUpgrades();
+
+    @NotNull BlockPos getLinkedPad();
+
+    void setLinkedPad(@NotNull BlockPos linkedPad);
+
+    /**
+     * Called when the player riding the rocket jumps
+     * Used to initiate the launch countdown in the rocket
+     */
+    void onJump();
+
+
+    /**
+     * Called when the rocket launch pad linked to this rocket is destroyed
+     */
+    void onBaseDestroyed();
+
+    /**
+     * Called when the rocket is destroyed
+     *
+     * @param source   the type of damage inflicted on this rocket
+     * @param exploded whether the damage is self-inflicted (the rocket failed)
+     */
+    void dropItems(DamageSource source, boolean exploded);
+
     // utility entity methods
 
     Entity getEntity();
 
-    Level getWorld();
+    Level getLevel();
 
-    Vector3d getPos();
+    Vec3 position();
+
+    BlockPos blockPosition();
+
+    Vector3d getPosition(float delta);
 
     Vector3d getVelocity();
 
@@ -56,8 +102,6 @@ public interface Rocket extends RocketData {
     double getY();
 
     double getZ();
-
-    double getSpeed();
 
     List<Entity> getPassengers();
 
