@@ -25,7 +25,7 @@ package dev.galacticraft.impl.universe.celestialbody.type;
 import com.mojang.serialization.Codec;
 import dev.galacticraft.api.accessor.SatelliteAccessor;
 import dev.galacticraft.api.gas.GasComposition;
-import dev.galacticraft.api.registry.AddonRegistry;
+import dev.galacticraft.api.registry.AddonRegistries;
 import dev.galacticraft.api.satellite.Satellite;
 import dev.galacticraft.api.satellite.SatelliteOwnershipData;
 import dev.galacticraft.api.universe.celestialbody.CelestialBody;
@@ -105,7 +105,7 @@ public class SatelliteType extends CelestialBodyType<SatelliteConfig> implements
 
     @ApiStatus.Internal
     public static CelestialBody<SatelliteConfig, SatelliteType> registerSatellite(@NotNull MinecraftServer server, @NotNull ServerPlayer player, @NotNull CelestialBody<?, ?> parent, StructureTemplate structure) {
-        ResourceLocation id = new ResourceLocation(Objects.requireNonNull(server.registryAccess().registryOrThrow(AddonRegistry.CELESTIAL_BODY_KEY).getKey(parent)) + "_" + player.getScoreboardName().toLowerCase(Locale.ROOT));
+        ResourceLocation id = new ResourceLocation(Objects.requireNonNull(server.registryAccess().registryOrThrow(AddonRegistries.CELESTIAL_BODY).getKey(parent)) + "_" + player.getScoreboardName().toLowerCase(Locale.ROOT));
         DimensionType type = new DimensionType(OptionalLong.empty(), true, false, false, true, 1, false, false, 0, 256, 256, TagKey.create(Registries.BLOCK, new ResourceLocation(Constant.MOD_ID, "infiniburn_space")), new ResourceLocation(Constant.MOD_ID, "space_sky"), 0, new DimensionType.MonsterSettings(false, true, UniformInt.of(0, 7), 0));
         SatelliteChunkGenerator chunkGenerator = new SatelliteChunkGenerator(server.registryAccess().registryOrThrow(Registries.BIOME).getHolderOrThrow(GcApiBiomes.SPACE), structure);
         SatelliteOwnershipData ownershipData = SatelliteOwnershipData.create(player.getUUID(), player.getScoreboardName(), new LinkedList<>(), false);
@@ -125,7 +125,7 @@ public class SatelliteType extends CelestialBodyType<SatelliteConfig> implements
 
         ((DynamicDimensionRegistry)server).addDynamicDimension(id, generator, type);
 
-        SatelliteConfig config = new SatelliteConfig(ResourceKey.create(AddonRegistry.CELESTIAL_BODY_KEY, server.registryAccess().registryOrThrow(AddonRegistry.CELESTIAL_BODY_KEY).getKey(parent)), parent.galaxy(), position, display, ownershipData, ResourceKey.create(Registries.DIMENSION, id), EMPTY_GAS_COMPOSITION, 0.0f, parent.type() instanceof Tiered<?> ? ((Tiered) parent.type()).accessWeight(parent.config()) : 1, new LevelStem(Holder.direct(type), generator));
+        SatelliteConfig config = new SatelliteConfig(ResourceKey.create(AddonRegistries.CELESTIAL_BODY, server.registryAccess().registryOrThrow(AddonRegistries.CELESTIAL_BODY).getKey(parent)), parent.galaxy(), position, display, ownershipData, ResourceKey.create(Registries.DIMENSION, id), EMPTY_GAS_COMPOSITION, 0.0f, parent.type() instanceof Tiered<?> ? ((Tiered) parent.type()).accessWeight(parent.config()) : 1, new LevelStem(Holder.direct(type), generator));
         config.customName(Component.translatable(name));
         CelestialBody<SatelliteConfig, SatelliteType> satellite = INSTANCE.configure(config);
         ((SatelliteAccessor) server).addSatellite(id, satellite);

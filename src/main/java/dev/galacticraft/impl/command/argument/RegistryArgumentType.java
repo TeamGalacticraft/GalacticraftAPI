@@ -29,7 +29,7 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
-import dev.galacticraft.api.registry.AddonRegistry;
+import dev.galacticraft.api.registry.AddonRegistries;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.core.Registry;
@@ -52,7 +52,7 @@ public class RegistryArgumentType<T> implements ArgumentType<Registry<T>> {
             Registries.DIMENSION_TYPE.location().toString(),
             Registries.BIOME.location().toString(),
             Registries.SOUND_EVENT.location().toString(),
-            AddonRegistry.CELESTIAL_BODY_TYPE_KEY.location().toString()
+            AddonRegistries.CELESTIAL_BODY_TYPE.location().toString()
     );
 
     private RegistryArgumentType() {

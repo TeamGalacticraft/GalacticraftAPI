@@ -22,20 +22,44 @@
 
 package dev.galacticraft.impl.internal.fabric;
 
-import dev.galacticraft.impl.data.*;
+import dev.galacticraft.api.registry.AddonRegistries;
+import dev.galacticraft.api.registry.RocketRegistries;
+import dev.galacticraft.api.rocket.part.*;
+import dev.galacticraft.api.universe.celestialbody.CelestialBody;
+import dev.galacticraft.impl.data.BootstrapDataProvider;
+import dev.galacticraft.impl.internal.world.gen.biome.GcApiBiomes;
+import dev.galacticraft.impl.rocket.part.*;
+import dev.galacticraft.impl.universe.galaxy.GalaxyImpl;
 import net.fabricmc.fabric.api.datagen.v1.DataGeneratorEntrypoint;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
+import net.minecraft.core.RegistrySetBuilder;
+import net.minecraft.core.registries.Registries;
 
 public class GalacticraftAPIData implements DataGeneratorEntrypoint {
     @Override
     public void onInitializeDataGenerator(FabricDataGenerator generator) {
-        generator.createPack().addProvider((FabricDataGenerator.Pack.Factory<ConfiguredCelestialBodyGenerator>) ConfiguredCelestialBodyGenerator::new);
-        generator.createPack().addProvider((FabricDataGenerator.Pack.Factory<GalaxyDataGenerator>) GalaxyDataGenerator::new);
-        generator.createPack().addProvider((FabricDataGenerator.Pack.Factory<ConfiguredRocketConeDataGenerator>) ConfiguredRocketConeDataGenerator::new);
-        generator.createPack().addProvider((FabricDataGenerator.Pack.Factory<ConfiguredRocketBodyDataGenerator>) ConfiguredRocketBodyDataGenerator::new);
-        generator.createPack().addProvider((FabricDataGenerator.Pack.Factory<ConfiguredRocketFinDataGenerator>) ConfiguredRocketFinDataGenerator::new);
-        generator.createPack().addProvider((FabricDataGenerator.Pack.Factory<ConfiguredRocketBoosterDataGenerator>) ConfiguredRocketBoosterDataGenerator::new);
-        generator.createPack().addProvider((FabricDataGenerator.Pack.Factory<ConfiguredRocketBottomDataGenerator>) ConfiguredRocketBottomDataGenerator::new);
-        generator.createPack().addProvider((FabricDataGenerator.Pack.Factory<ConfiguredRocketUpgradeDataGenerator>) ConfiguredRocketUpgradeDataGenerator::new);
+        generator.createPack().addProvider(BootstrapDataProvider.create("Biomes", GcApiBiomes::bootstrapRegistries));
+        generator.createPack().addProvider(BootstrapDataProvider.<CelestialBody<?, ?>>create("Celestial Bodies", CelestialBody::bootstrapRegistries));
+        generator.createPack().addProvider(BootstrapDataProvider.create("Galaxies", GalaxyImpl::bootstrapRegistries));
+        generator.createPack().addProvider(BootstrapDataProvider.<RocketCone<?, ?>>create("Rocket Cones", RocketConeImpl::bootstrapRegistries));
+        generator.createPack().addProvider(BootstrapDataProvider.<RocketBody<?, ?>>create("Rocket Bodies", RocketBodyImpl::bootstrapRegistries));
+        generator.createPack().addProvider(BootstrapDataProvider.<RocketFin<?, ?>>create("Rocket Fins", RocketFinImpl::bootstrapRegistries));
+        generator.createPack().addProvider(BootstrapDataProvider.<RocketBooster<?, ?>>create("Rocket Boosters", RocketBoosterImpl::bootstrapRegistries));
+        generator.createPack().addProvider(BootstrapDataProvider.<RocketBottom<?, ?>>create("Rocket Bottoms", RocketBottomImpl::bootstrapRegistries));
+        generator.createPack().addProvider(BootstrapDataProvider.<RocketUpgrade<?, ?>>create("Rocket Upgrades", RocketUpgradeImpl::bootstrapRegistries));
+    }
+
+    @Override
+    public void buildRegistry(RegistrySetBuilder registryBuilder) {
+        DataGeneratorEntrypoint.super.buildRegistry(registryBuilder);
+        registryBuilder.add(Registries.BIOME, GcApiBiomes::bootstrapRegistries);
+        registryBuilder.add(AddonRegistries.GALAXY, GalaxyImpl::bootstrapRegistries);
+        registryBuilder.add(AddonRegistries.CELESTIAL_BODY, CelestialBody::bootstrapRegistries);
+        registryBuilder.add(RocketRegistries.ROCKET_CONE, RocketConeImpl::bootstrapRegistries);
+        registryBuilder.add(RocketRegistries.ROCKET_BODY, RocketBodyImpl::bootstrapRegistries);
+        registryBuilder.add(RocketRegistries.ROCKET_FIN, RocketFinImpl::bootstrapRegistries);
+        registryBuilder.add(RocketRegistries.ROCKET_BOOSTER, RocketBoosterImpl::bootstrapRegistries);
+        registryBuilder.add(RocketRegistries.ROCKET_BOTTOM, RocketBottomImpl::bootstrapRegistries);
+        registryBuilder.add(RocketRegistries.ROCKET_UPGRADE, RocketUpgradeImpl::bootstrapRegistries);
     }
 }

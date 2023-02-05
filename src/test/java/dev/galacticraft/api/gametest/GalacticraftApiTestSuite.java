@@ -23,7 +23,7 @@
 package dev.galacticraft.api.gametest;
 
 import dev.galacticraft.api.accessor.ChunkOxygenAccessor;
-import dev.galacticraft.api.registry.AddonRegistry;
+import dev.galacticraft.api.registry.AddonRegistries;
 import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTest;
@@ -41,8 +41,8 @@ public class GalacticraftApiTestSuite implements FabricGameTest {
     @GameTest(template = EMPTY_STRUCTURE)
     public void testForDatapackGalaxy(@NotNull GameTestHelper context) {
         context.succeedWhen(() -> {
-            final var registry = context.getLevel().registryAccess().registryOrThrow(AddonRegistry.GALAXY_KEY);
-            if (!registry.containsKey(ResourceKey.create(AddonRegistry.GALAXY_KEY, new ResourceLocation(MOD_ID, "example_galaxy")))) {
+            final var registry = context.getLevel().registryAccess().registryOrThrow(AddonRegistries.GALAXY);
+            if (!registry.containsKey(ResourceKey.create(AddonRegistries.GALAXY, new ResourceLocation(MOD_ID, "example_galaxy")))) {
                 context.fail("Expected custom datapack galaxy to be loaded!");
             }
         });
@@ -51,10 +51,10 @@ public class GalacticraftApiTestSuite implements FabricGameTest {
     @GameTest(template = EMPTY_STRUCTURE)
     public void testForDatapackCelestialBodies(@NotNull GameTestHelper context) {
         context.succeedWhen(() -> {
-            final var registry = context.getLevel().registryAccess().registryOrThrow(AddonRegistry.CELESTIAL_BODY_KEY);
-            if (!registry.containsKey(ResourceKey.create(AddonRegistry.CELESTIAL_BODY_KEY, new ResourceLocation(MOD_ID, "example_star")))) {
+            final var registry = context.getLevel().registryAccess().registryOrThrow(AddonRegistries.CELESTIAL_BODY);
+            if (!registry.containsKey(ResourceKey.create(AddonRegistries.CELESTIAL_BODY, new ResourceLocation(MOD_ID, "example_star")))) {
                 context.fail("Expected custom datapack star to be loaded!");
-            } else if (!registry.containsKey(ResourceKey.create(AddonRegistry.CELESTIAL_BODY_KEY, new ResourceLocation(MOD_ID, "example_planet")))) {
+            } else if (!registry.containsKey(ResourceKey.create(AddonRegistries.CELESTIAL_BODY, new ResourceLocation(MOD_ID, "example_planet")))) {
                 context.fail("Expected custom datapack planet to be loaded!");
             }
         });

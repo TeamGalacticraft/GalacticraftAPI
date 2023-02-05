@@ -25,6 +25,13 @@ package dev.galacticraft.impl.universe.galaxy;
 import dev.galacticraft.api.universe.display.CelestialDisplay;
 import dev.galacticraft.api.universe.galaxy.Galaxy;
 import dev.galacticraft.api.universe.position.CelestialPosition;
+import dev.galacticraft.impl.universe.BuiltinObjects;
+import dev.galacticraft.impl.universe.display.config.EmptyCelestialDisplayConfig;
+import dev.galacticraft.impl.universe.display.type.EmptyCelestialDisplayType;
+import dev.galacticraft.impl.universe.position.config.StaticCelestialPositionConfig;
+import dev.galacticraft.impl.universe.position.type.StaticCelestialPositionType;
+import net.minecraft.data.worldgen.BootstapContext;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -35,6 +42,20 @@ public record GalaxyImpl(@NotNull MutableComponent name,
                          @NotNull MutableComponent description,
                          CelestialPosition<?, ?> position,
                          CelestialDisplay<?, ?> display) implements Galaxy {
+
+    public static void bootstrapRegistries(@NotNull BootstapContext<Galaxy> context) {
+        context.register(BuiltinObjects.MILKY_WAY_KEY, createMilkyWay());
+    }
+
+    @Contract(" -> new")
+    public static @NotNull Galaxy createMilkyWay() {
+        return Galaxy.create(
+                Component.translatable("galaxy.galacticraft-api.milky_way.name"),
+                Component.translatable("galaxy.galacticraft-api.milky_way.description"),
+                StaticCelestialPositionType.INSTANCE.configure(new StaticCelestialPositionConfig(0, 0)),
+                EmptyCelestialDisplayType.INSTANCE.configure(EmptyCelestialDisplayConfig.INSTANCE)
+        );
+    }
 
     @Override
     public boolean equals(Object obj) {

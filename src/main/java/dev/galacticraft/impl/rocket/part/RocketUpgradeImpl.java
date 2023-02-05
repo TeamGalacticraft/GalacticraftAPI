@@ -25,7 +25,16 @@ package dev.galacticraft.impl.rocket.part;
 import dev.galacticraft.api.rocket.part.RocketUpgrade;
 import dev.galacticraft.api.rocket.part.config.RocketUpgradeConfig;
 import dev.galacticraft.api.rocket.part.type.RocketUpgradeType;
+import dev.galacticraft.impl.rocket.part.config.DefaultRocketUpgradeConfig;
+import dev.galacticraft.impl.rocket.part.type.InvalidRocketUpgradeType;
+import dev.galacticraft.impl.universe.BuiltinObjects;
+import net.minecraft.data.worldgen.BootstapContext;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 public record RocketUpgradeImpl<C extends RocketUpgradeConfig, T extends RocketUpgradeType<C>>(@NotNull C config, @NotNull T type) implements RocketUpgrade<C, T> {
+    @ApiStatus.Internal
+    public static void bootstrapRegistries(BootstapContext<RocketUpgrade<?, ?>> context) {
+        context.register(BuiltinObjects.INVALID_ROCKET_UPGRADE, RocketUpgrade.create(DefaultRocketUpgradeConfig.INSTANCE, InvalidRocketUpgradeType.INSTANCE));
+    }
 }

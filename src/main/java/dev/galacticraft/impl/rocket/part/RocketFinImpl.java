@@ -25,7 +25,16 @@ package dev.galacticraft.impl.rocket.part;
 import dev.galacticraft.api.rocket.part.RocketFin;
 import dev.galacticraft.api.rocket.part.config.RocketFinConfig;
 import dev.galacticraft.api.rocket.part.type.RocketFinType;
+import dev.galacticraft.impl.rocket.part.config.DefaultRocketFinConfig;
+import dev.galacticraft.impl.rocket.part.type.InvalidRocketFinType;
+import dev.galacticraft.impl.universe.BuiltinObjects;
+import net.minecraft.data.worldgen.BootstapContext;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 public record RocketFinImpl<C extends RocketFinConfig, T extends RocketFinType<C>>(@NotNull C config, @NotNull T type) implements RocketFin<C, T> {
+    @ApiStatus.Internal
+    public static void bootstrapRegistries(BootstapContext<RocketFin<?, ?>> context) {
+        context.register(BuiltinObjects.INVALID_ROCKET_FIN, RocketFin.create(DefaultRocketFinConfig.INSTANCE, InvalidRocketFinType.INSTANCE));
+    }
 }

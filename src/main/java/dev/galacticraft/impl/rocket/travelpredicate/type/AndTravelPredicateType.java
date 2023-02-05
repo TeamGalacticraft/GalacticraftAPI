@@ -37,10 +37,10 @@ public final class AndTravelPredicateType extends TravelPredicateType<AndTravelP
     }
 
     @Override
-    public Result canTravelTo(CelestialBody<?, ?> type, RocketCone<?, ?> cone, RocketBody<?, ?> body, RocketFin<?, ?> fin, RocketBooster<?, ?> booster, RocketBottom<?, ?> bottom, RocketUpgrade<?, ?>[] upgrades, AndTravelPredicateConfig config) {
+    public Result canTravel(CelestialBody<?, ?> from, CelestialBody<?, ?> to, RocketCone<?, ?> cone, RocketBody<?, ?> body, RocketFin<?, ?> fin, RocketBooster<?, ?> booster, RocketBottom<?, ?> bottom, RocketUpgrade<?, ?>[] upgrades, AndTravelPredicateConfig config) {
         Result result = Result.PASS;
         for (ConfiguredTravelPredicate<?, ?> predicate : config.predicates()) {
-            result = result.merge(predicate.canTravelTo(type, cone, body, fin, booster, bottom, upgrades));
+            result = result.merge(predicate.canTravel(from, to, cone, body, fin, booster, bottom, upgrades));
         }
         return result;
     }

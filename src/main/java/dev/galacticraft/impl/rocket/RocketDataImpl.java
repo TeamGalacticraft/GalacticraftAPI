@@ -94,7 +94,7 @@ public record RocketDataImpl(int color, ResourceLocation cone, ResourceLocation 
     }
 
     @Override
-    public boolean canTravelTo(RegistryAccess manager, CelestialBody<?, ?> from, CelestialBody<?, ?> to) {
+    public boolean canTravel(@NotNull RegistryAccess manager, CelestialBody<?, ?> from, CelestialBody<?, ?> to) {
         TravelPredicateType.Result type = TravelPredicateType.Result.PASS;
         RocketCone<?, ?> cone = manager.registryOrThrow(RocketRegistries.ROCKET_CONE).get(this.cone());
         RocketBody<?, ?> body = manager.registryOrThrow(RocketRegistries.ROCKET_BODY).get(this.body());
@@ -114,13 +114,13 @@ public record RocketDataImpl(int color, ResourceLocation cone, ResourceLocation 
         assert booster != null;
         assert bottom != null;
 
-        type = type.merge(cone.travelPredicate().canTravelTo(to, cone, body, fin, booster, bottom, upgrades));
-        type = type.merge(body.travelPredicate().canTravelTo(to, cone, body, fin, booster, bottom, upgrades));
-        type = type.merge(fin.travelPredicate().canTravelTo(to, cone, body, fin, booster, bottom, upgrades));
-        type = type.merge(booster.travelPredicate().canTravelTo(to, cone, body, fin, booster, bottom, upgrades));
-        type = type.merge(bottom.travelPredicate().canTravelTo(to, cone, body, fin, booster, bottom, upgrades));
+        type = type.merge(cone.travelPredicate().canTravel(from, to, cone, body, fin, booster, bottom, upgrades));
+        type = type.merge(body.travelPredicate().canTravel(from, to, cone, body, fin, booster, bottom, upgrades));
+        type = type.merge(fin.travelPredicate().canTravel(from, to, cone, body, fin, booster, bottom, upgrades));
+        type = type.merge(booster.travelPredicate().canTravel(from, to, cone, body, fin, booster, bottom, upgrades));
+        type = type.merge(bottom.travelPredicate().canTravel(from, to, cone, body, fin, booster, bottom, upgrades));
         for (RocketUpgrade<?, ?> upgrade : upgrades) {
-            type = type.merge(upgrade.travelPredicate().canTravelTo(to, cone, body, fin, booster, bottom, upgrades));
+            type = type.merge(upgrade.travelPredicate().canTravel(from, to, cone, body, fin, booster, bottom, upgrades));
         }
 
         return type == TravelPredicateType.Result.ALLOW;

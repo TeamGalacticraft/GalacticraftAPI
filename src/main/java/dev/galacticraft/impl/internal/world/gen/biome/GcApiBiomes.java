@@ -38,7 +38,7 @@ import org.jetbrains.annotations.ApiStatus;
 public class GcApiBiomes {
     public static final ResourceKey<Biome> SPACE = ResourceKey.create(Registries.BIOME, new ResourceLocation(Constant.MOD_ID, "space"));
 
-    private static Biome createSpaceBiome(HolderGetter<net.minecraft.world.level.levelgen.placement.PlacedFeature> holderGetter, HolderGetter<net.minecraft.world.level.levelgen.carver.ConfiguredWorldCarver<?>> holderGetter2) {
+    public static Biome createSpaceBiome(HolderGetter<net.minecraft.world.level.levelgen.placement.PlacedFeature> holderGetter, HolderGetter<net.minecraft.world.level.levelgen.carver.ConfiguredWorldCarver<?>> holderGetter2) {
         Biome.BiomeBuilder builder = new Biome.BiomeBuilder();
         MobSpawnSettings.Builder spawns = new MobSpawnSettings.Builder();
         BiomeGenerationSettings.Builder genSettings = new BiomeGenerationSettings.Builder(holderGetter, holderGetter2);
@@ -54,7 +54,7 @@ public class GcApiBiomes {
                 .temperatureAdjustment(Biome.TemperatureModifier.NONE).build();
     }
 
-    public static void bootstrap(BootstapContext<Biome> context) {
-        context.register(ResourceKey.create(Registries.BIOME, new ResourceLocation(Constant.MOD_ID, "space")), createSpaceBiome(context.lookup(Registries.PLACED_FEATURE), context.lookup(Registries.CONFIGURED_CARVER)));
+    public static void bootstrapRegistries(BootstapContext<Biome> context) {
+        context.register(SPACE, createSpaceBiome(context.lookup(Registries.PLACED_FEATURE), context.lookup(Registries.CONFIGURED_CARVER)));
     }
 }

@@ -25,7 +25,16 @@ package dev.galacticraft.impl.rocket.part;
 import dev.galacticraft.api.rocket.part.RocketBody;
 import dev.galacticraft.api.rocket.part.config.RocketBodyConfig;
 import dev.galacticraft.api.rocket.part.type.RocketBodyType;
+import dev.galacticraft.impl.rocket.part.config.DefaultRocketBodyConfig;
+import dev.galacticraft.impl.rocket.part.type.InvalidRocketBodyType;
+import dev.galacticraft.impl.universe.BuiltinObjects;
+import net.minecraft.data.worldgen.BootstapContext;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 public record RocketBodyImpl<C extends RocketBodyConfig, T extends RocketBodyType<C>>(@NotNull C config, @NotNull T type) implements RocketBody<C, T> {
+    @ApiStatus.Internal
+    public static void bootstrapRegistries(BootstapContext<RocketBody<?, ?>> context) {
+        context.register(BuiltinObjects.INVALID_ROCKET_BODY, RocketBody.create(DefaultRocketBodyConfig.INSTANCE, InvalidRocketBodyType.INSTANCE));
+    }
 }

@@ -25,7 +25,16 @@ package dev.galacticraft.impl.rocket.part;
 import dev.galacticraft.api.rocket.part.RocketCone;
 import dev.galacticraft.api.rocket.part.config.RocketConeConfig;
 import dev.galacticraft.api.rocket.part.type.RocketConeType;
+import dev.galacticraft.impl.rocket.part.config.DefaultRocketConeConfig;
+import dev.galacticraft.impl.rocket.part.type.InvalidRocketConeType;
+import dev.galacticraft.impl.universe.BuiltinObjects;
+import net.minecraft.data.worldgen.BootstapContext;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 public record RocketConeImpl<C extends RocketConeConfig, T extends RocketConeType<C>>(@NotNull C config, @NotNull T type) implements RocketCone<C, T> {
+    @ApiStatus.Internal
+    public static void bootstrapRegistries(BootstapContext<RocketCone<?, ?>> context) {
+        context.register(BuiltinObjects.INVALID_ROCKET_CONE, RocketCone.create(DefaultRocketConeConfig.INSTANCE, InvalidRocketConeType.INSTANCE));
+    }
 }

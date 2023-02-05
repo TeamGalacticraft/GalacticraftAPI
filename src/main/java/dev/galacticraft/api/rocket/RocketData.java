@@ -92,6 +92,6 @@ public interface RocketData {
 
     boolean isEmpty();
 
-    boolean canTravelTo(RegistryAccess manager, CelestialBody<?, ?> from, CelestialBody<?, ?> to);
+    boolean canTravel(RegistryAccess manager, CelestialBody<?, ?> from, CelestialBody<?, ?> to);
 
 }

@@ -84,8 +84,6 @@ public final class BuiltInRocketRegistries {
                     false
             )).buildAndRegister();
 
-    public static void initialize() {}
-
     static {
         Registry.register(BuiltInRocketRegistries.TRAVEL_PREDICATE_TYPE, new ResourceLocation(Constant.MOD_ID, "default"), DefaultTravelPredicateType.INSTANCE);
         Registry.register(BuiltInRocketRegistries.TRAVEL_PREDICATE_TYPE, new ResourceLocation(Constant.MOD_ID, "access_weight"), AccessWeightTravelPredicateType.INSTANCE);

@@ -29,21 +29,22 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3d;
 
 import java.util.List;
 
 public interface Rocket extends RocketData {
-
     /**
      * Returns the launch stage of this rocket.
      * @return the launch stage of this rocket.
      */
     LaunchStage getLaunchStage();
 
-    void setStage(LaunchStage stage);
+    void setLaunchStage(LaunchStage stage);
 
     RocketCone<?, ?> getCone();
 
@@ -81,6 +82,10 @@ public interface Rocket extends RocketData {
      */
     void dropItems(DamageSource source, boolean exploded);
 
+    @Nullable Fluid getFuelTankFluid();
+    long getFuelTankAmount();
+    long getFuelTankCapacity();
+
     // utility entity methods
 
     Entity getEntity();
@@ -90,8 +95,6 @@ public interface Rocket extends RocketData {
     Vec3 position();
 
     BlockPos blockPosition();
-
-    Vector3d getPosition(float delta);
 
     Vector3d getVelocity();
 

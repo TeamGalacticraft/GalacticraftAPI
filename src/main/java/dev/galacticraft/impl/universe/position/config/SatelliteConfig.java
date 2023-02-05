@@ -25,7 +25,7 @@ package dev.galacticraft.impl.universe.position.config;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import dev.galacticraft.api.gas.GasComposition;
-import dev.galacticraft.api.registry.AddonRegistry;
+import dev.galacticraft.api.registry.AddonRegistries;
 import dev.galacticraft.api.satellite.SatelliteOwnershipData;
 import dev.galacticraft.api.universe.celestialbody.CelestialBody;
 import dev.galacticraft.api.universe.celestialbody.CelestialBodyConfig;
@@ -43,8 +43,8 @@ import java.util.Objects;
 
 public final class SatelliteConfig implements CelestialBodyConfig {
     public static final Codec<SatelliteConfig> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-            ResourceLocation.CODEC.fieldOf("parent").xmap(id -> ResourceKey.create(AddonRegistry.CELESTIAL_BODY_KEY, id), ResourceKey::location).forGetter(SatelliteConfig::parent),
-            ResourceLocation.CODEC.fieldOf("galaxy").xmap(id -> ResourceKey.create(AddonRegistry.GALAXY_KEY, id), ResourceKey::location).forGetter(SatelliteConfig::galaxy),
+            ResourceLocation.CODEC.fieldOf("parent").xmap(id -> ResourceKey.create(AddonRegistries.CELESTIAL_BODY, id), ResourceKey::location).forGetter(SatelliteConfig::parent),
+            ResourceLocation.CODEC.fieldOf("galaxy").xmap(id -> ResourceKey.create(AddonRegistries.GALAXY, id), ResourceKey::location).forGetter(SatelliteConfig::galaxy),
             CelestialPosition.CODEC.fieldOf("position").forGetter(SatelliteConfig::position),
             CelestialDisplay.CODEC.fieldOf("display").forGetter(SatelliteConfig::display),
             SatelliteOwnershipData.CODEC.fieldOf("ownership_data").forGetter(SatelliteConfig::ownershipData),

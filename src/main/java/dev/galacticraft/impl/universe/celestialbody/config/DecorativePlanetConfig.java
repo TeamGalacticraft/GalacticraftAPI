@@ -25,7 +25,7 @@ package dev.galacticraft.impl.universe.celestialbody.config;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import dev.galacticraft.api.gas.GasComposition;
-import dev.galacticraft.api.registry.AddonRegistry;
+import dev.galacticraft.api.registry.AddonRegistries;
 import dev.galacticraft.api.satellite.SatelliteRecipe;
 import dev.galacticraft.api.universe.celestialbody.CelestialBody;
 import dev.galacticraft.api.universe.celestialbody.CelestialBodyConfig;
@@ -49,8 +49,8 @@ public record DecorativePlanetConfig(@NotNull MutableComponent name, @NotNull Mu
     public static final Codec<DecorativePlanetConfig> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             MiscCodecs.TRANSLATABLE_COMPONENT.fieldOf("name").forGetter(DecorativePlanetConfig::name),
             MiscCodecs.TRANSLATABLE_COMPONENT.fieldOf("description").forGetter(DecorativePlanetConfig::description),
-            ResourceLocation.CODEC.fieldOf("galaxy").xmap(id -> ResourceKey.create(AddonRegistry.GALAXY_KEY, id), ResourceKey::location).forGetter(DecorativePlanetConfig::galaxy),
-            ResourceLocation.CODEC.fieldOf("parent").xmap(id -> ResourceKey.create(AddonRegistry.CELESTIAL_BODY_KEY, id), ResourceKey::location).forGetter(DecorativePlanetConfig::parent),
+            ResourceLocation.CODEC.fieldOf("galaxy").xmap(id -> ResourceKey.create(AddonRegistries.GALAXY, id), ResourceKey::location).forGetter(DecorativePlanetConfig::galaxy),
+            ResourceLocation.CODEC.fieldOf("parent").xmap(id -> ResourceKey.create(AddonRegistries.CELESTIAL_BODY, id), ResourceKey::location).forGetter(DecorativePlanetConfig::parent),
             CelestialPosition.CODEC.fieldOf("position").forGetter(DecorativePlanetConfig::position),
             CelestialDisplay.CODEC.fieldOf("display").forGetter(DecorativePlanetConfig::display),
             GasComposition.CODEC.fieldOf("atmosphere").forGetter(DecorativePlanetConfig::atmosphere),

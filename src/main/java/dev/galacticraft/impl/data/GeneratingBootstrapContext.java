@@ -22,26 +22,24 @@
 
 package dev.galacticraft.impl.data;
 
-import dev.galacticraft.api.data.ConfiguredRocketFinDataProvider;
-import dev.galacticraft.api.rocket.part.RocketFin;
-import dev.galacticraft.impl.rocket.part.config.DefaultRocketFinConfig;
-import dev.galacticraft.impl.rocket.part.type.InvalidRocketFinType;
-import dev.galacticraft.impl.universe.BuiltinObjects;
-import net.minecraft.data.PackOutput;
+import com.mojang.serialization.Lifecycle;
+import net.fabricmc.fabric.api.datagen.v1.provider.FabricDynamicRegistryProvider;
+import net.minecraft.core.Holder;
+import net.minecraft.core.HolderGetter;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.Registry;
+import net.minecraft.data.worldgen.BootstapContext;
+import net.minecraft.resources.ResourceKey;
 import org.jetbrains.annotations.NotNull;
 
-public class ConfiguredRocketFinDataGenerator extends ConfiguredRocketFinDataProvider {
-    public ConfiguredRocketFinDataGenerator(PackOutput output) {
-        super(output);
+public record GeneratingBootstrapContext<T>(HolderLookup.Provider registries, FabricDynamicRegistryProvider.Entries entries) implements BootstapContext<T> {
+    @Override
+    public Holder.Reference<T> register(ResourceKey<T> resourceKey, T object, Lifecycle lifecycle) {
+        return (Holder.Reference<T>) this.entries.add(resourceKey, object);
     }
 
     @Override
-    public void generateGalaxies() {
-        this.add(BuiltinObjects.INVALID_ROCKET_FIN, RocketFin.create(DefaultRocketFinConfig.INSTANCE, InvalidRocketFinType.INSTANCE));
-    }
-
-    @Override
-    public @NotNull String getName() {
-        return "Galacticraft API Rocket Fins";
+    public <S> @NotNull HolderGetter<S> lookup(ResourceKey<? extends Registry<? extends S>> resourceKey) {
+        return this.registries.lookupOrThrow(resourceKey);
     }
 }

@@ -22,7 +22,8 @@
 
 package dev.galacticraft.impl.universe;
 
-import dev.galacticraft.api.registry.AddonRegistry;
+import dev.galacticraft.api.registry.AddonRegistries;
+import dev.galacticraft.api.registry.BuiltInAddonRegistries;
 import dev.galacticraft.api.registry.RocketRegistries;
 import dev.galacticraft.api.rocket.part.*;
 import dev.galacticraft.api.universe.celestialbody.CelestialBody;
@@ -40,9 +41,9 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 
 public class BuiltinObjects {
-    public static final ResourceKey<Galaxy> MILKY_WAY_KEY = ResourceKey.create(AddonRegistry.GALAXY_KEY, new ResourceLocation(Constant.MOD_ID, "milky_way"));
-    public static final ResourceKey<CelestialBody<?, ?>> SOL_KEY = ResourceKey.create(AddonRegistry.CELESTIAL_BODY_KEY, new ResourceLocation(Constant.MOD_ID, "sol"));
-    public static final ResourceKey<CelestialBody<?, ?>> EARTH_KEY = ResourceKey.create(AddonRegistry.CELESTIAL_BODY_KEY, new ResourceLocation(Constant.MOD_ID, "earth"));
+    public static final ResourceKey<Galaxy> MILKY_WAY_KEY = ResourceKey.create(AddonRegistries.GALAXY, new ResourceLocation(Constant.MOD_ID, "milky_way"));
+    public static final ResourceKey<CelestialBody<?, ?>> SOL_KEY = ResourceKey.create(AddonRegistries.CELESTIAL_BODY, new ResourceLocation(Constant.MOD_ID, "sol"));
+    public static final ResourceKey<CelestialBody<?, ?>> EARTH_KEY = ResourceKey.create(AddonRegistries.CELESTIAL_BODY, new ResourceLocation(Constant.MOD_ID, "earth"));
     public static final ResourceKey<RocketCone<?, ?>> INVALID_ROCKET_CONE = ResourceKey.create(RocketRegistries.ROCKET_CONE, Constant.Misc.INVALID);
     public static final ResourceKey<RocketBody<?, ?>> INVALID_ROCKET_BODY = ResourceKey.create(RocketRegistries.ROCKET_BODY, Constant.Misc.INVALID);
     public static final ResourceKey<RocketFin<?, ?>> INVALID_ROCKET_FIN = ResourceKey.create(RocketRegistries.ROCKET_FIN, Constant.Misc.INVALID);
@@ -51,14 +52,14 @@ public class BuiltinObjects {
     public static final ResourceKey<RocketUpgrade<?, ?>> INVALID_ROCKET_UPGRADE = ResourceKey.create(RocketRegistries.ROCKET_UPGRADE, Constant.Misc.INVALID);
 
     public static void register() {
-        Registry.register(AddonRegistry.CELESTIAL_POSITION_TYPE, new ResourceLocation(Constant.MOD_ID, "static"), StaticCelestialPositionType.INSTANCE);
-        Registry.register(AddonRegistry.CELESTIAL_POSITION_TYPE, new ResourceLocation(Constant.MOD_ID, "orbital"), OrbitalCelestialPositionType.INSTANCE);
+        Registry.register(BuiltInAddonRegistries.CELESTIAL_POSITION_TYPE, new ResourceLocation(Constant.MOD_ID, "static"), StaticCelestialPositionType.INSTANCE);
+        Registry.register(BuiltInAddonRegistries.CELESTIAL_POSITION_TYPE, new ResourceLocation(Constant.MOD_ID, "orbital"), OrbitalCelestialPositionType.INSTANCE);
 
-        Registry.register(AddonRegistry.CELESTIAL_DISPLAY_TYPE, new ResourceLocation(Constant.MOD_ID, "empty"), EmptyCelestialDisplayType.INSTANCE);
-        Registry.register(AddonRegistry.CELESTIAL_DISPLAY_TYPE, new ResourceLocation(Constant.MOD_ID, "icon"), IconCelestialDisplayType.INSTANCE);
+        Registry.register(BuiltInAddonRegistries.CELESTIAL_DISPLAY_TYPE, new ResourceLocation(Constant.MOD_ID, "empty"), EmptyCelestialDisplayType.INSTANCE);
+        Registry.register(BuiltInAddonRegistries.CELESTIAL_DISPLAY_TYPE, new ResourceLocation(Constant.MOD_ID, "icon"), IconCelestialDisplayType.INSTANCE);
 
-        Registry.register(AddonRegistry.CELESTIAL_BODY_TYPE, new ResourceLocation(Constant.MOD_ID, "star"), StarType.INSTANCE);
-        Registry.register(AddonRegistry.CELESTIAL_BODY_TYPE, new ResourceLocation(Constant.MOD_ID, "planet"), PlanetType.INSTANCE);
-        Registry.register(AddonRegistry.CELESTIAL_BODY_TYPE, new ResourceLocation(Constant.MOD_ID, "decorative_planet"), DecorativePlanet.INSTANCE);
+        Registry.register(BuiltInAddonRegistries.CELESTIAL_BODY_TYPE, new ResourceLocation(Constant.MOD_ID, "star"), StarType.INSTANCE);
+        Registry.register(BuiltInAddonRegistries.CELESTIAL_BODY_TYPE, new ResourceLocation(Constant.MOD_ID, "planet"), PlanetType.INSTANCE);
+        Registry.register(BuiltInAddonRegistries.CELESTIAL_BODY_TYPE, new ResourceLocation(Constant.MOD_ID, "decorative_planet"), DecorativePlanet.INSTANCE);
     }
 }

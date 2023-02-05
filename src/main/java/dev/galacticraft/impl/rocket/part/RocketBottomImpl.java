@@ -25,7 +25,16 @@ package dev.galacticraft.impl.rocket.part;
 import dev.galacticraft.api.rocket.part.RocketBottom;
 import dev.galacticraft.api.rocket.part.config.RocketBottomConfig;
 import dev.galacticraft.api.rocket.part.type.RocketBottomType;
+import dev.galacticraft.impl.rocket.part.config.DefaultRocketBottomConfig;
+import dev.galacticraft.impl.rocket.part.type.InvalidRocketBottomType;
+import dev.galacticraft.impl.universe.BuiltinObjects;
+import net.minecraft.data.worldgen.BootstapContext;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 public record RocketBottomImpl<C extends RocketBottomConfig, T extends RocketBottomType<C>>(@NotNull C config, @NotNull T type) implements RocketBottom<C, T> {
+    @ApiStatus.Internal
+    public static void bootstrapRegistries(BootstapContext<RocketBottom<?, ?>> context) {
+        context.register(BuiltinObjects.INVALID_ROCKET_BOTTOM, RocketBottom.create(DefaultRocketBottomConfig.INSTANCE, InvalidRocketBottomType.INSTANCE));
+    }
 }

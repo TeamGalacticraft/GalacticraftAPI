@@ -25,7 +25,7 @@ package dev.galacticraft.impl.universe.celestialbody.config;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import dev.galacticraft.api.gas.GasComposition;
-import dev.galacticraft.api.registry.AddonRegistry;
+import dev.galacticraft.api.registry.AddonRegistries;
 import dev.galacticraft.api.universe.celestialbody.CelestialBodyConfig;
 import dev.galacticraft.api.universe.display.CelestialDisplay;
 import dev.galacticraft.api.universe.galaxy.Galaxy;
@@ -43,7 +43,7 @@ public record StarConfig(@NotNull MutableComponent name, @NotNull MutableCompone
     public static final Codec<StarConfig> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             MiscCodecs.TRANSLATABLE_COMPONENT.fieldOf("name").forGetter(StarConfig::name),
             MiscCodecs.TRANSLATABLE_COMPONENT.fieldOf("description").forGetter(StarConfig::description),
-            ResourceLocation.CODEC.fieldOf("galaxy").xmap(id -> ResourceKey.create(AddonRegistry.GALAXY_KEY, id), ResourceKey::location).forGetter(StarConfig::galaxy),
+            ResourceLocation.CODEC.fieldOf("galaxy").xmap(id -> ResourceKey.create(AddonRegistries.GALAXY, id), ResourceKey::location).forGetter(StarConfig::galaxy),
             CelestialPosition.CODEC.fieldOf("position").forGetter(StarConfig::position),
             CelestialDisplay.CODEC.fieldOf("display").forGetter(StarConfig::display),
             GasComposition.CODEC.fieldOf("photospheric_composition").forGetter(StarConfig::photosphericComposition),

@@ -25,7 +25,16 @@ package dev.galacticraft.impl.rocket.part;
 import dev.galacticraft.api.rocket.part.RocketBooster;
 import dev.galacticraft.api.rocket.part.config.RocketBoosterConfig;
 import dev.galacticraft.api.rocket.part.type.RocketBoosterType;
+import dev.galacticraft.impl.rocket.part.config.DefaultRocketBoosterConfig;
+import dev.galacticraft.impl.rocket.part.type.InvalidRocketBoosterType;
+import dev.galacticraft.impl.universe.BuiltinObjects;
+import net.minecraft.data.worldgen.BootstapContext;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 public record RocketBoosterImpl<C extends RocketBoosterConfig, T extends RocketBoosterType<C>>(@NotNull C config, @NotNull T type) implements RocketBooster<C, T> {
+    @ApiStatus.Internal
+    public static void bootstrapRegistries(BootstapContext<RocketBooster<?, ?>> context) {
+        context.register(BuiltinObjects.INVALID_ROCKET_BOOSTER, RocketBooster.create(DefaultRocketBoosterConfig.INSTANCE, InvalidRocketBoosterType.INSTANCE));
+    }
 }

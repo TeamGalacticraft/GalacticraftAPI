@@ -129,10 +129,10 @@ public abstract class LivingEntityMixin extends Entity implements GearInventoryP
         if (mask && gear) {
             Container tankInv = this.getOxygenTanks();
             for (int i = 0; i < tankInv.getContainerSize(); i++) {
-                Storage<FluidVariant> storage = ContainerItemContext.withInitial(tankInv.getItem(i)).find(FluidStorage.ITEM);
+                Storage<FluidVariant> storage = ContainerItemContext.withConstant(tankInv.getItem(i)).find(FluidStorage.ITEM);
                 if (storage != null) {
                     try (Transaction transaction = Transaction.openOuter()) {
-                        if (storage.extract(FluidVariant.of(Gases.OXYGEN), 1L, transaction) > 0) {
+                        if (storage.extract(FluidVariant.of(Gases.OXYGEN), 1L, transaction) > 0) { //FIXME
                             transaction.commit();
                             ci.setReturnValue(this.increaseAirSupply(air));
                             return;

@@ -24,7 +24,7 @@ package dev.galacticraft.api.universe.galaxy;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import dev.galacticraft.api.registry.AddonRegistry;
+import dev.galacticraft.api.registry.AddonRegistries;
 import dev.galacticraft.api.universe.display.CelestialDisplay;
 import dev.galacticraft.api.universe.position.CelestialPosition;
 import dev.galacticraft.impl.codec.MiscCodecs;
@@ -50,7 +50,7 @@ public interface Galaxy {
     }
 
     static Registry<Galaxy> getRegistry(@NotNull RegistryAccess manager) {
-        return manager.registryOrThrow(AddonRegistry.GALAXY_KEY);
+        return manager.registryOrThrow(AddonRegistries.GALAXY);
     }
 
     static Galaxy getById(RegistryAccess manager, ResourceLocation id) {

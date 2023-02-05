@@ -53,6 +53,14 @@ public enum LaunchStage implements StringRepresentable {
      */
     FAILED;
 
+    public LaunchStage next() {
+        if (this.ordinal() < LAUNCHED.ordinal()) {
+            return LaunchStage.values()[ordinal() + 1];
+        } else {
+            return LAUNCHED;
+        }
+    }
+
     @Override
     public @NotNull String getSerializedName() {
         return this.toString().toLowerCase(Locale.ROOT);
