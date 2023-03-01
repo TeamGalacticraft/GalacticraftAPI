@@ -70,12 +70,22 @@ public abstract class LivingEntityMixin extends Entity implements GearInventoryP
 
     @ModifyConstant(method = "travel", constant = @Constant(doubleValue = 0.08))
     private double galacticraft_modifyGravity(double d) {
-        return CelestialBody.getByDimension(this.level).map(celestialBodyType -> celestialBodyType.gravity() * 0.08d).orElse(0.08);
+        AttributeInstance attribute = ((LivingEntity) (Object) this).getAttribute(GcApiEntityAttributes.LOCAL_GRAVITY_LEVEL);
+        if (attribute != null && attribute.getValue() > 0) {
+            return attribute.getValue() * 0.08d;
+        } else {
+            return CelestialBody.getByDimension(this.level).map(celestialBodyType -> celestialBodyType.gravity() * 0.08d).orElse(0.08);
+        }
     }
 
     @ModifyConstant(method = "travel", constant = @Constant(doubleValue = 0.01))
     private double galacticraft_modifySlowFallingGravity(double d) {
-        return CelestialBody.getByDimension(this.level).map(celestialBodyType -> celestialBodyType.gravity() * 0.01d).orElse(0.01);
+        AttributeInstance attribute = ((LivingEntity) (Object) this).getAttribute(GcApiEntityAttributes.LOCAL_GRAVITY_LEVEL);
+        if (attribute != null && attribute.getValue() > 0) {
+            return attribute.getValue() * 0.01d;
+        } else {
+            return CelestialBody.getByDimension(this.level).map(celestialBodyType -> celestialBodyType.gravity() * 0.01d).orElse(0.01);
+        }
     }
 
     @Shadow
@@ -84,8 +94,13 @@ public abstract class LivingEntityMixin extends Entity implements GearInventoryP
     @Inject(method = "calculateFallDamage", at = @At("HEAD"), cancellable = true)
     protected void galacticraft_modifyFallDamage(float fallDistance, float damageMultiplier, CallbackInfoReturnable<Integer> cir) {
         MobEffectInstance effectInstance = this.getEffect(MobEffects.JUMP);
+        AttributeInstance attribute = ((LivingEntity) (Object) this).getAttribute(GcApiEntityAttributes.LOCAL_GRAVITY_LEVEL);
         float ff = effectInstance == null ? 0.0F : (float) (effectInstance.getAmplifier() + 6);
-        CelestialBody.getByDimension(this.level).ifPresent(celestialBodyType -> cir.setReturnValue((int) (Mth.ceil((fallDistance * celestialBodyType.gravity()) - 3.0F - ff) * damageMultiplier)));
+        if (attribute != null && attribute.getValue() > 0) {
+            cir.setReturnValue((int) (Mth.ceil((fallDistance * attribute.getValue()) - 3.0F - ff) * damageMultiplier));
+        } else {
+            CelestialBody.getByDimension(this.level).ifPresent(celestialBodyType -> cir.setReturnValue((int) (Mth.ceil((fallDistance * celestialBodyType.gravity()) - 3.0F - ff) * damageMultiplier)));
+        }
     }
 
     @Redirect(method = "baseTick", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;isEyeInFluid(Lnet/minecraft/tags/TagKey;)Z", ordinal = 0))
