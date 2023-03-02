@@ -38,11 +38,11 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.Sheets;
 import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.Direction;
+import net.minecraft.world.item.ItemDisplayContext;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -62,7 +62,7 @@ public record BakedModelRocketPartRenderer(Supplier<BakedModel> model,
         RenderSystem.setShader(GameRenderer::getPositionColorTexShader);
         matrices.translate(0, 0, 150);
         matrices.translate(8, 8, 8);
-        model.get().getTransforms().getTransform(ItemTransforms.TransformType.GUI).apply(false, matrices);
+        model.get().getTransforms().getTransform(ItemDisplayContext.GUI).apply(false, matrices);
         matrices.mulPose(Axis.XN.rotationDegrees(35));
         matrices.mulPose(Axis.YP.rotationDegrees(225));
         matrices.mulPose(Axis.ZP.rotationDegrees(180));
@@ -75,7 +75,6 @@ public record BakedModelRocketPartRenderer(Supplier<BakedModel> model,
         }
         Minecraft.getInstance().getTextureManager().getTexture(TextureAtlas.LOCATION_BLOCKS).setFilter(false, false);
         RenderSystem.setShaderTexture(0, TextureAtlas.LOCATION_BLOCKS);
-        RenderSystem.enableTexture();
         RenderSystem.setShaderTexture(0, this.model.get().getParticleIcon().atlasLocation());
         RenderSystem.disableBlend();
         RenderSystem.disableDepthTest();

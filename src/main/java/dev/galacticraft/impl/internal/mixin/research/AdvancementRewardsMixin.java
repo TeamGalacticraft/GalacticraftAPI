@@ -20,13 +20,16 @@
  * SOFTWARE.
  */
 
-package dev.galacticraft.impl.internal.mixin;
+package dev.galacticraft.impl.internal.mixin.research;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import dev.galacticraft.api.accessor.ServerResearchAccessor;
 import dev.galacticraft.impl.internal.accessor.AdvancementRewardsAccessor;
+import net.minecraft.advancements.AdvancementRewards;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
@@ -37,9 +40,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.Arrays;
-import net.minecraft.advancements.AdvancementRewards;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerPlayer;
 
 @Mixin(AdvancementRewards.class)
 public abstract class AdvancementRewardsMixin implements AdvancementRewardsAccessor {

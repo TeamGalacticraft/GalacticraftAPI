@@ -20,14 +20,13 @@
  * SOFTWARE.
  */
 
-package dev.galacticraft.impl.internal.mixin;
+package dev.galacticraft.impl.internal.mixin.gear;
 
 import dev.galacticraft.api.accessor.GearInventoryProvider;
 import dev.galacticraft.api.entity.attribute.GcApiEntityAttributes;
 import dev.galacticraft.api.item.Accessory;
 import dev.galacticraft.api.item.OxygenGear;
 import dev.galacticraft.api.item.OxygenMask;
-import dev.galacticraft.api.universe.celestialbody.CelestialBody;
 import dev.galacticraft.impl.internal.fabric.GalacticraftAPI;
 import dev.galacticraft.machinelib.api.gas.Gases;
 import net.fabricmc.fabric.api.transfer.v1.context.ContainerItemContext;
@@ -38,11 +37,7 @@ import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.tags.TagKey;
-import net.minecraft.util.Mth;
 import net.minecraft.world.Container;
-import net.minecraft.world.effect.MobEffect;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -56,7 +51,9 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.material.Fluid;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.injection.*;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
@@ -68,35 +65,13 @@ public abstract class LivingEntityMixin extends Entity implements GearInventoryP
 
     @Shadow protected abstract int increaseAirSupply(int air);
 
-    @ModifyConstant(method = "travel", constant = @Constant(doubleValue = 0.08))
-    private double galacticraft_modifyGravity(double d) {
-        return CelestialBody.getByDimension(this.level).map(celestialBodyType -> celestialBodyType.gravity() * 0.08d).orElse(0.08);
-    }
-
-    @ModifyConstant(method = "travel", constant = @Constant(doubleValue = 0.01))
-    private double galacticraft_modifySlowFallingGravity(double d) {
-        return CelestialBody.getByDimension(this.level).map(celestialBodyType -> celestialBodyType.gravity() * 0.01d).orElse(0.01);
-    }
-
-    @Shadow
-    public abstract MobEffectInstance getEffect(MobEffect effect);
-
-    @Inject(method = "calculateFallDamage", at = @At("HEAD"), cancellable = true)
-    protected void galacticraft_modifyFallDamage(float fallDistance, float damageMultiplier, CallbackInfoReturnable<Integer> cir) {
-        MobEffectInstance effectInstance = this.getEffect(MobEffects.JUMP);
-        float ff = effectInstance == null ? 0.0F : (float) (effectInstance.getAmplifier() + 6);
-        CelestialBody.getByDimension(this.level).ifPresent(celestialBodyType -> cir.setReturnValue((int) (Mth.ceil((fallDistance * celestialBodyType.gravity()) - 3.0F - ff) * damageMultiplier)));
-    }
-
     @Redirect(method = "baseTick", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;isEyeInFluid(Lnet/minecraft/tags/TagKey;)Z", ordinal = 0))
     private boolean galacticraft_testForBreathability(LivingEntity entity, TagKey<Fluid> tag) {
-        //noinspection ConstantConditions
-        assert ((Object) entity) == this;
-        return entity.isEyeInFluid(tag) || !this.level.isBreathable(entity.blockPosition().relative(Direction.UP, (int) Math.floor(this.getEyeHeight(entity.getPose(), entity.getDimensions(entity.getPose())))));
+        return entity.isEyeInFluid(tag) || !entity.level.isBreathable(entity.blockPosition().relative(Direction.UP, (int) Math.floor(this.getEyeHeight(entity.getPose(), entity.getDimensions(entity.getPose())))));
     }
 
     @Inject(method = "tick", at = @At(value = "RETURN"))
-    private void thistickAccessories(CallbackInfo ci) {
+    private void tickAccessories(CallbackInfo ci) {
         LivingEntity thisEntity = ((LivingEntity) (Object) this);
         for (int i = 0; i < this.getAccessories().getContainerSize(); i++) {
             ItemStack stack = this.getAccessories().getItem(i);

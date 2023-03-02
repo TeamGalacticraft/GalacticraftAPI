@@ -81,7 +81,7 @@ public class SatelliteChunkGenerator extends ChunkGenerator {
                 }
                 return DataResult.success(new Pair<>(structure, input));
             } else {
-                return DataResult.error("Not a compound");
+                return DataResult.error(() -> "Not a compound");
             }
         }
 

@@ -28,7 +28,7 @@ import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import dev.galacticraft.api.accessor.WorldOxygenAccessor;
+import dev.galacticraft.api.accessor.LevelOxygenAccessor;
 import dev.galacticraft.impl.Constant;
 import dev.galacticraft.impl.command.argument.RegistryArgumentType;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
@@ -109,7 +109,7 @@ public class GCApiCommands {
     private static int setOxygenArea(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         BlockPos startPos = BlockPosArgument.getLoadedBlockPos(context, "start_pos");
         BlockPos endPos = BlockPosArgument.getLoadedBlockPos(context, "end_pos");
-        WorldOxygenAccessor accessor = context.getSource().getLevel();
+        LevelOxygenAccessor accessor = context.getSource().getLevel();
         BoundingBox box = BoundingBox.fromCorners(startPos, endPos);
         boolean b = BoolArgumentType.getBool(context, "oxygen");
         BlockPos.MutableBlockPos mutable = new BlockPos.MutableBlockPos();
@@ -138,7 +138,7 @@ public class GCApiCommands {
     private static int getOxygenArea(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         BlockPos startPos = BlockPosArgument.getLoadedBlockPos(context, "start_pos");
         BlockPos endPos = BlockPosArgument.getLoadedBlockPos(context, "end_pos");
-        WorldOxygenAccessor accessor = context.getSource().getLevel();
+        LevelOxygenAccessor accessor = context.getSource().getLevel();
         BoundingBox box = BoundingBox.fromCorners(startPos, endPos);
         BlockPos.MutableBlockPos mutable = new BlockPos.MutableBlockPos();
         boolean allOxygen = true;

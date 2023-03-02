@@ -62,12 +62,7 @@ public class GalacticraftAPIClient implements ClientModInitializer {
         ClientPlayNetworking.registerGlobalReceiver(new ResourceLocation(Constant.MOD_ID, "oxygen_update"), (client, handler, buf, responseSender) -> {
             int x = buf.readInt();
             int y = buf.readInt();
-            byte dirty = buf.readByte();
-            var syncer = (ChunkOxygenSyncer) handler.getLevel().getChunk(x, y);
-
-            for (byte a = 0; a < dirty; a++) {
-                syncer.readOxygenUpdate(buf.readByte(), buf);
-            }
+            ((ChunkOxygenSyncer) handler.getLevel().getChunk(x, y)).galacticraft$readOxygenUpdate(buf);
         });
 
         ClientPlayNetworking.registerGlobalReceiver(new ResourceLocation(Constant.MOD_ID, "gear_inv_sync"), (client, handler, buf, responseSender) -> {

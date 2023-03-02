@@ -20,33 +20,46 @@
  * SOFTWARE.
  */
 
-package dev.galacticraft.impl.internal.mixin;
+package dev.galacticraft.impl.internal.mixin.gear;
 
 import dev.galacticraft.impl.Constant;
-import dev.galacticraft.impl.internal.accessor.ChunkOxygenSyncer;
+import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
+import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.minecraft.network.Connection;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.protocol.Packet;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ChunkHolder;
-import net.minecraft.world.level.chunk.LevelChunk;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.players.PlayerList;
+import net.minecraft.world.Container;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import java.util.Collection;
+
 /**
  * @author <a href="https://github.com/TeamGalacticraft">TeamGalacticraft</a>
  */
-@Mixin(ChunkHolder.class)
-public abstract class ChunkHolderMixin {
-    @Shadow
-    protected abstract void broadcast(Packet<?> packet, boolean onlyOnWatchDistanceEdge);
+@Mixin(PlayerList.class)
+public abstract class PlayerListMixin {
+    @Inject(method = "placeNewPlayer", at = @At("RETURN"))
+    private void galacticraft_syncGearInventory(Connection connection, ServerPlayer player, CallbackInfo ci) {
+        FriendlyByteBuf buf = PacketByteBufs.create();
+        Container inventory = player.getGearInv();
+        buf.writeInt(player.getId());
+        buf.writeInt(inventory.getContainerSize());
+        for (int i = 0; i < inventory.getContainerSize(); i++) {
+            buf.writeItem(inventory.getItem(i));
+        }
 
-    @Inject(method = "broadcastChanges", at = @At("HEAD"))
-    private void galacticraft_flushOxygenPackets(LevelChunk chunk, CallbackInfo ci) {
-        FriendlyByteBuf buf = ((ChunkOxygenSyncer) chunk).syncOxygenPacketsToClient();
-        if (buf != null) this.broadcast(ServerPlayNetworking.createS2CPacket(new ResourceLocation(Constant.MOD_ID, "oxygen_update"), buf), false);
+        Collection<ServerPlayer> tracking = PlayerLookup.tracking(player);
+        if (!tracking.contains(player)) {
+            ServerPlayNetworking.send(player, new ResourceLocation(Constant.MOD_ID, "gear_inv_sync"), buf);
+        }
+        for (ServerPlayer pl : tracking) {
+            ServerPlayNetworking.send(pl, new ResourceLocation(Constant.MOD_ID, "gear_inv_sync"), PacketByteBufs.copy(buf));
+        }
     }
 }

@@ -24,6 +24,7 @@ package dev.galacticraft.impl.internal.fabric;
 
 import dev.galacticraft.api.accessor.ServerResearchAccessor;
 import dev.galacticraft.api.entity.attribute.GcApiEntityAttributes;
+import dev.galacticraft.api.registry.BuiltInRocketRegistries;
 import dev.galacticraft.impl.Constant;
 import dev.galacticraft.impl.internal.command.GCApiCommands;
 import dev.galacticraft.impl.internal.world.gen.SatelliteChunkGenerator;
@@ -47,7 +48,6 @@ public class GalacticraftAPI implements ModInitializer {
     @Override
     public void onInitialize() {
         long startInitTime = System.currentTimeMillis();
-        Constant.LOGGER.info("Initializing...");
         GCApiCommands.register();
         ServerTickEvents.END_SERVER_TICK.register(server -> {
             for (ServerPlayer player : server.getPlayerList().getPlayers()) {
@@ -77,6 +77,7 @@ public class GalacticraftAPI implements ModInitializer {
 
         Registry.register(BuiltInRegistries.CHUNK_GENERATOR, new ResourceLocation(Constant.MOD_ID, "satellite"), SatelliteChunkGenerator.CODEC);
         BuiltinObjects.register();
+        BuiltInRocketRegistries.initialize();
         GcApiEntityAttributes.init();
         Constant.LOGGER.info("Initialization Complete. (Took {}ms).", System.currentTimeMillis() - startInitTime);
     }

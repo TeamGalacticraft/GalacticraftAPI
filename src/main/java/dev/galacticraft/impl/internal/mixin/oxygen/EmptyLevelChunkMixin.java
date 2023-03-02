@@ -20,13 +20,24 @@
  * SOFTWARE.
  */
 
-package dev.galacticraft.impl.internal.accessor;
+package dev.galacticraft.impl.internal.mixin.oxygen;
 
-import org.jetbrains.annotations.ApiStatus;
+import dev.galacticraft.impl.internal.accessor.ChunkOxygenAccessor;
+import dev.galacticraft.impl.internal.accessor.ChunkOxygenSyncer;
+import net.minecraft.world.level.chunk.EmptyLevelChunk;
+import org.spongepowered.asm.mixin.Mixin;
 
-@ApiStatus.Internal
-public interface ChunkOxygenAccessorInternal {
-    boolean getDefaultBreathable();
+/**
+ * @author <a href="https://github.com/TeamGalacticraft">TeamGalacticraft</a>
+ */
+@Mixin(EmptyLevelChunk.class)
+public abstract class EmptyLevelChunkMixin implements ChunkOxygenSyncer, ChunkOxygenAccessor {
+    @Override
+    public boolean galacticraft$isInverted(int x, int y, int z) {
+        return false;
+    }
 
-    void setDefaultBreathable(boolean breathable);
+    @Override
+    public void galacticraft$setInverted(int x, int y, int z, boolean inverted) {
+    }
 }

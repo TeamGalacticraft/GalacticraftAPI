@@ -22,8 +22,8 @@
 
 package dev.galacticraft.api.gametest;
 
-import dev.galacticraft.api.accessor.ChunkOxygenAccessor;
 import dev.galacticraft.api.registry.AddonRegistries;
+import dev.galacticraft.impl.internal.accessor.ChunkOxygenAccessor;
 import net.fabricmc.fabric.api.gametest.v1.FabricGameTest;
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTest;
@@ -66,15 +66,15 @@ public class GalacticraftApiTestSuite implements FabricGameTest {
             var absolutePos = context.absolutePos(BlockPos.ZERO);
             var chunk = context.getLevel().getChunk(absolutePos);
             int x = absolutePos.getX() & 15;
-            int y = absolutePos.getY() & 15;
+            int y = absolutePos.getY();
             int z = absolutePos.getZ() & 15;
-            ((ChunkOxygenAccessor) chunk).setBreathable(x, y, z, false);
-            if (((ChunkOxygenAccessor) chunk).isBreathable(x, y, z)) {
+            ((ChunkOxygenAccessor) chunk).galacticraft$setInverted(x, y, z, true);
+            if (!((ChunkOxygenAccessor) chunk).galacticraft$isInverted(x, y, z)) {
                 context.fail("Expected area to become unbreathable!");
             } else {
                 CompoundTag serialized = ChunkSerializer.write(context.getLevel(), chunk);
                 ProtoChunk deserialized = ChunkSerializer.read(context.getLevel(), context.getLevel().getPoiManager(), chunk.getPos(), serialized);
-                if (deserialized.isBreathable(x, y, z)) {
+                if (!((ChunkOxygenAccessor)deserialized).galacticraft$isInverted(x, y, z)) {
                     context.fail("Expected area to stay unbreathable upon deserialization!");
                 }
             }

@@ -20,25 +20,21 @@
  * SOFTWARE.
  */
 
-package dev.galacticraft.api.accessor;
+package dev.galacticraft.impl.internal.mixin.gravity;
 
-import net.minecraft.core.BlockPos;
+import dev.galacticraft.api.universe.celestialbody.CelestialBody;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.item.PrimedTnt;
+import net.minecraft.world.entity.vehicle.AbstractMinecart;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.Constant;
+import org.spongepowered.asm.mixin.injection.ModifyConstant;
 
-/**
- * @author <a href="https://github.com/TeamGalacticraft">TeamGalacticraft</a>
- */
-public interface WorldOxygenAccessor {
-    /**
-     * Returns whether the supplied position in this world is breathable for entities
-     *
-     * @param pos the position to test
-     * @return whether the supplied position in the chunk is breathable for entities
-     */
-    default boolean isBreathable(BlockPos pos) {
-        throw new RuntimeException("This should be overridden by mixin!");
-    }
-
-    default void setBreathable(BlockPos pos, boolean value) {
-        throw new RuntimeException("This should be overridden by mixin!");
+@Mixin({ItemEntity.class, PrimedTnt.class, AbstractMinecart.class})
+public abstract class EntityGravityMixin {
+    @ModifyConstant(method = "tick", constant = @Constant(doubleValue = -0.04D))
+    private double galacticraft_changeEntityGravity(double defaultValue) {
+        return CelestialBody.getByDimension(((Entity) (Object) this).level).map(celestialBody -> celestialBody.gravity() / 1.75D * defaultValue).orElse(defaultValue);
     }
 }

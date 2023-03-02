@@ -34,9 +34,8 @@ public interface Constant {
 
     interface Nbt {
         String GC_API = "GCApi";
-        String DEFAULT_BREATHABLE = "DefaultBreathable";
-        String CHANGE_COUNT = "ChangeCount";
-        String OXYGEN = "Oxygen";
+        String CHANGE_COUNT = "Modified";
+        String OXYGEN = "Inversion";
         String GEAR_INV = "GearInv";
     }
 

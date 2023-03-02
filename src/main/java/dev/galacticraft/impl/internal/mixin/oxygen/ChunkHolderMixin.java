@@ -20,14 +20,18 @@
  * SOFTWARE.
  */
 
-package dev.galacticraft.impl.internal.mixin.client;
+package dev.galacticraft.impl.internal.mixin.oxygen;
 
-import dev.galacticraft.impl.internal.accessor.ChunkSectionOxygenAccessorInternal;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
+import dev.galacticraft.impl.Constant;
+import dev.galacticraft.impl.internal.accessor.ChunkOxygenSyncer;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.world.level.chunk.LevelChunkSection;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ChunkHolder;
+import net.minecraft.world.level.chunk.LevelChunk;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -35,11 +39,14 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 /**
  * @author <a href="https://github.com/TeamGalacticraft">TeamGalacticraft</a>
  */
-@Mixin(LevelChunkSection.class)
-@Environment(EnvType.CLIENT)
-public abstract class ClientChunkSectionMixin implements ChunkSectionOxygenAccessorInternal {
-    @Inject(method = "read", at = @At("RETURN"))
-    private void galacticraft_fromPacket(FriendlyByteBuf buf, CallbackInfo ci) {
-        this.readOxygenPacket(buf);
+@Mixin(ChunkHolder.class)
+public abstract class ChunkHolderMixin {
+    @Shadow
+    protected abstract void broadcast(Packet<?> packet, boolean onlyOnWatchDistanceEdge);
+
+    @Inject(method = "broadcastChanges", at = @At("HEAD"))
+    private void galacticraft_flushOxygenPackets(LevelChunk chunk, CallbackInfo ci) {
+        FriendlyByteBuf buf = ((ChunkOxygenSyncer) chunk).galacticraft$syncOxygenPacketsToClient();
+        if (buf != null) this.broadcast(ServerPlayNetworking.createS2CPacket(new ResourceLocation(Constant.MOD_ID, "oxygen_update"), buf), false);
     }
 }

@@ -20,21 +20,29 @@
  * SOFTWARE.
  */
 
-package dev.galacticraft.impl.internal.mixin;
+package dev.galacticraft.impl.internal.mixin.oxygen;
 
-import dev.galacticraft.api.universe.celestialbody.CelestialBody;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.entity.item.PrimedTnt;
-import net.minecraft.world.entity.vehicle.AbstractMinecart;
+import dev.galacticraft.impl.internal.accessor.ChunkOxygenAccessor;
+import net.minecraft.world.level.chunk.ImposterProtoChunk;
+import net.minecraft.world.level.chunk.LevelChunk;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.injection.Constant;
-import org.spongepowered.asm.mixin.injection.ModifyConstant;
+import org.spongepowered.asm.mixin.Shadow;
 
-@Mixin({ItemEntity.class, PrimedTnt.class, AbstractMinecart.class})
-public abstract class EntityGravityMixin {
-    @ModifyConstant(method = "tick", constant = @Constant(doubleValue = -0.04D))
-    private double galacticraft_changeEntityGravity(double defaultValue) {
-        return CelestialBody.getByDimension(((Entity) (Object) this).level).map(celestialBody -> celestialBody.gravity() / 1.75D * defaultValue).orElse(defaultValue);
+@Mixin(ImposterProtoChunk.class)
+public abstract class ImposterProtoChunkMixin implements ChunkOxygenAccessor {
+    @Shadow @Final private boolean allowWrites;
+    @Shadow @Final private LevelChunk wrapped;
+
+    @Override
+    public boolean galacticraft$isInverted(int x, int y, int z) {
+        return ((ChunkOxygenAccessor)this.wrapped).galacticraft$isInverted(x, y, z);
+    }
+
+    @Override
+    public void galacticraft$setInverted(int x, int y, int z, boolean inverted) {
+        if (this.allowWrites) {
+            ((ChunkOxygenAccessor)this.wrapped).galacticraft$setInverted(x, y, z, inverted);
+        }
     }
 }

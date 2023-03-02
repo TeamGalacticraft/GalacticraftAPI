@@ -27,10 +27,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public interface ChunkOxygenSyncer {
-    default @Nullable FriendlyByteBuf syncOxygenPacketsToClient() {
+    default @Nullable FriendlyByteBuf galacticraft$syncOxygenPacketsToClient() {
         return null;
     }
 
-    default void readOxygenUpdate(byte b, @NotNull FriendlyByteBuf buf) {
+    default void galacticraft$readOxygenUpdate(@NotNull FriendlyByteBuf buf) {
     }
 }

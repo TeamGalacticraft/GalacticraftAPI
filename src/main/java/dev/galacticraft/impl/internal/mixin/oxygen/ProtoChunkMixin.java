@@ -20,11 +20,11 @@
  * SOFTWARE.
  */
 
-package dev.galacticraft.impl.internal.mixin;
+package dev.galacticraft.impl.internal.mixin.oxygen;
 
-import dev.galacticraft.api.accessor.ChunkOxygenAccessor;
-import dev.galacticraft.impl.internal.accessor.ChunkOxygenAccessorInternal;
+import dev.galacticraft.impl.internal.accessor.ChunkOxygenAccessor;
 import dev.galacticraft.impl.internal.accessor.ChunkOxygenSyncer;
+import dev.galacticraft.impl.internal.accessor.ChunkSectionOxygenAccessor;
 import net.minecraft.core.Registry;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.LevelHeightAccessor;
@@ -36,41 +36,23 @@ import net.minecraft.world.level.chunk.UpgradeData;
 import net.minecraft.world.level.levelgen.blending.BlendingData;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Unique;
 
 /**
  * @author <a href="https://github.com/TeamGalacticraft">TeamGalacticraft</a>
  */
 @Mixin(ProtoChunk.class)
-public abstract class ProtoChunkMixin extends ChunkAccess implements ChunkOxygenAccessor, ChunkOxygenSyncer, ChunkOxygenAccessorInternal {
-    private @Unique boolean defaultBreathable = false;
-
+public abstract class ProtoChunkMixin extends ChunkAccess implements ChunkOxygenAccessor, ChunkOxygenSyncer {
     private ProtoChunkMixin(ChunkPos pos, UpgradeData upgradeData, LevelHeightAccessor heightLimitView, Registry<Biome> biome, long inhabitedTime, @Nullable LevelChunkSection[] sectionArrayInitializer, @Nullable BlendingData blendingData) {
         super(pos, upgradeData, heightLimitView, biome, inhabitedTime, sectionArrayInitializer, blendingData);
     }
 
     @Override
-    public boolean isBreathable(int x, int y, int z) {
-        if (this.isOutsideBuildHeight(y)) return this.defaultBreathable;
-        LevelChunkSection section = this.getSection(this.getSectionIndex(y));
-        if (!section.hasOnlyAir()) {
-            return section.isBreathable(x & 15, y & 15, z & 15);
-        }
-        return this.defaultBreathable;
+    public boolean galacticraft$isInverted(int x, int y, int z) {
+        return ((ChunkSectionOxygenAccessor) this.sections[this.getSectionIndex(y)]).galacticraft$isInverted(x, y & 15, z);
     }
 
     @Override
-    public void setBreathable(int x, int y, int z, boolean value) {
-        if (this.isOutsideBuildHeight(y)) return;
-        LevelChunkSection section = this.getSection(this.getSectionIndex(y));
-        assert section != null;
-        if (value != section.isBreathable(x & 15, y & 15, z & 15)) {
-            section.setBreathable(x & 15, y & 15, z & 15, value);
-        }
-    }
-
-    @Override
-    public void setDefaultBreathable(boolean defaultBreathable) {
-        this.defaultBreathable = defaultBreathable;
+    public void galacticraft$setInverted(int x, int y, int z, boolean inverted) {
+        ((ChunkSectionOxygenAccessor) this.sections[this.getSectionIndex(y)]).galacticraft$setInverted(x, y & 15, z, inverted);
     }
 }

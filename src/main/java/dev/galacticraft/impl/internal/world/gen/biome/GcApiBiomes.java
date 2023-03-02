@@ -32,13 +32,15 @@ import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.BiomeGenerationSettings;
 import net.minecraft.world.level.biome.BiomeSpecialEffects;
 import net.minecraft.world.level.biome.MobSpawnSettings;
+import net.minecraft.world.level.levelgen.carver.ConfiguredWorldCarver;
+import net.minecraft.world.level.levelgen.placement.PlacedFeature;
 import org.jetbrains.annotations.ApiStatus;
 
 @ApiStatus.Internal
 public class GcApiBiomes {
     public static final ResourceKey<Biome> SPACE = ResourceKey.create(Registries.BIOME, new ResourceLocation(Constant.MOD_ID, "space"));
 
-    public static Biome createSpaceBiome(HolderGetter<net.minecraft.world.level.levelgen.placement.PlacedFeature> holderGetter, HolderGetter<net.minecraft.world.level.levelgen.carver.ConfiguredWorldCarver<?>> holderGetter2) {
+    public static Biome createSpaceBiome(HolderGetter<PlacedFeature> holderGetter, HolderGetter<ConfiguredWorldCarver<?>> holderGetter2) {
         Biome.BiomeBuilder builder = new Biome.BiomeBuilder();
         MobSpawnSettings.Builder spawns = new MobSpawnSettings.Builder();
         BiomeGenerationSettings.Builder genSettings = new BiomeGenerationSettings.Builder(holderGetter, holderGetter2);
@@ -49,7 +51,7 @@ public class GcApiBiomes {
                 .temperature(1)
                 .specialEffects(effects.build())
                 .mobSpawnSettings(spawns.build())
-                .precipitation(Biome.Precipitation.NONE)
+                .hasPrecipitation(false)
                 .generationSettings(genSettings.build())
                 .temperatureAdjustment(Biome.TemperatureModifier.NONE).build();
     }

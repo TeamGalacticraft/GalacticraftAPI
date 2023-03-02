@@ -22,31 +22,24 @@
 
 package dev.galacticraft.impl.internal.accessor;
 
-import net.minecraft.network.FriendlyByteBuf;
-import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+public interface ChunkOxygenAccessor {
+    /**
+     * Returns whether the supplied position in the chunk is breathable for entities
+     *
+     * @param x the position to test on the X-axis, normalized from 0 to 15
+     * @param y the position to test on the Y-axis, will return the default breathability if it is outside the world's min/max height
+     * @param z the position to test on the Z-axis, normalized from 0 to 15
+     * @return whether the supplied position in the chunk is breathable for entities
+     */
+    boolean galacticraft$isInverted(int x, int y, int z);
 
-import java.util.BitSet;
-
-/**
- * @author <a href="https://github.com/TeamGalacticraft">TeamGalacticraft</a>
- */
-@ApiStatus.Internal
-public interface ChunkSectionOxygenAccessorInternal {
-    @Nullable BitSet getInversion();
-
-    void setInversion(@Nullable BitSet inverted);
-
-    short getModifiedBlocks();
-
-    void setModifiedBlocks(short amount);
-
-    void writeOxygenPacket(@NotNull FriendlyByteBuf buf);
-
-    void readOxygenPacket(@NotNull FriendlyByteBuf buf);
-
-    boolean getDefaultBreathable();
-
-    void setDefaultBreathable(boolean breathable);
+    /**
+     * Sets the breathable state for entities for the supplied position
+     *
+     * @param x     the position to test on the X-axis, normalized from 0 to 15
+     * @param y     the position to test on the Y-axis, this method will do nothing if it is outside the world's min/max height
+     * @param z     the position to test on the Z-axis, normalized from 0 to 15
+     * @param inverted whether the supplied position is breathable
+     */
+    void galacticraft$setInverted(int x, int y, int z, boolean inverted);
 }

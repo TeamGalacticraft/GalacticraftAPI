@@ -235,3 +235,5 @@ gradle-app.setting
 # FabricMC
 run/
 remappedSrc/
+
+src/main/generated/.cache

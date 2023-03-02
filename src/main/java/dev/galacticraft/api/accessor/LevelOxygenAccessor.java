@@ -20,20 +20,33 @@
  * SOFTWARE.
  */
 
-package dev.galacticraft.impl.internal.mixin;
+package dev.galacticraft.api.accessor;
 
-import dev.galacticraft.api.accessor.ChunkOxygenAccessor;
-import dev.galacticraft.impl.internal.accessor.ChunkOxygenAccessorInternal;
-import net.minecraft.world.level.chunk.ImposterProtoChunk;
-import org.spongepowered.asm.mixin.Mixin;
+import net.minecraft.core.BlockPos;
 
-@Mixin(ImposterProtoChunk.class)
-public abstract class ReadOnlyChunkMixin implements ChunkOxygenAccessor, ChunkOxygenAccessorInternal {
-    @Override
-    public void setBreathable(int x, int y, int z, boolean value) {
+/**
+ * @author <a href="https://github.com/TeamGalacticraft">TeamGalacticraft</a>
+ */
+public interface LevelOxygenAccessor {
+    /**
+     * Returns whether the supplied position in this world is breathable for entities
+     *
+     * @param pos the position to test
+     * @return whether the supplied position in the chunk is breathable for entities
+     */
+    default boolean isBreathable(BlockPos pos) {
+        return this.isBreathable(pos.getX(), pos.getY(), pos.getZ());
     }
 
-    @Override
-    public void setDefaultBreathable(boolean breathable) {
+    default boolean isBreathable(int x, int y, int z) {
+        throw new RuntimeException("This should be overridden by mixin!");
+    }
+
+    default void setBreathable(BlockPos pos, boolean value) {
+        this.setBreathable(pos.getX(), pos.getY(), pos.getZ(), value);
+    }
+
+    default void setBreathable(int x, int y, int z, boolean value) {
+        throw new RuntimeException("This should be overridden by mixin!");
     }
 }

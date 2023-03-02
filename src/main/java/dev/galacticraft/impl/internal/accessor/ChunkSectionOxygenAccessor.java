@@ -20,27 +20,33 @@
  * SOFTWARE.
  */
 
-package dev.galacticraft.impl.internal.mixin;
+package dev.galacticraft.impl.internal.accessor;
 
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.storage.LevelStorageSource;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.gen.Accessor;
+import net.minecraft.network.FriendlyByteBuf;
+import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.Map;
-import java.util.concurrent.Executor;
+import java.util.BitSet;
 
-@Mixin(MinecraftServer.class)
-public interface MinecraftServerAccessor {
-    @Accessor("executor")
-    Executor getWorkerExecutor();
+/**
+ * @author <a href="https://github.com/TeamGalacticraft">TeamGalacticraft</a>
+ */
+@ApiStatus.Internal
+public interface ChunkSectionOxygenAccessor {
+    boolean galacticraft$isInverted(int x, int y, int z);
 
-    @Accessor("storageSource")
-    LevelStorageSource.LevelStorageAccess getSession();
+    void galacticraft$setInverted(int x, int y, int z, boolean inverted);
 
-    @Accessor("levels")
-    Map<ResourceKey<Level>, ServerLevel> getWorlds();
+    @Nullable BitSet galacticraft$inversionBits();
+
+    void galacticraft$setInversionBits(@Nullable BitSet set);
+
+    short galacticraft$modifiedBlocks();
+
+    void galacticraft$setModifiedBlocks(short amount);
+
+    void galacticraft$writeOxygenPacket(@NotNull FriendlyByteBuf buf);
+
+    void galacticraft$readOxygenPacket(@NotNull FriendlyByteBuf buf);
 }

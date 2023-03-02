@@ -20,7 +20,7 @@
  * SOFTWARE.
  */
 
-package dev.galacticraft.impl.internal.mixin;
+package dev.galacticraft.impl.internal.mixin.registry;
 
 import dev.galacticraft.api.registry.AddonRegistries;
 import dev.galacticraft.api.registry.RocketRegistries;
@@ -47,8 +47,8 @@ public abstract class RegistryDataLoaderMixin {
     @Inject(method = "<clinit>", at = @At("RETURN"))
     private static void addGalacticraftAPIDynamicRegistries(CallbackInfo ci) {
         WORLDGEN_REGISTRIES = new ArrayList<>(WORLDGEN_REGISTRIES);
-        WORLDGEN_REGISTRIES.add(new RegistryDataLoader.RegistryData<>(AddonRegistries.GALAXY, Galaxy.CODEC));
-        WORLDGEN_REGISTRIES.add(new RegistryDataLoader.RegistryData<>(AddonRegistries.CELESTIAL_BODY, CelestialBody.CODEC));
+        WORLDGEN_REGISTRIES.add(new RegistryDataLoader.RegistryData<>(AddonRegistries.GALAXY, Galaxy.DIRECT_CODEC));
+        WORLDGEN_REGISTRIES.add(new RegistryDataLoader.RegistryData<>(AddonRegistries.CELESTIAL_BODY, CelestialBody.DIRECT_CODEC));
 
         WORLDGEN_REGISTRIES.add(new RegistryDataLoader.RegistryData<>(RocketRegistries.ROCKET_CONE, RocketCone.DIRECT_CODEC));
         WORLDGEN_REGISTRIES.add(new RegistryDataLoader.RegistryData<>(RocketRegistries.ROCKET_BODY, RocketBody.DIRECT_CODEC));

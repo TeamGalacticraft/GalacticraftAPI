@@ -25,7 +25,7 @@ package dev.galacticraft.impl.internal.accessor;
 import org.jetbrains.annotations.ApiStatus;
 
 @ApiStatus.Internal
-public interface WorldOxygenAccessorInternal {
+public interface InternalLevelOxygenAccessor {
     boolean getDefaultBreathable();
 
     void setDefaultBreathable(boolean breathable);

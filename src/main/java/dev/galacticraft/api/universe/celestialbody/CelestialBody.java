@@ -39,10 +39,10 @@ import dev.galacticraft.impl.universe.display.type.IconCelestialDisplayType;
 import dev.galacticraft.impl.universe.position.config.StaticCelestialPositionConfig;
 import dev.galacticraft.impl.universe.position.type.StaticCelestialPositionType;
 import dev.galacticraft.machinelib.api.gas.Gases;
-import net.minecraft.core.Registry;
-import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.*;
 import net.minecraft.data.worldgen.BootstapContext;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.RegistryFileCodec;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
@@ -52,7 +52,9 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Optional;
 
 public record CelestialBody<C extends CelestialBodyConfig, T extends CelestialBodyType<C>>(T type, C config) {
-    public static final Codec<CelestialBody<?, ?>> CODEC = BuiltInAddonRegistries.CELESTIAL_BODY_TYPE.byNameCodec().dispatch(CelestialBody::type, CelestialBodyType::codec);
+    public static final Codec<CelestialBody<?, ?>> DIRECT_CODEC = BuiltInAddonRegistries.CELESTIAL_BODY_TYPE.byNameCodec().dispatch(CelestialBody::type, CelestialBodyType::codec);
+    public static final Codec<Holder<CelestialBody<?, ?>>> CODEC = RegistryFileCodec.create(AddonRegistries.CELESTIAL_BODY, DIRECT_CODEC);
+    public static final Codec<HolderSet<CelestialBody<?, ?>>> LIST_CODEC = RegistryCodecs.homogeneousList(AddonRegistries.CELESTIAL_BODY, DIRECT_CODEC);
 
     public static Registry<CelestialBody<?, ?>> getRegistry(RegistryAccess manager) {
         return manager.registryOrThrow(AddonRegistries.CELESTIAL_BODY);
@@ -70,8 +72,8 @@ public record CelestialBody<C extends CelestialBodyConfig, T extends CelestialBo
         return getByDimension(getRegistry(manager), key);
     }
 
-    public static <C extends CelestialBodyConfig, T extends CelestialBodyType<C> & Landable<C>> Optional<CelestialBody<C, T>> getByDimension(Level world) {
-        return getByDimension(world.registryAccess(), world.dimension());
+    public static <C extends CelestialBodyConfig, T extends CelestialBodyType<C> & Landable<C>> Optional<CelestialBody<C, T>> getByDimension(Level level) {
+        return getByDimension(level.registryAccess(), level.dimension());
     }
 
     public static CelestialBody<?, ?> getById(Registry<CelestialBody<?, ?>> registry, ResourceLocation id) {
