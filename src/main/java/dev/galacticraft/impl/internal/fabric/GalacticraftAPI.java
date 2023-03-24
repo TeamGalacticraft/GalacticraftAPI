@@ -25,6 +25,7 @@ package dev.galacticraft.impl.internal.fabric;
 import dev.galacticraft.api.accessor.SatelliteAccessor;
 import dev.galacticraft.api.accessor.ServerResearchAccessor;
 import dev.galacticraft.api.entity.attribute.GcApiEntityAttributes;
+import dev.galacticraft.api.gas.Gases;
 import dev.galacticraft.api.registry.BuiltInRocketRegistries;
 import dev.galacticraft.dynamicdimensions.api.event.DynamicDimensionLoadCallback;
 import dev.galacticraft.impl.Constant;
@@ -85,6 +86,7 @@ public class GalacticraftAPI implements ModInitializer {
         DynamicDimensionLoadCallback.register((minecraftServer, dynamicDimensionLoader) -> {
             ((SatelliteAccessor) minecraftServer).loadSatellites(dynamicDimensionLoader);
         });
+        Gases.init();
         Constant.LOGGER.info("Initialization Complete. (Took {}ms).", System.currentTimeMillis() - startInitTime);
     }
 }
