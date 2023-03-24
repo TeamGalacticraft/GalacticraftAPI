@@ -42,7 +42,6 @@ val modGroup          = project.property("mod.group").toString()
 val minecraft         = project.property("minecraft.version").toString()
 val loader            = project.property("loader.version").toString()
 val fabric            = project.property("fabric.version").toString()
-val machinelib        = project.property("machinelib.version").toString()
 val dynamicdimensions = project.property("dynamicdimensions.version").toString()
 val badpackets        = project.property("badpackets.version").toString()
 
@@ -130,7 +129,6 @@ dependencies {
 
     modImplementation("net.fabricmc.fabric-api:fabric-api:$fabric")
 
-    modImplementation("dev.galacticraft:MachineLib:$machinelib")
     modImplementation("dev.galacticraft:dynamicdimensions-fabric:$dynamicdimensions")
     modImplementation("lol.bai:badpackets:fabric-$badpackets")
 }

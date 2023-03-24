@@ -24,11 +24,11 @@ package dev.galacticraft.impl.internal.mixin.gear;
 
 import dev.galacticraft.api.accessor.GearInventoryProvider;
 import dev.galacticraft.api.entity.attribute.GcApiEntityAttributes;
+import dev.galacticraft.api.gas.Gases;
 import dev.galacticraft.api.item.Accessory;
 import dev.galacticraft.api.item.OxygenGear;
 import dev.galacticraft.api.item.OxygenMask;
 import dev.galacticraft.impl.internal.fabric.GalacticraftAPI;
-import dev.galacticraft.machinelib.api.gas.Gases;
 import net.fabricmc.fabric.api.transfer.v1.context.ContainerItemContext;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidStorage;
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidVariant;

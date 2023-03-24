@@ -26,11 +26,18 @@ import net.minecraft.resources.ResourceLocation;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
 @ApiStatus.Internal
 public interface Constant {
     String MOD_ID = "galacticraft-api";
     Logger LOGGER = LogManager.getLogger("GalacticraftAPI");
+
+    @Contract(value = "_ -> new", pure = true)
+    static @NotNull ResourceLocation id(String id) {
+        return new ResourceLocation(MOD_ID, id);
+    }
 
     interface Nbt {
         String GC_API = "GCApi";
@@ -45,6 +52,25 @@ public interface Constant {
         int CHUNK_SECTION_AREA = WIDTH * WIDTH * SECTION_HEIGHT;
     }
 
+    interface TranslationKey {
+        String HYDROGEN = "gas.galacticraft-api.hydrogen";
+        String NITROGEN = "gas.galacticraft-api.nitrogen";
+        String OXYGEN = "gas.galacticraft-api.oxygen";
+        String CARBON_DIOXIDE = "gas.galacticraft-api.carbon_dioxide";
+        String CARBON_MONOXIDE = "gas.galacticraft-api.carbon_monoxide";
+        String WATER_VAPOR = "gas.galacticraft-api.water_vapor";
+        String METHANE = "gas.galacticraft-api.methane";
+        String HELIUM = "gas.galacticraft-api.helium";
+        String ARGON = "gas.galacticraft-api.argon";
+        String NITROUS_OXIDE = "gas.galacticraft-api.nitrous_oxide";
+        String NEON = "gas.galacticraft-api.neon";
+        String KRYPTON = "gas.galacticraft-api.krypton";
+        String XENON = "gas.galacticraft-api.xenon";
+        String OZONE = "gas.galacticraft-api.ozone";
+        String NITROUS_DIOXIDE = "gas.galacticraft-api.nitrous_dioxide";
+        String IODINE = "gas.galacticraft-api.iodine";
+    }
+    
     interface Misc {
         ResourceLocation INVALID = new ResourceLocation(Constant.MOD_ID, "invalid");
     }

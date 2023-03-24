@@ -20,22 +20,31 @@
  * SOFTWARE.
  */
 
-package dev.galacticraft.api.accessor;
+package dev.galacticraft.api.gas;
 
-import dev.galacticraft.api.universe.celestialbody.CelestialBody;
-import dev.galacticraft.dynamicdimensions.api.event.DynamicDimensionLoadCallback;
-import dev.galacticraft.impl.universe.celestialbody.type.SatelliteType;
-import dev.galacticraft.impl.universe.position.config.SatelliteConfig;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.network.chat.Component;
+import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.Map;
+/**
+ * Represents a gas.
+ * Not yet stable API - use is not recommended.
+ */
+@ApiStatus.Experimental
+@Deprecated // TODO: better gas implementation - typechecking feels like the wrong way to go about this
+// may want an external registry or something
+public interface Gas {
+    /**
+     * The name of the gas
+     *
+     * @return the name of the gas
+     */
+    @NotNull Component getName();
 
-public interface SatelliteAccessor {
-    Map<ResourceLocation, CelestialBody<SatelliteConfig, SatelliteType>> getSatellites();
-
-    void addSatellite(ResourceLocation id, CelestialBody<SatelliteConfig, SatelliteType> satellite);
-
-    void removeSatellite(ResourceLocation id);
-
-    void loadSatellites(DynamicDimensionLoadCallback.DynamicDimensionLoader dynamicDimensionLoader);
+    /**
+     * The gas' symbol
+     *
+     * @return the gas' symbol
+     */
+    @NotNull String getSymbol();
 }

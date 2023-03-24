@@ -22,9 +22,11 @@
 
 package dev.galacticraft.impl.internal.fabric;
 
+import dev.galacticraft.api.accessor.SatelliteAccessor;
 import dev.galacticraft.api.accessor.ServerResearchAccessor;
 import dev.galacticraft.api.entity.attribute.GcApiEntityAttributes;
 import dev.galacticraft.api.registry.BuiltInRocketRegistries;
+import dev.galacticraft.dynamicdimensions.api.event.DynamicDimensionLoadCallback;
 import dev.galacticraft.impl.Constant;
 import dev.galacticraft.impl.internal.command.GCApiCommands;
 import dev.galacticraft.impl.internal.world.gen.SatelliteChunkGenerator;
@@ -79,6 +81,10 @@ public class GalacticraftAPI implements ModInitializer {
         BuiltinObjects.register();
         BuiltInRocketRegistries.initialize();
         GcApiEntityAttributes.init();
+
+        DynamicDimensionLoadCallback.register((minecraftServer, dynamicDimensionLoader) -> {
+            ((SatelliteAccessor) minecraftServer).loadSatellites(dynamicDimensionLoader);
+        });
         Constant.LOGGER.info("Initialization Complete. (Took {}ms).", System.currentTimeMillis() - startInitTime);
     }
 }
