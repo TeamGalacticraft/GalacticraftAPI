@@ -31,7 +31,7 @@ plugins {
     id("io.github.juuxel.loom-quiltflower") version("1.8.0")
 }
 
-val buildNumber       = System.getenv("BUILD_NUMBER") ?: ""
+val buildNumber       = System.getenv("GITHUB_RUN_NUMBER") ?: "99999"
 val prerelease        = (System.getenv("PRE_RELEASE") ?: "false") == "true"
 
 val modId             = project.property("mod.id").toString()
@@ -46,7 +46,7 @@ val dynamicdimensions = project.property("dynamicdimensions.version").toString()
 val badpackets        = project.property("badpackets.version").toString()
 
 group = modGroup
-version ="$modVersion+$minecraft"
+version = "$modVersion+$minecraft" + buildNumber
 
 base.archivesName.set(modName)
 
