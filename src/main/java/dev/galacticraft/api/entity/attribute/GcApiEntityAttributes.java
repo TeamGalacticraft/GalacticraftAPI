@@ -32,6 +32,8 @@ import net.minecraft.world.entity.ai.attributes.RangedAttribute;
 public final class GcApiEntityAttributes {
     public static final Attribute CAN_BREATHE_IN_SPACE = Registry.register(BuiltInRegistries.ATTRIBUTE, new ResourceLocation(Constant.MOD_ID, "can_breathe_in_space"), (new RangedAttribute("galacticraft-api.attribute.name.generic.can_breathe_in_space", 0.0D, 0.0D, 1.0D)).setSyncable(true));
 
+    public static final Attribute LOCAL_GRAVITY_LEVEL = Registry.register(Registry.ATTRIBUTE, new ResourceLocation(Constant.MOD_ID, "local_gravity_level"), (new RangedAttribute("galacticraft-api.attribute.name.generic.local_gravity_level", 0.0D, 0.0D, 1.0D)).setSyncable(true));
+
     private GcApiEntityAttributes() {}
 
     public static void init() {}
