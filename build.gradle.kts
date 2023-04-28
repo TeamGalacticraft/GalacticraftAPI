@@ -46,7 +46,7 @@ val dynamicdimensions = project.property("dynamicdimensions.version").toString()
 val badpackets        = project.property("badpackets.version").toString()
 
 group = modGroup
-version = "$modVersion+$minecraft" + buildNumber
+version = ".$buildNumber$modVersion+$minecraft"
 
 base.archivesName.set(modName)
 
