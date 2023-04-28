@@ -48,6 +48,7 @@ val badpackets        = project.property("badpackets.version").toString()
 group = modGroup
 version = "$modVersion.$buildNumber+$minecraft"
 
+
 base.archivesName.set(modName)
 
 java {
