@@ -50,6 +50,7 @@ version = "$modVersion.$buildNumber+$minecraft"
 
 base.archivesName.set(modName)
 
+
 java {
     targetCompatibility = JavaVersion.VERSION_17
     sourceCompatibility = JavaVersion.VERSION_17
