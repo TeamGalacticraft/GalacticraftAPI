@@ -108,7 +108,6 @@ loom {
 }
 
 repositories {
-    mavenLocal()
     maven("https://maven.galacticraft.net/repository/maven-releases/") {
         name = "Galacticraft Repository"
         content {
