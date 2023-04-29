@@ -23,10 +23,12 @@
 package dev.galacticraft.impl.universe.celestialbody.type;
 
 import dev.galacticraft.api.gas.GasComposition;
+import dev.galacticraft.api.registry.BuiltInAddonRegistries;
 import dev.galacticraft.api.satellite.SatelliteRecipe;
 import dev.galacticraft.api.universe.celestialbody.CelestialBody;
 import dev.galacticraft.api.universe.celestialbody.CelestialBodyType;
 import dev.galacticraft.api.universe.celestialbody.Tiered;
+import dev.galacticraft.api.universe.celestialbody.landable.CelestialTeleporter;
 import dev.galacticraft.api.universe.celestialbody.satellite.Orbitable;
 import dev.galacticraft.api.universe.display.CelestialDisplay;
 import dev.galacticraft.api.universe.galaxy.Galaxy;
@@ -80,6 +82,11 @@ public class PlanetType extends CelestialBodyType<PlanetConfig> implements Tiere
     @Override
     public @NotNull ResourceKey<Level> world(PlanetConfig config) {
         return config.world();
+    }
+
+    @Override
+    public CelestialTeleporter teleporter(PlanetConfig config) {
+        return config.teleporter();
     }
 
     @Override

@@ -27,6 +27,7 @@ import dev.galacticraft.api.registry.BuiltInAddonRegistries;
 import dev.galacticraft.api.registry.RocketRegistries;
 import dev.galacticraft.api.rocket.part.*;
 import dev.galacticraft.api.universe.celestialbody.CelestialBody;
+import dev.galacticraft.api.universe.celestialbody.landable.FallbackCelestialTeleporter;
 import dev.galacticraft.api.universe.galaxy.Galaxy;
 import dev.galacticraft.impl.Constant;
 import dev.galacticraft.impl.universe.celestialbody.type.DecorativePlanet;
@@ -61,5 +62,7 @@ public class BuiltinObjects {
         Registry.register(BuiltInAddonRegistries.CELESTIAL_BODY_TYPE, new ResourceLocation(Constant.MOD_ID, "star"), StarType.INSTANCE);
         Registry.register(BuiltInAddonRegistries.CELESTIAL_BODY_TYPE, new ResourceLocation(Constant.MOD_ID, "planet"), PlanetType.INSTANCE);
         Registry.register(BuiltInAddonRegistries.CELESTIAL_BODY_TYPE, new ResourceLocation(Constant.MOD_ID, "decorative_planet"), DecorativePlanet.INSTANCE);
+
+        Registry.register(BuiltInAddonRegistries.CELESTIAL_TELEPORTER, Constant.id("fallback"), FallbackCelestialTeleporter.INSTANCE);
     }
 }

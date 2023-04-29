@@ -24,6 +24,7 @@ package dev.galacticraft.api.registry;
 
 import dev.galacticraft.api.universe.celestialbody.CelestialBody;
 import dev.galacticraft.api.universe.celestialbody.CelestialBodyType;
+import dev.galacticraft.api.universe.celestialbody.landable.CelestialTeleporter;
 import dev.galacticraft.api.universe.display.CelestialDisplayType;
 import dev.galacticraft.api.universe.galaxy.Galaxy;
 import dev.galacticraft.api.universe.position.CelestialPositionType;
@@ -38,6 +39,7 @@ public final class AddonRegistries {
     public static final ResourceKey<Registry<CelestialPositionType<?>>> CELESTIAL_POSITION_TYPE = ResourceKey.createRegistryKey(new ResourceLocation(Constant.MOD_ID, "celestial_position_type"));
     public static final ResourceKey<Registry<CelestialDisplayType<?>>> CELESTIAL_DISPLAY_TYPE = ResourceKey.createRegistryKey(new ResourceLocation(Constant.MOD_ID, "celestial_display_type"));
     public static final ResourceKey<Registry<CelestialBodyType<?>>> CELESTIAL_BODY_TYPE = ResourceKey.createRegistryKey(new ResourceLocation(Constant.MOD_ID, "celestial_body_type"));
+    public static final ResourceKey<Registry<CelestialTeleporter>> CELESTIAL_TELEPORTER = ResourceKey.createRegistryKey(new ResourceLocation(Constant.MOD_ID, "celestial_teleporter"));
 
     public static final ResourceKey<Registry<Galaxy>> GALAXY = ResourceKey.createRegistryKey(new ResourceLocation(Constant.MOD_ID, "galaxy"));
     public static final ResourceKey<Registry<CelestialBody<?, ?>>> CELESTIAL_BODY = ResourceKey.createRegistryKey(new ResourceLocation(Constant.MOD_ID, "celestial_body"));

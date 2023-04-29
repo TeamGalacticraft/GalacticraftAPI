@@ -25,6 +25,7 @@ package dev.galacticraft.api.universe.celestialbody.landable;
 import dev.galacticraft.api.universe.celestialbody.CelestialBodyConfig;
 import dev.galacticraft.api.universe.celestialbody.SurfaceEnvironment;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
@@ -41,4 +42,6 @@ public interface Landable<C extends CelestialBodyConfig> extends SurfaceEnvironm
      * @return the registry key of the {@link Level} this celestial body is linked to
      */
     @NotNull ResourceKey<Level> world(C config);
+
+    CelestialTeleporter teleporter(C config);
 }
