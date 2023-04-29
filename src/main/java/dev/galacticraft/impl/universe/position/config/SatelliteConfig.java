@@ -26,9 +26,11 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import dev.galacticraft.api.gas.GasComposition;
 import dev.galacticraft.api.registry.AddonRegistries;
+import dev.galacticraft.api.registry.BuiltInAddonRegistries;
 import dev.galacticraft.api.satellite.SatelliteOwnershipData;
 import dev.galacticraft.api.universe.celestialbody.CelestialBody;
 import dev.galacticraft.api.universe.celestialbody.CelestialBodyConfig;
+import dev.galacticraft.api.universe.celestialbody.landable.CelestialTeleporter;
 import dev.galacticraft.api.universe.display.CelestialDisplay;
 import dev.galacticraft.api.universe.galaxy.Galaxy;
 import dev.galacticraft.api.universe.position.CelestialPosition;
@@ -49,6 +51,7 @@ public final class SatelliteConfig implements CelestialBodyConfig {
             CelestialDisplay.CODEC.fieldOf("display").forGetter(SatelliteConfig::display),
             SatelliteOwnershipData.CODEC.fieldOf("ownership_data").forGetter(SatelliteConfig::ownershipData),
             ResourceKey.codec(Registries.DIMENSION).fieldOf("world").forGetter(SatelliteConfig::world),
+            BuiltInAddonRegistries.CELESTIAL_TELEPORTER.byNameCodec().fieldOf("teleporter").forGetter(SatelliteConfig::teleporter),
             GasComposition.CODEC.fieldOf("atmosphere").forGetter(SatelliteConfig::atmosphere),
             Codec.FLOAT.fieldOf("gravity").forGetter(SatelliteConfig::gravity),
             Codec.INT.fieldOf("accessWeight").forGetter(SatelliteConfig::accessWeight),
@@ -61,19 +64,21 @@ public final class SatelliteConfig implements CelestialBodyConfig {
     private final CelestialDisplay<?, ?> display;
     private final SatelliteOwnershipData ownershipData;
     private final ResourceKey<Level> world;
+    private final CelestialTeleporter teleporter;
     private final GasComposition atmosphere;
     private final float gravity;
     private final int accessWeight;
     private final LevelStem options;
     private Component customName = Component.empty();
 
-    public SatelliteConfig(ResourceKey<CelestialBody<?, ?>> parent, ResourceKey<Galaxy> galaxy, CelestialPosition<?, ?> position, CelestialDisplay<?, ?> display, SatelliteOwnershipData ownershipData, ResourceKey<Level> world, GasComposition atmosphere, float gravity, int accessWeight, LevelStem options) {
+    public SatelliteConfig(ResourceKey<CelestialBody<?, ?>> parent, ResourceKey<Galaxy> galaxy, CelestialPosition<?, ?> position, CelestialDisplay<?, ?> display, SatelliteOwnershipData ownershipData, ResourceKey<Level> world, CelestialTeleporter teleporter, GasComposition atmosphere, float gravity, int accessWeight, LevelStem options) {
         this.parent = parent;
         this.galaxy = galaxy;
         this.position = position;
         this.display = display;
         this.ownershipData = ownershipData;
         this.world = world;
+        this.teleporter = teleporter;
         this.atmosphere = atmosphere;
         this.gravity = gravity;
         this.accessWeight = accessWeight;
@@ -95,6 +100,8 @@ public final class SatelliteConfig implements CelestialBodyConfig {
     public void customName(Component name) {this.customName = name;}
 
     public ResourceKey<Level> world() {return world;}
+
+    public CelestialTeleporter teleporter() {return teleporter;}
 
     public GasComposition atmosphere() {return atmosphere;}
 

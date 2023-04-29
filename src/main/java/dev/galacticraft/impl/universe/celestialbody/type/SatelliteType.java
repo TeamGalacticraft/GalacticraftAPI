@@ -31,6 +31,8 @@ import dev.galacticraft.api.satellite.SatelliteOwnershipData;
 import dev.galacticraft.api.universe.celestialbody.CelestialBody;
 import dev.galacticraft.api.universe.celestialbody.CelestialBodyType;
 import dev.galacticraft.api.universe.celestialbody.Tiered;
+import dev.galacticraft.api.universe.celestialbody.landable.CelestialTeleporter;
+import dev.galacticraft.api.universe.celestialbody.landable.FallbackCelestialTeleporter;
 import dev.galacticraft.api.universe.display.CelestialDisplay;
 import dev.galacticraft.api.universe.galaxy.Galaxy;
 import dev.galacticraft.api.universe.position.CelestialPosition;
@@ -125,7 +127,7 @@ public class SatelliteType extends CelestialBodyType<SatelliteConfig> implements
 
         ((DynamicDimensionRegistry)server).createDynamicDimension(id, generator, type);
 
-        SatelliteConfig config = new SatelliteConfig(ResourceKey.create(AddonRegistries.CELESTIAL_BODY, server.registryAccess().registryOrThrow(AddonRegistries.CELESTIAL_BODY).getKey(parent)), parent.galaxy(), position, display, ownershipData, ResourceKey.create(Registries.DIMENSION, id), EMPTY_GAS_COMPOSITION, 0.0f, parent.type() instanceof Tiered<?> ? ((Tiered) parent.type()).accessWeight(parent.config()) : 1, new LevelStem(Holder.direct(type), generator));
+        SatelliteConfig config = new SatelliteConfig(ResourceKey.create(AddonRegistries.CELESTIAL_BODY, server.registryAccess().registryOrThrow(AddonRegistries.CELESTIAL_BODY).getKey(parent)), parent.galaxy(), position, display, ownershipData, ResourceKey.create(Registries.DIMENSION, id), FallbackCelestialTeleporter.INSTANCE, EMPTY_GAS_COMPOSITION, 0.0f, parent.type() instanceof Tiered<?> ? ((Tiered) parent.type()).accessWeight(parent.config()) : 1, new LevelStem(Holder.direct(type), generator));
         config.customName(Component.translatable(name));
         CelestialBody<SatelliteConfig, SatelliteType> satellite = INSTANCE.configure(config);
         ((SatelliteAccessor) server).addSatellite(id, satellite);
@@ -185,6 +187,11 @@ public class SatelliteType extends CelestialBodyType<SatelliteConfig> implements
     @Override
     public @NotNull ResourceKey<Level> world(SatelliteConfig config) {
         return config.world();
+    }
+
+    @Override
+    public CelestialTeleporter teleporter(SatelliteConfig config) {
+        return config.teleporter();
     }
 
     @Override
