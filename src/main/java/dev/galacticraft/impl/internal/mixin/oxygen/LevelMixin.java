@@ -87,7 +87,7 @@ public abstract class LevelMixin implements LevelOxygenAccessor, InternalLevelOx
     }
 
     private boolean validPosition(int x, int y, int z) {
-        return y >= this.getMinBuildHeight() && y <= this.getMaxBuildHeight()
+        return y >= this.getMinBuildHeight() && y < this.getMaxBuildHeight()
                 && x < WORLD_SIZE && z < WORLD_SIZE && x >= -WORLD_SIZE && z >= -WORLD_SIZE;
     }
 }
