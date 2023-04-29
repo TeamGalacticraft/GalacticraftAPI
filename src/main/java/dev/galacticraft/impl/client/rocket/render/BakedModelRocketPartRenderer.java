@@ -37,21 +37,16 @@ import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.Sheets;
-import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.resources.model.BakedModel;
-import net.minecraft.core.Direction;
 import net.minecraft.world.item.ItemDisplayContext;
 
-import java.util.LinkedList;
-import java.util.List;
 import java.util.function.Supplier;
 
 @Environment(EnvType.CLIENT)
 public record BakedModelRocketPartRenderer(Supplier<BakedModel> model,
                                            Supplier<RenderType> layer) implements RocketPartRenderer {
-    private static final Direction[] DIRECTIONS_AND_NULL = new Direction[]{null, Direction.DOWN, Direction.UP, Direction.NORTH, Direction.SOUTH, Direction.WEST, Direction.EAST};
 
     public BakedModelRocketPartRenderer(Supplier<BakedModel> model) {
         this(model, () -> RenderType.entityCutoutNoCull(model.get().getParticleIcon().atlasLocation(), true));
@@ -69,10 +64,6 @@ public record BakedModelRocketPartRenderer(Supplier<BakedModel> model,
         matrices.scale(16, 16, 16);
 
         PoseStack.Pose entry = matrices.last();
-        List<BakedQuad> quads = new LinkedList<>();
-        for (Direction direction : DIRECTIONS_AND_NULL) {
-            quads.addAll(this.model.get().getQuads(null, direction, world.random));
-        }
         Minecraft.getInstance().getTextureManager().getTexture(TextureAtlas.LOCATION_BLOCKS).setFilter(false, false);
         RenderSystem.setShaderTexture(0, TextureAtlas.LOCATION_BLOCKS);
         RenderSystem.setShaderTexture(0, this.model.get().getParticleIcon().atlasLocation());
@@ -86,22 +77,10 @@ public record BakedModelRocketPartRenderer(Supplier<BakedModel> model,
             Lighting.setupFor3DItems();
         }
 
-        if (!quads.isEmpty()) {
-            MultiBufferSource.BufferSource entityVertexConsumers = Minecraft.getInstance().renderBuffers().bufferSource();
-            VertexConsumer itemGlintConsumer = entityVertexConsumers.getBuffer(Sheets.cutoutBlockSheet());
-            for (BakedQuad quad : quads) {
-                itemGlintConsumer.putBulkData(
-                        entry,
-                        quad,
-                        1,
-                        1,
-                        1,
-                        15728880,
-                        OverlayTexture.NO_OVERLAY
-                );
-            }
-            entityVertexConsumers.endBatch();
-        }
+        MultiBufferSource.BufferSource entityVertexConsumers = Minecraft.getInstance().renderBuffers().bufferSource();
+        VertexConsumer itemGlintConsumer = entityVertexConsumers.getBuffer(Sheets.cutoutBlockSheet());
+        Minecraft.getInstance().getBlockRenderer().getModelRenderer().renderModel(entry, itemGlintConsumer, null, this.model.get(), 1, 1, 1, 15728880, OverlayTexture.NO_OVERLAY);
+        entityVertexConsumers.endBatch();
 
         if (model.get().usesBlockLight()) {
             Lighting.setupFor3DItems();
@@ -114,18 +93,6 @@ public record BakedModelRocketPartRenderer(Supplier<BakedModel> model,
         matrices.translate(0.5D, 0.5D, 0.5D);
         PoseStack.Pose entry = matrices.last();
         VertexConsumer vertexConsumer = vertices.getBuffer(layer.get());
-        for (Direction direction : DIRECTIONS_AND_NULL) {
-            for (BakedQuad quad : this.model.get().getQuads(null, direction, world.random)) {
-                vertexConsumer.putBulkData(
-                        entry,
-                        quad,
-                        1,
-                        1,
-                        1,
-                        light,
-                        OverlayTexture.NO_OVERLAY
-                );
-            }
-        }
+        Minecraft.getInstance().getBlockRenderer().getModelRenderer().renderModel(entry, vertexConsumer, null, this.model.get(), 1, 1, 1, light, OverlayTexture.NO_OVERLAY);
     }
 }
