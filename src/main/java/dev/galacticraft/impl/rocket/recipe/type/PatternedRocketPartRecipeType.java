@@ -20,31 +20,41 @@
  * SOFTWARE.
  */
 
-package dev.galacticraft.api.rocket.part.type;
+package dev.galacticraft.impl.rocket.recipe.type;
 
-import com.mojang.serialization.Codec;
-import dev.galacticraft.api.rocket.entity.Rocket;
 import dev.galacticraft.api.rocket.part.RocketPart;
-import dev.galacticraft.api.rocket.part.config.RocketPartConfig;
-import dev.galacticraft.api.rocket.travelpredicate.ConfiguredTravelPredicate;
+import dev.galacticraft.api.rocket.recipe.RocketPartRecipeSlot;
+import dev.galacticraft.api.rocket.recipe.type.RocketPartRecipeType;
+import dev.galacticraft.impl.rocket.recipe.config.PatternedRocketPartRecipeConfig;
+import net.minecraft.resources.ResourceKey;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * Base rocket part interface.
- * To create a custom rocket part, extend {@link RocketBottomType}, {@link RocketBoosterType}, {@link RocketBottomType}, {@link RocketConeType}, {@link RocketFinType}, or {@link RocketUpgradeType}
- */
-public sealed interface RocketPartType<C extends RocketPartConfig> permits RocketBodyType, RocketBoosterType, RocketBottomType, RocketConeType, RocketFinType, RocketUpgradeType {
+import java.util.List;
 
-    @NotNull RocketPart<C, ? extends RocketPartType<C>> configure(@NotNull C config);
+public class PatternedRocketPartRecipeType extends RocketPartRecipeType<PatternedRocketPartRecipeConfig> {
+    public static final RocketPartRecipeType<PatternedRocketPartRecipeConfig> INSTANCE = new PatternedRocketPartRecipeType();
 
-    /**
-     * Called every tick when this part is applied to a placed rocket.
-     * The rocket may not have launched yet.
-     * @param rocket the rocket that this part is a part of.
-     */
-    void tick(@NotNull Rocket rocket, @NotNull C config);
+    private PatternedRocketPartRecipeType() {
+        super(PatternedRocketPartRecipeConfig.CODEC);
+    }
 
-    @NotNull Codec<? extends RocketPart<C, ? extends RocketPartType<C>>> codec();
+    @Override
+    public int width(PatternedRocketPartRecipeConfig config) {
+        return config.width();
+    }
 
-    @NotNull ConfiguredTravelPredicate<?, ?> travelPredicate(@NotNull C config);
+    @Override
+    public int height(PatternedRocketPartRecipeConfig config) {
+        return config.height();
+    }
+
+    @Override
+    public @NotNull List<RocketPartRecipeSlot> slots(PatternedRocketPartRecipeConfig config) {
+        return config.slots();
+    }
+
+    @Override
+    public @NotNull ResourceKey<? extends RocketPart<?, ?>> output(PatternedRocketPartRecipeConfig config) {
+        return config.output();
+    }
 }

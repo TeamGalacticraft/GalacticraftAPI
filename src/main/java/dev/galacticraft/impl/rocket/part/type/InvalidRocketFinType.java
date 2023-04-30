@@ -25,12 +25,10 @@ package dev.galacticraft.impl.rocket.part.type;
 import com.mojang.serialization.Codec;
 import dev.galacticraft.api.rocket.entity.Rocket;
 import dev.galacticraft.api.rocket.part.type.RocketFinType;
-import dev.galacticraft.api.rocket.recipe.RocketPartRecipe;
 import dev.galacticraft.api.rocket.travelpredicate.ConfiguredTravelPredicate;
 import dev.galacticraft.impl.rocket.part.config.DefaultRocketFinConfig;
 import dev.galacticraft.impl.rocket.travelpredicate.type.DefaultTravelPredicateType;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public final class InvalidRocketFinType extends RocketFinType<DefaultRocketFinConfig> {
     public static final InvalidRocketFinType INSTANCE = new InvalidRocketFinType(DefaultRocketFinConfig.CODEC);
@@ -47,11 +45,6 @@ public final class InvalidRocketFinType extends RocketFinType<DefaultRocketFinCo
     @Override
     public void tick(@NotNull Rocket rocket, @NotNull DefaultRocketFinConfig config) {
 
-    }
-
-    @Override
-    public @Nullable RocketPartRecipe getRecipe(@NotNull DefaultRocketFinConfig config) {
-        return null;
     }
 
     @Override

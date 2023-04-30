@@ -22,10 +22,34 @@
 
 package dev.galacticraft.impl.rocket.recipe;
 
-import dev.galacticraft.api.rocket.recipe.QuantifiedIngredient;
+import dev.galacticraft.api.rocket.part.RocketPart;
 import dev.galacticraft.api.rocket.recipe.RocketPartRecipe;
+import dev.galacticraft.api.rocket.recipe.RocketPartRecipeSlot;
+import dev.galacticraft.api.rocket.recipe.config.RocketPartRecipeConfig;
+import dev.galacticraft.api.rocket.recipe.type.RocketPartRecipeType;
+import net.minecraft.resources.ResourceKey;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public record RocketPartRecipeImpl(List<QuantifiedIngredient> ingredients) implements RocketPartRecipe {
+public record RocketPartRecipeImpl<C extends RocketPartRecipeConfig, T extends RocketPartRecipeType<C>>(T type, C config) implements RocketPartRecipe<C, T> {
+    @Override
+    public int width() {
+        return this.type().width(this.config);
+    }
+
+    @Override
+    public int height() {
+        return this.type().height(this.config);
+    }
+
+    @Override
+    public @NotNull List<RocketPartRecipeSlot> slots() {
+        return this.type().slots(this.config);
+    }
+
+    @Override
+    public ResourceKey<? extends RocketPart<?, ?>> output() {
+        return this.type().output(this.config);
+    }
 }

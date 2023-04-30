@@ -20,31 +20,34 @@
  * SOFTWARE.
  */
 
-package dev.galacticraft.api.rocket.part.type;
+package dev.galacticraft.impl.rocket.part.type;
 
 import com.mojang.serialization.Codec;
 import dev.galacticraft.api.rocket.entity.Rocket;
-import dev.galacticraft.api.rocket.part.RocketPart;
-import dev.galacticraft.api.rocket.part.config.RocketPartConfig;
+import dev.galacticraft.api.rocket.part.type.RocketBottomType;
 import dev.galacticraft.api.rocket.travelpredicate.ConfiguredTravelPredicate;
+import dev.galacticraft.impl.rocket.part.config.BasicRocketBottomConfig;
+import dev.galacticraft.impl.rocket.travelpredicate.type.DefaultTravelPredicateType;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * Base rocket part interface.
- * To create a custom rocket part, extend {@link RocketBottomType}, {@link RocketBoosterType}, {@link RocketBottomType}, {@link RocketConeType}, {@link RocketFinType}, or {@link RocketUpgradeType}
- */
-public sealed interface RocketPartType<C extends RocketPartConfig> permits RocketBodyType, RocketBoosterType, RocketBottomType, RocketConeType, RocketFinType, RocketUpgradeType {
+public final class BasicRocketBottomType extends RocketBottomType<BasicRocketBottomConfig> {
+    public static final BasicRocketBottomType INSTANCE = new BasicRocketBottomType(BasicRocketBottomConfig.CODEC);
 
-    @NotNull RocketPart<C, ? extends RocketPartType<C>> configure(@NotNull C config);
+    private BasicRocketBottomType(@NotNull Codec<BasicRocketBottomConfig> configCodec) {
+        super(configCodec);
+    }
 
-    /**
-     * Called every tick when this part is applied to a placed rocket.
-     * The rocket may not have launched yet.
-     * @param rocket the rocket that this part is a part of.
-     */
-    void tick(@NotNull Rocket rocket, @NotNull C config);
+    @Override
+    public long getFuelCapacity(@NotNull BasicRocketBottomConfig config) {
+        return config.fuelCapacity();
+    }
 
-    @NotNull Codec<? extends RocketPart<C, ? extends RocketPartType<C>>> codec();
+    @Override
+    public void tick(@NotNull Rocket rocket, @NotNull BasicRocketBottomConfig config) {
+    }
 
-    @NotNull ConfiguredTravelPredicate<?, ?> travelPredicate(@NotNull C config);
+    @Override
+    public @NotNull ConfiguredTravelPredicate<?, ?> travelPredicate(@NotNull BasicRocketBottomConfig config) {
+        return DefaultTravelPredicateType.CONFIGURED;
+    }
 }

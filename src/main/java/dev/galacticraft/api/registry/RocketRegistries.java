@@ -24,6 +24,8 @@ package dev.galacticraft.api.registry;
 
 import dev.galacticraft.api.rocket.part.*;
 import dev.galacticraft.api.rocket.part.type.*;
+import dev.galacticraft.api.rocket.recipe.RocketPartRecipe;
+import dev.galacticraft.api.rocket.recipe.type.RocketPartRecipeType;
 import dev.galacticraft.api.rocket.travelpredicate.ConfiguredTravelPredicate;
 import dev.galacticraft.api.rocket.travelpredicate.TravelPredicateType;
 import dev.galacticraft.impl.Constant;
@@ -41,6 +43,7 @@ public final class RocketRegistries {
     public static final ResourceKey<Registry<RocketBoosterType<?>>> ROCKET_BOOSTER_TYPE = ResourceKey.createRegistryKey(new ResourceLocation(Constant.MOD_ID, "rocket_booster_type"));
     public static final ResourceKey<Registry<RocketBottomType<?>>> ROCKET_BOTTOM_TYPE = ResourceKey.createRegistryKey(new ResourceLocation(Constant.MOD_ID, "rocket_bottom_type"));
     public static final ResourceKey<Registry<RocketUpgradeType<?>>> ROCKET_UPGRADE_TYPE = ResourceKey.createRegistryKey(new ResourceLocation(Constant.MOD_ID, "rocket_upgrade_type"));
+    public static final ResourceKey<Registry<RocketPartRecipeType<?>>> ROCKET_PART_RECIPE_TYPE = ResourceKey.createRegistryKey(new ResourceLocation(Constant.MOD_ID, "rocket_part_recipe_type"));
 
     public static final ResourceKey<Registry<RocketCone<?, ?>>> ROCKET_CONE = ResourceKey.createRegistryKey(new ResourceLocation(Constant.MOD_ID, "rocket_cone"));
     public static final ResourceKey<Registry<RocketBody<?, ?>>> ROCKET_BODY = ResourceKey.createRegistryKey(new ResourceLocation(Constant.MOD_ID, "rocket_body"));
@@ -48,4 +51,5 @@ public final class RocketRegistries {
     public static final ResourceKey<Registry<RocketBooster<?, ?>>> ROCKET_BOOSTER = ResourceKey.createRegistryKey(new ResourceLocation(Constant.MOD_ID, "rocket_booster"));
     public static final ResourceKey<Registry<RocketBottom<?, ?>>> ROCKET_BOTTOM = ResourceKey.createRegistryKey(new ResourceLocation(Constant.MOD_ID, "rocket_bottom"));
     public static final ResourceKey<Registry<RocketUpgrade<?, ?>>> ROCKET_UPGRADE = ResourceKey.createRegistryKey(new ResourceLocation(Constant.MOD_ID, "rocket_upgrade"));
+    public static final ResourceKey<Registry<RocketPartRecipe<?, ?>>> ROCKET_PART_RECIPE = ResourceKey.createRegistryKey(new ResourceLocation(Constant.MOD_ID, "rocket_part_recipe"));
 }

@@ -25,11 +25,8 @@ package dev.galacticraft.api.rocket.part;
 import dev.galacticraft.api.rocket.entity.Rocket;
 import dev.galacticraft.api.rocket.part.config.RocketPartConfig;
 import dev.galacticraft.api.rocket.part.type.RocketPartType;
-import dev.galacticraft.api.rocket.recipe.RocketPartRecipe;
 import dev.galacticraft.api.rocket.travelpredicate.ConfiguredTravelPredicate;
-import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public sealed interface RocketPart<C extends RocketPartConfig, T extends RocketPartType<C>> permits RocketBody, RocketBooster, RocketBottom, RocketCone, RocketFin, RocketUpgrade {
     @NotNull C config();
@@ -44,16 +41,6 @@ public sealed interface RocketPart<C extends RocketPartConfig, T extends RocketP
      */
     default void tick(@NotNull Rocket rocket) {
         this.type().tick(rocket, this.config());
-    }
-
-    /**
-     * Returns the recipe of this rocket part.
-     *
-     * @return the recipe of this rocket part. Can be null.
-     */
-    @Contract(pure = true)
-    default @Nullable RocketPartRecipe getRecipe() {
-        return this.type().getRecipe(this.config());
     }
 
     default @NotNull ConfiguredTravelPredicate<?, ?> travelPredicate() {

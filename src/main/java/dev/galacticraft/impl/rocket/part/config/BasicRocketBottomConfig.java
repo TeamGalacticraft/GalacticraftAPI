@@ -20,31 +20,16 @@
  * SOFTWARE.
  */
 
-package dev.galacticraft.api.rocket.part.type;
+package dev.galacticraft.impl.rocket.part.config;
 
 import com.mojang.serialization.Codec;
-import dev.galacticraft.api.rocket.entity.Rocket;
-import dev.galacticraft.api.rocket.part.RocketPart;
-import dev.galacticraft.api.rocket.part.config.RocketPartConfig;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+import dev.galacticraft.api.rocket.part.config.RocketBottomConfig;
 import dev.galacticraft.api.rocket.travelpredicate.ConfiguredTravelPredicate;
-import org.jetbrains.annotations.NotNull;
 
-/**
- * Base rocket part interface.
- * To create a custom rocket part, extend {@link RocketBottomType}, {@link RocketBoosterType}, {@link RocketBottomType}, {@link RocketConeType}, {@link RocketFinType}, or {@link RocketUpgradeType}
- */
-public sealed interface RocketPartType<C extends RocketPartConfig> permits RocketBodyType, RocketBoosterType, RocketBottomType, RocketConeType, RocketFinType, RocketUpgradeType {
-
-    @NotNull RocketPart<C, ? extends RocketPartType<C>> configure(@NotNull C config);
-
-    /**
-     * Called every tick when this part is applied to a placed rocket.
-     * The rocket may not have launched yet.
-     * @param rocket the rocket that this part is a part of.
-     */
-    void tick(@NotNull Rocket rocket, @NotNull C config);
-
-    @NotNull Codec<? extends RocketPart<C, ? extends RocketPartType<C>>> codec();
-
-    @NotNull ConfiguredTravelPredicate<?, ?> travelPredicate(@NotNull C config);
+public record BasicRocketBottomConfig(ConfiguredTravelPredicate<?, ?> predicate, long fuelCapacity) implements RocketBottomConfig {
+    public static final Codec<BasicRocketBottomConfig> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+            ConfiguredTravelPredicate.DIRECT_CODEC.fieldOf("predicate").forGetter(BasicRocketBottomConfig::predicate),
+            Codec.LONG.fieldOf("fuel_capacity").forGetter(BasicRocketBottomConfig::fuelCapacity)
+    ).apply(instance, BasicRocketBottomConfig::new));
 }

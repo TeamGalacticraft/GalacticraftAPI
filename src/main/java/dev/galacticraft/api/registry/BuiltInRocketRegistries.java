@@ -24,9 +24,11 @@ package dev.galacticraft.api.registry;
 
 import com.mojang.serialization.Lifecycle;
 import dev.galacticraft.api.rocket.part.type.*;
+import dev.galacticraft.api.rocket.recipe.type.RocketPartRecipeType;
 import dev.galacticraft.api.rocket.travelpredicate.TravelPredicateType;
 import dev.galacticraft.impl.Constant;
 import dev.galacticraft.impl.rocket.part.type.*;
+import dev.galacticraft.impl.rocket.recipe.type.PatternedRocketPartRecipeType;
 import dev.galacticraft.impl.rocket.travelpredicate.type.*;
 import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder;
 import net.minecraft.core.DefaultedMappedRegistry;
@@ -84,15 +86,23 @@ public final class BuiltInRocketRegistries {
                     false
             )).buildAndRegister();
 
+
+    public static final WritableRegistry<RocketPartRecipeType<?>> ROCKET_PART_RECIPE_TYPE = FabricRegistryBuilder.from(
+            new DefaultedMappedRegistry<>(Constant.id("slotted_default").toString(),
+                    RocketRegistries.ROCKET_PART_RECIPE_TYPE,
+                    Lifecycle.experimental(),
+                    false
+            )).buildAndRegister();
+
     public static void initialize() {
     }
 
     static {
-        Registry.register(BuiltInRocketRegistries.TRAVEL_PREDICATE_TYPE, new ResourceLocation(Constant.MOD_ID, "default"), DefaultTravelPredicateType.INSTANCE);
-        Registry.register(BuiltInRocketRegistries.TRAVEL_PREDICATE_TYPE, new ResourceLocation(Constant.MOD_ID, "access_weight"), AccessWeightTravelPredicateType.INSTANCE);
-        Registry.register(BuiltInRocketRegistries.TRAVEL_PREDICATE_TYPE, new ResourceLocation(Constant.MOD_ID, "constant"), ConstantTravelPredicateType.INSTANCE);
-        Registry.register(BuiltInRocketRegistries.TRAVEL_PREDICATE_TYPE, new ResourceLocation(Constant.MOD_ID, "and"), AndTravelPredicateType.INSTANCE);
-        Registry.register(BuiltInRocketRegistries.TRAVEL_PREDICATE_TYPE, new ResourceLocation(Constant.MOD_ID, "or"), OrTravelPredicateType.INSTANCE);
+        Registry.register(TRAVEL_PREDICATE_TYPE, new ResourceLocation(Constant.MOD_ID, "default"), DefaultTravelPredicateType.INSTANCE);
+        Registry.register(TRAVEL_PREDICATE_TYPE, new ResourceLocation(Constant.MOD_ID, "access_weight"), AccessWeightTravelPredicateType.INSTANCE);
+        Registry.register(TRAVEL_PREDICATE_TYPE, new ResourceLocation(Constant.MOD_ID, "constant"), ConstantTravelPredicateType.INSTANCE);
+        Registry.register(TRAVEL_PREDICATE_TYPE, new ResourceLocation(Constant.MOD_ID, "and"), AndTravelPredicateType.INSTANCE);
+        Registry.register(TRAVEL_PREDICATE_TYPE, new ResourceLocation(Constant.MOD_ID, "or"), OrTravelPredicateType.INSTANCE);
 
         Registry.register(ROCKET_CONE_TYPE, Constant.Misc.INVALID, InvalidRocketConeType.INSTANCE);
         Registry.register(ROCKET_BODY_TYPE, Constant.Misc.INVALID, InvalidRocketBodyType.INSTANCE);
@@ -100,6 +110,14 @@ public final class BuiltInRocketRegistries {
         Registry.register(ROCKET_BOOSTER_TYPE, Constant.Misc.INVALID, InvalidRocketBoosterType.INSTANCE);
         Registry.register(ROCKET_BOTTOM_TYPE, Constant.Misc.INVALID, InvalidRocketBottomType.INSTANCE);
         Registry.register(ROCKET_UPGRADE_TYPE, Constant.Misc.INVALID, InvalidRocketUpgradeType.INSTANCE);
+
+        Registry.register(ROCKET_CONE_TYPE, new ResourceLocation(Constant.MOD_ID, "basic"), BasicRocketConeType.INSTANCE);
+        Registry.register(ROCKET_BODY_TYPE, new ResourceLocation(Constant.MOD_ID, "basic"), BasicRocketBodyType.INSTANCE);
+        Registry.register(ROCKET_FIN_TYPE, new ResourceLocation(Constant.MOD_ID, "basic"), BasicRocketFinType.INSTANCE);
+        Registry.register(ROCKET_BOOSTER_TYPE, new ResourceLocation(Constant.MOD_ID, "basic"), BasicRocketBoosterType.INSTANCE);
+        Registry.register(ROCKET_BOTTOM_TYPE, new ResourceLocation(Constant.MOD_ID, "basic"), BasicRocketBottomType.INSTANCE);
+
+        Registry.register(ROCKET_PART_RECIPE_TYPE, Constant.id("slotted_default"), PatternedRocketPartRecipeType.INSTANCE);
 
         Registry.register(ROCKET_UPGRADE_TYPE, new ResourceLocation(Constant.MOD_ID, "no_upgrade"), NoUpgradeRocketUpgradeType.INSTANCE);
     }

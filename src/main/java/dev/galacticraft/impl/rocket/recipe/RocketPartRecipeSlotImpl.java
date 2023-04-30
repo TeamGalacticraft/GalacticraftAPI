@@ -22,23 +22,9 @@
 
 package dev.galacticraft.impl.rocket.recipe;
 
-import dev.galacticraft.api.rocket.recipe.QuantifiedIngredient;
-import dev.galacticraft.api.rocket.recipe.RocketPartRecipe;
-import org.jetbrains.annotations.Contract;
+import dev.galacticraft.api.rocket.recipe.RocketPartRecipeSlot;
+import net.minecraft.world.item.crafting.Ingredient;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Unmodifiable;
 
-import java.util.Collections;
-import java.util.List;
-
-public final class EmptyRocketPartRecipeImpl implements RocketPartRecipe {
-    public static final @NotNull EmptyRocketPartRecipeImpl INSTANCE = new EmptyRocketPartRecipeImpl();
-
-    private EmptyRocketPartRecipeImpl() {}
-
-    @Contract(pure = true)
-    @Override
-    public @NotNull @Unmodifiable List<QuantifiedIngredient> ingredients() {
-        return Collections.emptyList();
-    }
+public record RocketPartRecipeSlotImpl(int x, int y, @NotNull Ingredient ingredient) implements RocketPartRecipeSlot {
 }

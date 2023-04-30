@@ -20,17 +20,7 @@
  * SOFTWARE.
  */
 
-package dev.galacticraft.impl.rocket.recipe;
+package dev.galacticraft.api.rocket.recipe.config;
 
-import dev.galacticraft.api.rocket.recipe.QuantifiedIngredient;
-import net.minecraft.world.item.crafting.Ingredient;
-import org.jetbrains.annotations.NotNull;
-
-public record QuantifiedIngredientImpl(@NotNull Ingredient ingredient, long amount) implements QuantifiedIngredient {
-    @Override
-    public boolean isEmpty() {
-        assert !this.ingredient().isEmpty();
-        assert this.amount() > 0;
-        return false;
-    }
+public interface RocketPartRecipeConfig {
 }

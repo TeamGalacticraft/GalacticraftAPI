@@ -25,10 +25,8 @@ package dev.galacticraft.api.rocket.part.type;
 import com.mojang.serialization.Codec;
 import dev.galacticraft.api.rocket.part.RocketUpgrade;
 import dev.galacticraft.api.rocket.part.config.RocketUpgradeConfig;
-import dev.galacticraft.api.rocket.recipe.QuantifiedIngredient;
-import dev.galacticraft.api.rocket.recipe.RocketPartRecipe;
+import net.minecraft.world.item.crafting.Ingredient;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * An upgrade for a rocket.
@@ -45,12 +43,7 @@ public non-sealed abstract class RocketUpgradeType<C extends RocketUpgradeConfig
         return RocketUpgrade.create(config, this);
     }
 
-    @Override
-    public final @Nullable RocketPartRecipe getRecipe(@NotNull C config) {
-        return null;
-    }
-
-    public abstract @NotNull QuantifiedIngredient upgradeRecipe(@NotNull C config);
+    public abstract @NotNull Ingredient upgradeRecipe(@NotNull C config);
 
     @Override
     public @NotNull Codec<RocketUpgrade<C, RocketUpgradeType<C>>> codec() {

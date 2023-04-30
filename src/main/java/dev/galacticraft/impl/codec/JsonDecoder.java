@@ -20,17 +20,21 @@
  * SOFTWARE.
  */
 
-package dev.galacticraft.api.item;
+package dev.galacticraft.impl.codec;
 
-import dev.galacticraft.api.rocket.recipe.RocketPartRecipe;
-import net.minecraft.core.Registry;
-import net.minecraft.world.item.ItemStack;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.google.gson.JsonElement;
+import com.mojang.datafixers.util.Pair;
+import com.mojang.serialization.DataResult;
+import com.mojang.serialization.Decoder;
+import com.mojang.serialization.DynamicOps;
+import com.mojang.serialization.JsonOps;
 
-/**
- * @author <a href="https://github.com/TeamGalacticraft">TeamGalacticraft</a>
- */
-public interface Schematic {
-    @Nullable RocketPartRecipe<?, ?> getRecipe(Registry<RocketPartRecipe<?, ?>> registry, @NotNull ItemStack stack);
+@FunctionalInterface
+public interface JsonDecoder<A> extends Decoder<A> {
+    @Override
+    default <T> DataResult<Pair<A, T>> decode(DynamicOps<T> ops, T input) {
+        return DataResult.success(new Pair<>(apply(ops, ops.convertTo(JsonOps.INSTANCE, input)), input));
+    }
+
+    A apply(DynamicOps<?> ops, JsonElement element);
 }

@@ -20,27 +20,27 @@
  * SOFTWARE.
  */
 
-package dev.galacticraft.impl.rocket.recipe;
+package dev.galacticraft.impl.codec;
 
-import dev.galacticraft.api.rocket.recipe.QuantifiedIngredient;
-import net.minecraft.world.item.crafting.Ingredient;
-import org.jetbrains.annotations.NotNull;
+import com.mojang.datafixers.util.Pair;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.DataResult;
+import com.mojang.serialization.Decoder;
+import com.mojang.serialization.DynamicOps;
 
-public final class EmptyQuantifiedIngredient implements QuantifiedIngredient {
-    public static final @NotNull EmptyQuantifiedIngredient INSTANCE = new EmptyQuantifiedIngredient();
-
+public record AlternateDecoderCodec<A>(Decoder<A> alternative, Codec<A> main) implements Codec<A> {
     @Override
-    public @NotNull Ingredient ingredient() {
-        return Ingredient.EMPTY;
+    public <T> DataResult<Pair<A, T>> decode(DynamicOps<T> ops, T input) {
+        DataResult<Pair<A, T>> decode = this.alternative.decode(ops, input);
+        if (decode.error().isPresent()) {
+            return this.main.decode(ops, input);
+        } else {
+            return decode;
+        }
     }
 
     @Override
-    public long amount() {
-        return 0;
-    }
-
-    @Override
-    public boolean isEmpty() {
-        return true;
+    public <T> DataResult<T> encode(A input, DynamicOps<T> ops, T prefix) {
+        return this.main.encode(input, ops, prefix);
     }
 }

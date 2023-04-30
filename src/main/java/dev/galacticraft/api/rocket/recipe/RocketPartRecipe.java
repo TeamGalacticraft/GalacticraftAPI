@@ -22,32 +22,43 @@
 
 package dev.galacticraft.api.rocket.recipe;
 
-import com.google.common.collect.ImmutableList;
 import com.mojang.serialization.Codec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
-import dev.galacticraft.impl.rocket.recipe.EmptyRocketPartRecipeImpl;
+import dev.galacticraft.api.registry.BuiltInRocketRegistries;
+import dev.galacticraft.api.registry.RocketRegistries;
+import dev.galacticraft.api.rocket.part.RocketPart;
+import dev.galacticraft.api.rocket.recipe.config.RocketPartRecipeConfig;
+import dev.galacticraft.api.rocket.recipe.type.RocketPartRecipeType;
 import dev.galacticraft.impl.rocket.recipe.RocketPartRecipeImpl;
+import net.minecraft.core.Holder;
+import net.minecraft.core.HolderSet;
+import net.minecraft.core.RegistryCodecs;
+import net.minecraft.resources.RegistryFileCodec;
+import net.minecraft.resources.ResourceKey;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collection;
 import java.util.List;
 
-public interface RocketPartRecipe {
-    Codec<RocketPartRecipe> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-            QuantifiedIngredient.CODEC.listOf().fieldOf("ingredients").forGetter(RocketPartRecipe::ingredients)
-    ).apply(instance, RocketPartRecipe::create));
+public interface RocketPartRecipe<C extends RocketPartRecipeConfig, T extends RocketPartRecipeType<C>> {
+    Codec<RocketPartRecipe<?, ?>> DIRECT_CODEC = BuiltInRocketRegistries.ROCKET_PART_RECIPE_TYPE.byNameCodec().dispatch(RocketPartRecipe::type, RocketPartRecipeType::codec);
+    Codec<Holder<RocketPartRecipe<?, ?>>> CODEC = RegistryFileCodec.create(RocketRegistries.ROCKET_PART_RECIPE, DIRECT_CODEC);
+    Codec<HolderSet<RocketPartRecipe<?, ?>>> LIST_CODEC = RegistryCodecs.homogeneousList(RocketRegistries.ROCKET_PART_RECIPE, DIRECT_CODEC);
 
-    @Contract(pure = true)
-    static @NotNull RocketPartRecipe create(@NotNull Collection<QuantifiedIngredient> ingredients) {
-        if (ingredients.size() == 0) return empty();
-        return new RocketPartRecipeImpl(ImmutableList.copyOf(ingredients));
+    @Contract("_, _ -> new")
+    static <C extends RocketPartRecipeConfig, T extends RocketPartRecipeType<C>> @NotNull RocketPartRecipe<C, RocketPartRecipeType<C>> create(C config, T type) {
+        return new RocketPartRecipeImpl<>(type, config);
     }
 
-    @Contract(pure = true)
-    static @NotNull RocketPartRecipe empty() {
-        return EmptyRocketPartRecipeImpl.INSTANCE;
-    }
+    @NotNull T type();
 
-    @NotNull List<QuantifiedIngredient> ingredients();
+    @NotNull C config();
+
+    // PIXELS
+    int width();
+
+    int height();
+
+    @NotNull List<RocketPartRecipeSlot> slots();
+
+    ResourceKey<? extends RocketPart<?, ?>> output();
 }

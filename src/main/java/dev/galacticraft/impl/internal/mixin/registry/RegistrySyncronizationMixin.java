@@ -27,6 +27,7 @@ import com.mojang.serialization.Codec;
 import dev.galacticraft.api.registry.AddonRegistries;
 import dev.galacticraft.api.registry.RocketRegistries;
 import dev.galacticraft.api.rocket.part.*;
+import dev.galacticraft.api.rocket.recipe.RocketPartRecipe;
 import dev.galacticraft.api.universe.celestialbody.CelestialBody;
 import dev.galacticraft.api.universe.galaxy.Galaxy;
 import net.minecraft.core.Registry;
@@ -58,5 +59,6 @@ public abstract class RegistrySyncronizationMixin {
         put(builder, RocketRegistries.ROCKET_BOOSTER, RocketBooster.DIRECT_CODEC);
         put(builder, RocketRegistries.ROCKET_BOTTOM, RocketBottom.DIRECT_CODEC);
         put(builder, RocketRegistries.ROCKET_UPGRADE, RocketUpgrade.DIRECT_CODEC);
+        put(builder, RocketRegistries.ROCKET_PART_RECIPE, RocketPartRecipe.DIRECT_CODEC);
     }
 }

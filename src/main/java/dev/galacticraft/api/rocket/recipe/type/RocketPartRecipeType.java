@@ -20,31 +20,35 @@
  * SOFTWARE.
  */
 
-package dev.galacticraft.api.rocket.part.type;
+package dev.galacticraft.api.rocket.recipe.type;
 
 import com.mojang.serialization.Codec;
-import dev.galacticraft.api.rocket.entity.Rocket;
 import dev.galacticraft.api.rocket.part.RocketPart;
-import dev.galacticraft.api.rocket.part.config.RocketPartConfig;
-import dev.galacticraft.api.rocket.travelpredicate.ConfiguredTravelPredicate;
+import dev.galacticraft.api.rocket.recipe.RocketPartRecipe;
+import dev.galacticraft.api.rocket.recipe.RocketPartRecipeSlot;
+import dev.galacticraft.api.rocket.recipe.config.RocketPartRecipeConfig;
+import net.minecraft.resources.ResourceKey;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * Base rocket part interface.
- * To create a custom rocket part, extend {@link RocketBottomType}, {@link RocketBoosterType}, {@link RocketBottomType}, {@link RocketConeType}, {@link RocketFinType}, or {@link RocketUpgradeType}
- */
-public sealed interface RocketPartType<C extends RocketPartConfig> permits RocketBodyType, RocketBoosterType, RocketBottomType, RocketConeType, RocketFinType, RocketUpgradeType {
+import java.util.List;
 
-    @NotNull RocketPart<C, ? extends RocketPartType<C>> configure(@NotNull C config);
+public abstract class RocketPartRecipeType<C extends RocketPartRecipeConfig> {
+    private final @NotNull Codec<RocketPartRecipe<C, RocketPartRecipeType<C>>> codec;
 
-    /**
-     * Called every tick when this part is applied to a placed rocket.
-     * The rocket may not have launched yet.
-     * @param rocket the rocket that this part is a part of.
-     */
-    void tick(@NotNull Rocket rocket, @NotNull C config);
+    protected RocketPartRecipeType(@NotNull Codec<C> configCodec) {
+        this.codec = configCodec.fieldOf("config").xmap(this::configure, RocketPartRecipe::config).codec();
+    }
 
-    @NotNull Codec<? extends RocketPart<C, ? extends RocketPartType<C>>> codec();
+    public @NotNull Codec<RocketPartRecipe<C, RocketPartRecipeType<C>>> codec() {
+        return this.codec;
+    }
 
-    @NotNull ConfiguredTravelPredicate<?, ?> travelPredicate(@NotNull C config);
+    public @NotNull RocketPartRecipe<C, RocketPartRecipeType<C>> configure(@NotNull C config) {
+        return RocketPartRecipe.create(config, this);
+    }
+
+    public abstract int width(C config);
+    public abstract int height(C config);
+    public abstract @NotNull List<RocketPartRecipeSlot> slots(C config);
+    public abstract @NotNull ResourceKey<? extends RocketPart<?, ?>> output(C config);
 }

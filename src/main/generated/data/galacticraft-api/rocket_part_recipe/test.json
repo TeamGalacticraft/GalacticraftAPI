@@ -1,0 +1,20 @@
+{
+  "type": "galacticraft-api:slotted_default",
+  "config": {
+    "key": {
+      ".": 8,
+      "D": {
+        "item": "minecraft:diamond"
+      }
+    },
+    "pattern": [
+      "DD ",
+      ".DD",
+      ".DD"
+    ],
+    "result": {
+      "type": "galacticraft-api:rocket_body",
+      "id": "galacticraft-api:invalid"
+    }
+  }
+}

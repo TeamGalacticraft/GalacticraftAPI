@@ -25,10 +25,10 @@ package dev.galacticraft.impl.rocket.part.type;
 import com.mojang.serialization.Codec;
 import dev.galacticraft.api.rocket.entity.Rocket;
 import dev.galacticraft.api.rocket.part.type.RocketUpgradeType;
-import dev.galacticraft.api.rocket.recipe.QuantifiedIngredient;
 import dev.galacticraft.api.rocket.travelpredicate.ConfiguredTravelPredicate;
 import dev.galacticraft.impl.rocket.part.config.DefaultRocketUpgradeConfig;
 import dev.galacticraft.impl.rocket.travelpredicate.type.DefaultTravelPredicateType;
+import net.minecraft.world.item.crafting.Ingredient;
 import org.jetbrains.annotations.NotNull;
 
 public final class InvalidRocketUpgradeType extends RocketUpgradeType<DefaultRocketUpgradeConfig> {
@@ -43,8 +43,8 @@ public final class InvalidRocketUpgradeType extends RocketUpgradeType<DefaultRoc
     }
 
     @Override
-    public @NotNull QuantifiedIngredient upgradeRecipe(@NotNull DefaultRocketUpgradeConfig config) {
-        return QuantifiedIngredient.empty();
+    public @NotNull Ingredient upgradeRecipe(@NotNull DefaultRocketUpgradeConfig config) {
+        return Ingredient.EMPTY;
     }
 
     @Override
