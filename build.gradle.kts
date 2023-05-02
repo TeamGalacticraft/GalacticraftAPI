@@ -26,7 +26,7 @@ import java.time.format.DateTimeFormatter
 plugins {
     java
     `maven-publish`
-    id("fabric-loom") version("1.1-SNAPSHOT")
+    id("fabric-loom") version("1.2-SNAPSHOT")
     id("org.cadixdev.licenser") version("0.6.1")
     id("io.github.juuxel.loom-quiltflower") version("1.8.0")
 }
@@ -187,9 +187,6 @@ publishing {
                     password = System.getenv("NEXUS_PASSWORD")
                 }
             }
-        } else {
-            println("No nexus repository url found, publishing to local maven repo")
-            mavenLocal()
         }
     }
 }
@@ -201,9 +198,4 @@ tasks.javadoc {
 license {
     setHeader(project.file("LICENSE_HEADER.txt"))
     include("**/dev/galacticraft/**/*.java")
-    include("build.gradle.kts")
-    ext {
-        set("year", "2023")
-        set("company", "Team Galacticraft")
-    }
 }

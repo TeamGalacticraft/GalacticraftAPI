@@ -49,13 +49,9 @@ import java.util.function.Supplier;
  */
 @Mixin(Level.class)
 public abstract class LevelMixin implements LevelOxygenAccessor, InternalLevelOxygenAccessor, LevelAccessor {
-    private static final int WORLD_SIZE = 30000000;
-
     private @Unique boolean breathable = true;
 
     @Shadow public abstract @NotNull LevelChunk getChunk(int i, int j);
-
-    @Shadow public abstract boolean isClientSide();
 
     @Inject(method = "<init>", at = @At("RETURN"))
     private void initializeOxygenValues(WritableLevelData writableLevelData, ResourceKey<Level> resourceKey, RegistryAccess registryAccess, Holder holder, Supplier supplier, boolean bl, boolean bl2, long l, int i, CallbackInfo ci) {
@@ -64,16 +60,32 @@ public abstract class LevelMixin implements LevelOxygenAccessor, InternalLevelOx
 
     @Override
     public boolean isBreathable(int x, int y, int z) {
-        return this.validPosition(x, y, z) ? (this.breathable && !((ChunkOxygenAccessor) this.getChunk(SectionPos.blockToSectionCoord(x), SectionPos.blockToSectionCoord(z))).galacticraft$isInverted(x & 15, y, z & 15))
-                || (!this.breathable && ((ChunkOxygenAccessor) this.getChunk(SectionPos.blockToSectionCoord(x), SectionPos.blockToSectionCoord(z))).galacticraft$isInverted(x & 15, y, z & 15))
-                : this.breathable;
+        if (this.validPosition(x, y, z)) {
+            return this.isBreathableChunk(this.getChunk(SectionPos.blockToSectionCoord(x), SectionPos.blockToSectionCoord(z)), x & 15, y, z & 15);
+        }
+        return this.breathable/* && y < this.getMaxBuildHeight() * 2*/;
+    }
+
+    @Override
+    public boolean isBreathableChunk(LevelChunk chunk, int x, int y, int z) {
+        assert x >= 0 && x < 16 && z >= 0 && z < 16;
+        if (this.withinBuildHeight(y)) {
+            return this.breathable ^ ((ChunkOxygenAccessor) chunk).galacticraft$isInverted(x, y, z);
+        }
+        return this.breathable/* && y < this.getMaxBuildHeight() * 2*/;
     }
 
     @Override
     public void setBreathable(int x, int y, int z, boolean value) {
-        if (this.validPosition(x, y, z)) {
-            ((ChunkOxygenAccessor) this.getChunk(SectionPos.blockToSectionCoord(x), SectionPos.blockToSectionCoord(z))).galacticraft$setInverted(x & 15, y, z & 15, this.breathable != value);
+        if (withinWorldSize(x, z)) {
+            this.setBreathableChunk(this.getChunk(SectionPos.blockToSectionCoord(x), SectionPos.blockToSectionCoord(z)), x & 15, y, z & 15, value);
         }
+    }
+
+    @Override
+    public void setBreathableChunk(LevelChunk chunk, int x, int y, int z, boolean value) {
+        assert x >= 0 && x < 16 && z >= 0 && z < 16;
+        ((ChunkOxygenAccessor) chunk).galacticraft$setInverted(x, y, z, this.breathable ^ value);
     }
 
     @Override
@@ -86,8 +98,15 @@ public abstract class LevelMixin implements LevelOxygenAccessor, InternalLevelOx
         this.breathable = breathable;
     }
 
+    private boolean withinBuildHeight(int y) {
+        return y >= this.getMinBuildHeight() && y < this.getMaxBuildHeight();
+    }
+
+    private static boolean withinWorldSize(int x, int z) {
+        return x >= -Level.MAX_LEVEL_SIZE && z >= -Level.MAX_LEVEL_SIZE && x < Level.MAX_LEVEL_SIZE && z < Level.MAX_LEVEL_SIZE;
+    }
+
     private boolean validPosition(int x, int y, int z) {
-        return y >= this.getMinBuildHeight() && y < this.getMaxBuildHeight()
-                && x < WORLD_SIZE && z < WORLD_SIZE && x >= -WORLD_SIZE && z >= -WORLD_SIZE;
+        return this.withinBuildHeight(y) && withinWorldSize(x, z);
     }
 }

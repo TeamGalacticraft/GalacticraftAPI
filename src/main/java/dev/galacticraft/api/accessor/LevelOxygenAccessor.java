@@ -23,6 +23,7 @@
 package dev.galacticraft.api.accessor;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.chunk.LevelChunk;
 
 /**
  * @author <a href="https://github.com/TeamGalacticraft">TeamGalacticraft</a>
@@ -38,6 +39,10 @@ public interface LevelOxygenAccessor {
         return this.isBreathable(pos.getX(), pos.getY(), pos.getZ());
     }
 
+    default boolean isBreathableChunk(LevelChunk chunk, int x, int y, int z) {
+        throw new RuntimeException("This should be overridden by mixin!");
+    }
+
     default boolean isBreathable(int x, int y, int z) {
         throw new RuntimeException("This should be overridden by mixin!");
     }
@@ -47,6 +52,10 @@ public interface LevelOxygenAccessor {
     }
 
     default void setBreathable(int x, int y, int z, boolean value) {
+        throw new RuntimeException("This should be overridden by mixin!");
+    }
+
+    default void setBreathableChunk(LevelChunk chunk, int x, int y, int z, boolean value) {
         throw new RuntimeException("This should be overridden by mixin!");
     }
 }

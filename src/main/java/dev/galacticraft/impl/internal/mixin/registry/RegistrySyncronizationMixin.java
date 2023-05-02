@@ -47,7 +47,7 @@ public abstract class RegistrySyncronizationMixin {
     private static <E> void put(ImmutableMap.Builder<ResourceKey<? extends Registry<?>>, RegistrySynchronization.NetworkedRegistryData<?>> builder, ResourceKey<? extends Registry<E>> resourceKey, Codec<E> codec) {
     }
 
-    @Dynamic("1.19.4-pre3 synthetic")
+    @Dynamic("1.19.4 synthetic")
     @Inject(method = "method_45958", at = @At(value = "INVOKE", target = "Lcom/google/common/collect/ImmutableMap$Builder;build()Lcom/google/common/collect/ImmutableMap;", remap = false), locals = LocalCapture.CAPTURE_FAILEXCEPTION)
     private static void addRegistries(CallbackInfoReturnable<ImmutableMap<ResourceKey<? extends Registry<?>>, RegistrySynchronization.NetworkedRegistryData<?>>> cir, ImmutableMap.Builder<ResourceKey<? extends Registry<?>>, RegistrySynchronization.NetworkedRegistryData<?>> builder) {
         put(builder, AddonRegistries.CELESTIAL_BODY, CelestialBody.DIRECT_CODEC);
