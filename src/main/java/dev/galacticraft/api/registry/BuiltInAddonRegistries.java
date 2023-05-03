@@ -24,7 +24,8 @@ package dev.galacticraft.api.registry;
 
 import com.mojang.serialization.Lifecycle;
 import dev.galacticraft.api.universe.celestialbody.CelestialBodyType;
-import dev.galacticraft.api.universe.celestialbody.landable.CelestialTeleporter;
+import dev.galacticraft.api.universe.celestialbody.landable.teleporter.CelestialTeleporter;
+import dev.galacticraft.api.universe.celestialbody.landable.teleporter.type.CelestialTeleporterType;
 import dev.galacticraft.api.universe.display.CelestialDisplayType;
 import dev.galacticraft.api.universe.position.CelestialPositionType;
 import dev.galacticraft.impl.Constant;
@@ -48,6 +49,6 @@ public final class BuiltInAddonRegistries {
             new DefaultedMappedRegistry<>(new ResourceLocation(Constant.MOD_ID, "star").toString(),
                     AddonRegistries.CELESTIAL_BODY_TYPE, Lifecycle.experimental(), false)).buildAndRegister();
 
-    public static final WritableRegistry<CelestialTeleporter> CELESTIAL_TELEPORTER = FabricRegistryBuilder.createDefaulted(
-            AddonRegistries.CELESTIAL_TELEPORTER, Constant.id("fallback")).buildAndRegister();
+    public static final WritableRegistry<CelestialTeleporterType<?>> CELESTIAL_TELEPORTER_TYPE = FabricRegistryBuilder.createDefaulted(
+            AddonRegistries.CELESTIAL_TELEPORTER_TYPE, Constant.id("direct")).buildAndRegister();
 }

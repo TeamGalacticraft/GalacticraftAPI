@@ -19,11 +19,11 @@
     "name": "star.galacticraft-api.sol.name",
     "photospheric_composition": {
       "composition": {
-        "machinelib:helium": 248500.0,
-        "machinelib:hydrogen": 734600.0,
-        "machinelib:neon": 1200.0,
-        "machinelib:nitrogen": 900.0,
-        "machinelib:oxygen": 7700.0
+        "galacticraft-api:helium": 248500.0,
+        "galacticraft-api:hydrogen": 734600.0,
+        "galacticraft-api:neon": 1200.0,
+        "galacticraft-api:nitrogen": 900.0,
+        "galacticraft-api:oxygen": 7700.0
       },
       "pressure": 28.0,
       "temperature": 15.0

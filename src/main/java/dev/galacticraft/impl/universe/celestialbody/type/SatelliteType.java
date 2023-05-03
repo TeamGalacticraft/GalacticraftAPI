@@ -22,6 +22,7 @@
 
 package dev.galacticraft.impl.universe.celestialbody.type;
 
+import com.mojang.datafixers.kinds.Const;
 import com.mojang.serialization.Codec;
 import dev.galacticraft.api.accessor.SatelliteAccessor;
 import dev.galacticraft.api.gas.GasComposition;
@@ -31,8 +32,8 @@ import dev.galacticraft.api.satellite.SatelliteOwnershipData;
 import dev.galacticraft.api.universe.celestialbody.CelestialBody;
 import dev.galacticraft.api.universe.celestialbody.CelestialBodyType;
 import dev.galacticraft.api.universe.celestialbody.Tiered;
-import dev.galacticraft.api.universe.celestialbody.landable.CelestialTeleporter;
-import dev.galacticraft.api.universe.celestialbody.landable.FallbackCelestialTeleporter;
+import dev.galacticraft.api.universe.celestialbody.landable.teleporter.CelestialTeleporter;
+import dev.galacticraft.impl.universe.celestialbody.landable.teleporter.type.DirectCelestialTeleporterType;
 import dev.galacticraft.api.universe.display.CelestialDisplay;
 import dev.galacticraft.api.universe.galaxy.Galaxy;
 import dev.galacticraft.api.universe.position.CelestialPosition;
@@ -127,7 +128,9 @@ public class SatelliteType extends CelestialBodyType<SatelliteConfig> implements
 
         ((DynamicDimensionRegistry)server).createDynamicDimension(id, generator, type);
 
-        SatelliteConfig config = new SatelliteConfig(ResourceKey.create(AddonRegistries.CELESTIAL_BODY, server.registryAccess().registryOrThrow(AddonRegistries.CELESTIAL_BODY).getKey(parent)), parent.galaxy(), position, display, ownershipData, ResourceKey.create(Registries.DIMENSION, id), FallbackCelestialTeleporter.INSTANCE, EMPTY_GAS_COMPOSITION, 0.0f, parent.type() instanceof Tiered<?> ? ((Tiered) parent.type()).accessWeight(parent.config()) : 1, new LevelStem(Holder.direct(type), generator));
+        CelestialTeleporter<?, ?> direct = server.registryAccess().registryOrThrow(AddonRegistries.CELESTIAL_TELEPORTER).get(Constant.id("direct"));
+
+        SatelliteConfig config = new SatelliteConfig(ResourceKey.create(AddonRegistries.CELESTIAL_BODY, server.registryAccess().registryOrThrow(AddonRegistries.CELESTIAL_BODY).getKey(parent)), parent.galaxy(), position, display, ownershipData, ResourceKey.create(Registries.DIMENSION, id), direct, EMPTY_GAS_COMPOSITION, 0.0f, parent.type() instanceof Tiered<?> ? ((Tiered) parent.type()).accessWeight(parent.config()) : 1, new LevelStem(Holder.direct(type), generator));
         config.customName(Component.translatable(name));
         CelestialBody<SatelliteConfig, SatelliteType> satellite = INSTANCE.configure(config);
         ((SatelliteAccessor) server).addSatellite(id, satellite);

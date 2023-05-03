@@ -26,11 +26,10 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import dev.galacticraft.api.gas.GasComposition;
 import dev.galacticraft.api.registry.AddonRegistries;
-import dev.galacticraft.api.registry.BuiltInAddonRegistries;
 import dev.galacticraft.api.satellite.SatelliteRecipe;
 import dev.galacticraft.api.universe.celestialbody.CelestialBody;
 import dev.galacticraft.api.universe.celestialbody.CelestialBodyConfig;
-import dev.galacticraft.api.universe.celestialbody.landable.CelestialTeleporter;
+import dev.galacticraft.api.universe.celestialbody.landable.teleporter.CelestialTeleporter;
 import dev.galacticraft.api.universe.display.CelestialDisplay;
 import dev.galacticraft.api.universe.galaxy.Galaxy;
 import dev.galacticraft.api.universe.position.CelestialPosition;
@@ -46,7 +45,7 @@ import java.util.Optional;
 public record PlanetConfig(@NotNull MutableComponent name, @NotNull MutableComponent description,
                            @NotNull ResourceKey<Galaxy> galaxy, @NotNull ResourceKey<CelestialBody<?, ?>> parent,
                            @NotNull CelestialPosition<?, ?> position, @NotNull CelestialDisplay<?, ?> display,
-                           @NotNull ResourceKey<Level> world, CelestialTeleporter teleporter, @NotNull GasComposition atmosphere, float gravity,
+                           @NotNull ResourceKey<Level> world, CelestialTeleporter<?, ?> teleporter, @NotNull GasComposition atmosphere, float gravity,
                            int accessWeight, int dayTemperature, int nightTemperature,
                            @NotNull Optional<SatelliteRecipe> satelliteRecipe) implements CelestialBodyConfig {
     public static final Codec<PlanetConfig> CODEC = RecordCodecBuilder.create(instance -> instance.group(
@@ -57,7 +56,7 @@ public record PlanetConfig(@NotNull MutableComponent name, @NotNull MutableCompo
             CelestialPosition.CODEC.fieldOf("position").forGetter(PlanetConfig::position),
             CelestialDisplay.CODEC.fieldOf("display").forGetter(PlanetConfig::display),
             Level.RESOURCE_KEY_CODEC.fieldOf("world").forGetter(PlanetConfig::world),
-            BuiltInAddonRegistries.CELESTIAL_TELEPORTER.byNameCodec().fieldOf("teleporter").forGetter(PlanetConfig::teleporter),
+            CelestialTeleporter.DIRECT_CODEC.fieldOf("teleporter").forGetter(PlanetConfig::teleporter),
             GasComposition.CODEC.fieldOf("atmosphere").forGetter(PlanetConfig::atmosphere),
             Codec.FLOAT.fieldOf("gravity").forGetter(PlanetConfig::gravity),
             Codec.INT.fieldOf("access_weight").forGetter(PlanetConfig::accessWeight),

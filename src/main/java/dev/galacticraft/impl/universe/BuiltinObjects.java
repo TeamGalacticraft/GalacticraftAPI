@@ -27,9 +27,11 @@ import dev.galacticraft.api.registry.BuiltInAddonRegistries;
 import dev.galacticraft.api.registry.RocketRegistries;
 import dev.galacticraft.api.rocket.part.*;
 import dev.galacticraft.api.universe.celestialbody.CelestialBody;
-import dev.galacticraft.api.universe.celestialbody.landable.FallbackCelestialTeleporter;
+import dev.galacticraft.api.universe.celestialbody.landable.teleporter.CelestialTeleporter;
+import dev.galacticraft.impl.universe.celestialbody.landable.teleporter.type.DirectCelestialTeleporterType;
 import dev.galacticraft.api.universe.galaxy.Galaxy;
 import dev.galacticraft.impl.Constant;
+import dev.galacticraft.impl.universe.celestialbody.landable.teleporter.type.FixedCelestialTeleporterType;
 import dev.galacticraft.impl.universe.celestialbody.type.DecorativePlanet;
 import dev.galacticraft.impl.universe.celestialbody.type.PlanetType;
 import dev.galacticraft.impl.universe.celestialbody.type.StarType;
@@ -52,6 +54,8 @@ public class BuiltinObjects {
     public static final ResourceKey<RocketBottom<?, ?>> INVALID_ROCKET_BOTTOM = ResourceKey.create(RocketRegistries.ROCKET_BOTTOM, Constant.Misc.INVALID);
     public static final ResourceKey<RocketUpgrade<?, ?>> INVALID_ROCKET_UPGRADE = ResourceKey.create(RocketRegistries.ROCKET_UPGRADE, Constant.Misc.INVALID);
 
+    public static final ResourceKey<CelestialTeleporter<?, ?>> DIRECT_CELESTIAL_TELEPORTER = ResourceKey.create(AddonRegistries.CELESTIAL_TELEPORTER, Constant.id("direct"));
+
     public static void register() {
         Registry.register(BuiltInAddonRegistries.CELESTIAL_POSITION_TYPE, new ResourceLocation(Constant.MOD_ID, "static"), StaticCelestialPositionType.INSTANCE);
         Registry.register(BuiltInAddonRegistries.CELESTIAL_POSITION_TYPE, new ResourceLocation(Constant.MOD_ID, "orbital"), OrbitalCelestialPositionType.INSTANCE);
@@ -63,6 +67,7 @@ public class BuiltinObjects {
         Registry.register(BuiltInAddonRegistries.CELESTIAL_BODY_TYPE, new ResourceLocation(Constant.MOD_ID, "planet"), PlanetType.INSTANCE);
         Registry.register(BuiltInAddonRegistries.CELESTIAL_BODY_TYPE, new ResourceLocation(Constant.MOD_ID, "decorative_planet"), DecorativePlanet.INSTANCE);
 
-        Registry.register(BuiltInAddonRegistries.CELESTIAL_TELEPORTER, Constant.id("fallback"), FallbackCelestialTeleporter.INSTANCE);
+        Registry.register(BuiltInAddonRegistries.CELESTIAL_TELEPORTER_TYPE, Constant.id("direct"), DirectCelestialTeleporterType.INSTANCE);
+        Registry.register(BuiltInAddonRegistries.CELESTIAL_TELEPORTER_TYPE, Constant.id("fixed"), FixedCelestialTeleporterType.INSTANCE);
     }
 }

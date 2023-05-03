@@ -20,16 +20,14 @@
  * SOFTWARE.
  */
 
-package dev.galacticraft.api.universe.celestialbody.landable;
+package dev.galacticraft.impl.universe.celestialbody.landable.teleporter.config;
 
-import dev.galacticraft.api.universe.celestialbody.CelestialBody;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
+import com.mojang.serialization.Codec;
+import dev.galacticraft.api.universe.celestialbody.landable.teleporter.config.CelestialTeleporterConfig;
 
-public enum FallbackCelestialTeleporter implements CelestialTeleporter {
-    INSTANCE;
-    @Override
-    public void onEnterAtmosphere(ServerLevel planet, ServerPlayer player, CelestialBody<?, ?> body, CelestialBody<?, ?> fromBody) {
-        player.teleportTo(planet, player.getX(), 500, player.getZ(), player.getYRot(), player.getXRot());
-    }
+public class DefaultCelestialTeleporterConfig implements CelestialTeleporterConfig {
+    public static final DefaultCelestialTeleporterConfig INSTANCE = new DefaultCelestialTeleporterConfig();
+    public static final Codec<DefaultCelestialTeleporterConfig> CODEC = Codec.unit(INSTANCE);
+
+    private DefaultCelestialTeleporterConfig() {}
 }

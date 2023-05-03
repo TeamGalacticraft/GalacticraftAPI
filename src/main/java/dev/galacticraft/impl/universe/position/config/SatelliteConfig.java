@@ -30,7 +30,7 @@ import dev.galacticraft.api.registry.BuiltInAddonRegistries;
 import dev.galacticraft.api.satellite.SatelliteOwnershipData;
 import dev.galacticraft.api.universe.celestialbody.CelestialBody;
 import dev.galacticraft.api.universe.celestialbody.CelestialBodyConfig;
-import dev.galacticraft.api.universe.celestialbody.landable.CelestialTeleporter;
+import dev.galacticraft.api.universe.celestialbody.landable.teleporter.CelestialTeleporter;
 import dev.galacticraft.api.universe.display.CelestialDisplay;
 import dev.galacticraft.api.universe.galaxy.Galaxy;
 import dev.galacticraft.api.universe.position.CelestialPosition;
@@ -51,7 +51,7 @@ public final class SatelliteConfig implements CelestialBodyConfig {
             CelestialDisplay.CODEC.fieldOf("display").forGetter(SatelliteConfig::display),
             SatelliteOwnershipData.CODEC.fieldOf("ownership_data").forGetter(SatelliteConfig::ownershipData),
             ResourceKey.codec(Registries.DIMENSION).fieldOf("world").forGetter(SatelliteConfig::world),
-            BuiltInAddonRegistries.CELESTIAL_TELEPORTER.byNameCodec().fieldOf("teleporter").forGetter(SatelliteConfig::teleporter),
+            CelestialTeleporter.DIRECT_CODEC.fieldOf("teleporter").forGetter(SatelliteConfig::teleporter),
             GasComposition.CODEC.fieldOf("atmosphere").forGetter(SatelliteConfig::atmosphere),
             Codec.FLOAT.fieldOf("gravity").forGetter(SatelliteConfig::gravity),
             Codec.INT.fieldOf("accessWeight").forGetter(SatelliteConfig::accessWeight),

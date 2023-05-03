@@ -20,22 +20,29 @@
  * SOFTWARE.
  */
 
-package dev.galacticraft.api.universe.celestialbody.landable;
+package dev.galacticraft.impl.universe.celestialbody.landable.teleporter.type;
 
 import dev.galacticraft.api.universe.celestialbody.CelestialBody;
+import dev.galacticraft.api.universe.celestialbody.landable.teleporter.type.CelestialTeleporterType;
+import dev.galacticraft.impl.universe.celestialbody.landable.teleporter.config.DefaultCelestialTeleporterConfig;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.level.levelgen.Heightmap;
 
-/**
- * This class is for determining how a celestial should handle a player teleporting to it.
- * Such as making custom landing sequences.
- */
-public interface CelestialTeleporter {
-    /**
-     * @param level The current world for the celestial body
-     * @param player The player.
-     * @param body The celestial body being landed on.
-     * @param fromBody The previous celestial body the player is traveling from.
-     */
-    void onEnterAtmosphere(ServerLevel level, ServerPlayer player, CelestialBody<?, ?> body, CelestialBody<?, ?> fromBody);
+public class DirectCelestialTeleporterType extends CelestialTeleporterType<DefaultCelestialTeleporterConfig> {
+    public static final DirectCelestialTeleporterType INSTANCE = new DirectCelestialTeleporterType();
+
+    private DirectCelestialTeleporterType() {
+        super(DefaultCelestialTeleporterConfig.CODEC);
+    }
+
+    @Override
+    public void onEnterAtmosphere(ServerLevel level, ServerPlayer player, CelestialBody<?, ?> body, CelestialBody<?, ?> fromBody, DefaultCelestialTeleporterConfig config) {
+        int height = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, player.getBlockX(), player.getBlockZ());
+        if (height == level.getMinBuildHeight()) {
+            height = level.getMaxBuildHeight() * 2;
+        }
+
+        player.teleportTo(level, player.getX(), height, player.getZ(), player.getYRot(), player.getXRot());
+    }
 }

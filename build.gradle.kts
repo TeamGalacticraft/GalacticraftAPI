@@ -149,7 +149,6 @@ tasks.processResources {
 }
 
 tasks.withType<JavaCompile> {
-    dependsOn(tasks.checkLicenses)
     options.encoding = "UTF-8"
     options.release.set(17)
 }

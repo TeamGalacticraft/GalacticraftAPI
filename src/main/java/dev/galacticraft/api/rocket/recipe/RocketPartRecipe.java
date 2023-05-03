@@ -32,6 +32,7 @@ import dev.galacticraft.impl.rocket.recipe.RocketPartRecipeImpl;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.RegistryCodecs;
+import net.minecraft.data.worldgen.BootstapContext;
 import net.minecraft.resources.RegistryFileCodec;
 import net.minecraft.resources.ResourceKey;
 import org.jetbrains.annotations.Contract;
@@ -61,4 +62,8 @@ public interface RocketPartRecipe<C extends RocketPartRecipeConfig, T extends Ro
     @NotNull List<RocketPartRecipeSlot> slots();
 
     ResourceKey<? extends RocketPart<?, ?>> output();
+
+    static void bootstrapRegistries(BootstapContext<RocketPartRecipe<?, ?>> context) {
+
+    }
 }

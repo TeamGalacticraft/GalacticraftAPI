@@ -4,6 +4,10 @@
     "day_temperature": 21,
     "night_temperature": 15,
     "world": "minecraft:the_end",
+    "teleporter": {
+      "type": "galacticraft-api:direct",
+      "config": {}
+    },
     "atmosphere": {
       "composition": {
         "galacticraft-api:nitrogen": 780840,

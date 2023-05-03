@@ -25,7 +25,9 @@ package dev.galacticraft.impl.internal.fabric;
 import dev.galacticraft.api.registry.AddonRegistries;
 import dev.galacticraft.api.registry.RocketRegistries;
 import dev.galacticraft.api.rocket.part.*;
+import dev.galacticraft.api.rocket.recipe.RocketPartRecipe;
 import dev.galacticraft.api.universe.celestialbody.CelestialBody;
+import dev.galacticraft.api.universe.celestialbody.landable.teleporter.CelestialTeleporter;
 import dev.galacticraft.impl.data.BootstrapDataProvider;
 import dev.galacticraft.impl.internal.world.gen.biome.GcApiBiomes;
 import dev.galacticraft.impl.rocket.part.*;
@@ -47,6 +49,7 @@ public class GalacticraftAPIData implements DataGeneratorEntrypoint {
         generator.createPack().addProvider(BootstrapDataProvider.<RocketBooster<?, ?>>create("Rocket Boosters", RocketBoosterImpl::bootstrapRegistries));
         generator.createPack().addProvider(BootstrapDataProvider.<RocketBottom<?, ?>>create("Rocket Bottoms", RocketBottomImpl::bootstrapRegistries));
         generator.createPack().addProvider(BootstrapDataProvider.<RocketUpgrade<?, ?>>create("Rocket Upgrades", RocketUpgradeImpl::bootstrapRegistries));
+        generator.createPack().addProvider(BootstrapDataProvider.<CelestialTeleporter<?, ?>>create("Celestial Teleporters", CelestialTeleporter::bootstrapRegistries));
     }
 
     @Override
@@ -61,5 +64,7 @@ public class GalacticraftAPIData implements DataGeneratorEntrypoint {
         registryBuilder.add(RocketRegistries.ROCKET_BOOSTER, RocketBoosterImpl::bootstrapRegistries);
         registryBuilder.add(RocketRegistries.ROCKET_BOTTOM, RocketBottomImpl::bootstrapRegistries);
         registryBuilder.add(RocketRegistries.ROCKET_UPGRADE, RocketUpgradeImpl::bootstrapRegistries);
+        registryBuilder.add(RocketRegistries.ROCKET_PART_RECIPE, RocketPartRecipe::bootstrapRegistries);
+        registryBuilder.add(AddonRegistries.CELESTIAL_TELEPORTER, CelestialTeleporter::bootstrapRegistries);
     }
 }
