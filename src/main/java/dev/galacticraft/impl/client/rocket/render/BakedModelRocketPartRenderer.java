@@ -37,10 +37,12 @@ import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.Sheets;
+import net.minecraft.client.renderer.block.BlockModelShaper;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.world.item.ItemDisplayContext;
+import net.minecraft.world.level.block.Blocks;
 
 import java.util.function.Supplier;
 
@@ -49,7 +51,7 @@ public record BakedModelRocketPartRenderer(Supplier<BakedModel> model,
                                            Supplier<RenderType> layer) implements RocketPartRenderer {
 
     public BakedModelRocketPartRenderer(Supplier<BakedModel> model) {
-        this(model, () -> RenderType.entityCutoutNoCull(model.get().getParticleIcon().atlasLocation(), true));
+        this(model, () -> RenderType.entityTranslucent(model.get().getParticleIcon().contents().name(), true));
     }
 
     @Override
@@ -93,6 +95,6 @@ public record BakedModelRocketPartRenderer(Supplier<BakedModel> model,
         matrices.translate(0.5D, 0.5D, 0.5D);
         PoseStack.Pose entry = matrices.last();
         VertexConsumer vertexConsumer = vertices.getBuffer(layer.get());
-        Minecraft.getInstance().getBlockRenderer().getModelRenderer().renderModel(entry, vertexConsumer, null, this.model.get(), 1, 1, 1, light, OverlayTexture.NO_OVERLAY);
+        Minecraft.getInstance().getBlockRenderer().getModelRenderer().renderModel(entry, vertexConsumer, null, Minecraft.getInstance().getModelManager().getModel(BlockModelShaper.stateToModelLocation(Blocks.GRASS_BLOCK.defaultBlockState())), 1, 1, 1, light, OverlayTexture.NO_OVERLAY);
     }
 }

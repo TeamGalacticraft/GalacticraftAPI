@@ -58,6 +58,6 @@ public final class BasicRocketBoosterType extends RocketBoosterType<BasicRocketB
 
     @Override
     public @NotNull ConfiguredTravelPredicate<?, ?> travelPredicate(@NotNull BasicRocketBoosterConfig config) {
-        return DefaultTravelPredicateType.CONFIGURED;
+        return config.predicate();
     }
 }

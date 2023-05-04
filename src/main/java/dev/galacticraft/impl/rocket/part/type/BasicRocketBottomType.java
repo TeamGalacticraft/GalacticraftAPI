@@ -48,6 +48,6 @@ public final class BasicRocketBottomType extends RocketBottomType<BasicRocketBot
 
     @Override
     public @NotNull ConfiguredTravelPredicate<?, ?> travelPredicate(@NotNull BasicRocketBottomConfig config) {
-        return DefaultTravelPredicateType.CONFIGURED;
+        return config.predicate();
     }
 }

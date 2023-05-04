@@ -53,6 +53,6 @@ public final class BasicRocketBodyType extends RocketBodyType<BasicRocketBodyCon
 
     @Override
     public @NotNull ConfiguredTravelPredicate<?, ?> travelPredicate(@NotNull BasicRocketBodyConfig config) {
-        return DefaultTravelPredicateType.CONFIGURED;
+        return config.predicate();
     }
 }

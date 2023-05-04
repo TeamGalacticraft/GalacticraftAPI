@@ -48,6 +48,6 @@ public final class BasicRocketFinType extends RocketFinType<BasicRocketFinConfig
 
     @Override
     public @NotNull ConfiguredTravelPredicate<?, ?> travelPredicate(@NotNull BasicRocketFinConfig config) {
-        return DefaultTravelPredicateType.CONFIGURED;
+        return config.predicate();
     }
 }

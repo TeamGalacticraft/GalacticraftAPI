@@ -43,6 +43,6 @@ public final class BasicRocketConeType extends RocketConeType<BasicRocketConeCon
 
     @Override
     public @NotNull ConfiguredTravelPredicate<?, ?> travelPredicate(@NotNull BasicRocketConeConfig config) {
-        return DefaultTravelPredicateType.CONFIGURED;
+        return config.predicate();
     }
 }
