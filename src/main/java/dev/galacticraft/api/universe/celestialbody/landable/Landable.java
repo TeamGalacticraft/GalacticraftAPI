@@ -25,6 +25,7 @@ package dev.galacticraft.api.universe.celestialbody.landable;
 import dev.galacticraft.api.universe.celestialbody.CelestialBodyConfig;
 import dev.galacticraft.api.universe.celestialbody.SurfaceEnvironment;
 import dev.galacticraft.api.universe.celestialbody.landable.teleporter.CelestialTeleporter;
+import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
@@ -43,5 +44,5 @@ public interface Landable<C extends CelestialBodyConfig> extends SurfaceEnvironm
      */
     @NotNull ResourceKey<Level> world(C config);
 
-    CelestialTeleporter teleporter(C config);
+    Holder<CelestialTeleporter<?, ?>> teleporter(C config);
 }

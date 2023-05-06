@@ -33,6 +33,7 @@ import dev.galacticraft.api.universe.display.CelestialDisplay;
 import dev.galacticraft.api.universe.galaxy.Galaxy;
 import dev.galacticraft.api.universe.position.CelestialPosition;
 import dev.galacticraft.impl.universe.celestialbody.config.PlanetConfig;
+import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.chat.Component;
@@ -84,7 +85,7 @@ public class PlanetType extends CelestialBodyType<PlanetConfig> implements Tiere
     }
 
     @Override
-    public CelestialTeleporter teleporter(PlanetConfig config) {
+    public Holder<CelestialTeleporter<?, ?>> teleporter(PlanetConfig config) {
         return config.teleporter();
     }
 

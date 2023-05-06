@@ -22,7 +22,6 @@
 
 package dev.galacticraft.impl.universe.celestialbody.type;
 
-import com.mojang.datafixers.kinds.Const;
 import com.mojang.serialization.Codec;
 import dev.galacticraft.api.accessor.SatelliteAccessor;
 import dev.galacticraft.api.gas.GasComposition;
@@ -33,7 +32,6 @@ import dev.galacticraft.api.universe.celestialbody.CelestialBody;
 import dev.galacticraft.api.universe.celestialbody.CelestialBodyType;
 import dev.galacticraft.api.universe.celestialbody.Tiered;
 import dev.galacticraft.api.universe.celestialbody.landable.teleporter.CelestialTeleporter;
-import dev.galacticraft.impl.universe.celestialbody.landable.teleporter.type.DirectCelestialTeleporterType;
 import dev.galacticraft.api.universe.display.CelestialDisplay;
 import dev.galacticraft.api.universe.galaxy.Galaxy;
 import dev.galacticraft.api.universe.position.CelestialPosition;
@@ -41,6 +39,7 @@ import dev.galacticraft.dynamicdimensions.api.DynamicDimensionRegistry;
 import dev.galacticraft.impl.Constant;
 import dev.galacticraft.impl.internal.world.gen.SatelliteChunkGenerator;
 import dev.galacticraft.impl.internal.world.gen.biome.GcApiBiomes;
+import dev.galacticraft.impl.universe.BuiltinObjects;
 import dev.galacticraft.impl.universe.display.config.IconCelestialDisplayConfig;
 import dev.galacticraft.impl.universe.display.type.IconCelestialDisplayType;
 import dev.galacticraft.impl.universe.position.config.OrbitalCelestialPositionConfig;
@@ -128,7 +127,7 @@ public class SatelliteType extends CelestialBodyType<SatelliteConfig> implements
 
         ((DynamicDimensionRegistry)server).createDynamicDimension(id, generator, type);
 
-        CelestialTeleporter<?, ?> direct = server.registryAccess().registryOrThrow(AddonRegistries.CELESTIAL_TELEPORTER).get(Constant.id("direct"));
+        Holder<CelestialTeleporter<?, ?>> direct = server.registryAccess().registryOrThrow(AddonRegistries.CELESTIAL_TELEPORTER).getHolderOrThrow(BuiltinObjects.DIRECT_CELESTIAL_TELEPORTER);
 
         SatelliteConfig config = new SatelliteConfig(ResourceKey.create(AddonRegistries.CELESTIAL_BODY, server.registryAccess().registryOrThrow(AddonRegistries.CELESTIAL_BODY).getKey(parent)), parent.galaxy(), position, display, ownershipData, ResourceKey.create(Registries.DIMENSION, id), direct, EMPTY_GAS_COMPOSITION, 0.0f, parent.type() instanceof Tiered<?> ? ((Tiered) parent.type()).accessWeight(parent.config()) : 1, new LevelStem(Holder.direct(type), generator));
         config.customName(Component.translatable(name));
@@ -193,7 +192,7 @@ public class SatelliteType extends CelestialBodyType<SatelliteConfig> implements
     }
 
     @Override
-    public CelestialTeleporter teleporter(SatelliteConfig config) {
+    public Holder<CelestialTeleporter<?, ?>> teleporter(SatelliteConfig config) {
         return config.teleporter();
     }
 
