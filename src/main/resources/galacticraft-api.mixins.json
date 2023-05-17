@@ -4,6 +4,7 @@
   "compatibilityLevel": "JAVA_17",
   "mixins": [
     "MinecraftServerMixin",
+    "client.AbstractContainerScreenMixin",
     "gear.LivingEntityMixin",
     "gear.PlayerListMixin",
     "gear.ServerPlayerMixin",
