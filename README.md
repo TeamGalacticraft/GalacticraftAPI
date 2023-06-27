@@ -16,36 +16,57 @@ Here are a list of features, both planned and implemented.
 * [ ] Rockets/Rocket parts.
 
 ## Installing
-You will need to add the Team Galacticraft maven repository to your mod's `build.gradle`.
+In your mod's `build.gradle` (*Groovy*) or `build.gradle.kts` (*Kotlin*):
 
-```groovy
-repositories {
-    maven { url "https://maven.galacticraft.dev" }
-}
-```
-
-After that you can add Galacticraft and the Addon API.
-
-```groovy
-dependencies {
-    // add both the addon api and mod but only include the addon api 
-    include modImplementation("dev.galacticraft:GalacticraftAPI:{VERSION}")
-    //modRuntimeOnly("dev.galacticraft:Galacticraft:{VERSION}") // not up yet
-}
-```
-
-You will also need to add the Addon API to your `fabric.mod.json` in the `depends` section.
-```json
-{
-    "depends": {
-        "galacticraft-api": ">={VERSION}"
-    },
-    "suggests": {
-        "galacticraft": ">={VERSION}"
-    }
-}
-```
-
-Replace `{VERSION}` with the version of Galacticraft you want to use. Versions use the format `MAJOR.MINOR.PATCH[-TYPE]+MC_VERSION`, e.g. `0.1.0-alpha+1.14.4` & `1.0.0+1.15.1`. Note: GC won't be supported for every Minecraft version, only the final patch for a minor. (E.g. We won't support 1.14 because 1.14.4 exists)
-
+<details>
+<summary>Important Note</summary>
+    
+Replace `{VERSION}` with the version of Galacticraft you want to use.<br>
+Versions use the format `MAJOR.MINOR.PATCH[-TYPE]+MC_VERSION`, e.g. `0.1.0-alpha+1.14.4` & `1.0.0+1.15.1`.<br>
 For more versioning information visit the [semver](https://semver.org/) website.
+
+</details>
+
+1. **Add the Team Galacticraft maven repository**
+     - <details>
+       <summary>Groovy</summary>
+
+       ```groovy
+        repositories {
+            maven { url "https://maven.galacticraft.dev/repository/maven-releases/" }
+        }
+        ```
+
+       </details>
+     - <details>
+       <summary>Kotlin</summary>
+
+       ```kotlin
+        repositories {
+            maven("https://maven.galacticraft.dev/repository/maven-releases/")
+        }
+        ```
+
+       </details>
+2. **Add Galacticraft API as a dependency**
+
+     > Mostly the same for both Groovy and Kotlin, adjust as needed
+    ```groovy
+    dependencies {
+        // add both the addon api and mod but only include the addon api 
+        modImplementation("dev.galacticraft:GalacticraftAPI:{VERSION}")
+        //modRuntimeOnly("dev.galacticraft:Galacticraft:{VERSION}") // not up yet
+    }
+    ```
+
+3. **Add the Addon API to your `fabric.mod.json` in the `depends` section.**
+    ```json
+    {
+        "depends": {
+            "galacticraft-api": ">={VERSION}"
+        },
+        "suggests": {
+            "galacticraft": ">={VERSION}"
+        }
+    }
+    ```
