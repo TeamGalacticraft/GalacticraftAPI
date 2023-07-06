@@ -66,7 +66,7 @@ public abstract class ChunkSerializerMixin {
         }
     }
 
-    @Inject(method = "read", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/ai/village/poi/PoiManager;checkConsistencyWithBlocks(Lnet/minecraft/world/level/ChunkPos;Lnet/minecraft/world/level/chunk/LevelChunkSection;)V"), locals = LocalCapture.CAPTURE_FAILHARD)
+    @Inject(method = "read", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/ai/village/poi/PoiManager;checkConsistencyWithBlocks(Lnet/minecraft/core/SectionPos;Lnet/minecraft/world/level/chunk/LevelChunkSection;)V"), locals = LocalCapture.CAPTURE_FAILHARD)
     private static void galacticraft_deserializeOxygen(ServerLevel world, PoiManager poiStorage, ChunkPos chunkPos, CompoundTag nbt, CallbackInfoReturnable<ProtoChunk> cir, ChunkPos chunkPos2, UpgradeData upgradeData, boolean bl, ListTag nbtList, int i, LevelChunkSection[] chunkSections, boolean bl2, ChunkSource chunkManager, LevelLightEngine lightingProvider, Registry<Biome> registry, Codec<PalettedContainerRO<Holder<Biome>>> codec, boolean bl3, int j, CompoundTag nbtCompound, int k, int l, PalettedContainer palettedContainer, PalettedContainerRO readableContainer, LevelChunkSection section) {
         CompoundTag apiCompound = nbtCompound.getCompound(Constant.Nbt.GC_API);
         short changedCount = apiCompound.getShort(Constant.Nbt.CHANGE_COUNT);

@@ -67,7 +67,7 @@ public abstract class LivingEntityMixin extends Entity implements GearInventoryP
 
     @Redirect(method = "baseTick", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;isEyeInFluid(Lnet/minecraft/tags/TagKey;)Z", ordinal = 0))
     private boolean galacticraft_testForBreathability(LivingEntity entity, TagKey<Fluid> tag) {
-        return entity.isEyeInFluid(tag) || !entity.level.isBreathable(entity.blockPosition().relative(Direction.UP, (int) Math.floor(this.getEyeHeight(entity.getPose(), entity.getDimensions(entity.getPose())))));
+        return entity.isEyeInFluid(tag) || !entity.level().isBreathable(entity.blockPosition().relative(Direction.UP, (int) Math.floor(this.getEyeHeight(entity.getPose(), entity.getDimensions(entity.getPose())))));
     }
 
     @Inject(method = "tick", at = @At(value = "RETURN"))
@@ -120,7 +120,7 @@ public abstract class LivingEntityMixin extends Entity implements GearInventoryP
 
     @Inject(method = "dropEquipment", at = @At(value = "RETURN"))
     private void galacticraft_dropGearInventory(CallbackInfo ci) {
-        if (!this.level.getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY)) {
+        if (!this.level().getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY)) {
             Container gearInv = this.getGearInv();
             for (int i = 0; i < gearInv.getContainerSize(); ++i) {
                 ItemStack itemStack = gearInv.getItem(i);

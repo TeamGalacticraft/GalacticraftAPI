@@ -28,10 +28,12 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import dev.galacticraft.impl.Constant;
 import dev.galacticraft.impl.internal.client.tabs.InventoryTabRegistryImpl;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -81,8 +83,8 @@ public abstract class AbstractContainerScreenMixin<T extends AbstractContainerMe
         }
     }
 
-    @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screens/inventory/AbstractContainerScreen;renderBg(Lcom/mojang/blaze3d/vertex/PoseStack;FII)V", shift = At.Shift.AFTER))
-    public void drawBackground(PoseStack matrices, int mouseX, int mouseY, float v, CallbackInfo callbackInfo) {
+    @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screens/inventory/AbstractContainerScreen;renderBg(Lnet/minecraft/client/gui/GuiGraphics;FII)V", shift = At.Shift.AFTER))
+    public void drawBackground(GuiGraphics graphics, int mouseX, int mouseY, float v, CallbackInfo callbackInfo) {
         boolean tabsVisible = false;
         for (InventoryTabRegistryImpl.TabData data : InventoryTabRegistryImpl.INSTANCE.TABS) {
             if (this.menu.getClass().equals(data.clazz())) {
@@ -94,29 +96,29 @@ public abstract class AbstractContainerScreenMixin<T extends AbstractContainerMe
             return;
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-        RenderSystem.setShaderTexture(0, Constant.id("textures/gui/player_inventory_switch_tabs.png"));
+        ResourceLocation texture = Constant.id("textures/gui/player_inventory_switch_tabs.png");
         int i = 0;
         for (InventoryTabRegistryImpl.TabData data : InventoryTabRegistryImpl.INSTANCE.TABS) {
             if (this.menu.getClass().equals(data.clazz())) {
                 if (i == 0)
-                    blit(matrices, this.leftPos, this.topPos - 28, 0, 0, 29, 32);
+                    graphics.blit(texture, this.leftPos, this.topPos - 28, 0, 0, 29, 32);
                 else
-                    blit(matrices, this.leftPos + (28 * i) + 1, this.topPos - 29, 29, 32, 56, 63);
+                    graphics.blit(texture, this.leftPos + (28 * i) + 1, this.topPos - 29, 29, 32, 56, 63);
                 i++;
                 continue;
             }
             if (data.visiablePredicate().test(Minecraft.getInstance().player)) {
                 if (i == 0)
-                    blit(matrices, this.leftPos, this.topPos - 29, 0, 32, 27, 63);
+                    graphics.blit(texture, this.leftPos, this.topPos - 29, 0, 32, 27, 63);
                 else
-                    blit(matrices, this.leftPos + (28 * i) + 1, this.topPos - 28, 29, 0, 56, 30);
+                    graphics.blit(texture, this.leftPos + (28 * i) + 1, this.topPos - 28, 29, 0, 56, 30);
                 i++;
             }
         }
     }
 
     @Inject(method = "render", at = @At("TAIL"))
-    public void render(PoseStack matrices, int mouseX, int mouseY, float v, CallbackInfo callbackInfo) {
+    public void render(GuiGraphics graphics, int mouseX, int mouseY, float v, CallbackInfo callbackInfo) {
         boolean tabsVisible = false;
         for (InventoryTabRegistryImpl.TabData data : InventoryTabRegistryImpl.INSTANCE.TABS) {
             if (this.menu.getClass().equals(data.clazz())) {
@@ -130,12 +132,12 @@ public abstract class AbstractContainerScreenMixin<T extends AbstractContainerMe
         int i = 0;
         for (InventoryTabRegistryImpl.TabData data : InventoryTabRegistryImpl.INSTANCE.TABS) {
             if (i == 0) {
-                this.itemRenderer.renderAndDecorateItem(matrices, data.icon(), this.leftPos + 6, this.topPos - 20);
+                graphics.renderItem(data.icon(), this.leftPos + 6, this.topPos - 20);
                 i++;
                 continue;
             }
             if (data.visiablePredicate().test(Minecraft.getInstance().player)) {
-                this.itemRenderer.renderAndDecorateItem(matrices, data.icon(), (this.leftPos + 6) + (28 * i) + 1, this.topPos - 20);
+                graphics.renderItem(data.icon(), (this.leftPos + 6) + (28 * i) + 1, this.topPos - 20);
                 i++;
             }
         }

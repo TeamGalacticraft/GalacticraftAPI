@@ -56,7 +56,7 @@ public abstract class LivingEntityMixin extends Entity {
         if (attribute != null && attribute.getValue() > 0) {
             return attribute.getValue() * 0.08d;
         } else {
-            return CelestialBody.getByDimension(this.level).map(celestialBodyType -> celestialBodyType.gravity() * 0.08d).orElse(0.08);
+            return CelestialBody.getByDimension(this.level()).map(celestialBodyType -> celestialBodyType.gravity() * 0.08d).orElse(0.08);
         }
     }
 
@@ -66,7 +66,7 @@ public abstract class LivingEntityMixin extends Entity {
         if (attribute != null && attribute.getValue() > 0) {
             return attribute.getValue() * 0.01d;
         } else {
-            return CelestialBody.getByDimension(this.level).map(celestialBodyType -> celestialBodyType.gravity() * 0.01d).orElse(0.01);
+            return CelestialBody.getByDimension(this.level()).map(celestialBodyType -> celestialBodyType.gravity() * 0.01d).orElse(0.01);
         }
     }
 
@@ -78,7 +78,7 @@ public abstract class LivingEntityMixin extends Entity {
         if (attribute != null && attribute.getValue() > 0) {
             cir.setReturnValue((int) (Mth.ceil((fallDistance * attribute.getValue()) - 3.0F - ff) * damageMultiplier));
         } else {
-            CelestialBody.getByDimension(this.level).ifPresent(celestialBodyType -> cir.setReturnValue((int) (Mth.ceil((fallDistance * celestialBodyType.gravity()) - 3.0F - ff) * damageMultiplier)));
+            CelestialBody.getByDimension(this.level()).ifPresent(celestialBodyType -> cir.setReturnValue((int) (Mth.ceil((fallDistance * celestialBodyType.gravity()) - 3.0F - ff) * damageMultiplier)));
         }
     }
 }

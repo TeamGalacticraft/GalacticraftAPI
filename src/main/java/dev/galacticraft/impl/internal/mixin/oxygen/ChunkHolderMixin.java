@@ -29,24 +29,32 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ChunkHolder;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.chunk.LevelChunk;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import java.util.List;
+
 /**
  * @author <a href="https://github.com/TeamGalacticraft">TeamGalacticraft</a>
  */
 @Mixin(ChunkHolder.class)
 public abstract class ChunkHolderMixin {
-    @Shadow
-    protected abstract void broadcast(Packet<?> packet, boolean onlyOnWatchDistanceEdge);
+    @Shadow protected abstract void broadcast(List<ServerPlayer> list, Packet<?> packet);
+
+    @Shadow @Final private ChunkHolder.PlayerProvider playerProvider;
+
+    @Shadow @Final private ChunkPos pos;
 
     @Inject(method = "broadcastChanges", at = @At("HEAD"))
     private void galacticraft_flushOxygenPackets(LevelChunk chunk, CallbackInfo ci) {
         FriendlyByteBuf buf = ((ChunkOxygenSyncer) chunk).galacticraft$syncOxygenPacketsToClient();
-        if (buf != null) this.broadcast(ServerPlayNetworking.createS2CPacket(new ResourceLocation(Constant.MOD_ID, "oxygen_update"), buf), false);
+        if (buf != null) this.broadcast(this.playerProvider.getPlayers(this.pos, false), ServerPlayNetworking.createS2CPacket(new ResourceLocation(Constant.MOD_ID, "oxygen_update"), buf));
     }
 }

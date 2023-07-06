@@ -63,30 +63,30 @@ public class GCApiCommands {
                     .then(Commands.literal("dump_ids").executes(context -> {
                         CommandSourceStack source = context.getSource();
                         Registry<?> registry = RegistryArgumentType.getRegistry(context, "registry");
-                        source.sendSuccess(Component.translatable("command.galacticraft-api.debug.registry.dump", registry.key().location().toString()), true);
+                        source.sendSuccess(() -> Component.translatable("command.galacticraft-api.debug.registry.dump", registry.key().location().toString()), true);
                         for (ResourceLocation id : registry.keySet()) {
-                            source.sendSuccess(Component.literal(id.toString()), false);
+                            source.sendSuccess(() -> Component.literal(id.toString()), false);
                         }
                         return 1;
                     })).then(Commands.literal("get").then(Commands.argument("id", ResourceLocationArgument.id()).executes(context -> {
                         Registry<?> registry = RegistryArgumentType.getRegistry(context, "registry");
-                        context.getSource().sendSuccess(Component.translatable("command.galacticraft-api.debug.registry.id", registry.key().location(), registry.get(ResourceLocationArgument.getId(context, "id"))), true);
+                        context.getSource().sendSuccess(() -> Component.translatable("command.galacticraft-api.debug.registry.id", registry.key().location(), registry.get(ResourceLocationArgument.getId(context, "id"))), true);
                         return 1;
                     }))).then(Commands.literal("get_raw").then(Commands.argument("id", IntegerArgumentType.integer()).executes(context -> {
                         Registry<?> registry = RegistryArgumentType.getRegistry(context, "registry");
-                        context.getSource().sendSuccess(Component.translatable("command.galacticraft-api.debug.registry.id", registry.key().location(), registry.byId(IntegerArgumentType.getInteger(context, "id"))), true);
+                        context.getSource().sendSuccess(() -> Component.translatable("command.galacticraft-api.debug.registry.id", registry.key().location(), registry.byId(IntegerArgumentType.getInteger(context, "id"))), true);
                         return 1;
                     }))).then(Commands.literal("to_raw").then(Commands.argument("id", ResourceLocationArgument.id()).executes(context -> {
                         Registry<? super Object> registry = RegistryArgumentType.getRegistry(context, "registry");
                         Object o = registry.get(ResourceLocationArgument.getId(context, "id"));
-                        context.getSource().sendSuccess(Component.translatable("command.galacticraft-api.debug.registry.id", registry.key().location(), registry.getId(o)), true);
+                        context.getSource().sendSuccess(() -> Component.translatable("command.galacticraft-api.debug.registry.id", registry.key().location(), registry.getId(o)), true);
                         return 1;
                     }))).then(Commands.literal("dump_values").then(Commands.argument("id", ResourceLocationArgument.id()).executes(context -> {
                         CommandSourceStack source = context.getSource();
                         Registry<?> registry = RegistryArgumentType.getRegistry(context, "registry");
-                        source.sendSuccess(Component.translatable("command.galacticraft-api.debug.registry.dump", registry.key().location().toString()), true);
+                        source.sendSuccess(() -> Component.translatable("command.galacticraft-api.debug.registry.dump", registry.key().location().toString()), true);
                         for (ResourceLocation id : registry.keySet()) {
-                            source.sendSuccess(Component.literal(id.toString() + " - " + registry.get(id)), false);
+                            source.sendSuccess(() -> Component.literal(id.toString() + " - " + registry.get(id)), false);
                         }
                         return 1;
                     })))));
@@ -102,7 +102,7 @@ public class GCApiCommands {
         BlockPos pos = BlockPosArgument.getLoadedBlockPos(context, "start_pos");
         boolean b = BoolArgumentType.getBool(context, "oxygen");
         context.getSource().getLevel().setBreathable(pos, b);
-        context.getSource().sendSuccess(Component.translatable("command.galacticraft-api.oxygen.set.single"), true);
+        context.getSource().sendSuccess(() -> Component.translatable("command.galacticraft-api.oxygen.set.single"), true);
         return 1;
     }
 
@@ -121,16 +121,16 @@ public class GCApiCommands {
             }
         }
 
-        context.getSource().sendSuccess(Component.translatable("command.galacticraft-api.oxygen.set.multiple"), true);
+        context.getSource().sendSuccess(() -> Component.translatable("command.galacticraft-api.oxygen.set.multiple"), true);
         return 1;
     }
 
     private static int getOxygen(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         BlockPos pos = BlockPosArgument.getLoadedBlockPos(context, "start_pos");
         if (context.getSource().getLevel().isBreathable(pos)) {
-            context.getSource().sendSuccess(Component.translatable("command.galacticraft-api.oxygen.get.single.oxygen"), false);
+            context.getSource().sendSuccess(() -> Component.translatable("command.galacticraft-api.oxygen.get.single.oxygen"), false);
         } else {
-            context.getSource().sendSuccess(Component.translatable("command.galacticraft-api.oxygen.get.single.no_oxygen"), false);
+            context.getSource().sendSuccess(() -> Component.translatable("command.galacticraft-api.oxygen.get.single.no_oxygen"), false);
         }
         return 1;
     }
@@ -154,11 +154,11 @@ public class GCApiCommands {
             }
         }
         if (allOxygen) {
-            context.getSource().sendSuccess(Component.translatable("command.galacticraft-api.oxygen.get.area.full"), false);
+            context.getSource().sendSuccess(() -> Component.translatable("command.galacticraft-api.oxygen.get.area.full"), false);
         } else if (hasSomeOxygen) {
-            context.getSource().sendSuccess(Component.translatable("command.galacticraft-api.oxygen.get.area.partial"), false);
+            context.getSource().sendSuccess(() -> Component.translatable("command.galacticraft-api.oxygen.get.area.partial"), false);
         } else {
-            context.getSource().sendSuccess(Component.translatable("command.galacticraft-api.oxygen.get.area.none"), false);
+            context.getSource().sendSuccess(() -> Component.translatable("command.galacticraft-api.oxygen.get.area.none"), false);
         }
         return 1;
     }
