@@ -28,6 +28,7 @@ import dev.galacticraft.api.rocket.entity.Rocket;
 import dev.galacticraft.impl.Constant;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.MultiBufferSource;
 
@@ -37,7 +38,7 @@ public enum EmptyRocketPartRenderer implements RocketPartRenderer {
     private static boolean hasWarned = false;
 
     @Override
-    public void renderGUI(ClientLevel world, PoseStack matrices, int mouseX, int mouseY, float delta) {
+    public void renderGUI(ClientLevel world, GuiGraphics graphics, int mouseX, int mouseY, float delta) {
         if (!hasWarned) {
             hasWarned = true;
             Constant.LOGGER.warn("EmptyRocketPartRenderer renderer is in use! RocketPartRenderer wasn't registered?");

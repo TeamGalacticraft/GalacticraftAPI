@@ -90,7 +90,7 @@ public interface Rocket extends RocketData {
 
     Entity getEntity();
 
-    Level getLevel();
+    Level level();
 
     Vec3 position();
 

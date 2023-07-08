@@ -26,6 +26,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import dev.galacticraft.api.rocket.entity.Rocket;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.MultiBufferSource;
 
@@ -36,12 +37,12 @@ public interface RocketPartRenderer {
      * Called when this rocket part is being rendered inside a gui/screen.
      *
      * @param world    the client world of the main player
-     * @param matrices the matrix stack containing the current transformations in the gui. All changes will not be popped out automatically
+     * @param graphics the gui graphics which has various methods for gui rendering; it also contains the matrix stack
      * @param mouseX   the x position of the mouse
      * @param mouseY   the y position of the mouse
      * @param delta    time in-between ticks
      */
-    default void renderGUI(ClientLevel world, PoseStack matrices, int mouseX, int mouseY, float delta) {
+    default void renderGUI(ClientLevel world, GuiGraphics graphics, int mouseX, int mouseY, float delta) {
     }
 
     void render(ClientLevel world, PoseStack matrices, Rocket rocket, MultiBufferSource vertices, float delta, int light);

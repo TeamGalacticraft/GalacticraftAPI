@@ -32,17 +32,16 @@ import dev.galacticraft.api.rocket.entity.Rocket;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.Sheets;
-import net.minecraft.client.renderer.block.BlockModelShaper;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.world.item.ItemDisplayContext;
-import net.minecraft.world.level.block.Blocks;
 
 import java.util.function.Supplier;
 
@@ -55,8 +54,9 @@ public record BakedModelRocketPartRenderer(Supplier<BakedModel> model,
     }
 
     @Override
-    public void renderGUI(ClientLevel world, PoseStack matrices, int mouseX, int mouseY, float delta) {
+    public void renderGUI(ClientLevel world, GuiGraphics graphics, int mouseX, int mouseY, float delta) {
         RenderSystem.setShader(GameRenderer::getPositionColorTexShader);
+        PoseStack matrices = graphics.pose();
         matrices.translate(0, 0, 150);
         matrices.translate(8, 8, 8);
         model.get().getTransforms().getTransform(ItemDisplayContext.GUI).apply(false, matrices);
